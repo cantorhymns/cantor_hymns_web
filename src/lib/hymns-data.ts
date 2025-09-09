@@ -51,7 +51,7 @@ export const hymns: Hymn[] = [
     name: 'Omonogenees',
     genre: 'holy-week',
     recordings: [
-      { cantor: 'Cantor Tharwat', url: audioUrl, marks: [0, 40, 80, 120, 160, 200, 240] },
+      { cantor: 'Cantor Tharwat', url: 'https://storage.googleapis.com/cantor_app_audio/CantorTharwat/HolyWeek/Omonogenees.mp3', marks: [0, 40, 80, 120, 160, 200, 240] },
       { cantor: 'Cantor Ibrahim', url: audioUrl, marks: [0, 45, 90, 135, 180, 225] },
       { cantor: 'Cantor Gad', url: audioUrl, marks: [0, 38, 76, 114, 152, 190, 228] },
     ],
