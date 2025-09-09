@@ -1,0 +1,322 @@
+"use client";
+
+import type { Hymn, Recording } from "@/lib/types";
+import { useState, useRef, useEffect, useMemo } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import {
+  Play,
+  Pause,
+  Repeat,
+  SkipBack,
+  SkipForward,
+  FastForward,
+  CheckCircle2,
+  Circle,
+} from "lucide-react";
+import { Badge } from "./ui/badge";
+
+function formatTime(seconds: number) {
+  const floorSeconds = Math.floor(seconds);
+  const min = Math.floor(floorSeconds / 60);
+  const sec = floorSeconds % 60;
+  return `${min}:${sec < 10 ? "0" : ""}${sec}`;
+}
+
+export function HymnPlayer({ hymn }: { hymn: Hymn }) {
+  const [currentRecording, setCurrentRecording] = useState<Recording>(
+    hymn.recordings[0]
+  );
+  const [activeMarks, setActiveMarks] = useState<number[]>(
+    currentRecording.marks
+  );
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isRepeat, setIsRepeat] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [playbackRate, setPlaybackRate] = useState(1);
+
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const isSeeking = useRef(false);
+
+  useEffect(() => {
+    setCurrentRecording(hymn.recordings[0]);
+    setPlaybackRate(1);
+    setIsPlaying(false);
+  }, [hymn]);
+
+  useEffect(() => {
+    setActiveMarks(currentRecording.marks);
+    if (audioRef.current) {
+      audioRef.current.src = currentRecording.url;
+      audioRef.current.load();
+      setIsPlaying(false);
+      setCurrentTime(0);
+    }
+  }, [currentRecording]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const setAudioData = () => {
+      setDuration(audio.duration);
+      setCurrentTime(audio.currentTime);
+    };
+
+    const setAudioTime = () => {
+        if (!isSeeking.current) {
+            setCurrentTime(audio.currentTime);
+        }
+    };
+    
+    const handleEnded = () => setIsPlaying(false);
+
+    audio.addEventListener("loadedmetadata", setAudioData);
+    audio.addEventListener("timeupdate", setAudioTime);
+    audio.addEventListener('ended', handleEnded);
+
+    return () => {
+      audio.removeEventListener("loadedmetadata", setAudioData);
+      audio.removeEventListener("timeupdate", setAudioTime);
+      audio.removeEventListener('ended', handleEnded);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (audioRef.current) {
+        audioRef.current.playbackRate = playbackRate;
+    }
+  }, [playbackRate]);
+
+  useEffect(() => {
+    if (!isRepeat || !isPlaying || audioRef.current?.seeking) return;
+
+    const sortedActiveMarks = [...activeMarks].sort((a, b) => a - b);
+    
+    let startMark = 0;
+    for (let i = sortedActiveMarks.length - 1; i >= 0; i--) {
+        if (sortedActiveMarks[i] <= currentTime) {
+            startMark = sortedActiveMarks[i];
+            break;
+        }
+    }
+    
+    let endMark = duration;
+    for(const mark of sortedActiveMarks) {
+        if (mark > startMark) {
+            endMark = mark;
+            break;
+        }
+    }
+
+    if (currentTime >= endMark && endMark < duration) {
+        if (audioRef.current) {
+            audioRef.current.currentTime = startMark;
+        }
+    }
+
+  }, [currentTime, isRepeat, isPlaying, activeMarks, duration]);
+
+
+  const handlePlayPause = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const handleSeek = (value: number[]) => {
+    if (audioRef.current) {
+      const newTime = value[0];
+      isSeeking.current = false;
+      audioRef.current.currentTime = newTime;
+      setCurrentTime(newTime);
+    }
+  };
+
+  const handleSeekCommit = (value: number[]) => {
+     if (audioRef.current) {
+      const newTime = value[0];
+      isSeeking.current = false;
+      audioRef.current.currentTime = newTime;
+      setCurrentTime(newTime);
+    }
+  }
+
+  const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
+
+  const handleNextSection = () => {
+    if (!audioRef.current) return;
+    const nextMark = sortedActiveMarks.find(mark => mark > currentTime + 1); // +1 to avoid getting stuck on current mark
+    if (nextMark !== undefined) {
+      audioRef.current.currentTime = nextMark;
+    } else {
+      audioRef.current.currentTime = duration;
+      setIsPlaying(false);
+    }
+  };
+
+  const handlePrevSection = () => {
+    if (!audioRef.current) return;
+    const prevMarks = sortedActiveMarks.filter(mark => mark < currentTime -1);
+    if (prevMarks.length > 0) {
+      audioRef.current.currentTime = prevMarks[prevMarks.length - 1];
+    } else {
+      audioRef.current.currentTime = 0;
+    }
+  };
+
+  const toggleMark = (mark: number) => {
+    setActiveMarks((prev) =>
+      prev.includes(mark) ? prev.filter((m) => m !== mark) : [...prev, mark]
+    );
+  };
+
+  return (
+    <Card className="w-full max-w-3xl mx-auto overflow-hidden shadow-xl">
+      <audio ref={audioRef} src={currentRecording.url} preload="metadata" />
+      <CardHeader>
+        <div className="flex justify-between items-start">
+            <div>
+                <CardTitle className="font-headline text-3xl text-primary">
+                {hymn.name}
+                </CardTitle>
+                <CardDescription className="mt-1">{currentRecording.cantor}</CardDescription>
+            </div>
+            <Select
+                value={currentRecording.cantor}
+                onValueChange={(cantorName) => {
+                const newRec = hymn.recordings.find((r) => r.cantor === cantorName);
+                if (newRec) setCurrentRecording(newRec);
+                }}
+            >
+                <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select Cantor" />
+                </SelectTrigger>
+                <SelectContent>
+                {hymn.recordings.map((rec) => (
+                    <SelectItem key={rec.cantor} value={rec.cantor}>
+                    {rec.cantor}
+                    </SelectItem>
+                ))}
+                </SelectContent>
+            </Select>
+        </div>
+      </CardHeader>
+      <CardContent className="px-6 pb-6">
+        <div className="space-y-6">
+            <div className="relative w-full">
+                <Slider
+                    value={[currentTime]}
+                    max={duration || 100}
+                    step={1}
+                    onValueChange={(value) => {
+                        isSeeking.current = true;
+                        setCurrentTime(value[0]);
+                    }}
+                    onValueCommit={handleSeekCommit}
+                    className="w-full h-2"
+                />
+                {duration > 0 && currentRecording.marks.map((mark, index) => {
+                    const isActive = activeMarks.includes(mark);
+                    return (
+                    <button
+                        key={index}
+                        onClick={() => toggleMark(mark)}
+                        className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                        style={{ left: `${(mark / duration) * 100}%` }}
+                        aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
+                    >
+                        {isActive ? (
+                            <CheckCircle2 className="w-4 h-4 text-primary bg-background rounded-full"/>
+                        ) : (
+                            <Circle className="w-4 h-4 text-muted-foreground bg-background rounded-full"/>
+                        )}
+                    </button>
+                    );
+                })}
+            </div>
+
+            <div className="flex justify-between items-center text-sm text-muted-foreground">
+                <span>{formatTime(currentTime)}</span>
+                <span>{formatTime(duration)}</span>
+            </div>
+
+            <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant={isRepeat ? "secondary" : "ghost"}
+                        size="icon"
+                        onClick={() => setIsRepeat(!isRepeat)}
+                        className={isRepeat ? "text-primary ring-2 ring-primary" : ""}
+                    >
+                        <Repeat className="h-5 w-5" />
+                        <span className="sr-only">Repeat Section</span>
+                    </Button>
+                </div>
+                <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="icon" onClick={handlePrevSection}>
+                        <SkipBack className="h-6 w-6" />
+                        <span className="sr-only">Previous Section</span>
+                    </Button>
+                    <Button size="icon" className="h-16 w-16 rounded-full" onClick={handlePlayPause}>
+                        {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
+                        <span className="sr-only">{isPlaying ? "Pause" : "Play"}</span>
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={handleNextSection}>
+                        <SkipForward className="h-6 w-6" />
+                        <span className="sr-only">Next Section</span>
+                    </Button>
+                </div>
+                <div className="flex items-center gap-2 w-[100px] justify-end">
+                    <Select value={String(playbackRate)} onValueChange={(val) => setPlaybackRate(Number(val))}>
+                        <SelectTrigger className="w-full">
+                            <FastForward className="h-4 w-4 mr-1 text-muted-foreground"/>
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {[...Array(11)].map((_, i) => {
+                                const speed = 1.0 + i * 0.1;
+                                return <SelectItem key={speed} value={String(speed)}>{speed.toFixed(1)}x</SelectItem>
+                            })}
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+
+            <div className="pt-4">
+                <h4 className="text-sm font-medium text-muted-foreground mb-2">Active Section Markers</h4>
+                 <div className="flex flex-wrap gap-2">
+                    {sortedActiveMarks.length > 0 ? (
+                        sortedActiveMarks.map(mark => (
+                            <Badge key={mark} variant="secondary">{formatTime(mark)}</Badge>
+                        ))
+                    ) : (
+                        <p className="text-sm text-muted-foreground">No active markers. Playback will not be sectioned.</p>
+                    )}
+                 </div>
+            </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
