@@ -149,10 +149,23 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   // Animate the waveform scroll
   useEffect(() => {
-    if (waveformInnerRef.current && duration > 0) {
-      const scrollOffsetTime = Math.max(0, currentTime - VISIBLE_DURATION_S / 2);
-      const translatePercentage = -(scrollOffsetTime / duration) * 100;
-      waveformInnerRef.current.style.transform = `translateX(${translatePercentage}%)`;
+    if (waveformInnerRef.current && duration > VISIBLE_DURATION_S) {
+        const fullWidth = waveformInnerRef.current.scrollWidth;
+        const containerWidth = waveformContainerRef.current?.offsetWidth ?? fullWidth;
+        const scrollableWidth = fullWidth - containerWidth;
+        
+        // Center the playhead
+        const targetScrollLeft = (currentTime / duration) * fullWidth - containerWidth / 2;
+        
+        // Clamp the scroll position
+        const clampedScrollLeft = Math.max(0, Math.min(scrollableWidth, targetScrollLeft));
+
+        // Use translateX for smoother animation
+        const translatePercentage = -(clampedScrollLeft / fullWidth) * 100 * (duration / VISIBLE_DURATION_S);
+
+        waveformInnerRef.current.style.transform = `translateX(${translatePercentage}%)`;
+    } else if (waveformInnerRef.current) {
+        waveformInnerRef.current.style.transform = `translateX(0%)`;
     }
   }, [currentTime, duration]);
 
@@ -169,24 +182,24 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   };
   
   const seek = useCallback((clientX: number) => {
-      if (!waveformContainerRef.current || !audioRef.current || duration <= 0) return;
+      if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
 
-      const rect = waveformContainerRef.current.getBoundingClientRect();
-      const clickX = clientX - rect.left;
-      const containerWidth = waveformContainerRef.current.offsetWidth;
+      const containerRect = waveformContainerRef.current.getBoundingClientRect();
+      const clickX = clientX - containerRect.left;
+      
+      const innerWidth = waveformInnerRef.current.scrollWidth;
+      const transform = waveformInnerRef.current.style.transform;
+      const translateXPercentage = transform ? parseFloat(transform.split('(')[1]) : 0;
+      const scrolledWidth = -(translateXPercentage / 100) * innerWidth / (duration / VISIBLE_DURATION_S);
 
-      // Calculate the time represented by the start of the visible part of the waveform
-      const scrollOffsetTime = Math.max(0, currentTime - VISIBLE_DURATION_S / 2);
-
-      // Calculate the new time based on the click within the visible portion
-      const newTime = scrollOffsetTime + (clickX / containerWidth) * VISIBLE_DURATION_S;
+      const newTime = ( (scrolledWidth + clickX) / innerWidth ) * duration;
       const clampedTime = Math.min(duration, Math.max(0, newTime));
 
       if(audioRef.current) {
         audioRef.current.currentTime = clampedTime;
       }
       setCurrentTime(clampedTime);
-  }, [duration, currentTime]);
+  }, [duration]);
 
   const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -237,7 +250,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     );
   };
   
-  const waveformContainerWidth = duration > 0 ? (duration / VISIBLE_DURATION_S) * 100 : 100;
+  const waveformContainerWidth = duration > VISIBLE_DURATION_S ? (duration / VISIBLE_DURATION_S) * 100 : 100;
+  const playheadPosition = duration > 0 ? (currentTime / duration) * waveformContainerWidth : 0;
   
   return (
     <Card className="w-full max-w-3xl mx-auto overflow-hidden shadow-xl">
@@ -312,7 +326,9 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         return (
                         <button
                             key={index}
-                            onMouseDown={(e) => e.stopPropagation()}
+                            onMouseDown={(e) => {
+                                e.stopPropagation();
+                            }}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 toggleMark(mark);
@@ -332,10 +348,16 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         </button>
                         );
                     })}
-                </div>
-                {/* Playhead */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0.5 h-full bg-red-500 z-20 pointer-events-none">
-                    <div className="absolute -top-1 -left-1.5 w-4 h-4 bg-red-500 rounded-full"></div>
+
+                    {/* Playhead for the inner scrolling container */}
+                    <div 
+                      className="absolute top-0 h-full w-0.5 bg-red-500 z-20 pointer-events-none"
+                      style={{
+                        left: `${playheadPosition}%`
+                      }}
+                    >
+                      <div className="absolute -top-1 -left-1.5 w-4 h-4 bg-red-500 rounded-full"></div>
+                    </div>
                 </div>
             </div>
 
@@ -377,10 +399,9 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                            {[...Array(11)].map((_, i) => {
-                                const speed = 1.0 + i * 0.1;
-                                return <SelectItem key={speed} value={String(speed)}>{speed.toFixed(1)}x</SelectItem>
-                            })}
+                            {[0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map((speed) => (
+                                <SelectItem key={speed} value={String(speed)}>{speed.toFixed(2)}x</SelectItem>
+                            ))}
                         </SelectContent>
                     </Select>
                 </div>
