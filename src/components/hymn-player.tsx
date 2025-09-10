@@ -27,6 +27,7 @@ import {
   FastForward,
   CheckCircle2,
   Circle,
+  ListX
 } from "lucide-react";
 import { Badge } from "./ui/badge";
 
@@ -49,6 +50,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
+  const [allMarksDisabled, setAllMarksDisabled] = useState(false);
+
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const isSeeking = useRef(false);
@@ -57,17 +60,18 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     setCurrentRecording(hymn.recordings[0]);
     setPlaybackRate(1);
     setIsPlaying(false);
+    setAllMarksDisabled(false);
   }, [hymn]);
 
   useEffect(() => {
-    setActiveMarks(currentRecording.marks);
+    setActiveMarks(allMarksDisabled ? [] : currentRecording.marks);
     if (audioRef.current) {
       audioRef.current.src = currentRecording.url;
       audioRef.current.load();
       setIsPlaying(false);
       setCurrentTime(0);
     }
-  }, [currentRecording]);
+  }, [currentRecording, allMarksDisabled]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -104,7 +108,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   }, [playbackRate]);
 
   useEffect(() => {
-    if (!isRepeat || !isPlaying || audioRef.current?.seeking) return;
+    if (!isRepeat || !isPlaying || audioRef.current?.seeking || allMarksDisabled) return;
 
     const sortedActiveMarks = [...activeMarks].sort((a, b) => a - b);
     
@@ -130,7 +134,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
         }
     }
 
-  }, [currentTime, isRepeat, isPlaying, activeMarks, duration]);
+  }, [currentTime, isRepeat, isPlaying, activeMarks, duration, allMarksDisabled]);
 
 
   const handlePlayPause = () => {
@@ -165,7 +169,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
 
   const handleNextSection = () => {
-    if (!audioRef.current) return;
+    if (!audioRef.current || allMarksDisabled) return;
     const nextMark = sortedActiveMarks.find(mark => mark > currentTime + 1); // +1 to avoid getting stuck on current mark
     if (nextMark !== undefined) {
       audioRef.current.currentTime = nextMark;
@@ -176,7 +180,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   };
 
   const handlePrevSection = () => {
-    if (!audioRef.current) return;
+    if (!audioRef.current || allMarksDisabled) return;
     const prevMarks = sortedActiveMarks.filter(mark => mark < currentTime -1);
     if (prevMarks.length > 0) {
       audioRef.current.currentTime = prevMarks[prevMarks.length - 1];
@@ -186,10 +190,15 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   };
 
   const toggleMark = (mark: number) => {
+    if (allMarksDisabled) return;
     setActiveMarks((prev) =>
       prev.includes(mark) ? prev.filter((m) => m !== mark) : [...prev, mark]
     );
   };
+
+  const toggleAllMarks = () => {
+    setAllMarksDisabled(prev => !prev);
+  }
 
   return (
     <Card className="w-full max-w-3xl mx-auto overflow-hidden shadow-xl">
@@ -242,9 +251,10 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                     <button
                         key={index}
                         onClick={() => toggleMark(mark)}
-                        className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                        className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed"
                         style={{ left: `${(mark / duration) * 100}%` }}
                         aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
+                        disabled={allMarksDisabled}
                     >
                         {isActive ? (
                             <CheckCircle2 className="w-4 h-4 text-primary bg-background rounded-full"/>
@@ -268,13 +278,23 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         size="icon"
                         onClick={() => setIsRepeat(!isRepeat)}
                         className={isRepeat ? "text-primary ring-2 ring-primary" : ""}
+                        disabled={allMarksDisabled}
                     >
                         <Repeat className="h-5 w-5" />
                         <span className="sr-only">Repeat Section</span>
                     </Button>
+                     <Button
+                        variant={allMarksDisabled ? "secondary" : "ghost"}
+                        size="icon"
+                        onClick={toggleAllMarks}
+                        className={allMarksDisabled ? "text-primary ring-2 ring-primary" : ""}
+                    >
+                        <ListX className="h-5 w-5" />
+                        <span className="sr-only">Disable All Marks</span>
+                    </Button>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" onClick={handlePrevSection}>
+                    <Button variant="ghost" size="icon" onClick={handlePrevSection} disabled={allMarksDisabled}>
                         <SkipBack className="h-6 w-6" />
                         <span className="sr-only">Previous Section</span>
                     </Button>
@@ -282,7 +302,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
                         <span className="sr-only">{isPlaying ? "Pause" : "Play"}</span>
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={handleNextSection}>
+                    <Button variant="ghost" size="icon" onClick={handleNextSection} disabled={allMarksDisabled}>
                         <SkipForward className="h-6 w-6" />
                         <span className="sr-only">Next Section</span>
                     </Button>
@@ -311,7 +331,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                             <Badge key={mark} variant="secondary">{formatTime(mark)}</Badge>
                         ))
                     ) : (
-                        <p className="text-sm text-muted-foreground">No active markers. Playback will not be sectioned.</p>
+                        <p className="text-sm text-muted-foreground">{allMarksDisabled ? "All marks disabled." : "No active markers."} Playback will not be sectioned.</p>
                     )}
                  </div>
             </div>

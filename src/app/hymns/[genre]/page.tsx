@@ -13,7 +13,7 @@ export default function GenrePage({ params }: { params: { genre: string } }) {
   const genre = getGenreById(params.genre);
   const hymns = getHymnsByGenre(params.genre);
 
-  if (!genre || hymns.length === 0) {
+  if (!genre) {
     notFound();
   }
 
@@ -42,29 +42,35 @@ export default function GenrePage({ params }: { params: { genre: string } }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {hymns.map((hymn) => (
-          <Link href={`/hymn/${hymn.id}`} key={hymn.id} className="group">
-            <Card className="h-full flex flex-col transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 group-hover:border-primary/50">
-              <CardHeader className="flex-grow">
-                <div className="mb-3">
-                  <Music className="h-8 w-8 text-primary/50" />
+      {hymns.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {hymns.map((hymn) => (
+            <Link href={`/hymn/${hymn.id}`} key={hymn.id} className="group">
+              <Card className="h-full flex flex-col transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 group-hover:border-primary/50">
+                <CardHeader className="flex-grow">
+                  <div className="mb-3">
+                    <Music className="h-8 w-8 text-primary/50" />
+                  </div>
+                  <CardTitle className="font-headline text-2xl text-primary">
+                    {hymn.name}
+                  </CardTitle>
+                  <CardDescription>
+                    {hymn.recordings.length} recordings available
+                  </CardDescription>
+                </CardHeader>
+                 <div className="p-6 pt-0 flex justify-end items-center text-sm font-semibold text-primary/80 group-hover:text-primary">
+                  Practice Hymn
+                  <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
                 </div>
-                <CardTitle className="font-headline text-2xl text-primary">
-                  {hymn.name}
-                </CardTitle>
-                <CardDescription>
-                  {hymn.recordings.length} recordings available
-                </CardDescription>
-              </CardHeader>
-               <div className="p-6 pt-0 flex justify-end items-center text-sm font-semibold text-primary/80 group-hover:text-primary">
-                Practice Hymn
-                <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
-              </div>
-            </Card>
-          </Link>
-        ))}
-      </div>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-16">
+          <p className="text-muted-foreground">No hymns available in this genre yet.</p>
+        </div>
+      )}
     </div>
   );
 }

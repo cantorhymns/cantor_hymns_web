@@ -1,3 +1,5 @@
+import type { LucideIcon } from "lucide-react";
+
 export interface Recording {
   cantor: string;
   url: string;
@@ -15,5 +17,5 @@ export interface Genre {
   id: string;
   name: string;
   description: string;
-  icon: React.ElementType;
+  icon: React.ElementType | LucideIcon;
 }
