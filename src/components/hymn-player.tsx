@@ -24,8 +24,6 @@ import {
   SkipBack,
   SkipForward,
   FastForward,
-  CheckCircle2,
-  Circle,
 } from "lucide-react";
 
 function formatTime(seconds: number) {
@@ -333,25 +331,17 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         return (
                         <button
                             key={index}
-                            onMouseDown={(e) => {
-                                e.stopPropagation();
-                            }}
+                            onMouseDown={(e) => { e.stopPropagation(); }}
+                            onMouseUp={(e) => { e.stopPropagation(); }}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 toggleMark(mark);
                             }}
-                            className="absolute bottom-0 -translate-x-1/2 w-4 h-full focus:outline-none z-10 flex flex-col items-center"
+                            className="absolute top-0 -translate-x-1/2 w-2 h-full focus:outline-none z-10 flex flex-col items-center group/marker"
                             style={{ left: `${(mark / duration) * 100}%` }}
                             aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
                         >
-                             <div className={`w-0.5 grow ${isActive ? 'bg-primary' : 'bg-muted-foreground/50'}`}></div>
-                             <div className="absolute -top-1 left-1/2 -translate-x-1/2">
-                                {isActive ? (
-                                    <CheckCircle2 className="w-4 h-4 text-primary bg-background rounded-full"/>
-                                ) : (
-                                    <Circle className="w-4 h-4 text-muted-foreground bg-background rounded-full"/>
-                                )}
-                            </div>
+                            <div className={`w-full h-full transition-colors ${isActive ? 'bg-primary' : 'bg-transparent border-2 border-muted-foreground'} group-hover/marker:bg-primary/50`}></div>
                         </button>
                         );
                     })}
