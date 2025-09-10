@@ -150,10 +150,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   // Animate the waveform scroll
   useEffect(() => {
     if (waveformInnerRef.current && duration > 0) {
-      const scrollOffset = Math.max(0, currentTime - VISIBLE_DURATION_S / 2);
-      const totalWidth = waveformInnerRef.current.scrollWidth;
-      const containerWidth = waveformContainerRef.current.offsetWidth;
-      const translatePercentage = -(scrollOffset / duration) * (totalWidth / containerWidth) * 100;
+      const scrollOffsetTime = Math.max(0, currentTime - VISIBLE_DURATION_S / 2);
+      const translatePercentage = -(scrollOffsetTime / duration) * 100;
       waveformInnerRef.current.style.transform = `translateX(${translatePercentage}%)`;
     }
   }, [currentTime, duration]);
@@ -177,18 +175,18 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       const clickX = clientX - rect.left;
       const containerWidth = waveformContainerRef.current.offsetWidth;
 
-      // Calculate the time represented by the visible part of the waveform
-      const scrollOffset = Math.max(0, audioRef.current.currentTime - VISIBLE_DURATION_S / 2);
+      // Calculate the time represented by the start of the visible part of the waveform
+      const scrollOffsetTime = Math.max(0, audioRef.current.currentTime - VISIBLE_DURATION_S / 2);
 
       // Calculate the new time based on the click within the visible portion
-      const newTime = scrollOffset + (clickX / containerWidth) * VISIBLE_DURATION_S;
+      const newTime = scrollOffsetTime + (clickX / containerWidth) * VISIBLE_DURATION_S;
       const clampedTime = Math.min(duration, Math.max(0, newTime));
 
       if(audioRef.current) {
         audioRef.current.currentTime = clampedTime;
       }
       setCurrentTime(clampedTime);
-  }, [duration]);
+  }, [duration, currentTime]);
 
   const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -226,11 +224,11 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     if (!audioRef.current) return;
     // Find the mark right before the current time
     const prevMark = [...sortedActiveMarks].reverse().find(mark => mark < currentTime - 1);
-    if (audioRef.current.currentTime < 1 && prevMark === undefined) {
+     if (prevMark === undefined) {
       audioRef.current.currentTime = 0;
       return;
     }
-    audioRef.current.currentTime = prevMark !== undefined ? prevMark : 0;
+    audioRef.current.currentTime = prevMark;
   };
 
   const toggleMark = (mark: number) => {
@@ -294,14 +292,14 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                     }}
                 >
                     {/* Background Waveform Bars */}
-                    {duration > 0 && Array.from({ length: Math.ceil(duration) }).map((_, i) => {
+                    {duration > 0 && Array.from({ length: Math.ceil(duration) * 2 }).map((_, i) => {
                        const barHeight = Math.random() * 60 + 20; // Random height between 20% and 80%
                        return (
                           <div
                             key={i}
-                            className="absolute bottom-0 w-0.5 bg-muted/50"
+                            className="absolute bottom-0 w-px bg-muted/50"
                             style={{
-                                left: `${(i / duration) * 100}%`,
+                                left: `${(i / (Math.ceil(duration) * 2)) * 100}%`,
                                 height: `${barHeight}%`,
                             }}
                           />
@@ -318,12 +316,12 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                                 e.stopPropagation();
                                 toggleMark(mark);
                             }}
-                            className="absolute bottom-0 -translate-x-1/2 w-4 h-full focus:outline-none z-10"
+                            className="absolute bottom-0 -translate-x-1/2 w-4 h-full focus:outline-none z-10 flex flex-col items-center"
                             style={{ left: `${(mark / duration) * 100}%` }}
                             aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
                         >
-                             <div className={`w-0.5 h-full mx-auto ${isActive ? 'bg-primary' : 'bg-muted-foreground'}`}></div>
-                             <div className="absolute -top-2 left-1/2 -translate-x-1/2">
+                             <div className={`w-0.5 grow ${isActive ? 'bg-primary' : 'bg-muted-foreground/50'}`}></div>
+                             <div className="absolute -top-1 left-1/2 -translate-x-1/2">
                                 {isActive ? (
                                     <CheckCircle2 className="w-4 h-4 text-primary bg-background rounded-full"/>
                                 ) : (
