@@ -79,50 +79,46 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   }, [playbackRate]);
 
   const handleEnded = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    
     setIsPlaying(false);
-    if (isRepeat && audioRef.current) {
-        // If repeat is on, loop to the beginning of the last section
+    if (isRepeat) {
         const lastMark = sortedMarks[sortedMarks.length - 1];
         if (lastMark !== undefined) {
-            audioRef.current.currentTime = lastMark;
-            audioRef.current.play();
+            audio.currentTime = lastMark;
+            audio.play();
             setIsPlaying(true);
-        } else {
-             audioRef.current.currentTime = 0;
         }
-    } else if (audioRef.current) {
-        audioRef.current.currentTime = 0;
+    } else {
+        audio.currentTime = 0;
     }
   }, [isRepeat, sortedMarks]);
 
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
-
+    
     const currentPlaybackTime = audio.currentTime;
     setCurrentTime(currentPlaybackTime);
 
-    if (isRepeat && !isSeeking && audio.duration > 0) {
-      let startMark = 0;
-      let endMark = audio.duration;
-
-      // Find the current section
-      for (let i = 0; i < sortedMarks.length; i++) {
-        if (sortedMarks[i] > currentPlaybackTime) {
-          endMark = sortedMarks[i];
-          startMark = i > 0 ? sortedMarks[i - 1] : 0;
+    if (isRepeat && !isSeeking && audio.duration > 0 && sortedMarks.length > 0) {
+      let currentMarkIndex = -1;
+      for (let i = sortedMarks.length - 1; i >= 0; i--) {
+        if (currentPlaybackTime >= sortedMarks[i]) {
+          currentMarkIndex = i;
           break;
         }
-         // Handle being in the last section
-        if (i === sortedMarks.length - 1 && currentPlaybackTime >= sortedMarks[i]) {
-            startMark = sortedMarks[i];
-            endMark = audio.duration;
-        }
       }
-      
-      // If playback time has passed the end mark of the section, loop back
-      if (currentPlaybackTime >= endMark) {
-        audio.currentTime = startMark;
+
+      if (currentMarkIndex !== -1) {
+        const nextMarkIndex = currentMarkIndex + 1;
+        if (nextMarkIndex < sortedMarks.length) {
+          const nextMarkTime = sortedMarks[nextMarkIndex];
+          if (currentPlaybackTime >= nextMarkTime) {
+            audio.currentTime = sortedMarks[currentMarkIndex];
+          }
+        }
       }
     }
   }, [isRepeat, isSeeking, sortedMarks]);
@@ -133,16 +129,22 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     if (!audio) return;
 
     const setAudioData = () => {
-      setDuration(audio.duration);
+      if (audio.duration && audio.duration !== Infinity) {
+        setDuration(audio.duration);
+      } else {
+        setDuration(0);
+      }
       setCurrentTime(audio.currentTime);
     };
     
     audio.addEventListener("loadeddata", setAudioData);
+    audio.addEventListener("durationchange", setAudioData);
     audio.addEventListener("timeupdate", handleTimeUpdate);
     audio.addEventListener('ended', handleEnded);
 
     return () => {
       audio.removeEventListener("loadeddata", setAudioData);
+      audio.removeEventListener("durationchange", setAudioData);
       audio.removeEventListener("timeupdate", handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
     };
@@ -230,16 +232,11 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const dragDeltaX = clientX - seekStartRef.current.x;
     
     const scrollerWidth = waveformInnerRef.current.scrollWidth;
-    const containerWidth = waveformContainerRef.current.clientWidth;
-    
     const timePerPixel = duration / scrollerWidth;
-    
     const timeDelta = dragDeltaX * timePerPixel;
-    
     const newTime = seekStartRef.current.time + timeDelta;
 
     seek(newTime);
-
   }, [isSeeking, duration, seek]);
 
   const handleSeekEnd = useCallback((e: MouseEvent | TouchEvent) => {
@@ -271,7 +268,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   const handleNextSection = () => {
     if (!audioRef.current) return;
-    const nextMark = sortedMarks.find(mark => mark > currentTime + 1);
+    const nextMark = sortedMarks.find(mark => mark > currentTime + 0.5); // Add small buffer
     if (nextMark !== undefined) {
       seek(nextMark);
     } else {
@@ -281,12 +278,17 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   const handlePrevSection = () => {
     if (!audioRef.current) return;
-    const prevMark = [...sortedMarks].reverse().find(mark => mark < currentTime - 1);
-     if (prevMark === undefined) {
-      seek(0);
+    // Find the mark for the beginning of the current section first
+    const currentSectionStartMark = [...sortedMarks].reverse().find(mark => mark <= currentTime - 0.5);
+    
+    // Then find the mark before that one
+    const prevMark = [...sortedMarks].reverse().find(mark => mark < (currentSectionStartMark ?? currentTime) - 0.5);
+
+     if (prevMark !== undefined) {
+      seek(prevMark);
       return;
     }
-    seek(prevMark);
+    seek(0);
   };
   
   const waveformWidthStyle = useMemo(() => {
@@ -379,27 +381,27 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                           />
                        )
                     })}
-                     {duration > 0 && sortedMarks.map((mark, index) => {
-                         const isActive = true;
-                         return (
-                            <div
-                                key={index}
-                                className="absolute top-0 w-8 -translate-x-1/2 h-full z-10 pointer-events-none"
-                                style={{ 
-                                    left: `${(mark / duration) * 100}%`,
-                                }}
-                            >
-                                <div className="relative w-full h-full">
-                                    <div className="absolute top-[calc(100%_-_1.25rem)] -translate-y-full w-full h-5 z-20 pointer-events-auto">
-                                       
-                                    </div>
-                                    <div className="absolute inset-x-0 bottom-0 h-full w-full bg-primary/75 flex items-center justify-center text-primary-foreground font-bold text-xs">
-                                        {index + 1}
+                     {duration > 0 && sortedMarks.map((mark, index) => (
+                        <div
+                            key={index}
+                            className="absolute top-0 w-8 -translate-x-1/2 h-full z-10 pointer-events-none"
+                            style={{ 
+                                left: `${(mark / duration) * 100}%`,
+                            }}
+                        >
+                           <div className="relative w-full h-full">
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0.5 h-full bg-primary/75"></div>
+                                <div className="absolute top-[calc(100%_-_1.25rem)] -translate-y-full w-full h-5 z-20 pointer-events-auto">
+                                   
+                                </div>
+                                <div className="absolute inset-x-0 bottom-0 h-full w-full flex items-center justify-center pointer-events-none">
+                                    <div className="bg-primary/75 text-primary-foreground font-bold text-xs w-6 h-6 rounded-full flex items-center justify-center">
+                                     {index + 1}
                                     </div>
                                 </div>
-                            </div>
-                        )
-                    })}
+                           </div>
+                        </div>
+                    ))}
                 </div>
 
                 <div 
