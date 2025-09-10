@@ -85,7 +85,20 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
         }
     };
     
-    const handleEnded = () => setIsPlaying(false);
+    const handleEnded = () => {
+        setIsPlaying(false);
+        if (isRepeat) {
+            // If repeat is on, loop from the beginning
+            const activeLoopMarks = sortedActiveMarks;
+            if (activeLoopMarks.length > 0) {
+                audio.currentTime = activeLoopMarks[0];
+                audio.play();
+                setIsPlaying(true);
+            } else {
+                 audio.currentTime = 0;
+            }
+        }
+    };
 
     audio.addEventListener("loadeddata", setAudioData);
     audio.addEventListener("timeupdate", setAudioTime);
@@ -96,7 +109,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       audio.removeEventListener("timeupdate", setAudioTime);
       audio.removeEventListener('ended', handleEnded);
     };
-  }, [isSeeking]);
+  }, [isSeeking, isRepeat, sortedActiveMarks]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -175,30 +188,16 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       if (isPlaying) {
         audioRef.current.pause();
       } else {
-        audioRef.current.play();
+        audio.current.play();
       }
       setIsPlaying(!isPlaying);
     }
   };
   
-  const seek = useCallback((clientX: number) => {
-    if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
-
-    const dragDeltaX = clientX - seekStartRef.current.x;
-    
-    // More robust time calculation based on drag delta
-    const containerWidth = waveformContainerRef.current.offsetWidth;
-    const timePerPixel = (duration / waveformInnerRef.current.scrollWidth) * (waveformInnerRef.current.scrollWidth / containerWidth);
-    const timeDelta = dragDeltaX * timePerPixel;
-    
-    let newTime = seekStartRef.current.time + timeDelta;
-    
-    const clampedTime = Math.max(0, Math.min(newTime, duration));
-
-    setCurrentTime(clampedTime);
-    if (audioRef.current) {
-        audioRef.current.currentTime = clampedTime;
-    }
+  const seek = useCallback((time: number) => {
+    if (!audioRef.current || duration <= 0) return;
+    const newTime = Math.max(0, Math.min(time, duration));
+    setCurrentTime(newTime);
   }, [duration]);
 
   const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
@@ -208,7 +207,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     
     if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
 
-    // Direct click to position logic
     const containerRect = waveformContainerRef.current.getBoundingClientRect();
     const clickXInContainer = clientX - containerRect.left;
     
@@ -225,11 +223,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const newTime = (clickXInScroller / scrollerWidth) * duration;
     const clampedTime = Math.min(duration, Math.max(0, newTime));
 
-    seekStartRef.current = { x: clientX, time: clampedTime }; // Use direct time for drag start
-    setCurrentTime(clampedTime);
-    if (audioRef.current) {
-      audioRef.current.currentTime = clampedTime;
-    }
+    seekStartRef.current = { x: clientX, time: clampedTime };
+    seek(clampedTime);
   };
 
   const handleSeekMove = useCallback((e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
@@ -241,15 +236,12 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
     const dragDeltaX = clientX - seekStartRef.current.x;
     const containerWidth = waveformContainerRef.current.offsetWidth;
-    // Correctly scale the delta to the visible duration
-    const timeDelta = (dragDeltaX / containerWidth) * VISIBLE_DURATION_S;
+    const timePerPixel = (duration / waveformInnerRef.current.scrollWidth);
+    const timeDelta = dragDeltaX * timePerPixel;
     
-    let newTime = seekStartRef.current.time + timeDelta;
-
-    const clampedTime = Math.max(0, Math.min(newTime, duration));
-
-    setCurrentTime(clampedTime);
-  }, [isSeeking, duration]);
+    const newTime = seekStartRef.current.time + timeDelta;
+    seek(newTime);
+  }, [isSeeking, duration, seek]);
 
   const handleSeekEnd = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     if (!isSeeking) return;
@@ -296,19 +288,28 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const playheadPositionStyle = useMemo(() => {
     if (duration <= 0) return { left: '0%' };
     const containerWidth = waveformContainerRef.current?.offsetWidth || 0;
+    const fullWidth = waveformInnerRef.current?.scrollWidth || containerWidth;
+    
     if (duration <= VISIBLE_DURATION_S) {
       return { left: `${(currentTime / duration) * 100}%` };
     }
+
     const scrollStartTime = VISIBLE_DURATION_S / 2;
     const scrollEndTime = duration - VISIBLE_DURATION_S / 2;
+
     if (currentTime < scrollStartTime) {
-      const progress = (currentTime / scrollStartTime) * 0.5;
+      const progress = currentTime / duration;
       return { left: `${progress * 100}%` };
     } else if (currentTime > scrollEndTime) {
-      const progress = ((currentTime - scrollEndTime) / (duration - scrollEndTime)) * 0.5 + 0.5;
+       const progress = currentTime / duration;
       return { left: `${progress * 100}%` };
     } else {
-      return { left: '50%' };
+      const scrollProgress = (currentTime - scrollStartTime) / (scrollEndTime - scrollStartTime);
+      const scrollTarget = scrollProgress * (fullWidth - containerWidth);
+      const playheadAbsolutePx = (currentTime/duration) * fullWidth;
+      const playheadRelativePx = playheadAbsolutePx - scrollTarget;
+
+      return { left: `${(playheadRelativePx / containerWidth) * 100}%` };
     }
   }, [currentTime, duration]);
   
@@ -383,28 +384,26 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         return (
                         <div
                             key={index}
-                            className="absolute top-0 -translate-x-1/2 h-full z-20 flex flex-col items-center"
+                            className="absolute top-0 -translate-x-1/2 h-full z-20 flex flex-col items-center group/marker"
                             style={{ left: `${(mark / duration) * 100}%` }}
                         >
                             <button
                                 onMouseDown={(e) => { e.stopPropagation(); }}
                                 onTouchStart={(e) => { e.stopPropagation(); }}
                                 onClick={(e) => { e.stopPropagation(); toggleMark(mark); }}
-                                className="absolute -top-5 w-4 h-[calc(100%+20px)] focus:outline-none group/marker"
+                                className={`absolute -top-5 w-8 h-5 focus:outline-none flex items-center justify-center text-xs font-bold rounded-t-md ${isActive ? 'bg-primary text-primary-foreground' : 'bg-muted border-2 border-muted-foreground text-muted-foreground'}`}
                                 aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
                             >
-                                <div className={`w-full h-full mx-auto transition-colors flex items-center justify-center text-xs font-bold ${isActive ? 'bg-primary text-primary-foreground' : 'bg-transparent border-2 border-muted-foreground text-muted-foreground'} group-hover/marker:bg-primary/50`}>
-                                   <span className="mt-[20px]">{index + 1}</span>
-                                </div>
+                               {index + 1}
                             </button>
-                             <div className="w-4 h-full pointer-events-none" />
+                             <div className={`w-4 h-full pointer-events-none transition-colors ${isActive ? 'bg-primary/50' : 'border-2 border-dashed border-muted-foreground'}`} />
                         </div>
                         );
                     })}
                 </div>
 
                 <div 
-                    className="absolute top-0 h-full w-0.5 bg-red-500 z-20 pointer-events-none -translate-x-1/2"
+                    className="absolute top-0 h-full w-0.5 bg-red-500 z-30 pointer-events-none -translate-x-1/2"
                     style={playheadPositionStyle}
                 >
                     <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-3 h-3 bg-red-500 rounded-full"></div>
