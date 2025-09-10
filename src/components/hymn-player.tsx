@@ -176,7 +176,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       const containerWidth = waveformContainerRef.current.offsetWidth;
 
       // Calculate the time represented by the start of the visible part of the waveform
-      const scrollOffsetTime = Math.max(0, audioRef.current.currentTime - VISIBLE_DURATION_S / 2);
+      const scrollOffsetTime = Math.max(0, currentTime - VISIBLE_DURATION_S / 2);
 
       // Calculate the new time based on the click within the visible portion
       const newTime = scrollOffsetTime + (clickX / containerWidth) * VISIBLE_DURATION_S;
@@ -312,6 +312,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         return (
                         <button
                             key={index}
+                            onMouseDown={(e) => e.stopPropagation()}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 toggleMark(mark);
