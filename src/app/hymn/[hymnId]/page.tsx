@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: { hymnId: string } 
   }
 
   return {
-    title: `${hymn.name} | Hymn Tutor`,
+    title: `${hymn.name} | Cantor`,
     description: `Practice the hymn ${hymn.name}.`,
   };
 }

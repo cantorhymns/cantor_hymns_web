@@ -5,7 +5,7 @@ import { Header } from '@/components/header';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Hymn Tutor',
+  title: 'Cantor',
   description: 'An app to learn Coptic hymns',
 };
 

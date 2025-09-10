@@ -8,7 +8,7 @@ export function Header() {
         <Link href="/" className="flex items-center gap-2 group">
           <Music4 className="h-8 w-8 text-primary transition-transform duration-300 group-hover:rotate-12" />
           <span className="text-2xl font-headline font-bold text-primary">
-            Hymn Tutor
+            Cantor
           </span>
         </Link>
       </div>

@@ -15,10 +15,6 @@ export default function Home() {
         <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight">
           Hymn Genres
         </h1>
-        <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-          Explore hymns from different seasons of the Coptic church. Select a
-          genre to begin your practice.
-        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
