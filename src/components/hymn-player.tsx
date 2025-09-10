@@ -47,7 +47,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const [currentTime, setCurrentTime] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [isSeeking, setIsSeeking] = useState(false);
-  
+  const [lastPassedMarkerIndex, setLastPassedMarkerIndex] = useState(0);
+
   const audioRef = useRef<HTMLAudioElement>(null);
   const waveformContainerRef = useRef<HTMLDivElement>(null);
   const waveformInnerRef = useRef<HTMLDivElement>(null);
@@ -59,6 +60,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     setCurrentRecording(hymn.recordings[0]);
     setPlaybackRate(1);
     setIsPlaying(false);
+    setLastPassedMarkerIndex(0);
   }, [hymn]);
 
   useEffect(() => {
@@ -69,6 +71,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       audio.pause();
       setIsPlaying(false);
       setCurrentTime(0);
+      setLastPassedMarkerIndex(0);
     }
   }, [currentRecording]);
 
@@ -95,37 +98,34 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     } else {
       setIsPlaying(false);
       audio.currentTime = 0;
+      setLastPassedMarkerIndex(0);
     }
   }, [isRepeat, sortedMarks]);
-  
+
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio) return;
-    
+    if (!audio || isSeeking) return;
+
     const currentPlaybackTime = audio.currentTime;
     setCurrentTime(currentPlaybackTime);
 
-    if (isRepeat && !isSeeking && audio.duration > 0 && sortedMarks.length > 0) {
-        let startMark = 0;
-        let endMark = duration;
+    if (isRepeat && sortedMarks.length > 0) {
+      let currentSectionIndex = -1;
+      for (let i = sortedMarks.length - 1; i >= 0; i--) {
+        if (currentPlaybackTime >= sortedMarks[i]) {
+          currentSectionIndex = i;
+          break;
+        }
+      }
 
-        // Find the current section
-        for (let i = 0; i < sortedMarks.length; i++) {
-            if (currentPlaybackTime >= sortedMarks[i]) {
-                startMark = sortedMarks[i];
-            } else {
-                endMark = sortedMarks[i];
-                break;
-            }
-        }
-        
-        // If the current time has passed the end of the section, loop back
-        if (currentPlaybackTime >= endMark) {
-            audio.currentTime = startMark;
-        }
+      if (currentSectionIndex > lastPassedMarkerIndex) {
+         audio.currentTime = sortedMarks[lastPassedMarkerIndex];
+      } else if (currentSectionIndex !== -1 && currentSectionIndex < lastPassedMarkerIndex) {
+         // User seeked backwards, so update the anchor point for the loop
+         setLastPassedMarkerIndex(currentSectionIndex);
+      }
     }
-  }, [isRepeat, isSeeking, sortedMarks, duration]);
-
+  }, [isRepeat, isSeeking, sortedMarks, lastPassedMarkerIndex]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -152,7 +152,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       audio.removeEventListener('ended', handleEnded);
     };
   }, [handleEnded, handleTimeUpdate]);
-  
 
   useEffect(() => {
     if (waveformContainerRef.current && waveformInnerRef.current && duration > VISIBLE_DURATION_S) {
@@ -197,7 +196,18 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       audioRef.current.currentTime = newTime;
     }
     setCurrentTime(newTime);
-  }, [duration]);
+    
+    // When seeking, update the loop anchor point
+    let newMarkIndex = -1;
+    for (let i = sortedMarks.length - 1; i >= 0; i--) {
+        if (newTime >= sortedMarks[i]) {
+            newMarkIndex = i;
+            break;
+        }
+    }
+    setLastPassedMarkerIndex(newMarkIndex >= 0 ? newMarkIndex : 0);
+
+  }, [duration, sortedMarks]);
 
   const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -239,14 +249,24 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const timeDelta = dragDeltaX * timePerPixel;
     const newTime = seekStartRef.current.time + timeDelta;
 
-    seek(newTime);
-  }, [isSeeking, duration, seek]);
+    // We don't call the full seek function here to avoid spamming state updates
+    if (audioRef.current) {
+        const newClampedTime = Math.max(0, Math.min(newTime, duration));
+        audioRef.current.currentTime = newClampedTime;
+        setCurrentTime(newClampedTime); // Just update display time
+    }
+  }, [isSeeking, duration]);
 
   const handleSeekEnd = useCallback((e: MouseEvent | TouchEvent) => {
     if (!isSeeking) return;
     e.preventDefault();
     setIsSeeking(false);
-  }, [isSeeking]);
+    
+    // Finalize the seek position and update the loop anchor
+    if(audioRef.current) {
+      seek(audioRef.current.currentTime);
+    }
+  }, [isSeeking, seek]);
   
   useEffect(() => {
     if (isSeeking) {
@@ -281,17 +301,21 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   const handlePrevSection = () => {
     if (!audioRef.current) return;
-    // Find the mark for the beginning of the current section first
-    const currentSectionStartMark = [...sortedMarks].reverse().find(mark => mark <= currentTime - 0.5);
-    
-    // Then find the mark before that one
-    const prevMark = [...sortedMarks].reverse().find(mark => mark < (currentSectionStartMark ?? currentTime) - 0.5);
+    const currentPlaybackTime = audioRef.current.currentTime;
+    // Find the start of the current section
+    const currentSectionStartMark = [...sortedMarks].reverse().find(mark => mark <= currentPlaybackTime - 1.5);
 
-     if (prevMark !== undefined) {
-      seek(prevMark);
-      return;
+    if (currentSectionStartMark !== undefined) {
+      // Now find the start of the *previous* section
+      const prevSectionStartMark = [...sortedMarks].reverse().find(mark => mark < currentSectionStartMark);
+      if (prevSectionStartMark !== undefined) {
+        seek(prevSectionStartMark);
+      } else {
+        seek(0);
+      }
+    } else {
+        seek(0);
     }
-    seek(0);
   };
   
   const waveformWidthStyle = useMemo(() => {
@@ -387,22 +411,14 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                      {duration > 0 && sortedMarks.map((mark, index) => (
                         <div
                             key={index}
-                            className="absolute top-0 w-8 -translate-x-1/2 h-full z-10 pointer-events-none"
+                            className="absolute top-0 w-0.5 h-full bg-primary/75 z-10 pointer-events-none"
                             style={{ 
                                 left: `${(mark / duration) * 100}%`,
                             }}
                         >
-                           <div className="relative w-full h-full">
-                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0.5 h-full bg-primary/75"></div>
-                                <div className="absolute top-[calc(100%_-_1.25rem)] -translate-y-full w-full h-5 z-20 pointer-events-auto">
-                                   
-                                </div>
-                                <div className="absolute inset-x-0 bottom-0 h-full w-full flex items-center justify-center pointer-events-none">
-                                    <div className="bg-primary/75 text-primary-foreground font-bold text-xs w-6 h-6 rounded-full flex items-center justify-center">
-                                     {index + 1}
-                                    </div>
-                                </div>
-                           </div>
+                            <div className="absolute top-1/2 -translate-y-1/2 -left-3 w-6 h-6 rounded-full bg-primary/75 text-primary-foreground font-bold text-xs flex items-center justify-center">
+                                {index + 1}
+                            </div>
                         </div>
                     ))}
                 </div>
