@@ -270,6 +270,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const playheadPositionStyle = useMemo(() => {
     if (duration <= 0) return { left: '0%' };
 
+    const containerWidth = waveformContainerRef.current?.offsetWidth || 0;
+
     if (duration <= VISIBLE_DURATION_S) {
       // If track is shorter than visible window, playhead moves normally
       return { left: `${(currentTime / duration) * 100}%` };
@@ -281,12 +283,14 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
     if (currentTime < scrollStartTime) {
       // ...before scrolling starts, playhead moves from left to center
-      const progress = (currentTime / VISIBLE_DURATION_S) * 100;
-      return { left: `${progress}%` };
+      const progress = (currentTime / VISIBLE_DURATION_S);
+      const leftPx = progress * containerWidth;
+      return { left: `${leftPx}px` };
     } else if (currentTime > scrollEndTime) {
       // ...after scrolling ends, playhead moves from center to right
-      const progress = ((currentTime - (duration - VISIBLE_DURATION_S)) / VISIBLE_DURATION_S) * 100;
-      return { left: `${progress}%` };
+      const progress = ((currentTime - (duration - VISIBLE_DURATION_S)) / VISIBLE_DURATION_S);
+      const leftPx = progress * containerWidth;
+      return { left: `${leftPx}px` };
     } else {
       // ...during scrolling, playhead is fixed at the center
       return { left: '50%' };
@@ -295,7 +299,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   
   return (
-    <Card className="w-full max-w-3xl mx-auto overflow-hidden shadow-xl">
+    <Card className="w-full max-w-3xl mx-auto shadow-xl overflow-hidden">
       <audio ref={audioRef} src={currentRecording.url} preload="metadata" />
       <CardHeader>
         <div className="flex justify-between items-start">
@@ -367,17 +371,17 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         return (
                         <div
                             key={index}
-                            className="absolute top-0 -translate-x-1/2 h-full z-10 flex flex-col items-center group/marker"
+                            className="absolute top-0 -translate-x-1/2 h-[125%] -translate-y-[10%] z-10 flex flex-col items-center group/marker"
                             style={{ left: `${(mark / duration) * 100}%` }}
                         >
                             <button
-                                onClick={() => toggleMark(mark)}
-                                className="h-4 w-4 -mb-1 flex-shrink-0 focus:outline-none"
+                                onMouseDown={(e) => { e.stopPropagation(); toggleMark(mark); }}
+                                className="h-full w-full focus:outline-none"
                                 aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
                             >
-                                <div className={`w-2 h-4 mx-auto transition-colors ${isActive ? 'bg-primary' : 'bg-transparent border-2 border-muted-foreground'} group-hover/marker:bg-primary/50`}></div>
+                                <div className={`w-2 h-full mx-auto transition-colors ${isActive ? 'bg-primary' : 'bg-transparent border-2 border-muted-foreground'} group-hover/marker:bg-primary/50`}></div>
+                                <div className="absolute bottom-[25%] left-0 right-0 h-[75%] pointer-events-none"></div>
                             </button>
-                             <div className="w-2 h-full bg-transparent pointer-events-none"></div>
                         </div>
                         );
                     })}
