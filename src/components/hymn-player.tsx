@@ -205,6 +205,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     setIsSeeking(true);
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     
+    seekStartRef.current = { x: clientX, time: audioRef.current?.currentTime || 0 };
+
     if (e.type === 'mousedown' || e.type === 'touchstart') {
       if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
       
@@ -266,6 +268,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   };
 
   const toggleMark = (mark: number) => {
+    if (isPlaying) return;
     setActiveMarks((prev) =>
       prev.includes(mark) ? prev.filter((m) => m !== mark) : [...prev, mark]
     );
@@ -376,9 +379,10 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                             style={{ left: `${(mark / duration) * 100}%` }}
                         >
                             <button
+                                disabled={isPlaying}
                                 onMouseDown={(e) => { e.stopPropagation(); }}
                                 onClick={(e) => { e.stopPropagation(); toggleMark(mark); }}
-                                className="absolute -top-5 w-4 h-[calc(100%+20px)] focus:outline-none group/marker"
+                                className="absolute -top-5 w-4 h-[calc(100%+20px)] focus:outline-none group/marker disabled:cursor-not-allowed"
                                 aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
                             >
                                 <div className={`w-full h-full mx-auto transition-colors flex items-center justify-center text-xs font-bold ${isActive ? 'bg-primary text-primary-foreground' : 'bg-transparent border-2 border-muted-foreground text-muted-foreground'} group-hover/marker:bg-primary/50`}>
