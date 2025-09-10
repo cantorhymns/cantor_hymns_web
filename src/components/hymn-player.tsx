@@ -151,14 +151,25 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
         const fullWidth = waveformInnerRef.current.scrollWidth;
         const containerWidth = waveformContainerRef.current.offsetWidth;
         
-        // Center the playhead visually
-        const scrollTarget = (currentTime / duration) * fullWidth - containerWidth / 2;
-        
-        // Clamp scroll position
-        const maxScroll = fullWidth - containerWidth;
-        const scrollLeft = Math.max(0, Math.min(scrollTarget, maxScroll));
+        // Time at which scrolling should start (playhead reaches middle)
+        const scrollStartTime = VISIBLE_DURATION_S / 2;
+        // Time at which scrolling should end (playhead is at middle of last visible section)
+        const scrollEndTime = duration - VISIBLE_DURATION_S / 2;
 
-        waveformInnerRef.current.style.transform = `translateX(-${scrollLeft}px)`;
+        let scrollTarget;
+        if (currentTime < scrollStartTime) {
+            // Before scrolling starts, waveform is static
+            scrollTarget = 0;
+        } else if (currentTime > scrollEndTime) {
+            // After scrolling ends, waveform is static at the end
+            scrollTarget = fullWidth - containerWidth;
+        } else {
+            // During scrolling
+            const scrollProgress = (currentTime - scrollStartTime) / (scrollEndTime - scrollStartTime);
+            scrollTarget = scrollProgress * (fullWidth - containerWidth);
+        }
+        
+        waveformInnerRef.current.style.transform = `translateX(-${scrollTarget}px)`;
     } else if (waveformInnerRef.current) {
         waveformInnerRef.current.style.transform = `translateX(0px)`;
     }
@@ -255,8 +266,33 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const multiplier = Math.max(1, duration / VISIBLE_DURATION_S);
     return { width: `${multiplier * 100}%` };
   }, [duration]);
-  
-  const playheadPositionPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+  const playheadPositionStyle = useMemo(() => {
+    if (duration <= 0) return { left: '0%' };
+
+    if (duration <= VISIBLE_DURATION_S) {
+      // If track is shorter than visible window, playhead moves normally
+      return { left: `${(currentTime / duration) * 100}%` };
+    }
+
+    // If track is longer...
+    const scrollStartTime = VISIBLE_DURATION_S / 2;
+    const scrollEndTime = duration - VISIBLE_DURATION_S / 2;
+
+    if (currentTime < scrollStartTime) {
+      // ...before scrolling starts, playhead moves from left to center
+      const progress = (currentTime / VISIBLE_DURATION_S) * 100;
+      return { left: `${progress}%` };
+    } else if (currentTime > scrollEndTime) {
+      // ...after scrolling ends, playhead moves from center to right
+      const progress = ((currentTime - (duration - VISIBLE_DURATION_S)) / VISIBLE_DURATION_S) * 100;
+      return { left: `${progress}%` };
+    } else {
+      // ...during scrolling, playhead is fixed at the center
+      return { left: '50%' };
+    }
+  }, [currentTime, duration]);
+
   
   return (
     <Card className="w-full max-w-3xl mx-auto overflow-hidden shadow-xl">
@@ -348,12 +384,10 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 </div>
                 {/* Static Playhead */}
                 <div 
-                    className="absolute top-0 h-full w-0.5 bg-red-500 z-20 pointer-events-none"
-                    style={{
-                        left: duration > VISIBLE_DURATION_S ? '50%' : `${playheadPositionPercentage}%`
-                    }}
+                    className="absolute top-0 h-full w-0.5 bg-red-500 z-20 pointer-events-none -translate-x-1/2"
+                    style={playheadPositionStyle}
                 >
-                    <div className="absolute -top-1 -left-1.5 w-4 h-4 bg-red-500 rounded-full"></div>
+                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-4 h-4 bg-red-500 rounded-full"></div>
                 </div>
             </div>
 
