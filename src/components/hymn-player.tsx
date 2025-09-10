@@ -17,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import {
   Play,
   Pause,
@@ -37,6 +36,8 @@ function formatTime(seconds: number) {
   return `${min}:${sec < 10 ? "0" : ""}${sec}`;
 }
 
+const VISIBLE_DURATION_S = 60; // 1 minute window
+
 export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const [currentRecording, setCurrentRecording] = useState<Recording>(
     hymn.recordings[0]
@@ -50,9 +51,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const [currentTime, setCurrentTime] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
 
-
   const audioRef = useRef<HTMLAudioElement>(null);
-  const isSeeking = useRef(false);
+  const waveformContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setCurrentRecording(hymn.recordings[0]);
@@ -80,9 +80,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     };
 
     const setAudioTime = () => {
-        if (!isSeeking.current) {
-            setCurrentTime(audio.currentTime);
-        }
+        setCurrentTime(audio.currentTime);
     };
     
     const handleEnded = () => setIsPlaying(false);
@@ -110,7 +108,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     if (!isRepeat || !isPlaying || audioRef.current?.seeking || sortedActiveMarks.length < 1) return;
   
     let startMark = 0;
-    // Find the last mark that is before or at the current time
     for (let i = sortedActiveMarks.length - 1; i >= 0; i--) {
         if (sortedActiveMarks[i] <= currentTime) {
             startMark = sortedActiveMarks[i];
@@ -119,25 +116,23 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     }
   
     let endMark = duration;
-    // Find the next mark after the start mark
-    for (const mark of sortedActiveMarks) {
-        if (mark > startMark) {
-            endMark = mark;
-            break;
+    const nextMarkIndex = sortedActiveMarks.findIndex(m => m > startMark);
+    if (nextMarkIndex !== -1) {
+        endMark = sortedActiveMarks[nextMarkIndex];
+    } else if (sortedActiveMarks.length > 0) {
+        const lastMark = sortedActiveMarks[sortedActiveMarks.length - 1];
+        if (startMark < lastMark) {
+            endMark = duration; // Loop until the end if it's the last section
+        } else {
+             // If current time is past the last mark, loop last section
+            endMark = duration;
+            startMark = lastMark;
         }
     }
-
-    // If there is no next mark, the section is from the last mark to the end of the song
-    if(endMark === duration){
-        const lastMark = sortedActiveMarks[sortedActiveMarks.length-1];
-        if(currentTime < lastMark){
-            endMark = lastMark;
-        }
-    }
-  
+    
     // When the current time passes the end mark, loop back to the start mark
-    // Use a small buffer (0.5s) to avoid issues with timeupdate frequency
-    if (currentTime >= endMark - 0.5 && endMark < duration) {
+    // Use a small buffer to avoid issues with timeupdate frequency
+    if (currentTime >= endMark - 0.1 && endMark < duration) {
         if (audioRef.current) {
             audioRef.current.currentTime = startMark;
         }
@@ -157,23 +152,20 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     }
   };
 
-  const handleSeek = (value: number[]) => {
-    if (audioRef.current) {
-      const newTime = value[0];
-      isSeeking.current = false;
-      audioRef.current.currentTime = newTime;
-      setCurrentTime(newTime);
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (audioRef.current && waveformContainerRef.current && duration > 0) {
+      const rect = waveformContainerRef.current.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const containerWidth = waveformContainerRef.current.offsetWidth;
+      const secondsPerPixel = VISIBLE_DURATION_S / containerWidth;
+
+      // The click position corresponds to a time relative to the start of the visible window
+      const scrollOffset = Math.max(0, currentTime - VISIBLE_DURATION_S / 2);
+      const newTime = scrollOffset + (clickX * secondsPerPixel);
+      
+      audioRef.current.currentTime = Math.min(duration, Math.max(0, newTime));
     }
   };
-
-  const handleSeekCommit = (value: number[]) => {
-     if (audioRef.current) {
-      const newTime = value[0];
-      isSeeking.current = false;
-      audioRef.current.currentTime = newTime;
-      setCurrentTime(newTime);
-    }
-  }
 
   const handleNextSection = () => {
     if (!audioRef.current) return;
@@ -189,7 +181,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const handlePrevSection = () => {
     if (!audioRef.current) return;
     let prevMark = 0;
-    // Find the last mark that is at least 1 second before the current time
     const reversedMarks = [...sortedActiveMarks].sort((a,b) => b-a);
     const foundMark = reversedMarks.find(mark => mark < currentTime - 1);
     
@@ -205,7 +196,11 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       prev.includes(mark) ? prev.filter((m) => m !== mark) : [...prev, mark]
     );
   };
-
+  
+  const waveformWidth = duration > 0 ? (duration / VISIBLE_DURATION_S) * 100 : 100;
+  const scrollOffset = Math.max(0, currentTime - VISIBLE_DURATION_S / 2);
+  const waveformTranslateX = duration > 0 ? -(scrollOffset / VISIBLE_DURATION_S) * 100 : 0;
+  
   return (
     <Card className="w-full max-w-3xl mx-auto overflow-hidden shadow-xl">
       <audio ref={audioRef} src={currentRecording.url} preload="metadata" />
@@ -239,36 +234,63 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       </CardHeader>
       <CardContent className="px-6 pb-6">
         <div className="space-y-6">
-            <div className="relative w-full">
-                <Slider
-                    value={[currentTime]}
-                    max={duration || 100}
-                    step={1}
-                    onValueChange={(value) => {
-                        isSeeking.current = true;
-                        setCurrentTime(value[0]);
+           <div 
+                ref={waveformContainerRef} 
+                className="relative w-full h-20 bg-secondary/50 rounded-lg overflow-hidden cursor-pointer group"
+                onClick={handleSeek}
+            >
+                <div 
+                    className="absolute top-0 left-0 h-full transition-transform duration-100 ease-linear"
+                    style={{
+                        width: `${waveformWidth}%`,
+                        transform: `translateX(${waveformTranslateX}%)`,
                     }}
-                    onValueCommit={handleSeekCommit}
-                    className="w-full h-2"
-                />
-                {duration > 0 && currentRecording.marks.map((mark, index) => {
-                    const isActive = activeMarks.includes(mark);
-                    return (
-                    <button
-                        key={index}
-                        onClick={() => toggleMark(mark)}
-                        className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                        style={{ left: `${(mark / duration) * 100}%` }}
-                        aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
-                    >
-                        {isActive ? (
-                            <CheckCircle2 className="w-4 h-4 text-primary bg-background rounded-full"/>
-                        ) : (
-                            <Circle className="w-4 h-4 text-muted-foreground bg-background rounded-full"/>
-                        )}
-                    </button>
-                    );
-                })}
+                >
+                    {/* Background Waveform Bars */}
+                    {duration > 0 && Array.from({ length: Math.ceil(duration / (VISIBLE_DURATION_S / 100)) }).map((_, i) => {
+                       const barHeight = Math.random() * 60 + 20; // Random height between 20% and 80%
+                       return (
+                          <div
+                            key={i}
+                            className="absolute bottom-0 w-1 bg-muted/50"
+                            style={{
+                                left: `${(i / (duration / (VISIBLE_DURATION_S/100)))*100}%`,
+                                height: `${barHeight}%`,
+                            }}
+                          />
+                       )
+                    })}
+
+                    {/* Markers */}
+                    {duration > 0 && currentRecording.marks.map((mark, index) => {
+                        const isActive = activeMarks.includes(mark);
+                        return (
+                        <button
+                            key={index}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                toggleMark(mark);
+                            }}
+                            className="absolute bottom-0 -translate-x-1/2 w-4 h-full focus:outline-none z-10"
+                            style={{ left: `${(mark / duration) * 100}%` }}
+                            aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
+                        >
+                             <div className={`w-0.5 h-full mx-auto ${isActive ? 'bg-primary' : 'bg-muted-foreground'}`}></div>
+                             <div className="absolute -top-2 left-1/2 -translate-x-1/2">
+                                {isActive ? (
+                                    <CheckCircle2 className="w-4 h-4 text-primary bg-background rounded-full"/>
+                                ) : (
+                                    <Circle className="w-4 h-4 text-muted-foreground bg-background rounded-full"/>
+                                )}
+                            </div>
+                        </button>
+                        );
+                    })}
+                </div>
+                {/* Playhead */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0.5 h-full bg-red-500 z-20 pointer-events-none">
+                    <div className="absolute -top-1 -left-1.5 w-4 h-4 bg-red-500 rounded-full"></div>
+                </div>
             </div>
 
             <div className="flex justify-between items-center text-sm text-muted-foreground">
