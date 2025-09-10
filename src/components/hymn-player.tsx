@@ -54,6 +54,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const waveformContainerRef = useRef<HTMLDivElement>(null);
   const waveformInnerRef = useRef<HTMLDivElement>(null);
   const seekStartRef = useRef({ x: 0, time: 0 });
+  
+  const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
 
   useEffect(() => {
     setCurrentRecording(hymn.recordings[0]);
@@ -70,8 +72,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       setCurrentTime(0);
     }
   }, [currentRecording]);
-  
-  const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -188,7 +188,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       if (isPlaying) {
         audioRef.current.pause();
       } else {
-        audio.current.play();
+        audioRef.current.play();
       }
       setIsPlaying(!isPlaying);
     }
@@ -210,6 +210,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     
     if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
 
+    seekStartRef.current = { x: clientX, time: audioRef.current.currentTime };
+    
     const containerRect = waveformContainerRef.current.getBoundingClientRect();
     const clickXInContainer = clientX - containerRect.left;
     
@@ -225,7 +227,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
     const newTime = (clickXInScroller / scrollerWidth) * duration;
     seek(newTime);
-    seekStartRef.current = { x: clientX, time: newTime };
   };
 
   const handleSeekMove = useCallback((e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
@@ -236,7 +237,11 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
 
     const dragDeltaX = clientX - seekStartRef.current.x;
-    const timePerPixel = (duration / waveformInnerRef.current.scrollWidth);
+    
+    const containerWidth = waveformContainerRef.current.offsetWidth;
+    const visibleDuration = (duration < VISIBLE_DURATION_S) ? duration : VISIBLE_DURATION_S;
+    const timePerPixel = visibleDuration / containerWidth;
+
     const timeDelta = dragDeltaX * timePerPixel;
     
     const newTime = seekStartRef.current.time + timeDelta;
@@ -304,8 +309,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     }
     
     if (currentTime > scrollEndTime) {
-       const progress = (currentTime - scrollEndTime) / (VISIBLE_DURATION_S / 2);
-       return { left: `${50 + progress * 50}%` };
+       const progress = (currentTime - (duration - VISIBLE_DURATION_S)) / VISIBLE_DURATION_S;
+       return { left: `${progress * 100}%` };
     }
 
     return { left: '50%' };
@@ -382,14 +387,14 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         return (
                         <div
                             key={index}
-                            className="absolute top-0 -translate-x-1/2 h-full z-20 flex flex-col items-center"
+                            className="absolute top-0 -translate-x-1/2 h-full z-20 flex flex-col items-center pointer-events-none"
                             style={{ left: `${(mark / duration) * 100}%` }}
                         >
                             <button
                                 onMouseDown={(e) => { e.stopPropagation(); }}
                                 onTouchStart={(e) => { e.stopPropagation(); }}
                                 onClick={(e) => { e.stopPropagation(); toggleMark(mark); }}
-                                className="absolute -top-5 w-8 h-8 focus:outline-none flex items-center justify-center text-xs font-bold"
+                                className="absolute -top-6 w-8 h-8 focus:outline-none flex items-center justify-center text-xs font-bold pointer-events-auto"
                                 aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
                             >
                               {isActive && <Check className="h-5 w-5 text-primary" />}
@@ -409,7 +414,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                     className="absolute top-0 h-full w-0.5 bg-red-500 z-30 pointer-events-none -translate-x-1/2"
                     style={playheadPositionStyle}
                 >
-                    <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 bg-red-500 rounded-full"></div>
+                    <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-3 h-3 bg-red-500 rounded-full"></div>
                 </div>
             </div>
 
