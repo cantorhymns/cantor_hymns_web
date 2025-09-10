@@ -329,7 +329,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
         <div className="space-y-6">
            <div 
                 ref={waveformContainerRef} 
-                className="relative w-full h-20 bg-secondary/50 rounded-lg overflow-hidden cursor-pointer group touch-none"
+                className="relative w-full h-20 bg-secondary/50 rounded-lg cursor-pointer group touch-none"
                 onMouseDown={handleSeekStart}
                 onMouseMove={handleSeekMove}
                 onMouseUp={handleSeekEnd}
@@ -365,20 +365,20 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                     {duration > 0 && currentRecording.marks.map((mark, index) => {
                         const isActive = activeMarks.includes(mark);
                         return (
-                        <button
+                        <div
                             key={index}
-                            onMouseDown={(e) => { e.stopPropagation(); }}
-                            onMouseUp={(e) => { e.stopPropagation(); }}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                toggleMark(mark);
-                            }}
-                            className="absolute top-0 -translate-x-1/2 h-full focus:outline-none z-10 flex flex-col items-center group/marker"
-                            style={{ left: `${(mark / duration) * 100}%`, width: '8px' }}
-                            aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
+                            className="absolute top-0 -translate-x-1/2 h-full z-10 flex flex-col items-center group/marker"
+                            style={{ left: `${(mark / duration) * 100}%` }}
                         >
-                            <div className={`w-2 h-full transition-colors ${isActive ? 'bg-primary' : 'bg-transparent border-2 border-muted-foreground'} group-hover/marker:bg-primary/50`}></div>
-                        </button>
+                            <button
+                                onClick={() => toggleMark(mark)}
+                                className="h-4 w-4 -mb-1 flex-shrink-0 focus:outline-none"
+                                aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
+                            >
+                                <div className={`w-2 h-4 mx-auto transition-colors ${isActive ? 'bg-primary' : 'bg-transparent border-2 border-muted-foreground'} group-hover/marker:bg-primary/50`}></div>
+                            </button>
+                             <div className="w-2 h-full bg-transparent pointer-events-none"></div>
+                        </div>
                         );
                     })}
                 </div>
@@ -441,5 +441,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    
