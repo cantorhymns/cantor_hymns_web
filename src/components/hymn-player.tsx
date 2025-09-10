@@ -81,20 +81,23 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const handleEnded = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    
-    setIsPlaying(false);
+
     if (isRepeat) {
-        const lastMark = sortedMarks[sortedMarks.length - 1];
-        if (lastMark !== undefined) {
-            audio.currentTime = lastMark;
-            audio.play();
-            setIsPlaying(true);
-        }
-    } else {
+      const lastMark = sortedMarks[sortedMarks.length - 1];
+      if (lastMark !== undefined) {
+          audio.currentTime = lastMark;
+          audio.play();
+          setIsPlaying(true);
+      } else {
+        setIsPlaying(false);
         audio.currentTime = 0;
+      }
+    } else {
+      setIsPlaying(false);
+      audio.currentTime = 0;
     }
   }, [isRepeat, sortedMarks]);
-
+  
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -103,25 +106,25 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     setCurrentTime(currentPlaybackTime);
 
     if (isRepeat && !isSeeking && audio.duration > 0 && sortedMarks.length > 0) {
-      let currentMarkIndex = -1;
-      for (let i = sortedMarks.length - 1; i >= 0; i--) {
-        if (currentPlaybackTime >= sortedMarks[i]) {
-          currentMarkIndex = i;
-          break;
-        }
-      }
+        let startMark = 0;
+        let endMark = duration;
 
-      if (currentMarkIndex !== -1) {
-        const nextMarkIndex = currentMarkIndex + 1;
-        if (nextMarkIndex < sortedMarks.length) {
-          const nextMarkTime = sortedMarks[nextMarkIndex];
-          if (currentPlaybackTime >= nextMarkTime) {
-            audio.currentTime = sortedMarks[currentMarkIndex];
-          }
+        // Find the current section
+        for (let i = 0; i < sortedMarks.length; i++) {
+            if (currentPlaybackTime >= sortedMarks[i]) {
+                startMark = sortedMarks[i];
+            } else {
+                endMark = sortedMarks[i];
+                break;
+            }
         }
-      }
+        
+        // If the current time has passed the end of the section, loop back
+        if (currentPlaybackTime >= endMark) {
+            audio.currentTime = startMark;
+        }
     }
-  }, [isRepeat, isSeeking, sortedMarks]);
+  }, [isRepeat, isSeeking, sortedMarks, duration]);
 
 
   useEffect(() => {
