@@ -37,9 +37,9 @@ export const hymns: Hymn[] = [
     name: 'Tai Shouri',
     genre: 'holy-week',
     recordings: [
-      { cantor: 'Cantor Tharwat', url: 'https://storage.googleapis.com/cantor_app_audio/CantorTharwat/CantorTharwat_MournfulTaishouri.mp3', marks: [0, 18, 36, 54, 72, 90, 108, 126, 144, 162, 180, 198, 216, 234, 252, 270, 288, 306, 324, 342, 360, 378, 396] },
-      { cantor: 'Cantor Bola', url: 'https://storage.googleapis.com/cantor_app_audio/CantorBola/CantorBola_MournfulTaishouri.mp3', marks: [0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272, 289, 306, 323, 340] },
-      { cantor: 'HICS', url: 'https://storage.googleapis.com/cantor_app_audio/HICS/HICS_MournfulTaishouri.mp3', marks: [0, 19, 38, 57, 76, 95, 114, 133, 152, 171, 190, 209, 228, 247, 266, 285, 304, 323, 342, 361, 380] },
+      { cantor: 'Cantor Tharwat', url: 'https://storage.googleapis.com/cantor_app_audio/CantorTharwat/CantorTharwat_MournfulTaishouri.mp3', marks: [0, 18, 36, 54, 72, 90, 108, 126, 144, 162, 180, 198, 216, 234, 252, 270, 288, 306, 324, 342, 360, 378, 396, 414, 432] },
+      { cantor: 'Cantor Bola', url: 'https://storage.googleapis.com/cantor_app_audio/CantorBola/CantorBola_MournfulTaishouri.mp3', marks: [0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272, 289, 306, 323, 340, 357, 374] },
+      { cantor: 'HICS', url: 'https://storage.googleapis.com/cantor_app_audio/HICS/HICS_MournfulTaishouri.mp3', marks: [0, 19, 38, 57, 76, 95, 114, 133, 152, 171, 190, 209, 228, 247, 266, 285, 304, 323, 342, 361, 380, 399, 418] },
     ],
   },
   {
@@ -47,9 +47,9 @@ export const hymns: Hymn[] = [
     name: 'Omonogenees',
     genre: 'holy-week',
     recordings: [
-      { cantor: 'Cantor Tharwat', url: 'https://storage.googleapis.com/cantor_app_audio/CantorTharwat/HolyWeek/Omonogenees.mp3', marks: [0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221] },
-      { cantor: 'Cantor Bola', url: 'https://storage.googleapis.com/cantor_app_audio/CantorBola/CantorBola_Omonogenees.mp3', marks: [0, 18, 36, 54, 72, 90, 108, 126, 144, 162, 180, 198, 216, 234, 252, 270, 288, 306, 324, 342] },
-      { cantor: 'HICS', url: 'https://storage.googleapis.com/cantor_app_audio/HICS/HICS_Omonogenees.mp3', marks: [0, 19, 38, 57, 76, 95, 114, 133, 152, 171, 190, 209, 228, 247, 266, 285, 304, 323] },
+      { cantor: 'Cantor Tharwat', url: 'https://storage.googleapis.com/cantor_app_audio/CantorTharwat/HolyWeek/Omonogenees.mp3', marks: [0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238] },
+      { cantor: 'Cantor Bola', url: 'https://storage.googleapis.com/cantor_app_audio/CantorBola/CantorBola_Omonogenees.mp3', marks: [0, 18, 36, 54, 72, 90, 108, 126, 144, 162, 180, 198, 216] },
+      { cantor: 'HICS', url: 'https://storage.googleapis.com/cantor_app_audio/HICS/HICS_Omonogenees.mp3', marks: [0, 19, 38, 57, 76, 95, 114, 133, 152, 171, 190, 209] },
     ],
   },
   {
@@ -57,7 +57,7 @@ export const hymns: Hymn[] = [
     name: 'Phai Etafenf',
     genre: 'holy-week',
     recordings: [
-       { cantor: 'Cantor Tharwat', url: 'https://storage.googleapis.com/cantor_app_audio/CantorTharwat/CantorTharwat_Phaietafenf.mp3', marks: [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340, 360] },
+       { cantor: 'Cantor Tharwat', url: 'https://storage.googleapis.com/cantor_app_audio/CantorTharwat/CantorTharwat_Phaietafenf.mp3', marks: [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340, 360, 380, 400] },
     ]
   },
   // Kiahk
@@ -66,8 +66,8 @@ export const hymns: Hymn[] = [
     name: 'El Tarh',
     genre: 'kiahk',
     recordings: [
-      { cantor: 'Cantor Ibrahim', url: 'https://storage.googleapis.com/cantor_app_audio/CantorIbrahim/CantorIbrahim_Tar7.mp3', marks: [0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256, 272] },
-      { cantor: 'Cantor Gad', url: 'https://storage.googleapis.com/cantor_app_audio/CantorGad/CantorGad_Tar7.mp3', marks: [0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272, 289, 306] },
+      { cantor: 'Cantor Ibrahim', url: 'https://storage.googleapis.com/cantor_app_audio/CantorIbrahim/CantorIbrahim_Tar7.mp3', marks: [0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256, 272, 288] },
+      { cantor: 'Cantor Gad', url: 'https://storage.googleapis.com/cantor_app_audio/CantorGad/CantorGad_Tar7.mp3', marks: [0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272, 289, 306, 323] },
     ],
   },
   // Resurrection
@@ -76,8 +76,8 @@ export const hymns: Hymn[] = [
     name: 'Kata Ni Khoros (El Hegab)',
     genre: 'resurrection',
     recordings: [
-      { cantor: 'Cantor Ibrahim', url: 'https://storage.googleapis.com/cantor_app_audio/CantorIbrahim/CantorIbrahim_KataNiKhoros7egab.mp3', marks: [0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180, 195, 210, 225, 240, 255] },
-      { cantor: 'HICS', url: 'https://storage.googleapis.com/cantor_app_audio/HICS/HICS_KataNiKhoros7egab.mp3', marks: [0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256, 272, 288] },
+      { cantor: 'Cantor Ibrahim', url: 'https://storage.googleapis.com/cantor_app_audio/CantorIbrahim/CantorIbrahim_KataNiKhoros7egab.mp3', marks: [0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180, 195, 210, 225, 240, 255, 270, 285] },
+      { cantor: 'HICS', url: 'https://storage.googleapis.com/cantor_app_audio/HICS/HICS_KataNiKhoros7egab.mp3', marks: [0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256, 272, 288, 304, 320] },
     ],
   },
 ];
