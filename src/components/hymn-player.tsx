@@ -120,43 +120,38 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   }, [playbackRate]);
 
   useEffect(() => {
-    if (!isRepeat || !isPlaying || isSeeking) return;
-  
+    if (!isRepeat || !isPlaying || isSeeking || !audioRef.current) return;
+
     const activeLoopMarks = sortedActiveMarks;
-    if (activeLoopMarks.length < 2) return;
-  
-    let startMark: number | undefined;
+    if (activeLoopMarks.length < 1) return;
+
     let endMark: number | undefined;
+    let startMark = 0;
 
     for (let i = 0; i < activeLoopMarks.length; i++) {
-        if (activeLoopMarks[i] > currentTime) {
+        if (activeLoopMarks[i] > currentTime + 0.1) {
             endMark = activeLoopMarks[i];
-            const prevIndex = i - 1;
-            if (prevIndex >= 0) {
-               startMark = activeLoopMarks[prevIndex]
-            } else {
-               startMark = 0;
+            if (i > 0) {
+              startMark = activeLoopMarks[i-1];
             }
             break;
         }
     }
     
-    if (endMark === undefined && activeLoopMarks.length > 0) {
-        const lastMark = activeLoopMarks[activeLoopMarks.length - 1];
-        if(currentTime > lastMark){
-            startMark = lastMark;
-            endMark = duration;
-        }
+    // If we are past the last mark
+    if (endMark === undefined) {
+      const lastMark = activeLoopMarks[activeLoopMarks.length - 1];
+      if (currentTime > lastMark) {
+        startMark = lastMark;
+        endMark = duration;
+      }
     }
-
-
-    if (startMark !== undefined && endMark !== undefined && currentTime >= endMark - 0.2) {
-       if (audioRef.current) {
-          audioRef.current.currentTime = startMark;
-       }
+    
+    if (startMark !== undefined && endMark !== undefined && currentTime >= endMark) {
+       audioRef.current.currentTime = startMark;
     }
-
   }, [currentTime, isRepeat, isPlaying, sortedActiveMarks, duration, isSeeking]);
+
 
   useEffect(() => {
     if (waveformContainerRef.current && waveformInnerRef.current && duration > VISIBLE_DURATION_S) {
@@ -239,10 +234,10 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const dragDeltaX = clientX - seekStartRef.current.x;
     
     const containerWidth = waveformContainerRef.current.offsetWidth;
-    const visibleDuration = (duration < VISIBLE_DURATION_S) ? duration : VISIBLE_DURATION_S;
-    const timePerPixel = visibleDuration / containerWidth;
+    const scrollerWidth = waveformInnerRef.current.scrollWidth;
+    const pixelPerSecond = scrollerWidth / duration;
 
-    const timeDelta = dragDeltaX * timePerPixel;
+    const timeDelta = dragDeltaX / pixelPerSecond;
     
     const newTime = seekStartRef.current.time + timeDelta;
     
