@@ -53,6 +53,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const waveformContainerRef = useRef<HTMLDivElement>(null);
+  const waveformInnerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setCurrentRecording(hymn.recordings[0]);
@@ -105,40 +106,40 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
 
   useEffect(() => {
-    if (!isRepeat || !isPlaying || audioRef.current?.seeking || sortedActiveMarks.length < 1) return;
+    if (!isRepeat || !isPlaying || audioRef.current?.seeking) return;
+  
+    const activeLoopMarks = sortedActiveMarks;
+    if (activeLoopMarks.length < 1) return;
   
     let startMark = 0;
-    for (let i = sortedActiveMarks.length - 1; i >= 0; i--) {
-        if (sortedActiveMarks[i] <= currentTime) {
-            startMark = sortedActiveMarks[i];
-            break;
-        }
+    for (let i = activeLoopMarks.length - 1; i >= 0; i--) {
+      if (activeLoopMarks[i] <= currentTime) {
+        startMark = activeLoopMarks[i];
+        break;
+      }
     }
   
     let endMark = duration;
-    const nextMarkIndex = sortedActiveMarks.findIndex(m => m > startMark);
+    const nextMarkIndex = activeLoopMarks.findIndex(m => m > currentTime);
     if (nextMarkIndex !== -1) {
-        endMark = sortedActiveMarks[nextMarkIndex];
-    } else if (sortedActiveMarks.length > 0) {
-        const lastMark = sortedActiveMarks[sortedActiveMarks.length - 1];
-        if (startMark < lastMark) {
-            endMark = duration; // Loop until the end if it's the last section
-        } else {
-             // If current time is past the last mark, loop last section
-            endMark = duration;
-            startMark = lastMark;
-        }
-    }
-    
-    // When the current time passes the end mark, loop back to the start mark
-    // Use a small buffer to avoid issues with timeupdate frequency
-    if (currentTime >= endMark - 0.1 && endMark < duration) {
-        if (audioRef.current) {
-            audioRef.current.currentTime = startMark;
-        }
+      endMark = activeLoopMarks[nextMarkIndex];
     }
   
+    if (currentTime >= endMark - 0.1 && endMark > startMark) {
+      if (audioRef.current) {
+        audioRef.current.currentTime = startMark;
+      }
+    }
   }, [currentTime, isRepeat, isPlaying, sortedActiveMarks, duration]);
+
+  // Animate the waveform scroll
+  useEffect(() => {
+    if (waveformInnerRef.current && duration > 0) {
+      const scrollOffset = Math.max(0, currentTime - VISIBLE_DURATION_S / 2);
+      const translatePercentage = -(scrollOffset / duration) * 100;
+      waveformInnerRef.current.style.transform = `translateX(${translatePercentage}%)`;
+    }
+  }, [currentTime, duration]);
 
 
   const handlePlayPause = () => {
@@ -157,16 +158,14 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       const rect = waveformContainerRef.current.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
       const containerWidth = waveformContainerRef.current.offsetWidth;
-      const secondsPerPixel = VISIBLE_DURATION_S / containerWidth;
-
-      // The click position corresponds to a time relative to the start of the visible window
+      
       const scrollOffset = Math.max(0, currentTime - VISIBLE_DURATION_S / 2);
-      const newTime = scrollOffset + (clickX * secondsPerPixel);
+      const newTime = scrollOffset + (clickX / containerWidth) * VISIBLE_DURATION_S;
       
       audioRef.current.currentTime = Math.min(duration, Math.max(0, newTime));
     }
   };
-
+  
   const handleNextSection = () => {
     if (!audioRef.current) return;
     const nextMark = sortedActiveMarks.find(mark => mark > currentTime + 1); // +1 to avoid getting stuck on current mark
@@ -179,16 +178,13 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   };
 
   const handlePrevSection = () => {
-    if (!audioRef.current) return;
-    let prevMark = 0;
-    const reversedMarks = [...sortedActiveMarks].sort((a,b) => b-a);
-    const foundMark = reversedMarks.find(mark => mark < currentTime - 1);
-    
-    if (foundMark !== undefined) {
-      prevMark = foundMark;
-    }
-
-    audioRef.current.currentTime = prevMark;
+    if (!audioRef.current || currentTime < 1) {
+        if(audioRef.current) audioRef.current.currentTime = 0;
+        return;
+    };
+    // Find the mark right before the current time
+    const prevMark = [...sortedActiveMarks].reverse().find(mark => mark < currentTime - 1);
+    audioRef.current.currentTime = prevMark !== undefined ? prevMark : 0;
   };
 
   const toggleMark = (mark: number) => {
@@ -197,9 +193,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     );
   };
   
-  const waveformWidth = duration > 0 ? (duration / VISIBLE_DURATION_S) * 100 : 100;
-  const scrollOffset = Math.max(0, currentTime - VISIBLE_DURATION_S / 2);
-  const waveformTranslateX = duration > 0 ? -(scrollOffset / VISIBLE_DURATION_S) * 100 : 0;
+  const waveformContainerWidth = duration > 0 ? (duration / VISIBLE_DURATION_S) * 100 : 100;
   
   return (
     <Card className="w-full max-w-3xl mx-auto overflow-hidden shadow-xl">
@@ -240,21 +234,22 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 onClick={handleSeek}
             >
                 <div 
-                    className="absolute top-0 left-0 h-full transition-transform duration-100 ease-linear"
+                    ref={waveformInnerRef}
+                    className="absolute top-0 left-0 h-full"
                     style={{
-                        width: `${waveformWidth}%`,
-                        transform: `translateX(${waveformTranslateX}%)`,
+                        width: `${waveformContainerWidth}%`,
+                        willChange: 'transform',
                     }}
                 >
                     {/* Background Waveform Bars */}
-                    {duration > 0 && Array.from({ length: Math.ceil(duration / (VISIBLE_DURATION_S / 100)) }).map((_, i) => {
+                    {duration > 0 && Array.from({ length: Math.ceil(duration) }).map((_, i) => {
                        const barHeight = Math.random() * 60 + 20; // Random height between 20% and 80%
                        return (
                           <div
                             key={i}
-                            className="absolute bottom-0 w-1 bg-muted/50"
+                            className="absolute bottom-0 w-0.5 bg-muted/50"
                             style={{
-                                left: `${(i / (duration / (VISIBLE_DURATION_S/100)))*100}%`,
+                                left: `${(i / duration) * 100}%`,
                                 height: `${barHeight}%`,
                             }}
                           />
@@ -344,3 +339,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    
