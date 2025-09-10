@@ -373,11 +373,11 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                                 e.stopPropagation();
                                 toggleMark(mark);
                             }}
-                            className="absolute top-0 -translate-x-1/2 w-2 h-full focus:outline-none z-10 flex flex-col items-center group/marker"
-                            style={{ left: `${(mark / duration) * 100}%` }}
+                            className="absolute top-0 -translate-x-1/2 h-full focus:outline-none z-10 flex flex-col items-center group/marker"
+                            style={{ left: `${(mark / duration) * 100}%`, width: '8px' }}
                             aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
                         >
-                            <div className={`w-1 h-full transition-colors ${isActive ? 'bg-primary' : 'bg-transparent border-2 border-muted-foreground'} group-hover/marker:bg-primary/50`}></div>
+                            <div className={`w-2 h-full transition-colors ${isActive ? 'bg-primary' : 'bg-transparent border-2 border-muted-foreground'} group-hover/marker:bg-primary/50`}></div>
                         </button>
                         );
                     })}
@@ -441,3 +441,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    
