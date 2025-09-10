@@ -377,7 +377,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                             style={{ left: `${(mark / duration) * 100}%` }}
                             aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
                         >
-                            <div className={`w-full h-full transition-colors ${isActive ? 'bg-primary' : 'bg-transparent border-2 border-muted-foreground'} group-hover/marker:bg-primary/50`}></div>
+                            <div className={`w-1 h-full transition-colors ${isActive ? 'bg-primary' : 'bg-transparent border-2 border-muted-foreground'} group-hover/marker:bg-primary/50`}></div>
                         </button>
                         );
                     })}
