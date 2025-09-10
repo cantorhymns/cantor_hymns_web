@@ -185,10 +185,10 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     if (!waveformContainerRef.current || !audioRef.current || duration <= 0) return;
 
     const dragDeltaX = clientX - seekStartRef.current.x;
-
+    
     const scrollerWidth = (duration / VISIBLE_DURATION_S) * waveformContainerRef.current.offsetWidth;
     const timePerPixel = duration / scrollerWidth;
-
+    
     const timeDelta = dragDeltaX * timePerPixel;
 
     const newTime = seekStartRef.current.time + timeDelta;
@@ -372,18 +372,20 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         return (
                         <div
                             key={index}
-                            className="absolute top-0 -translate-x-1/2 h-full z-10 flex flex-col items-center"
+                            className="absolute top-0 -translate-x-1/2 h-full z-20 flex flex-col items-center"
                             style={{ left: `${(mark / duration) * 100}%` }}
                         >
                             <button
                                 onMouseDown={(e) => { e.stopPropagation(); }}
                                 onClick={(e) => { e.stopPropagation(); toggleMark(mark); }}
-                                className="absolute -top-5 w-2 h-[calc(100%+20px)] focus:outline-none group/marker"
+                                className="absolute -top-5 w-4 h-[calc(100%+20px)] focus:outline-none group/marker"
                                 aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
                             >
-                                <div className={`w-full h-full mx-auto transition-colors ${isActive ? 'bg-primary' : 'bg-transparent border-2 border-muted-foreground'} group-hover/marker:bg-primary/50`}></div>
+                                <div className={`w-full h-full mx-auto transition-colors flex items-center justify-center text-xs font-bold ${isActive ? 'bg-primary text-primary-foreground' : 'bg-transparent border-2 border-muted-foreground text-muted-foreground'} group-hover/marker:bg-primary/50`}>
+                                   <span className="mt-[20px]">{index + 1}</span>
+                                </div>
                             </button>
-                             <div className="w-2 h-full pointer-events-none" />
+                             <div className="w-4 h-full pointer-events-none" />
                         </div>
                         );
                     })}
