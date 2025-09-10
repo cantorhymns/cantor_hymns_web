@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/card';
 import { ChevronLeft, Music, ArrowRight } from 'lucide-react';
 
-export default function GenrePage({ params }: { params: { genre: string } }) {
+export default async function GenrePage({ params }: { params: { genre: string } }) {
   const genre = getGenreById(params.genre);
   const hymns = getHymnsByGenre(params.genre);
 
