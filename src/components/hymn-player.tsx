@@ -181,12 +181,15 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   const handlePrevSection = () => {
     if (!audioRef.current || allMarksDisabled) return;
-    const prevMarks = sortedActiveMarks.filter(mark => mark < currentTime -1);
-    if (prevMarks.length > 0) {
-      audioRef.current.currentTime = prevMarks[prevMarks.length - 1];
-    } else {
-      audioRef.current.currentTime = 0;
+    let prevMark = 0;
+    for (const mark of sortedActiveMarks) {
+      if (mark < currentTime - 1) { // -1 to avoid getting stuck on current mark
+        prevMark = mark;
+      } else {
+        break;
+      }
     }
+    audioRef.current.currentTime = prevMark;
   };
 
   const toggleMark = (mark: number) => {
