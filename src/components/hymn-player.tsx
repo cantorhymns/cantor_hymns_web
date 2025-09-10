@@ -24,7 +24,6 @@ import {
   SkipBack,
   SkipForward,
   FastForward,
-  Check,
 } from "lucide-react";
 
 function formatTime(seconds: number) {
@@ -40,9 +39,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const [currentRecording, setCurrentRecording] = useState<Recording>(
     hymn.recordings[0]
   );
-  const [activeMarks, setActiveMarks] = useState<number[]>(
-    currentRecording.marks
-  );
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -55,7 +51,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const waveformInnerRef = useRef<HTMLDivElement>(null);
   const seekStartRef = useRef({ x: 0, time: 0 });
   
-  const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
+  const sortedActiveMarks = useMemo(() => [...currentRecording.marks].sort((a, b) => a - b), [currentRecording.marks]);
 
   useEffect(() => {
     setCurrentRecording(hymn.recordings[0]);
@@ -64,7 +60,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   }, [hymn]);
 
   useEffect(() => {
-    setActiveMarks(currentRecording.marks);
     if (audioRef.current) {
       audioRef.current.src = currentRecording.url;
       audioRef.current.load();
@@ -120,37 +115,38 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   }, [playbackRate]);
 
   useEffect(() => {
-    if (!isRepeat || !isPlaying || isSeeking || !audioRef.current) return;
-
+    const audio = audioRef.current;
+    if (!audio || !isPlaying || isSeeking || !isRepeat) return;
+  
     const activeLoopMarks = sortedActiveMarks;
     if (activeLoopMarks.length < 1) return;
-
+  
+    // Find the end of the current section
     let endMark: number | undefined;
-    let startMark = 0;
-
     for (let i = 0; i < activeLoopMarks.length; i++) {
-        if (activeLoopMarks[i] > currentTime + 0.1) {
-            endMark = activeLoopMarks[i];
-            if (i > 0) {
-              startMark = activeLoopMarks[i-1];
-            }
-            break;
-        }
+      if (activeLoopMarks[i] > currentTime + 0.5) { // Add a small buffer
+        endMark = activeLoopMarks[i];
+        break;
+      }
     }
-    
-    // If we are past the last mark
+  
+    // If no end mark found, means we are in the last section
     if (endMark === undefined) {
       const lastMark = activeLoopMarks[activeLoopMarks.length - 1];
       if (currentTime > lastMark) {
-        startMark = lastMark;
-        endMark = duration;
+        endMark = duration; // loop until the end of the track
+      } else {
+        return; // Not in a loop section yet
       }
     }
-    
-    if (startMark !== undefined && endMark !== undefined && currentTime >= endMark) {
-       audioRef.current.currentTime = startMark;
+  
+    // If playback reaches the end of the section, loop back
+    if (currentTime >= endMark) {
+      const endMarkIndex = activeLoopMarks.indexOf(endMark);
+      const startMark = endMarkIndex > 0 ? activeLoopMarks[endMarkIndex - 1] : 0;
+      audio.currentTime = startMark;
     }
-  }, [currentTime, isRepeat, isPlaying, sortedActiveMarks, duration, isSeeking]);
+  }, [currentTime, isPlaying, isSeeking, isRepeat, sortedActiveMarks, duration]);
 
 
   useEffect(() => {
@@ -233,7 +229,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
     const dragDeltaX = clientX - seekStartRef.current.x;
     
-    const containerWidth = waveformContainerRef.current.offsetWidth;
     const scrollerWidth = waveformInnerRef.current.scrollWidth;
     const pixelPerSecond = scrollerWidth / duration;
 
@@ -274,12 +269,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       return;
     }
     audioRef.current.currentTime = prevMark;
-  };
-
-  const toggleMark = (mark: number) => {
-    setActiveMarks((prev) =>
-      prev.includes(mark) ? prev.filter((m) => m !== mark) : [...prev, mark]
-    );
   };
   
   const waveformWidthStyle = useMemo(() => {
@@ -378,23 +367,13 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                        )
                     })}
                      {duration > 0 && currentRecording.marks.map((mark, index) => {
-                        const isActive = activeMarks.includes(mark);
                         return (
                         <div
                             key={index}
                             className="absolute top-0 -translate-x-1/2 h-full z-20 flex flex-col items-center pointer-events-none"
                             style={{ left: `${(mark / duration) * 100}%` }}
                         >
-                            <button
-                                onMouseDown={(e) => { e.stopPropagation(); }}
-                                onTouchStart={(e) => { e.stopPropagation(); }}
-                                onClick={(e) => { e.stopPropagation(); toggleMark(mark); }}
-                                className="absolute -top-6 w-8 h-8 focus:outline-none flex items-center justify-center text-xs font-bold pointer-events-auto"
-                                aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
-                            >
-                              {isActive && <Check className="h-5 w-5 text-primary" />}
-                            </button>
-                            <div className={`w-4 h-full pointer-events-none transition-colors ${isActive ? 'bg-primary/75' : 'bg-muted-foreground/50'}`}>
+                            <div className="w-4 h-full pointer-events-none bg-primary/75">
                               <div className="h-full w-full flex items-center justify-center text-primary-foreground font-bold text-xs">
                                 {index + 1}
                               </div>
