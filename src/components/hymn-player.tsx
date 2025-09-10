@@ -107,34 +107,46 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     }
   }, [playbackRate]);
 
-  useEffect(() => {
-    if (!isRepeat || !isPlaying || audioRef.current?.seeking || allMarksDisabled) return;
+  const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
 
-    const sortedActiveMarks = [...activeMarks].sort((a, b) => a - b);
-    
+  useEffect(() => {
+    if (!isRepeat || !isPlaying || audioRef.current?.seeking || allMarksDisabled || sortedActiveMarks.length < 1) return;
+  
     let startMark = 0;
+    // Find the last mark that is before or at the current time
     for (let i = sortedActiveMarks.length - 1; i >= 0; i--) {
         if (sortedActiveMarks[i] <= currentTime) {
             startMark = sortedActiveMarks[i];
             break;
         }
     }
-    
+  
     let endMark = duration;
-    for(const mark of sortedActiveMarks) {
+    // Find the next mark after the start mark
+    for (const mark of sortedActiveMarks) {
         if (mark > startMark) {
             endMark = mark;
             break;
         }
     }
 
-    if (currentTime >= endMark && endMark < duration) {
+    // If there is no next mark, the section is from the last mark to the end of the song
+    if(endMark === duration){
+        const lastMark = sortedActiveMarks[sortedActiveMarks.length-1];
+        if(currentTime < lastMark){
+            endMark = lastMark;
+        }
+    }
+  
+    // When the current time passes the end mark, loop back to the start mark
+    // Use a small buffer (0.5s) to avoid issues with timeupdate frequency
+    if (currentTime >= endMark - 0.5 && endMark < duration) {
         if (audioRef.current) {
             audioRef.current.currentTime = startMark;
         }
     }
-
-  }, [currentTime, isRepeat, isPlaying, activeMarks, duration, allMarksDisabled]);
+  
+  }, [currentTime, isRepeat, isPlaying, sortedActiveMarks, duration, allMarksDisabled]);
 
 
   const handlePlayPause = () => {
@@ -166,8 +178,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     }
   }
 
-  const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
-
   const handleNextSection = () => {
     if (!audioRef.current || allMarksDisabled) return;
     const nextMark = sortedActiveMarks.find(mark => mark > currentTime + 1); // +1 to avoid getting stuck on current mark
@@ -182,13 +192,14 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const handlePrevSection = () => {
     if (!audioRef.current || allMarksDisabled) return;
     let prevMark = 0;
-    for (const mark of sortedActiveMarks) {
-      if (mark < currentTime - 1) { // -1 to avoid getting stuck on current mark
-        prevMark = mark;
-      } else {
-        break;
-      }
+    // Find the last mark that is at least 1 second before the current time
+    const reversedMarks = [...sortedActiveMarks].sort((a,b) => b-a);
+    const foundMark = reversedMarks.find(mark => mark < currentTime - 1);
+    
+    if (foundMark !== undefined) {
+      prevMark = foundMark;
     }
+
     audioRef.current.currentTime = prevMark;
   };
 
