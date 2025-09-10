@@ -182,15 +182,17 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   };
   
   const seek = useCallback((clientX: number) => {
-    if (!waveformContainerRef.current || !audioRef.current || duration <= 0) return;
+    if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
 
     const dragDeltaX = clientX - seekStartRef.current.x;
-    const containerWidth = waveformContainerRef.current.offsetWidth;
-    const timePerPixel = VISIBLE_DURATION_S / containerWidth;
     
+    // More robust time calculation based on drag delta
+    const containerWidth = waveformContainerRef.current.offsetWidth;
+    const timePerPixel = (duration / waveformInnerRef.current.scrollWidth) * (waveformInnerRef.current.scrollWidth / containerWidth);
     const timeDelta = dragDeltaX * timePerPixel;
-
-    const newTime = seekStartRef.current.time + timeDelta;
+    
+    let newTime = seekStartRef.current.time + timeDelta;
+    
     const clampedTime = Math.max(0, Math.min(newTime, duration));
 
     setCurrentTime(clampedTime);
@@ -204,32 +206,29 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     setIsSeeking(true);
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     
-    seekStartRef.current = { x: clientX, time: audioRef.current?.currentTime || 0 };
+    if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
 
-    if (e.type === 'mousedown' || e.type === 'touchstart') {
-      if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
-      
-      const containerRect = waveformContainerRef.current.getBoundingClientRect();
-      const clickXInContainer = clientX - containerRect.left;
-      
-      const transform = window.getComputedStyle(waveformInnerRef.current).transform;
-      let scrollLeft = 0;
-      if (transform !== 'none') {
-          const matrix = new DOMMatrix(transform);
-          scrollLeft = -matrix.e;
-      }
-      
-      const clickXInScroller = clickXInContainer + scrollLeft;
-      const scrollerWidth = waveformInnerRef.current.scrollWidth;
+    // Direct click to position logic
+    const containerRect = waveformContainerRef.current.getBoundingClientRect();
+    const clickXInContainer = clientX - containerRect.left;
+    
+    const transform = window.getComputedStyle(waveformInnerRef.current).transform;
+    let scrollLeft = 0;
+    if (transform !== 'none') {
+        const matrix = new DOMMatrix(transform);
+        scrollLeft = -matrix.e;
+    }
+    
+    const clickXInScroller = clickXInContainer + scrollLeft;
+    const scrollerWidth = waveformInnerRef.current.scrollWidth;
 
-      const newTime = (clickXInScroller / scrollerWidth) * duration;
-      const clampedTime = Math.min(duration, Math.max(0, newTime));
-      
-      seekStartRef.current = { x: clientX, time: clampedTime };
-      setCurrentTime(clampedTime);
-      if (audioRef.current) {
-        audioRef.current.currentTime = clampedTime;
-      }
+    const newTime = (clickXInScroller / scrollerWidth) * duration;
+    const clampedTime = Math.min(duration, Math.max(0, newTime));
+
+    seekStartRef.current = { x: clientX, time: clampedTime }; // Use direct time for drag start
+    setCurrentTime(clampedTime);
+    if (audioRef.current) {
+      audioRef.current.currentTime = clampedTime;
     }
   };
 
@@ -237,12 +236,27 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     if (!isSeeking) return;
     e.preventDefault();
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    seek(clientX);
-  }, [isSeeking, seek]);
+    
+    if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
+
+    const dragDeltaX = clientX - seekStartRef.current.x;
+    const containerWidth = waveformContainerRef.current.offsetWidth;
+    // Correctly scale the delta to the visible duration
+    const timeDelta = (dragDeltaX / containerWidth) * VISIBLE_DURATION_S;
+    
+    let newTime = seekStartRef.current.time + timeDelta;
+
+    const clampedTime = Math.max(0, Math.min(newTime, duration));
+
+    setCurrentTime(clampedTime);
+  }, [isSeeking, duration]);
 
   const handleSeekEnd = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     if (!isSeeking) return;
     e.preventDefault();
+    if(audioRef.current) {
+        audioRef.current.currentTime = currentTime;
+    }
     setIsSeeking(false);
   };
   
@@ -268,7 +282,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   };
 
   const toggleMark = (mark: number) => {
-    if (isPlaying) return;
     setActiveMarks((prev) =>
       prev.includes(mark) ? prev.filter((m) => m !== mark) : [...prev, mark]
     );
@@ -283,22 +296,17 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const playheadPositionStyle = useMemo(() => {
     if (duration <= 0) return { left: '0%' };
     const containerWidth = waveformContainerRef.current?.offsetWidth || 0;
-
     if (duration <= VISIBLE_DURATION_S) {
       return { left: `${(currentTime / duration) * 100}%` };
     }
-
     const scrollStartTime = VISIBLE_DURATION_S / 2;
     const scrollEndTime = duration - VISIBLE_DURATION_S / 2;
-
     if (currentTime < scrollStartTime) {
-      const progress = (currentTime / VISIBLE_DURATION_S);
-      const leftPx = progress * containerWidth;
-      return { left: `${leftPx}px` };
+      const progress = (currentTime / scrollStartTime) * 0.5;
+      return { left: `${progress * 100}%` };
     } else if (currentTime > scrollEndTime) {
-      const progress = ((currentTime - (duration - VISIBLE_DURATION_S)) / VISIBLE_DURATION_S);
-      const leftPx = progress * containerWidth;
-      return { left: `${leftPx}px` };
+      const progress = ((currentTime - scrollEndTime) / (duration - scrollEndTime)) * 0.5 + 0.5;
+      return { left: `${progress * 100}%` };
     } else {
       return { left: '50%' };
     }
@@ -379,11 +387,10 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                             style={{ left: `${(mark / duration) * 100}%` }}
                         >
                             <button
-                                disabled={isPlaying}
                                 onMouseDown={(e) => { e.stopPropagation(); }}
                                 onTouchStart={(e) => { e.stopPropagation(); }}
                                 onClick={(e) => { e.stopPropagation(); toggleMark(mark); }}
-                                className="absolute -top-5 w-4 h-[calc(100%+20px)] focus:outline-none group/marker disabled:cursor-not-allowed"
+                                className="absolute -top-5 w-4 h-[calc(100%+20px)] focus:outline-none group/marker"
                                 aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
                             >
                                 <div className={`w-full h-full mx-auto transition-colors flex items-center justify-center text-xs font-bold ${isActive ? 'bg-primary text-primary-foreground' : 'bg-transparent border-2 border-muted-foreground text-muted-foreground'} group-hover/marker:bg-primary/50`}>
@@ -400,7 +407,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                     className="absolute top-0 h-full w-0.5 bg-red-500 z-20 pointer-events-none -translate-x-1/2"
                     style={playheadPositionStyle}
                 >
-                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-4 h-4 bg-red-500 rounded-full"></div>
+                    <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-3 h-3 bg-red-500 rounded-full"></div>
                 </div>
             </div>
 
