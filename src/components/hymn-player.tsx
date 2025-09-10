@@ -52,6 +52,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const waveformContainerRef = useRef<HTMLDivElement>(null);
   const waveformInnerRef = useRef<HTMLDivElement>(null);
+  const seekStartRef = useRef({ x: 0, time: 0 });
 
   useEffect(() => {
     setCurrentRecording(hymn.recordings[0]);
@@ -86,12 +87,12 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     
     const handleEnded = () => setIsPlaying(false);
 
-    audio.addEventListener("loadedmetadata", setAudioData);
+    audio.addEventListener("loadeddata", setAudioData);
     audio.addEventListener("timeupdate", setAudioTime);
     audio.addEventListener('ended', handleEnded);
 
     return () => {
-      audio.removeEventListener("loadedmetadata", setAudioData);
+      audio.removeEventListener("loadeddata", setAudioData);
       audio.removeEventListener("timeupdate", setAudioTime);
       audio.removeEventListener('ended', handleEnded);
     };
@@ -127,7 +128,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
         }
     }
     
-    // If we're past the last marker, loop from last marker to the end
     if (endMark === undefined && activeLoopMarks.length > 0) {
         const lastMark = activeLoopMarks[activeLoopMarks.length - 1];
         if(currentTime > lastMark){
@@ -145,26 +145,20 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   }, [currentTime, isRepeat, isPlaying, sortedActiveMarks, duration, isSeeking]);
 
-  // Animate the waveform scroll
   useEffect(() => {
     if (waveformContainerRef.current && waveformInnerRef.current && duration > VISIBLE_DURATION_S) {
         const fullWidth = waveformInnerRef.current.scrollWidth;
         const containerWidth = waveformContainerRef.current.offsetWidth;
         
-        // Time at which scrolling should start (playhead reaches middle)
         const scrollStartTime = VISIBLE_DURATION_S / 2;
-        // Time at which scrolling should end (playhead is at middle of last visible section)
         const scrollEndTime = duration - VISIBLE_DURATION_S / 2;
 
         let scrollTarget;
         if (currentTime < scrollStartTime) {
-            // Before scrolling starts, waveform is static
             scrollTarget = 0;
         } else if (currentTime > scrollEndTime) {
-            // After scrolling ends, waveform is static at the end
             scrollTarget = fullWidth - containerWidth;
         } else {
-            // During scrolling
             const scrollProgress = (currentTime - scrollStartTime) / (scrollEndTime - scrollStartTime);
             scrollTarget = scrollProgress * (fullWidth - containerWidth);
         }
@@ -188,8 +182,32 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   };
   
   const seek = useCallback((clientX: number) => {
-      if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
+    if (!waveformContainerRef.current || !audioRef.current || duration <= 0) return;
+  
+    const containerWidth = waveformContainerRef.current.offsetWidth;
+    const dragDeltaX = clientX - seekStartRef.current.x;
+  
+    // Scale the drag distance to the timeline's visible duration
+    const timeDelta = (dragDeltaX / containerWidth) * VISIBLE_DURATION_S;
+  
+    const newTime = seekStartRef.current.time + timeDelta;
+    const clampedTime = Math.max(0, Math.min(newTime, duration));
+  
+    setCurrentTime(clampedTime);
+    if (audioRef.current) {
+      audioRef.current.currentTime = clampedTime;
+    }
+  }, [duration]);
 
+  const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsSeeking(true);
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    
+    // If just clicking, not dragging
+    if (e.type === 'mousedown' || e.type === 'touchstart') {
+      if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
+      
       const containerRect = waveformContainerRef.current.getBoundingClientRect();
       const clickXInContainer = clientX - containerRect.left;
       
@@ -206,36 +224,33 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       const newTime = (clickXInScroller / scrollerWidth) * duration;
       const clampedTime = Math.min(duration, Math.max(0, newTime));
 
-      if(audioRef.current) {
+      seekStartRef.current = { x: clientX, time: clampedTime };
+      setCurrentTime(clampedTime);
+      if (audioRef.current) {
         audioRef.current.currentTime = clampedTime;
       }
-      setCurrentTime(clampedTime);
-  }, [duration]);
 
-  const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsSeeking(true);
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    seek(clientX);
+    } else {
+       seekStartRef.current = { x: clientX, time: currentTime };
+    }
   };
 
-  const handleSeekMove = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+  const handleSeekMove = useCallback((e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     if (!isSeeking) return;
     e.preventDefault();
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     seek(clientX);
-  };
+  }, [isSeeking, seek]);
 
   const handleSeekEnd = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     if (!isSeeking) return;
     e.preventDefault();
     setIsSeeking(false);
   };
-
   
   const handleNextSection = () => {
     if (!audioRef.current) return;
-    const nextMark = sortedActiveMarks.find(mark => mark > currentTime + 1); // +1 to avoid getting stuck on current mark
+    const nextMark = sortedActiveMarks.find(mark => mark > currentTime + 1);
     if (nextMark !== undefined) {
       audioRef.current.currentTime = nextMark;
     } else {
@@ -246,7 +261,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   const handlePrevSection = () => {
     if (!audioRef.current) return;
-    // Find the mark right before the current time
     const prevMark = [...sortedActiveMarks].reverse().find(mark => mark < currentTime - 1);
      if (prevMark === undefined) {
       audioRef.current.currentTime = 0;
@@ -269,37 +283,30 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   const playheadPositionStyle = useMemo(() => {
     if (duration <= 0) return { left: '0%' };
-
     const containerWidth = waveformContainerRef.current?.offsetWidth || 0;
 
     if (duration <= VISIBLE_DURATION_S) {
-      // If track is shorter than visible window, playhead moves normally
       return { left: `${(currentTime / duration) * 100}%` };
     }
 
-    // If track is longer...
     const scrollStartTime = VISIBLE_DURATION_S / 2;
     const scrollEndTime = duration - VISIBLE_DURATION_S / 2;
 
     if (currentTime < scrollStartTime) {
-      // ...before scrolling starts, playhead moves from left to center
       const progress = (currentTime / VISIBLE_DURATION_S);
       const leftPx = progress * containerWidth;
       return { left: `${leftPx}px` };
     } else if (currentTime > scrollEndTime) {
-      // ...after scrolling ends, playhead moves from center to right
       const progress = ((currentTime - (duration - VISIBLE_DURATION_S)) / VISIBLE_DURATION_S);
       const leftPx = progress * containerWidth;
       return { left: `${leftPx}px` };
     } else {
-      // ...during scrolling, playhead is fixed at the center
       return { left: '50%' };
     }
   }, [currentTime, duration]);
-
   
   return (
-    <Card className="w-full max-w-3xl mx-auto shadow-xl overflow-hidden">
+    <Card className="w-full max-w-3xl mx-auto shadow-xl">
       <audio ref={audioRef} src={currentRecording.url} preload="metadata" />
       <CardHeader>
         <div className="flex justify-between items-start">
@@ -350,9 +357,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         willChange: 'transform',
                     }}
                 >
-                    {/* Background Waveform Bars */}
                     {duration > 0 && Array.from({ length: Math.ceil(duration) * 2 }).map((_, i) => {
-                       const barHeight = Math.random() * 60 + 20; // Random height between 20% and 80%
+                       const barHeight = Math.random() * 60 + 20;
                        return (
                           <div
                             key={i}
@@ -365,7 +371,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                        )
                     })}
 
-                    {/* Markers */}
                     {duration > 0 && currentRecording.marks.map((mark, index) => {
                         const isActive = activeMarks.includes(mark);
                         return (
@@ -375,7 +380,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                             style={{ left: `${(mark / duration) * 100}%` }}
                         >
                             <button
-                                onMouseDown={(e) => { e.stopPropagation(); toggleMark(mark); }}
+                                onMouseDown={(e) => { e.stopPropagation(); }}
+                                onClick={(e) => { e.stopPropagation(); toggleMark(mark); }}
                                 className="h-full w-full focus:outline-none"
                                 aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
                             >
@@ -386,7 +392,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         );
                     })}
                 </div>
-                {/* Static Playhead */}
+
                 <div 
                     className="absolute top-0 h-full w-0.5 bg-red-500 z-20 pointer-events-none -translate-x-1/2"
                     style={playheadPositionStyle}
@@ -445,3 +451,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    
