@@ -336,19 +336,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                     </Select>
                 </div>
             </div>
-
-            <div className="pt-4">
-                <h4 className="text-sm font-medium text-muted-foreground mb-2">Active Section Markers</h4>
-                 <div className="flex flex-wrap gap-2">
-                    {sortedActiveMarks.length > 0 ? (
-                        sortedActiveMarks.map(mark => (
-                            <Badge key={mark} variant="secondary">{formatTime(mark)}</Badge>
-                        ))
-                    ) : (
-                        <p className="text-sm text-muted-foreground">{allMarksDisabled ? "All marks disabled." : "No active markers."} Playback will not be sectioned.</p>
-                    )}
-                 </div>
-            </div>
         </div>
       </CardContent>
     </Card>
