@@ -149,23 +149,20 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   // Animate the waveform scroll
   useEffect(() => {
-    if (waveformInnerRef.current && duration > VISIBLE_DURATION_S) {
+    if (waveformContainerRef.current && waveformInnerRef.current && duration > VISIBLE_DURATION_S) {
         const fullWidth = waveformInnerRef.current.scrollWidth;
-        const containerWidth = waveformContainerRef.current?.offsetWidth ?? fullWidth;
-        const scrollableWidth = fullWidth - containerWidth;
+        const containerWidth = waveformContainerRef.current.offsetWidth;
         
-        // Center the playhead
-        const targetScrollLeft = (currentTime / duration) * fullWidth - containerWidth / 2;
+        // Center the playhead visually
+        const scrollTarget = (currentTime / duration) * fullWidth - containerWidth / 2;
         
-        // Clamp the scroll position
-        const clampedScrollLeft = Math.max(0, Math.min(scrollableWidth, targetScrollLeft));
+        // Clamp scroll position
+        const maxScroll = fullWidth - containerWidth;
+        const scrollLeft = Math.max(0, Math.min(scrollTarget, maxScroll));
 
-        // Use translateX for smoother animation
-        const translatePercentage = -(clampedScrollLeft / fullWidth) * 100 * (duration / VISIBLE_DURATION_S);
-
-        waveformInnerRef.current.style.transform = `translateX(${translatePercentage}%)`;
+        waveformInnerRef.current.style.transform = `translateX(-${scrollLeft}px)`;
     } else if (waveformInnerRef.current) {
-        waveformInnerRef.current.style.transform = `translateX(0%)`;
+        waveformInnerRef.current.style.transform = `translateX(0px)`;
     }
   }, [currentTime, duration]);
 
@@ -185,14 +182,19 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
 
       const containerRect = waveformContainerRef.current.getBoundingClientRect();
-      const clickX = clientX - containerRect.left;
+      const clickXInContainer = clientX - containerRect.left;
       
-      const innerWidth = waveformInnerRef.current.scrollWidth;
-      const transform = waveformInnerRef.current.style.transform;
-      const translateXPercentage = transform ? parseFloat(transform.split('(')[1]) : 0;
-      const scrolledWidth = -(translateXPercentage / 100) * innerWidth / (duration / VISIBLE_DURATION_S);
+      const transform = window.getComputedStyle(waveformInnerRef.current).transform;
+      let scrollLeft = 0;
+      if (transform !== 'none') {
+          const matrix = new DOMMatrix(transform);
+          scrollLeft = -matrix.e;
+      }
+      
+      const clickXInScroller = clickXInContainer + scrollLeft;
+      const scrollerWidth = waveformInnerRef.current.scrollWidth;
 
-      const newTime = ( (scrolledWidth + clickX) / innerWidth ) * duration;
+      const newTime = (clickXInScroller / scrollerWidth) * duration;
       const clampedTime = Math.min(duration, Math.max(0, newTime));
 
       if(audioRef.current) {
@@ -250,8 +252,13 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     );
   };
   
-  const waveformContainerWidth = duration > VISIBLE_DURATION_S ? (duration / VISIBLE_DURATION_S) * 100 : 100;
-  const playheadPosition = duration > 0 ? (currentTime / duration) * waveformContainerWidth : 0;
+  const waveformWidthStyle = useMemo(() => {
+    if (duration <= 0) return { width: '100%' };
+    const multiplier = Math.max(1, duration / VISIBLE_DURATION_S);
+    return { width: `${multiplier * 100}%` };
+  }, [duration]);
+  
+  const playheadPositionPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
   
   return (
     <Card className="w-full max-w-3xl mx-auto overflow-hidden shadow-xl">
@@ -301,7 +308,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                     ref={waveformInnerRef}
                     className="absolute top-0 left-0 h-full"
                     style={{
-                        width: `${waveformContainerWidth}%`,
+                        ...waveformWidthStyle,
                         willChange: 'transform',
                     }}
                 >
@@ -348,16 +355,15 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         </button>
                         );
                     })}
-
-                    {/* Playhead for the inner scrolling container */}
-                    <div 
-                      className="absolute top-0 h-full w-0.5 bg-red-500 z-20 pointer-events-none"
-                      style={{
-                        left: `${playheadPosition}%`
-                      }}
-                    >
-                      <div className="absolute -top-1 -left-1.5 w-4 h-4 bg-red-500 rounded-full"></div>
-                    </div>
+                </div>
+                {/* Static Playhead */}
+                <div 
+                    className="absolute top-0 h-full w-0.5 bg-red-500 z-20 pointer-events-none"
+                    style={{
+                        left: duration > VISIBLE_DURATION_S ? '50%' : `${playheadPositionPercentage}%`
+                    }}
+                >
+                    <div className="absolute -top-1 -left-1.5 w-4 h-4 bg-red-500 rounded-full"></div>
                 </div>
             </div>
 
