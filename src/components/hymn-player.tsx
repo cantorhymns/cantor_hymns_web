@@ -29,7 +29,6 @@ import {
   Circle,
   ListX
 } from "lucide-react";
-import { Badge } from "./ui/badge";
 
 function formatTime(seconds: number) {
   const floorSeconds = Math.floor(seconds);
@@ -50,7 +49,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
-  const [allMarksDisabled, setAllMarksDisabled] = useState(false);
 
 
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -60,18 +58,17 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     setCurrentRecording(hymn.recordings[0]);
     setPlaybackRate(1);
     setIsPlaying(false);
-    setAllMarksDisabled(false);
   }, [hymn]);
 
   useEffect(() => {
-    setActiveMarks(allMarksDisabled ? [] : currentRecording.marks);
+    setActiveMarks(currentRecording.marks);
     if (audioRef.current) {
       audioRef.current.src = currentRecording.url;
       audioRef.current.load();
       setIsPlaying(false);
       setCurrentTime(0);
     }
-  }, [currentRecording, allMarksDisabled]);
+  }, [currentRecording]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -110,7 +107,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
 
   useEffect(() => {
-    if (!isRepeat || !isPlaying || audioRef.current?.seeking || allMarksDisabled || sortedActiveMarks.length < 1) return;
+    if (!isRepeat || !isPlaying || audioRef.current?.seeking || sortedActiveMarks.length < 1) return;
   
     let startMark = 0;
     // Find the last mark that is before or at the current time
@@ -146,7 +143,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
         }
     }
   
-  }, [currentTime, isRepeat, isPlaying, sortedActiveMarks, duration, allMarksDisabled]);
+  }, [currentTime, isRepeat, isPlaying, sortedActiveMarks, duration]);
 
 
   const handlePlayPause = () => {
@@ -179,7 +176,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   }
 
   const handleNextSection = () => {
-    if (!audioRef.current || allMarksDisabled) return;
+    if (!audioRef.current) return;
     const nextMark = sortedActiveMarks.find(mark => mark > currentTime + 1); // +1 to avoid getting stuck on current mark
     if (nextMark !== undefined) {
       audioRef.current.currentTime = nextMark;
@@ -190,7 +187,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   };
 
   const handlePrevSection = () => {
-    if (!audioRef.current || allMarksDisabled) return;
+    if (!audioRef.current) return;
     let prevMark = 0;
     // Find the last mark that is at least 1 second before the current time
     const reversedMarks = [...sortedActiveMarks].sort((a,b) => b-a);
@@ -204,15 +201,10 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   };
 
   const toggleMark = (mark: number) => {
-    if (allMarksDisabled) return;
     setActiveMarks((prev) =>
       prev.includes(mark) ? prev.filter((m) => m !== mark) : [...prev, mark]
     );
   };
-
-  const toggleAllMarks = () => {
-    setAllMarksDisabled(prev => !prev);
-  }
 
   return (
     <Card className="w-full max-w-3xl mx-auto overflow-hidden shadow-xl">
@@ -265,10 +257,9 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                     <button
                         key={index}
                         onClick={() => toggleMark(mark)}
-                        className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed"
+                        className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                         style={{ left: `${(mark / duration) * 100}%` }}
                         aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
-                        disabled={allMarksDisabled}
                     >
                         {isActive ? (
                             <CheckCircle2 className="w-4 h-4 text-primary bg-background rounded-full"/>
@@ -286,29 +277,19 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
             </div>
 
             <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 w-[100px]">
                     <Button
                         variant={isRepeat ? "secondary" : "ghost"}
                         size="icon"
                         onClick={() => setIsRepeat(!isRepeat)}
                         className={isRepeat ? "text-primary ring-2 ring-primary" : ""}
-                        disabled={allMarksDisabled}
                     >
                         <Repeat className="h-5 w-5" />
                         <span className="sr-only">Repeat Section</span>
                     </Button>
-                     <Button
-                        variant={allMarksDisabled ? "secondary" : "ghost"}
-                        size="icon"
-                        onClick={toggleAllMarks}
-                        className={allMarksDisabled ? "text-primary ring-2 ring-primary" : ""}
-                    >
-                        <ListX className="h-5 w-5" />
-                        <span className="sr-only">Disable All Marks</span>
-                    </Button>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" onClick={handlePrevSection} disabled={allMarksDisabled}>
+                    <Button variant="ghost" size="icon" onClick={handlePrevSection}>
                         <SkipBack className="h-6 w-6" />
                         <span className="sr-only">Previous Section</span>
                     </Button>
@@ -316,7 +297,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
                         <span className="sr-only">{isPlaying ? "Pause" : "Play"}</span>
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={handleNextSection} disabled={allMarksDisabled}>
+                    <Button variant="ghost" size="icon" onClick={handleNextSection}>
                         <SkipForward className="h-6 w-6" />
                         <span className="sr-only">Next Section</span>
                     </Button>
