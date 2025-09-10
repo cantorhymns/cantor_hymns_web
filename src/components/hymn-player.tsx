@@ -185,9 +185,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     if (!waveformContainerRef.current || !audioRef.current || duration <= 0) return;
 
     const dragDeltaX = clientX - seekStartRef.current.x;
-    
-    const scrollerWidth = (duration / VISIBLE_DURATION_S) * waveformContainerRef.current.offsetWidth;
-    const timePerPixel = duration / scrollerWidth;
+    const containerWidth = waveformContainerRef.current.offsetWidth;
+    const timePerPixel = VISIBLE_DURATION_S / containerWidth;
     
     const timeDelta = dragDeltaX * timePerPixel;
 
@@ -225,6 +224,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
       const newTime = (clickXInScroller / scrollerWidth) * duration;
       const clampedTime = Math.min(duration, Math.max(0, newTime));
+      
       seekStartRef.current = { x: clientX, time: clampedTime };
       setCurrentTime(clampedTime);
       if (audioRef.current) {
@@ -381,6 +381,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                             <button
                                 disabled={isPlaying}
                                 onMouseDown={(e) => { e.stopPropagation(); }}
+                                onTouchStart={(e) => { e.stopPropagation(); }}
                                 onClick={(e) => { e.stopPropagation(); toggleMark(mark); }}
                                 className="absolute -top-5 w-4 h-[calc(100%+20px)] focus:outline-none group/marker disabled:cursor-not-allowed"
                                 aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
