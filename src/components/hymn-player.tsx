@@ -69,6 +69,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       setCurrentTime(0);
     }
   }, [currentRecording]);
+  
+  const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -116,8 +118,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
         audioRef.current.playbackRate = playbackRate;
     }
   }, [playbackRate]);
-
-  const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
 
   useEffect(() => {
     if (!isRepeat || !isPlaying || isSeeking) return;
@@ -188,7 +188,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       if (isPlaying) {
         audioRef.current.pause();
       } else {
-        audio.current.play();
+        audioRef.current.play();
       }
       setIsPlaying(!isPlaying);
     }
@@ -204,7 +204,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     e.preventDefault();
     setIsSeeking(true);
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    
+    seekStartRef.current = { x: clientX, time: currentTime };
+
     if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
 
     const containerRect = waveformContainerRef.current.getBoundingClientRect();
@@ -223,7 +224,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const newTime = (clickXInScroller / scrollerWidth) * duration;
     const clampedTime = Math.min(duration, Math.max(0, newTime));
 
-    seekStartRef.current = { x: clientX, time: clampedTime };
     seek(clampedTime);
   };
 
@@ -235,7 +235,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
 
     const dragDeltaX = clientX - seekStartRef.current.x;
-    const containerWidth = waveformContainerRef.current.offsetWidth;
     const timePerPixel = (duration / waveformInnerRef.current.scrollWidth);
     const timeDelta = dragDeltaX * timePerPixel;
     
@@ -287,30 +286,20 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   const playheadPositionStyle = useMemo(() => {
     if (duration <= 0) return { left: '0%' };
-    const containerWidth = waveformContainerRef.current?.offsetWidth || 0;
-    const fullWidth = waveformInnerRef.current?.scrollWidth || containerWidth;
     
     if (duration <= VISIBLE_DURATION_S) {
       return { left: `${(currentTime / duration) * 100}%` };
     }
 
     const scrollStartTime = VISIBLE_DURATION_S / 2;
-    const scrollEndTime = duration - VISIBLE_DURATION_S / 2;
-
+    
     if (currentTime < scrollStartTime) {
-      const progress = currentTime / duration;
+      const progress = currentTime / VISIBLE_DURATION_S;
       return { left: `${progress * 100}%` };
-    } else if (currentTime > scrollEndTime) {
-       const progress = currentTime / duration;
-      return { left: `${progress * 100}%` };
-    } else {
-      const scrollProgress = (currentTime - scrollStartTime) / (scrollEndTime - scrollStartTime);
-      const scrollTarget = scrollProgress * (fullWidth - containerWidth);
-      const playheadAbsolutePx = (currentTime/duration) * fullWidth;
-      const playheadRelativePx = playheadAbsolutePx - scrollTarget;
-
-      return { left: `${(playheadRelativePx / containerWidth) * 100}%` };
     }
+
+    return { left: '50%' };
+
   }, [currentTime, duration]);
   
   return (
@@ -378,35 +367,37 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                           />
                        )
                     })}
-
-                    {duration > 0 && currentRecording.marks.map((mark, index) => {
+                     {duration > 0 && currentRecording.marks.map((mark, index) => {
                         const isActive = activeMarks.includes(mark);
                         return (
                         <div
                             key={index}
-                            className="absolute top-0 -translate-x-1/2 h-full z-20 flex flex-col items-center group/marker"
+                            className="absolute top-0 -translate-x-1/2 h-full z-10 flex flex-col items-center"
                             style={{ left: `${(mark / duration) * 100}%` }}
                         >
                             <button
                                 onMouseDown={(e) => { e.stopPropagation(); }}
                                 onTouchStart={(e) => { e.stopPropagation(); }}
                                 onClick={(e) => { e.stopPropagation(); toggleMark(mark); }}
-                                className={`absolute -top-5 w-8 h-5 focus:outline-none flex items-center justify-center text-xs font-bold rounded-t-md ${isActive ? 'bg-primary text-primary-foreground' : 'bg-muted border-2 border-muted-foreground text-muted-foreground'}`}
+                                className="absolute -top-5 w-8 h-8 focus:outline-none flex items-center justify-center text-xs font-bold rounded-t-md"
                                 aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
-                            >
-                               {index + 1}
-                            </button>
-                             <div className={`w-4 h-full pointer-events-none transition-colors ${isActive ? 'bg-primary/50' : 'border-2 border-dashed border-muted-foreground'}`} />
+                            />
+                            <div className={`w-4 h-full pointer-events-none transition-colors ${isActive ? 'bg-primary/75' : 'bg-muted-foreground/50'}`}>
+                              <div className="h-full w-full flex items-center justify-center text-primary-foreground font-bold text-xs">
+                                {index + 1}
+                              </div>
+                            </div>
                         </div>
                         );
                     })}
+
                 </div>
 
                 <div 
                     className="absolute top-0 h-full w-0.5 bg-red-500 z-30 pointer-events-none -translate-x-1/2"
                     style={playheadPositionStyle}
                 >
-                    <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-3 h-3 bg-red-500 rounded-full"></div>
+                    <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 bg-red-500 rounded-full"></div>
                 </div>
             </div>
 
