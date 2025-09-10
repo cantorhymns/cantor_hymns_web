@@ -24,6 +24,7 @@ import {
   SkipBack,
   SkipForward,
   FastForward,
+  Check,
 } from "lucide-react";
 
 function formatTime(seconds: number) {
@@ -90,7 +91,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const handleEnded = () => {
         setIsPlaying(false);
         if (isRepeat) {
-            // If repeat is on, loop from the beginning
             const activeLoopMarks = sortedActiveMarks;
             if (activeLoopMarks.length > 0) {
                 audio.currentTime = activeLoopMarks[0];
@@ -188,7 +188,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       if (isPlaying) {
         audioRef.current.pause();
       } else {
-        audioRef.current.play();
+        audio.current.play();
       }
       setIsPlaying(!isPlaying);
     }
@@ -197,6 +197,9 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const seek = useCallback((time: number) => {
     if (!audioRef.current || duration <= 0) return;
     const newTime = Math.max(0, Math.min(time, duration));
+    if (audioRef.current) {
+      audioRef.current.currentTime = newTime;
+    }
     setCurrentTime(newTime);
   }, [duration]);
 
@@ -204,8 +207,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     e.preventDefault();
     setIsSeeking(true);
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    seekStartRef.current = { x: clientX, time: currentTime };
-
+    
     if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
 
     const containerRect = waveformContainerRef.current.getBoundingClientRect();
@@ -222,9 +224,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const scrollerWidth = waveformInnerRef.current.scrollWidth;
 
     const newTime = (clickXInScroller / scrollerWidth) * duration;
-    const clampedTime = Math.min(duration, Math.max(0, newTime));
-
-    seek(clampedTime);
+    seek(newTime);
+    seekStartRef.current = { x: clientX, time: newTime };
   };
 
   const handleSeekMove = useCallback((e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
@@ -239,8 +240,11 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const timeDelta = dragDeltaX * timePerPixel;
     
     const newTime = seekStartRef.current.time + timeDelta;
-    seek(newTime);
-  }, [isSeeking, duration, seek]);
+    
+    const clampedTime = Math.min(duration, Math.max(0, newTime));
+    setCurrentTime(clampedTime);
+
+  }, [isSeeking, duration]);
 
   const handleSeekEnd = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     if (!isSeeking) return;
@@ -292,10 +296,16 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     }
 
     const scrollStartTime = VISIBLE_DURATION_S / 2;
+    const scrollEndTime = duration - VISIBLE_DURATION_S / 2;
     
     if (currentTime < scrollStartTime) {
       const progress = currentTime / VISIBLE_DURATION_S;
       return { left: `${progress * 100}%` };
+    }
+    
+    if (currentTime > scrollEndTime) {
+       const progress = (currentTime - scrollEndTime) / (VISIBLE_DURATION_S / 2);
+       return { left: `${50 + progress * 50}%` };
     }
 
     return { left: '50%' };
@@ -372,16 +382,18 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         return (
                         <div
                             key={index}
-                            className="absolute top-0 -translate-x-1/2 h-full z-10 flex flex-col items-center"
+                            className="absolute top-0 -translate-x-1/2 h-full z-20 flex flex-col items-center"
                             style={{ left: `${(mark / duration) * 100}%` }}
                         >
                             <button
                                 onMouseDown={(e) => { e.stopPropagation(); }}
                                 onTouchStart={(e) => { e.stopPropagation(); }}
                                 onClick={(e) => { e.stopPropagation(); toggleMark(mark); }}
-                                className="absolute -top-5 w-8 h-8 focus:outline-none flex items-center justify-center text-xs font-bold rounded-t-md"
+                                className="absolute -top-5 w-8 h-8 focus:outline-none flex items-center justify-center text-xs font-bold"
                                 aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
-                            />
+                            >
+                              {isActive && <Check className="h-5 w-5 text-primary" />}
+                            </button>
                             <div className={`w-4 h-full pointer-events-none transition-colors ${isActive ? 'bg-primary/75' : 'bg-muted-foreground/50'}`}>
                               <div className="h-full w-full flex items-center justify-center text-primary-foreground font-bold text-xs">
                                 {index + 1}
