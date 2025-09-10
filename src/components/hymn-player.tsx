@@ -183,19 +183,20 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   
   const seek = useCallback((clientX: number) => {
     if (!waveformContainerRef.current || !audioRef.current || duration <= 0) return;
-  
-    const containerWidth = waveformContainerRef.current.offsetWidth;
+
     const dragDeltaX = clientX - seekStartRef.current.x;
-  
-    // Scale the drag distance to the timeline's visible duration
-    const timeDelta = (dragDeltaX / containerWidth) * VISIBLE_DURATION_S;
-  
+
+    const scrollerWidth = (duration / VISIBLE_DURATION_S) * waveformContainerRef.current.offsetWidth;
+    const timePerPixel = duration / scrollerWidth;
+
+    const timeDelta = dragDeltaX * timePerPixel;
+
     const newTime = seekStartRef.current.time + timeDelta;
     const clampedTime = Math.max(0, Math.min(newTime, duration));
-  
+
     setCurrentTime(clampedTime);
     if (audioRef.current) {
-      audioRef.current.currentTime = clampedTime;
+        audioRef.current.currentTime = clampedTime;
     }
   }, [duration]);
 
@@ -204,7 +205,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     setIsSeeking(true);
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     
-    // If just clicking, not dragging
     if (e.type === 'mousedown' || e.type === 'touchstart') {
       if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
       
@@ -223,15 +223,11 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
       const newTime = (clickXInScroller / scrollerWidth) * duration;
       const clampedTime = Math.min(duration, Math.max(0, newTime));
-
       seekStartRef.current = { x: clientX, time: clampedTime };
       setCurrentTime(clampedTime);
       if (audioRef.current) {
         audioRef.current.currentTime = clampedTime;
       }
-
-    } else {
-       seekStartRef.current = { x: clientX, time: currentTime };
     }
   };
 
@@ -340,7 +336,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
         <div className="space-y-6">
            <div 
                 ref={waveformContainerRef} 
-                className="relative w-full h-20 bg-secondary/50 rounded-lg cursor-pointer group touch-none"
+                className="relative w-full h-20 bg-secondary/50 rounded-lg cursor-pointer group touch-none overflow-hidden"
                 onMouseDown={handleSeekStart}
                 onMouseMove={handleSeekMove}
                 onMouseUp={handleSeekEnd}
@@ -376,18 +372,18 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         return (
                         <div
                             key={index}
-                            className="absolute top-0 -translate-x-1/2 h-[125%] -translate-y-[10%] z-10 flex flex-col items-center group/marker"
+                            className="absolute top-0 -translate-x-1/2 h-full z-10 flex flex-col items-center"
                             style={{ left: `${(mark / duration) * 100}%` }}
                         >
                             <button
                                 onMouseDown={(e) => { e.stopPropagation(); }}
                                 onClick={(e) => { e.stopPropagation(); toggleMark(mark); }}
-                                className="h-full w-full focus:outline-none"
+                                className="absolute -top-5 w-2 h-[calc(100%+20px)] focus:outline-none group/marker"
                                 aria-label={isActive ? `Disable mark at ${formatTime(mark)}` : `Enable mark at ${formatTime(mark)}`}
                             >
-                                <div className={`w-2 h-full mx-auto transition-colors ${isActive ? 'bg-primary' : 'bg-transparent border-2 border-muted-foreground'} group-hover/marker:bg-primary/50`}></div>
-                                <div className="absolute bottom-[25%] left-0 right-0 h-[75%] pointer-events-none"></div>
+                                <div className={`w-full h-full mx-auto transition-colors ${isActive ? 'bg-primary' : 'bg-transparent border-2 border-muted-foreground'} group-hover/marker:bg-primary/50`}></div>
                             </button>
+                             <div className="w-2 h-full pointer-events-none" />
                         </div>
                         );
                     })}
@@ -451,5 +447,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    
