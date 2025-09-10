@@ -1,7 +1,7 @@
 "use client";
 
 import type { Hymn, Recording } from "@/lib/types";
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -26,7 +26,6 @@ import {
   FastForward,
   CheckCircle2,
   Circle,
-  ListX
 } from "lucide-react";
 
 function formatTime(seconds: number) {
@@ -50,6 +49,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
+  const [isSeeking, setIsSeeking] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const waveformContainerRef = useRef<HTMLDivElement>(null);
@@ -81,7 +81,9 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     };
 
     const setAudioTime = () => {
-        setCurrentTime(audio.currentTime);
+        if (!isSeeking) {
+            setCurrentTime(audio.currentTime);
+        }
     };
     
     const handleEnded = () => setIsPlaying(false);
@@ -95,7 +97,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       audio.removeEventListener("timeupdate", setAudioTime);
       audio.removeEventListener('ended', handleEnded);
     };
-  }, []);
+  }, [isSeeking]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -106,37 +108,52 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
 
   useEffect(() => {
-    if (!isRepeat || !isPlaying || audioRef.current?.seeking) return;
+    if (!isRepeat || !isPlaying || isSeeking) return;
   
     const activeLoopMarks = sortedActiveMarks;
-    if (activeLoopMarks.length < 1) return;
+    if (activeLoopMarks.length < 2) return;
   
-    let startMark = 0;
-    for (let i = activeLoopMarks.length - 1; i >= 0; i--) {
-      if (activeLoopMarks[i] <= currentTime) {
-        startMark = activeLoopMarks[i];
-        break;
-      }
+    let startMark: number | undefined;
+    let endMark: number | undefined;
+
+    for (let i = 0; i < activeLoopMarks.length; i++) {
+        if (activeLoopMarks[i] > currentTime) {
+            endMark = activeLoopMarks[i];
+            const prevIndex = i - 1;
+            if (prevIndex >= 0) {
+               startMark = activeLoopMarks[prevIndex]
+            } else {
+               startMark = 0;
+            }
+            break;
+        }
     }
-  
-    let endMark = duration;
-    const nextMarkIndex = activeLoopMarks.findIndex(m => m > currentTime);
-    if (nextMarkIndex !== -1) {
-      endMark = activeLoopMarks[nextMarkIndex];
+    
+    // If we're past the last marker, loop from last marker to the end
+    if (endMark === undefined && activeLoopMarks.length > 0) {
+        const lastMark = activeLoopMarks[activeLoopMarks.length - 1];
+        if(currentTime > lastMark){
+            startMark = lastMark;
+            endMark = duration;
+        }
     }
-  
-    if (currentTime >= endMark - 0.1 && endMark > startMark) {
-      if (audioRef.current) {
-        audioRef.current.currentTime = startMark;
-      }
+
+
+    if (startMark !== undefined && endMark !== undefined && currentTime >= endMark - 0.2) {
+       if (audioRef.current) {
+          audioRef.current.currentTime = startMark;
+       }
     }
-  }, [currentTime, isRepeat, isPlaying, sortedActiveMarks, duration]);
+
+  }, [currentTime, isRepeat, isPlaying, sortedActiveMarks, duration, isSeeking]);
 
   // Animate the waveform scroll
   useEffect(() => {
     if (waveformInnerRef.current && duration > 0) {
       const scrollOffset = Math.max(0, currentTime - VISIBLE_DURATION_S / 2);
-      const translatePercentage = -(scrollOffset / duration) * 100;
+      const totalWidth = waveformInnerRef.current.scrollWidth;
+      const containerWidth = waveformContainerRef.current.offsetWidth;
+      const translatePercentage = -(scrollOffset / duration) * (totalWidth / containerWidth) * 100;
       waveformInnerRef.current.style.transform = `translateX(${translatePercentage}%)`;
     }
   }, [currentTime, duration]);
@@ -152,19 +169,47 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       setIsPlaying(!isPlaying);
     }
   };
+  
+  const seek = useCallback((clientX: number) => {
+      if (!waveformContainerRef.current || !audioRef.current || duration <= 0) return;
 
-  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (audioRef.current && waveformContainerRef.current && duration > 0) {
       const rect = waveformContainerRef.current.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
+      const clickX = clientX - rect.left;
       const containerWidth = waveformContainerRef.current.offsetWidth;
-      
-      const scrollOffset = Math.max(0, currentTime - VISIBLE_DURATION_S / 2);
+
+      // Calculate the time represented by the visible part of the waveform
+      const scrollOffset = Math.max(0, audioRef.current.currentTime - VISIBLE_DURATION_S / 2);
+
+      // Calculate the new time based on the click within the visible portion
       const newTime = scrollOffset + (clickX / containerWidth) * VISIBLE_DURATION_S;
-      
-      audioRef.current.currentTime = Math.min(duration, Math.max(0, newTime));
-    }
+      const clampedTime = Math.min(duration, Math.max(0, newTime));
+
+      if(audioRef.current) {
+        audioRef.current.currentTime = clampedTime;
+      }
+      setCurrentTime(clampedTime);
+  }, [duration]);
+
+  const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsSeeking(true);
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    seek(clientX);
   };
+
+  const handleSeekMove = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    if (!isSeeking) return;
+    e.preventDefault();
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    seek(clientX);
+  };
+
+  const handleSeekEnd = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    if (!isSeeking) return;
+    e.preventDefault();
+    setIsSeeking(false);
+  };
+
   
   const handleNextSection = () => {
     if (!audioRef.current) return;
@@ -178,12 +223,13 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   };
 
   const handlePrevSection = () => {
-    if (!audioRef.current || currentTime < 1) {
-        if(audioRef.current) audioRef.current.currentTime = 0;
-        return;
-    };
+    if (!audioRef.current) return;
     // Find the mark right before the current time
     const prevMark = [...sortedActiveMarks].reverse().find(mark => mark < currentTime - 1);
+    if (audioRef.current.currentTime < 1 && prevMark === undefined) {
+      audioRef.current.currentTime = 0;
+      return;
+    }
     audioRef.current.currentTime = prevMark !== undefined ? prevMark : 0;
   };
 
@@ -230,8 +276,14 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
         <div className="space-y-6">
            <div 
                 ref={waveformContainerRef} 
-                className="relative w-full h-20 bg-secondary/50 rounded-lg overflow-hidden cursor-pointer group"
-                onClick={handleSeek}
+                className="relative w-full h-20 bg-secondary/50 rounded-lg overflow-hidden cursor-pointer group touch-none"
+                onMouseDown={handleSeekStart}
+                onMouseMove={handleSeekMove}
+                onMouseUp={handleSeekEnd}
+                onMouseLeave={handleSeekEnd}
+                onTouchStart={handleSeekStart}
+                onTouchMove={handleSeekMove}
+                onTouchEnd={handleSeekEnd}
             >
                 <div 
                     ref={waveformInnerRef}
@@ -339,5 +391,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    
