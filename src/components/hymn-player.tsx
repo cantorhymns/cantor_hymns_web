@@ -454,29 +454,31 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                     </Button>
                 </div>
 
-                <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" onClick={handlePrevSection}>
-                        <SkipBack className="h-6 w-6" />
-                        <span className="sr-only">Previous Section</span>
-                    </Button>
+                <div className="flex flex-col items-center gap-2">
                     <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="icon" onClick={() => handleSkip(-10)}>
-                            <Rewind className="h-6 w-6" />
-                            <span className="sr-only">Rewind 10 seconds</span>
+                        <Button variant="ghost" size="icon" onClick={handlePrevSection}>
+                            <SkipBack className="h-6 w-6" />
+                            <span className="sr-only">Previous Section</span>
                         </Button>
                         <Button size="icon" className="h-16 w-16 rounded-full" onClick={handlePlayPause}>
                             {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
                             <span className="sr-only">{isPlaying ? "Pause" : "Play"}</span>
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleSkip(10)}>
+                         <Button variant="ghost" size="icon" onClick={handleNextSection}>
+                            <SkipForward className="h-6 w-6" />
+                            <span className="sr-only">Next Section</span>
+                        </Button>
+                    </div>
+                    <div className="flex items-center gap-6 mt-2">
+                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full" onClick={() => handleSkip(-10)}>
+                            <Rewind className="h-6 w-6" />
+                            <span className="sr-only">Rewind 10 seconds</span>
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full" onClick={() => handleSkip(10)}>
                             <FastForward className="h-6 w-6" />
                             <span className="sr-only">Fast Forward 10 seconds</span>
                         </Button>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={handleNextSection}>
-                        <SkipForward className="h-6 w-6" />
-                        <span className="sr-only">Next Section</span>
-                    </Button>
                 </div>
                 
                 <div className="flex items-center gap-2 w-[100px] justify-end">
@@ -498,3 +500,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    
