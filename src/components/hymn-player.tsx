@@ -26,7 +26,6 @@ import {
   SkipForward,
   FastForward,
   Rewind,
-  Check,
 } from "lucide-react";
 
 function formatTime(seconds: number) {
@@ -107,11 +106,11 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio || isSeeking) return;
+    if (!audio) return;
 
     setCurrentTime(audio.currentTime);
 
-    if (isRepeat && sortedActiveMarks.length > 1) {
+    if (isRepeat && !isSeeking && sortedActiveMarks.length > 1) {
         let currentSectionIndex = -1;
         for (let i = sortedActiveMarks.length - 1; i >= 0; i--) {
             if (audio.currentTime >= sortedActiveMarks[i]) {
@@ -456,11 +455,10 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                                 data-marker-toggle
                                 onClick={() => toggleMark(mark)}
                                 className={`absolute top-1/2 -translate-y-[calc(50%+18px)] -left-3 w-6 h-6 rounded-full font-bold text-xs flex items-center justify-center pointer-events-auto cursor-pointer transition-colors ${
-                                    isActive ? 'bg-primary/75 text-primary-foreground' : 'bg-muted/75 text-muted-foreground'
+                                    isActive ? 'bg-primary/75 text-primary-foreground' : 'bg-muted-foreground/50 text-muted-foreground'
                                 }`}
                             >
                                 {index + 1}
-                                {isActive && <Check className="w-3 h-3 absolute -top-1 -right-1 text-green-400 bg-white rounded-full p-0.5" />}
                             </button>
                         </div>
                     )})}
@@ -538,5 +536,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    
