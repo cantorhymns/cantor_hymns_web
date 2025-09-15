@@ -25,6 +25,7 @@ import {
   SkipBack,
   SkipForward,
   FastForward,
+  Rewind,
   Check,
 } from "lucide-react";
 
@@ -55,7 +56,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const seekStartRef = useRef({ x: 0, time: 0 });
 
   const sortedMarks = useMemo(() => [...currentRecording.marks].sort((a, b) => a - b), [currentRecording]);
-
+  
   useEffect(() => {
     setCurrentRecording(hymn.recordings[0]);
     setPlaybackRate(1);
@@ -104,15 +105,14 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio || isSeeking) return;
+    if (!audio) return;
 
-    const currentPlaybackTime = audio.currentTime;
-    setCurrentTime(currentPlaybackTime);
+    setCurrentTime(audio.currentTime);
 
-    if (isRepeat && sortedMarks.length > 0) {
+    if (isRepeat && !isSeeking) {
       let currentSectionIndex = -1;
       for (let i = sortedMarks.length - 1; i >= 0; i--) {
-        if (currentPlaybackTime >= sortedMarks[i]) {
+        if (audio.currentTime >= sortedMarks[i]) {
           currentSectionIndex = i;
           break;
         }
@@ -318,6 +318,11 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     }
   };
   
+  const handleSkip = (amount: number) => {
+    if (!audioRef.current) return;
+    seek(currentTime + amount);
+  };
+  
   const waveformWidthStyle = useMemo(() => {
     if (duration <= 0) return { width: '100%' };
     const multiplier = Math.max(1, duration / VISIBLE_DURATION_S);
@@ -453,9 +458,17 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         <SkipBack className="h-6 w-6" />
                         <span className="sr-only">Previous Section</span>
                     </Button>
+                    <Button variant="ghost" size="icon" onClick={() => handleSkip(-10)}>
+                        <Rewind className="h-6 w-6" />
+                        <span className="sr-only">Rewind 10 seconds</span>
+                    </Button>
                     <Button size="icon" className="h-16 w-16 rounded-full" onClick={handlePlayPause}>
                         {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
                         <span className="sr-only">{isPlaying ? "Pause" : "Play"}</span>
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => handleSkip(10)}>
+                        <FastForward className="h-6 w-6" />
+                        <span className="sr-only">Fast Forward 10 seconds</span>
                     </Button>
                     <Button variant="ghost" size="icon" onClick={handleNextSection}>
                         <SkipForward className="h-6 w-6" />
@@ -481,3 +494,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    
