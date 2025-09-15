@@ -107,8 +107,10 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
-
-    setCurrentTime(audio.currentTime);
+    
+    if (!isSeeking) {
+      setCurrentTime(audio.currentTime);
+    }
 
     if (isRepeat && !isSeeking && sortedActiveMarks.length > 1) {
         let currentSectionIndex = -1;
@@ -118,7 +120,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
             break;
             }
         }
-        
+
         if (currentSectionIndex > lastPassedMarkerIndex) {
             audio.currentTime = sortedActiveMarks[lastPassedMarkerIndex];
         } else if (currentSectionIndex !== -1 && currentSectionIndex < lastPassedMarkerIndex) {
@@ -254,15 +256,12 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const timePerPixel = duration / scrollerWidth;
     const timeDelta = dragDeltaX * timePerPixel;
     
-    // We update the start ref's time directly to make dragging feel more natural
     const newTime = seekStartRef.current.time + timeDelta;
-    seekStartRef.current.x = clientX; // update start x for next move
-    seekStartRef.current.time = newTime; // update start time for next move
 
     if (audioRef.current) {
         const newClampedTime = Math.max(0, Math.min(newTime, duration));
         audioRef.current.currentTime = newClampedTime;
-        setCurrentTime(newClampedTime);
+        setCurrentTime(newClampedTime); // Continuously update time for visual feedback
     }
   }, [isSeeking, duration]);
 
@@ -272,6 +271,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     setIsSeeking(false);
     
     if(audioRef.current) {
+      seekStartRef.current.time = audioRef.current.currentTime;
       seek(audioRef.current.currentTime);
     }
   }, [isSeeking, seek]);
@@ -310,9 +310,12 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const handlePrevSection = () => {
     if (!audioRef.current) return;
     const currentPlaybackTime = audioRef.current.currentTime;
-    const currentSectionStartMark = [...sortedActiveMarks].reverse().find(mark => mark <= currentPlaybackTime - 1.5);
-
+  
+    // Find the start of the current section
+    const currentSectionStartMark = [...sortedActiveMarks].reverse().find(mark => mark < currentPlaybackTime);
+  
     if (currentSectionStartMark !== undefined) {
+      // Find the start of the previous section
       const prevSectionStartMark = [...sortedActiveMarks].reverse().find(mark => mark < currentSectionStartMark);
       if (prevSectionStartMark !== undefined) {
         seek(prevSectionStartMark);
@@ -320,7 +323,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
         seek(0);
       }
     } else {
-        seek(0);
+      seek(0);
     }
   };
   
@@ -334,7 +337,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
         const newMarks = prev.includes(mark) ? prev.filter(m => m !== mark) : [...prev, mark];
         const newSorted = newMarks.sort((a,b) => a - b);
         
-        // After toggling, re-evaluate the last passed marker index
         let newMarkIndex = -1;
         for (let i = newSorted.length - 1; i >= 0; i--) {
             if (currentTime >= newSorted[i]) {
@@ -426,7 +428,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                     }}
                 >
                     {duration > 0 && Array.from({ length: Math.ceil(duration) * 2 }).map((_, i) => {
-                       // Use a seeded random to keep the waveform consistent
                        const seed = i + currentRecording.url.length;
                        const barHeight = ((Math.sin(seed) + 1) / 2) * 60 + 20;
                        return (
