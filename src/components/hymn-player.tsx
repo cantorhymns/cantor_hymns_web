@@ -442,7 +442,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
             </div>
 
             <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2 w-[100px]">
+                <div className="flex items-center gap-2 w-[100px] justify-start">
                     <Button
                         variant={isRepeat ? "secondary" : "ghost"}
                         size="icon"
@@ -453,28 +453,32 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         <span className="sr-only">Repeat Section</span>
                     </Button>
                 </div>
+
                 <div className="flex items-center gap-2">
                     <Button variant="ghost" size="icon" onClick={handlePrevSection}>
                         <SkipBack className="h-6 w-6" />
                         <span className="sr-only">Previous Section</span>
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleSkip(-10)}>
-                        <Rewind className="h-6 w-6" />
-                        <span className="sr-only">Rewind 10 seconds</span>
-                    </Button>
-                    <Button size="icon" className="h-16 w-16 rounded-full" onClick={handlePlayPause}>
-                        {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
-                        <span className="sr-only">{isPlaying ? "Pause" : "Play"}</span>
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleSkip(10)}>
-                        <FastForward className="h-6 w-6" />
-                        <span className="sr-only">Fast Forward 10 seconds</span>
-                    </Button>
+                    <div className="flex items-center gap-4">
+                        <Button variant="ghost" size="icon" onClick={() => handleSkip(-10)}>
+                            <Rewind className="h-6 w-6" />
+                            <span className="sr-only">Rewind 10 seconds</span>
+                        </Button>
+                        <Button size="icon" className="h-16 w-16 rounded-full" onClick={handlePlayPause}>
+                            {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
+                            <span className="sr-only">{isPlaying ? "Pause" : "Play"}</span>
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleSkip(10)}>
+                            <FastForward className="h-6 w-6" />
+                            <span className="sr-only">Fast Forward 10 seconds</span>
+                        </Button>
+                    </div>
                     <Button variant="ghost" size="icon" onClick={handleNextSection}>
                         <SkipForward className="h-6 w-6" />
                         <span className="sr-only">Next Section</span>
                     </Button>
                 </div>
+                
                 <div className="flex items-center gap-2 w-[100px] justify-end">
                     <Select value={String(playbackRate)} onValueChange={(val) => setPlaybackRate(Number(val))}>
                         <SelectTrigger className="w-full">
@@ -494,5 +498,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    
