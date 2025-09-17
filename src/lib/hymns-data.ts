@@ -20,12 +20,6 @@ export const genres: Genre[] = [
     description: 'Joyful hymns celebrating the Resurrection of Christ, featured in the Bright Saturday liturgy.',
     icon: Sunrise,
   },
-   {
-    id: 'veneration',
-    name: 'Veneration',
-    description: 'Praises and hymns for the veneration of saints.',
-    icon: HeartHandshake,
-  },
 ];
 
 const cantorOrder = ['Cantor Ibrahim', 'Cantor Gad', 'Cantor Tharwat', 'Cantor Bola', 'HICS'];
