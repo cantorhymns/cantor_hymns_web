@@ -1,37 +1,28 @@
-import { getHymnById, getGenreById } from '@/lib/hymns-data';
+
+'use client';
 import { notFound } from 'next/navigation';
 import { HymnPlayer } from '@/components/hymn-player';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
-
-export async function generateMetadata({ params }: { params: { hymnId: string } }) {
-  const hymn = getHymnById(params.hymnId);
-
-  if (!hymn) {
-    return {
-      title: 'Hymn Not Found',
-    };
-  }
-
-  return {
-    title: `${hymn.name} | Cantor`,
-    description: `Practice the hymn ${hymn.name}.`,
-  };
-}
-
+import { useHymn } from '@/lib/hooks/useHymn';
+import { useGenre } from '@/lib/hooks/useGenres';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function HymnPage({ params }: { params: { hymnId: string } }) {
-  const hymn = getHymnById(params.hymnId);
+  const { data: hymn, isLoading: isHymnLoading } = useHymn(params.hymnId);
+  const { data: genre, isLoading: isGenreLoading } = useGenre(hymn?.genreId);
 
-  if (!hymn) {
+  if (!isHymnLoading && !hymn) {
     notFound();
   }
-  
-  const genre = getGenreById(hymn.genre);
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
-      {genre && (
+      {isGenreLoading ? (
+        <div className="mb-8">
+            <Skeleton className="h-6 w-40" />
+        </div>
+      ) : genre && (
          <div className="mb-8">
             <Link
             href={`/hymns/${genre.id}`}
@@ -42,7 +33,35 @@ export default function HymnPage({ params }: { params: { hymnId: string } }) {
             </Link>
          </div>
       )}
-      <HymnPlayer hymn={hymn} />
+      {isHymnLoading || !hymn ? (
+        <div className="w-full max-w-3xl mx-auto space-y-6">
+            <div className="flex justify-between items-start">
+                <div>
+                    <Skeleton className="h-9 w-48 mb-2" />
+                    <Skeleton className="h-5 w-32" />
+                </div>
+                <Skeleton className="h-10 w-[180px]" />
+            </div>
+            <Skeleton className="w-full h-20 rounded-lg" />
+            <div className="flex justify-between items-center">
+                <Skeleton className="h-5 w-12" />
+                <Skeleton className="h-5 w-12" />
+            </div>
+            <div className="flex flex-col items-center gap-4">
+                <div className="flex items-center gap-4">
+                    <Skeleton className="h-10 w-10 rounded-full" />
+                    <Skeleton className="h-16 w-16 rounded-full" />
+                    <Skeleton className="h-10 w-10 rounded-full" />
+                </div>
+                 <div className="flex items-center gap-6 mt-2">
+                    <Skeleton className="h-10 w-10 rounded-full" />
+                    <Skeleton className="h-10 w-10 rounded-full" />
+                </div>
+            </div>
+        </div>
+      ) : (
+        <HymnPlayer hymn={hymn} />
+      )}
     </div>
   );
 }

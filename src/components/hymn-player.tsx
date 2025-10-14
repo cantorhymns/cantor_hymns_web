@@ -27,6 +27,8 @@ import {
   FastForward,
   Rewind,
 } from "lucide-react";
+import { getDownloadURL, ref } from "firebase/storage";
+import { useFirebase } from "@/firebase";
 
 function formatTime(seconds: number) {
   const floorSeconds = Math.floor(seconds);
@@ -38,9 +40,13 @@ function formatTime(seconds: number) {
 const VISIBLE_DURATION_S = 60; // 1 minute window
 
 export function HymnPlayer({ hymn }: { hymn: Hymn }) {
-  const [currentRecording, setCurrentRecording] = useState<Recording>(
-    hymn.recordings[0]
+  const { firestore: db, firebaseApp } = useFirebase();
+  const storage = useMemo(() => firebaseApp ? firebaseApp.storage() : null, [firebaseApp]);
+
+  const [currentRecording, setCurrentRecording] = useState<Recording | undefined>(
+    hymn.recordings?.[0]
   );
+  const [audioSrc, setAudioSrc] = useState<string>('');
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -48,33 +54,46 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const [playbackRate, setPlaybackRate] = useState(1);
   const [isSeeking, setIsSeeking] = useState(false);
   
-  const [activeMarks, setActiveMarks] = useState<number[]>(currentRecording.marks);
+  const [activeMarks, setActiveMarks] = useState<number[]>(currentRecording?.marks || []);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const waveformContainerRef = useRef<HTMLDivElement>(null);
   const waveformInnerRef = useRef<HTMLDivElement>(null);
   const seekStartRef = useRef({ x: 0, time: 0 });
 
-  const sortedMarks = useMemo(() => [...currentRecording.marks].sort((a, b) => a - b), [currentRecording]);
+  const sortedMarks = useMemo(() => [...(currentRecording?.marks || [])].sort((a, b) => a - b), [currentRecording]);
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
   
   useEffect(() => {
-    setCurrentRecording(hymn.recordings[0]);
+    setCurrentRecording(hymn.recordings?.[0]);
     setPlaybackRate(1);
     setIsPlaying(false);
   }, [hymn]);
+  
+  useEffect(() => {
+    if (currentRecording && storage) {
+      const audioRef = ref(storage, currentRecording.audioUrl);
+      getDownloadURL(audioRef)
+        .then((url) => {
+          setAudioSrc(url);
+        })
+        .catch((error) => {
+          console.error("Error getting download URL:", error);
+        });
+    }
+  }, [currentRecording, storage]);
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (audio) {
-      audio.src = currentRecording.url;
+    if (audio && audioSrc) {
+      audio.src = audioSrc;
       audio.load();
       audio.pause();
       setIsPlaying(false);
       setCurrentTime(0);
-      setActiveMarks(currentRecording.marks);
+      setActiveMarks(currentRecording?.marks || []);
     }
-  }, [currentRecording]);
+  }, [audioSrc, currentRecording]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -269,13 +288,20 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   const handlePrevSection = () => {
     if (!audioRef.current) return;
-    const currentPlaybackTime = audioRef.current.currentTime;
     
-    const prevMark = [...sortedActiveMarks].reverse().find(mark => mark < currentPlaybackTime - 1.5);
-  
-    if (prevMark !== undefined) {
-      seek(prevMark);
+    // Find the start of the current section
+    const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= currentTime - 1.5);
+
+    if (currentSectionStart !== undefined) {
+      // Find the mark before the current section starts
+      const prevMark = [...sortedActiveMarks].reverse().find(mark => mark < currentSectionStart);
+       if (prevMark !== undefined) {
+         seek(prevMark);
+       } else {
+         seek(0);
+       }
     } else {
+      // If we are before the first mark, go to the beginning
       seek(0);
     }
   };
@@ -321,6 +347,19 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   }, [currentTime, duration]);
   
+  if (!hymn.recordings || hymn.recordings.length === 0 || !currentRecording) {
+      return (
+        <Card className="w-full max-w-3xl mx-auto shadow-xl">
+            <CardHeader>
+                <CardTitle className="font-headline text-3xl text-primary">
+                    {hymn.name}
+                </CardTitle>
+                <CardDescription>No recordings available for this hymn yet.</CardDescription>
+            </CardHeader>
+        </Card>
+      )
+  }
+
   return (
     <Card className="w-full max-w-3xl mx-auto shadow-xl">
       <audio ref={audioRef} preload="metadata" />
@@ -333,9 +372,9 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 <CardDescription className="mt-1">{currentRecording.cantor}</CardDescription>
             </div>
             <Select
-                value={currentRecording.cantor}
-                onValueChange={(cantorName) => {
-                const newRec = hymn.recordings.find((r) => r.cantor === cantorName);
+                value={currentRecording.id}
+                onValueChange={(recId) => {
+                const newRec = hymn.recordings!.find((r) => r.id === recId);
                 if (newRec) setCurrentRecording(newRec);
                 }}
             >
@@ -344,7 +383,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 </SelectTrigger>
                 <SelectContent>
                 {hymn.recordings.map((rec) => (
-                    <SelectItem key={rec.cantor} value={rec.cantor}>
+                    <SelectItem key={rec.id} value={rec.id}>
                     {rec.cantor}
                     </SelectItem>
                 ))}
@@ -369,7 +408,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                     }}
                 >
                     {duration > 0 && Array.from({ length: Math.ceil(duration) * 2 }).map((_, i) => {
-                       const seed = i + currentRecording.url.length;
+                       const seed = i + (currentRecording?.audioUrl.length || 0);
                        const barHeight = ((Math.sin(seed) + 1) / 2) * 60 + 20;
                        return (
                           <div
@@ -395,7 +434,10 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         >
                             <button
                                 data-marker-toggle
-                                onClick={() => toggleMark(mark)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleMark(mark)
+                                }}
                                 className={`absolute top-1/2 -translate-y-[calc(50%+18px)] -left-3 w-6 h-6 rounded-full font-bold text-xs flex items-center justify-center pointer-events-auto cursor-pointer transition-colors ${
                                     isActive ? 'bg-primary/75 text-primary-foreground' : 'bg-muted-foreground/50 text-muted-foreground'
                                 }`}
@@ -478,5 +520,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    

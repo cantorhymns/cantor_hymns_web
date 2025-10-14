@@ -1,21 +1,25 @@
-import type { LucideIcon } from "lucide-react";
+
+import type { LucideIcon, LucideProps } from 'lucide-react';
+import type { ForwardRefExoticComponent, RefAttributes } from 'react';
 
 export interface Recording {
+  id: string;
+  hymnId: string;
   cantor: string;
-  url: string;
+  audioUrl: string;
   marks: number[];
 }
 
 export interface Hymn {
   id: string;
   name: string;
-  genre: string;
-  recordings: Recording[];
+  genreId: string;
+  recordings?: Recording[]; // Optional because they are fetched separately
 }
 
 export interface Genre {
-  id: string;
+  id:string;
   name: string;
   description: string;
-  icon: React.ElementType | LucideIcon;
+  icon: string | ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
 }

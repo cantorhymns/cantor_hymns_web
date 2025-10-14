@@ -1,5 +1,6 @@
+
+'use client';
 import Link from 'next/link';
-import { getHymnsByGenre, getGenreById } from '@/lib/hymns-data';
 import { notFound } from 'next/navigation';
 import {
   Card,
@@ -8,14 +9,24 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { ChevronLeft, Music, ArrowRight } from 'lucide-react';
+import { useHymns } from '@/lib/hooks/useHymns';
+import { useGenre } from '@/lib/hooks/useGenres';
+import * as lucideIcons from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function GenrePage({ params }: { params: { genre: string } }) {
-  const genre = getGenreById(params.genre);
-  const hymns = getHymnsByGenre(params.genre);
+export default function GenrePage({ params }: { params: { genre: string } }) {
+  const { data: genre, isLoading: isGenreLoading } = useGenre(params.genre);
+  const { data: hymns, isLoading: areHymnsLoading } = useHymns(params.genre);
 
-  if (!genre) {
+  if (!isGenreLoading && !genre) {
     notFound();
   }
+
+  const renderIcon = (iconName: string) => {
+    const Icon = (lucideIcons as any)[iconName] as lucideIcons.LucideIcon;
+    if (!Icon) return <Music className="h-10 w-10 text-primary" />;
+    return <Icon className="h-10 w-10 text-primary" />;
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
@@ -28,21 +39,48 @@ export default async function GenrePage({ params }: { params: { genre: string } 
           Back to Genres
         </Link>
         <div className="flex items-center gap-4">
-          <div className="bg-primary/10 p-3 rounded-lg">
-             <genre.icon className="h-10 w-10 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight">
-              {genre.name}
-            </h1>
-            <p className="mt-2 text-lg text-muted-foreground">
-              {genre.description}
-            </p>
-          </div>
+          {isGenreLoading ? (
+            <>
+              <Skeleton className="h-[68px] w-[68px] rounded-lg" />
+              <div>
+                <Skeleton className="h-12 w-48 mb-2" />
+                <Skeleton className="h-6 w-72" />
+              </div>
+            </>
+          ) : genre && (
+            <>
+              <div className="bg-primary/10 p-3 rounded-lg">
+                {renderIcon(genre.icon as string)}
+              </div>
+              <div>
+                <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight">
+                  {genre.name}
+                </h1>
+                <p className="mt-2 text-lg text-muted-foreground">
+                  {genre.description}
+                </p>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      {hymns.length > 0 ? (
+      {areHymnsLoading ? (
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({length: 3}).map((_, i) => (
+                <Card key={i} className="h-full flex flex-col">
+                    <CardHeader className="flex-grow">
+                        <Skeleton className="h-8 w-8 mb-3" />
+                        <Skeleton className="h-7 w-3/4 mb-2" />
+                        <Skeleton className="h-4 w-1/2" />
+                    </CardHeader>
+                    <div className="p-6 pt-0 flex justify-end items-center">
+                        <Skeleton className="h-6 w-24" />
+                    </div>
+                </Card>
+            ))}
+         </div>
+      ) : hymns && hymns.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {hymns.map((hymn) => (
             <Link href={`/hymn/${hymn.id}`} key={hymn.id} className="group">
@@ -55,7 +93,7 @@ export default async function GenrePage({ params }: { params: { genre: string } 
                     {hymn.name}
                   </CardTitle>
                   <CardDescription>
-                    {hymn.recordings.length} recordings available
+                    {hymn.recordings?.length || 0} recordings available
                   </CardDescription>
                 </CardHeader>
                  <div className="p-6 pt-0 flex justify-end items-center text-sm font-semibold text-primary/80 group-hover:text-primary">
