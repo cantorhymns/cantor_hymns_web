@@ -1,59 +1,69 @@
 /**
- * @fileoverview Firestore Security Rules for the Hymns application.
+ * @fileoverview Firestore Security Rules for the Hymns app.
  *
  * Core Philosophy:
- * This ruleset allows public read access to all data (genres, hymns, and recordings) to support an open catalog.
- * Write access is completely disabled to ensure data integrity and prevent unauthorized modifications,
- * since there are no authenticated users or roles defined for modifying data. This is suitable for a read-only catalog.
+ * This ruleset adopts a public-read, owner-only-write model.  All data is readable by any client (including unauthenticated ones).
+ * Data modification (create, update, delete) is only permitted by an authenticated user.
  *
  * Data Structure:
  * - /genres/{genreId}: Stores hymn genres.
- * - /hymns/{hymnId}: Stores hymns, with a reference to their genre.
- * - /recordings/{recordingId}: Stores recordings for hymns.
+ * - /hymns/{hymnId}: Stores hymns.
+ * - /recordings/{recordingId}: Stores recordings of hymns.
  *
  * Key Security Decisions:
- * - Public read access is granted to all collections.
- * - All write operations (create, update, delete) are explicitly denied.
- * - There is no ownership model, user-specific data, or role-based access control in this prototype.
+ * - Public read access is granted for all collections to allow anonymous users to browse content.
+ * - Write access is restricted and requires the user to be authenticated, but no ownership is validated.
+ *
+ * Potential Improvements:
+ *  - Add user management and role-based access control for content moderation.
+ *  - Consider rate limiting to prevent abuse.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Grants public read access to all genres. Denies all write operations.
+     * @description Allows anyone to read genres; write access is restricted to authenticated users.
      * @path /genres/{genreId}
-     * @allow (get, list) - Any user (or no user) can read genre data.
-     * @deny (create, update, delete) - No user can modify genre data.
-     * @principle Allows public read access while preventing unauthorized writes.
+     * @allow (get, list): Any user can read genre data.
+     * @allow (create, update, delete): Only authenticated users can modify genre data.
+     * @deny (create, update, delete): Unauthenticated users cannot modify genre data.
+     * @principle Public read, authenticated write.
      */
     match /genres/{genreId} {
       allow get, list: if true;
-      allow create, update, delete: if false;
+      allow create, update, delete: if isSignedIn();
     }
 
     /**
-     * @description Grants public read access to all hymns. Denies all write operations.
+     * @description Allows anyone to read hymns; write access is restricted to authenticated users.
      * @path /hymns/{hymnId}
-     * @allow (get, list) - Any user (or no user) can read hymn data.
-     * @deny (create, update, delete) - No user can modify hymn data.
-     * @principle Allows public read access while preventing unauthorized writes.
+     * @allow (get, list): Any user can read hymn data.
+     * @allow (create, update, delete): Only authenticated users can modify hymn data.
+     * @deny (create, update, delete): Unauthenticated users cannot modify hymn data.
+     * @principle Public read, authenticated write.
      */
     match /hymns/{hymnId} {
       allow get, list: if true;
-      allow create, update, delete: if false;
+      allow create, update, delete: if isSignedIn();
     }
 
     /**
-     * @description Grants public read access to all recordings. Denies all write operations.
+     * @description Allows anyone to read recordings; write access is restricted to authenticated users.
      * @path /recordings/{recordingId}
-     * @allow (get, list) - Any user (or no user) can read recording data.
-     * @deny (create, update, delete) - No user can modify recording data.
-     * @principle Allows public read access while preventing unauthorized writes.
+     * @allow (get, list): Any user can read recording data.
+     * @allow (create, update, delete): Only authenticated users can modify recording data.
+     * @deny (create, update, delete): Unauthenticated users cannot modify recording data.
+     * @principle Public read, authenticated write.
      */
     match /recordings/{recordingId} {
       allow get, list: if true;
-      allow create, update, delete: if false;
+      allow create, update, delete: if isSignedIn();
+    }
+
+    // Helper function to check if a user is signed in.
+    function isSignedIn() {
+      return request.auth != null;
     }
   }
 }

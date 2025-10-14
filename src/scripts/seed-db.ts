@@ -1,15 +1,21 @@
 
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, writeBatch, doc } from 'firebase/firestore';
+import { getFirestore, writeBatch, doc, collection } from 'firebase/firestore';
+import { getAuth, signInAnonymously } from 'firebase/auth';
 import { firebaseConfig } from '../firebase/config';
 import { genres, hymns, recordings } from '../lib/seed-data';
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
+const auth = getAuth(firebaseApp);
 
 async function seedDatabase() {
   try {
+    console.log('Authenticating anonymously...');
+    await signInAnonymously(auth);
+    console.log('Authentication successful.');
+
     console.log('Starting to seed the database...');
 
     const batch = writeBatch(db);
@@ -50,8 +56,6 @@ async function seedDatabase() {
   } catch (error) {
     console.error('Error seeding database:', error);
   } finally {
-    // Firebase doesn't have a simple 'close' for the client-side SDK.
-    // The script will exit automatically.
     process.exit(0);
   }
 }
