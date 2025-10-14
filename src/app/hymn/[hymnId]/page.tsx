@@ -9,9 +9,8 @@ import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function HymnPage({ params }: { params: { hymnId: string } }) {
-  const hymnId = params.hymnId;
-  const { data: hymn, isLoading: isHymnLoading } = useHymn(hymnId);
-  const { data: genre, isLoading: isGenreLoading } = useGenre(hymn?.genreId);
+  const { data: hymn, isLoading: isHymnLoading } = useHymn(params);
+  const { data: genre, isLoading: isGenreLoading } = useGenre({ genreId: hymn?.genreId });
 
   if (!isHymnLoading && !hymn) {
     notFound();
