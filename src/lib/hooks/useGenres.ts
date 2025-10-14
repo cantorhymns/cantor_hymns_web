@@ -17,9 +17,8 @@ export function useGenres() {
   return { data: genres, ...rest };
 }
 
-export function useGenre(params: { genreId?: string }) {
+export function useGenre(genreId?: string) {
     const firestore = useFirestore();
-    const { genreId } = params;
 
     const genreRef = useMemoFirebase(() => {
         if (!firestore || !genreId) return null;
