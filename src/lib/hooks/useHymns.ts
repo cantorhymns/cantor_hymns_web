@@ -25,8 +25,8 @@ export function useHymns(genreId?: string) {
   const { data: recordings, isLoading: areRecordingsLoading, error: recordingsError } = useCollection<Recording>(recordingsQuery);
 
   const hymnsWithRecordings = useMemo(() => {
-    if (!hymns) return hymns; // Return null or empty array if hymns aren't loaded
-    if (!recordings) { // If recordings are loading, attach empty arrays for now
+    if (!hymns) return null; 
+    if (!recordings) { 
         return hymns.map(hymn => ({
             ...hymn,
             recordings: []
