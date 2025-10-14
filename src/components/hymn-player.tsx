@@ -47,8 +47,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const [currentTime, setCurrentTime] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [isSeeking, setIsSeeking] = useState(false);
+  
   const [activeMarks, setActiveMarks] = useState<number[]>(currentRecording.marks);
-  const [lastPassedMarkerIndex, setLastPassedMarkerIndex] = useState(0);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const waveformContainerRef = useRef<HTMLDivElement>(null);
@@ -73,7 +73,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       setIsPlaying(false);
       setCurrentTime(0);
       setActiveMarks(currentRecording.marks);
-      setLastPassedMarkerIndex(0);
     }
   }, [currentRecording]);
 
@@ -84,50 +83,26 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   }, [playbackRate]);
 
   const handleEnded = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (isRepeat && sortedActiveMarks.length > 0) {
-      const lastMark = sortedActiveMarks[sortedActiveMarks.length - 1];
-        if (lastMark !== undefined) {
-            audio.currentTime = lastMark;
-            audio.play();
-            setIsPlaying(true);
-        } else {
-            setIsPlaying(false);
-            audio.currentTime = 0;
-        }
-    } else {
-      setIsPlaying(false);
-      audio.currentTime = 0;
-      setLastPassedMarkerIndex(0);
+    setIsPlaying(false);
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
     }
-  }, [isRepeat, sortedActiveMarks]);
+    if (isRepeat) {
+        if (audioRef.current) {
+            audioRef.current.play();
+            setIsPlaying(true);
+        }
+    }
+  }, [isRepeat]);
 
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio) return;
-    
-    if (!isSeeking) {
-      setCurrentTime(audio.currentTime);
+    if (audio) {
+      if (!isSeeking) {
+          setCurrentTime(audio.currentTime);
+      }
     }
-
-    if (isRepeat && !isSeeking && sortedActiveMarks.length > 1) {
-        let currentSectionIndex = -1;
-        for (let i = sortedActiveMarks.length - 1; i >= 0; i--) {
-            if (audio.currentTime >= sortedActiveMarks[i]) {
-            currentSectionIndex = i;
-            break;
-            }
-        }
-
-        if (currentSectionIndex > lastPassedMarkerIndex) {
-            audio.currentTime = sortedActiveMarks[lastPassedMarkerIndex];
-        } else if (currentSectionIndex !== -1 && currentSectionIndex < lastPassedMarkerIndex) {
-            setLastPassedMarkerIndex(currentSectionIndex);
-        }
-    }
-  }, [isRepeat, isSeeking, sortedActiveMarks, lastPassedMarkerIndex]);
+  }, [isSeeking]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -197,28 +172,14 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       audioRef.current.currentTime = newTime;
     }
     setCurrentTime(newTime);
-    
-    let newMarkIndex = -1;
-    if (sortedActiveMarks.length > 0) {
-      for (let i = sortedActiveMarks.length - 1; i >= 0; i--) {
-          if (newTime >= sortedActiveMarks[i]) {
-              newMarkIndex = i;
-              break;
-          }
-      }
-    }
-    setLastPassedMarkerIndex(newMarkIndex >= 0 ? newMarkIndex : 0);
-
-  }, [duration, sortedActiveMarks]);
+  }, [duration]);
 
   const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     e.preventDefault();
     const target = e.target as HTMLElement;
-    // Prevent seek if clicking on a marker toggle button
     if (target.closest('[data-marker-toggle]')) {
       return;
     }
-
     setIsSeeking(true);
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     
@@ -261,7 +222,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     if (audioRef.current) {
         const newClampedTime = Math.max(0, Math.min(newTime, duration));
         audioRef.current.currentTime = newClampedTime;
-        setCurrentTime(newClampedTime); // Continuously update time for visual feedback
+        setCurrentTime(newClampedTime);
     }
   }, [isSeeking, duration]);
 
@@ -271,7 +232,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     setIsSeeking(false);
     
     if(audioRef.current) {
-      seekStartRef.current.time = audioRef.current.currentTime;
       seek(audioRef.current.currentTime);
     }
   }, [isSeeking, seek]);
@@ -299,7 +259,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   const handleNextSection = () => {
     if (!audioRef.current) return;
-    const nextMark = sortedActiveMarks.find(mark => mark > currentTime + 0.5); // Add small buffer
+    const nextMark = sortedActiveMarks.find(mark => mark > currentTime + 0.5); 
     if (nextMark !== undefined) {
       seek(nextMark);
     } else {
@@ -310,18 +270,11 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const handlePrevSection = () => {
     if (!audioRef.current) return;
     const currentPlaybackTime = audioRef.current.currentTime;
+    
+    const prevMark = [...sortedActiveMarks].reverse().find(mark => mark < currentPlaybackTime - 1.5);
   
-    // Find the start of the current section
-    const currentSectionStartMark = [...sortedActiveMarks].reverse().find(mark => mark < currentPlaybackTime);
-  
-    if (currentSectionStartMark !== undefined) {
-      // Find the start of the previous section
-      const prevSectionStartMark = [...sortedActiveMarks].reverse().find(mark => mark < currentSectionStartMark);
-      if (prevSectionStartMark !== undefined) {
-        seek(prevSectionStartMark);
-      } else {
-        seek(0);
-      }
+    if (prevMark !== undefined) {
+      seek(prevMark);
     } else {
       seek(0);
     }
@@ -333,21 +286,9 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   };
   
   const toggleMark = (mark: number) => {
-    setActiveMarks(prev => {
-        const newMarks = prev.includes(mark) ? prev.filter(m => m !== mark) : [...prev, mark];
-        const newSorted = newMarks.sort((a,b) => a - b);
-        
-        let newMarkIndex = -1;
-        for (let i = newSorted.length - 1; i >= 0; i--) {
-            if (currentTime >= newSorted[i]) {
-                newMarkIndex = i;
-                break;
-            }
-        }
-        setLastPassedMarkerIndex(newMarkIndex >= 0 ? newMarkIndex : 0);
-
-        return newMarks;
-    });
+    setActiveMarks(prev => 
+        prev.includes(mark) ? prev.filter(m => m !== mark) : [...prev, mark]
+    );
   };
 
   const waveformWidthStyle = useMemo(() => {
@@ -537,3 +478,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    
