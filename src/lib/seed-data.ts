@@ -32,6 +32,11 @@ export const hymns = [
         "genreId": "holy-week",
     },
     {
+        "id": "golgotha",
+        "name": "Golgotha",
+        "genreId": "holy-week",
+    },
+    {
         "id": "ten-gowt",
         "name": "Ten Gowt",
         "genreId": "kiahk",
@@ -67,6 +72,12 @@ export const recordings = [
         "cantor": "Cantor Farag",
         "audioUrl": "CantorFarag/CantorFarag_Agios.mp3",
         "marks": [0, 15, 30, 45, 60]
+    },
+     {
+        "hymnId": "golgotha",
+        "cantor": "HCOC",
+        "audioUrl": "HCOC/HCOC_Golgotha.mp3",
+        "marks": [0, 22, 45, 68, 90]
     },
     {
         "hymnId": "ten-gowt",
