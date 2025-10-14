@@ -8,8 +8,8 @@ import { useHymn } from '@/lib/hooks/useHymn';
 import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export default function HymnPage({ params }: { params: { hymnId: string } }) {
-  const { data: hymn, isLoading: isHymnLoading } = useHymn(params.hymnId);
+export default function HymnPage({ params: { hymnId } }: { params: { hymnId: string } }) {
+  const { data: hymn, isLoading: isHymnLoading } = useHymn(hymnId);
   const { data: genre, isLoading: isGenreLoading } = useGenre(hymn?.genreId);
 
   if (!isHymnLoading && !hymn) {
