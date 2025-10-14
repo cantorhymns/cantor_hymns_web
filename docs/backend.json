@@ -1,0 +1,213 @@
+{
+  "entities": {
+    "Genre": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Genre",
+      "type": "object",
+      "description": "Represents a genre of hymns.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Genre entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the genre (e.g., Holy Week, Kiahk, Resurrection)."
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "Hymn": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Hymn",
+      "type": "object",
+      "description": "Represents a hymn within a specific genre.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Hymn entity."
+        },
+        "genreId": {
+          "type": "string",
+          "description": "Reference to Genre. (Relationship: Genre 1:N Hymn)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the hymn (e.g., Tai shouri, Agios)."
+        }
+      },
+      "required": [
+        "id",
+        "genreId",
+        "title"
+      ]
+    },
+    "Recording": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Recording",
+      "type": "object",
+      "description": "Represents a specific recording of a hymn by a particular cantor.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Recording entity."
+        },
+        "hymnId": {
+          "type": "string",
+          "description": "Reference to Hymn. (Relationship: Hymn 1:N Recording)"
+        },
+        "cantor": {
+          "type": "string",
+          "description": "The name of the cantor for this recording (e.g., Cantor Tharwat, Cantor Ibrahim, Cantor Gad)."
+        },
+        "audioUrl": {
+          "type": "string",
+          "description": "URL to the audio file stored in Firebase Storage.",
+          "format": "uri"
+        },
+        "isDefault": {
+          "type": "boolean",
+          "description": "Indicates if this is the default recording for the hymn."
+        }
+      },
+      "required": [
+        "id",
+        "hymnId",
+        "cantor",
+        "audioUrl"
+      ]
+    },
+    "Mark": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Mark",
+      "type": "object",
+      "description": "Represents a specific mark within a recording, used for section navigation.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Mark entity."
+        },
+        "recordingId": {
+          "type": "string",
+          "description": "Reference to Recording. (Relationship: Recording 1:N Mark)"
+        },
+        "time": {
+          "type": "number",
+          "description": "The time (in seconds) of the mark within the recording."
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Indicates if the mark is enabled or disabled."
+        }
+      },
+      "required": [
+        "id",
+        "recordingId",
+        "time",
+        "enabled"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/genres/{genreId}",
+        "definition": {
+          "entityName": "Genre",
+          "schema": {
+            "$ref": "#/backend/entities/Genre"
+          },
+          "description": "Stores hymn genres (e.g., Holy Week, Kiahk, Resurrection).",
+          "params": [
+            {
+              "name": "genreId",
+              "description": "The unique identifier for the genre."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/genres/{genreId}/hymns/{hymnId}",
+        "definition": {
+          "entityName": "Hymn",
+          "schema": {
+            "$ref": "#/backend/entities/Hymn"
+          },
+          "description": "Stores hymns within a specific genre (e.g., Tai shouri, Agios, Omonogenees).",
+          "params": [
+            {
+              "name": "genreId",
+              "description": "The unique identifier for the genre."
+            },
+            {
+              "name": "hymnId",
+              "description": "The unique identifier for the hymn."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/genres/{genreId}/hymns/{hymnId}/recordings/{recordingId}",
+        "definition": {
+          "entityName": "Recording",
+          "schema": {
+            "$ref": "#/backend/entities/Recording"
+          },
+          "description": "Stores recordings of a hymn by different cantors (e.g., Cantor Tharwat, Cantor Ibrahim, Cantor Gad).",
+          "params": [
+            {
+              "name": "genreId",
+              "description": "The unique identifier for the genre."
+            },
+            {
+              "name": "hymnId",
+              "description": "The unique identifier for the hymn."
+            },
+            {
+              "name": "recordingId",
+              "description": "The unique identifier for the recording."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/genres/{genreId}/hymns/{hymnId}/recordings/{recordingId}/marks/{markId}",
+        "definition": {
+          "entityName": "Mark",
+          "schema": {
+            "$ref": "#/backend/entities/Mark"
+          },
+          "description": "Stores marks within a recording for section navigation.",
+          "params": [
+            {
+              "name": "genreId",
+              "description": "The unique identifier for the genre."
+            },
+            {
+              "name": "hymnId",
+              "description": "The unique identifier for the hymn."
+            },
+            {
+              "name": "recordingId",
+              "description": "The unique identifier for the recording."
+            },
+            {
+              "name": "markId",
+              "description": "The unique identifier for the mark."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to efficiently store and retrieve hymn recordings, genres, and related metadata. It prioritizes clarity and ease of querying for the application's core features. The design uses nested collections to represent the relationships between genres, hymns, recordings, and marks. Each level of nesting reflects a one-to-many relationship, ensuring data integrity and optimized queries.\n\nAuthorization Independence:\nThis design doesn't require denormalization because there are no explicit authorization requirements mentioned in the prompt. All data is assumed to be publicly accessible, meaning no user-specific roles or permissions are needed.\n\nQAPs (Rules are not Filters):\nSince the data is publicly accessible and no security rules are applied, QAPs are inherently supported. List operations on any collection will return all documents without filtering based on access rights.\n\nInvariants:\nThe structure supports invariants by clearly defining the parent-child relationships. For example, each hymn belongs to a genre, each recording belongs to a hymn, and each mark belongs to a recording. This ensures that all data is logically organized and easy to navigate."
+  }
+}

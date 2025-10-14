@@ -1,0 +1,73 @@
+/**
+ * @fileoverview Firestore Security Rules for Hymn Recordings.
+ *
+ * Core Philosophy:
+ * This ruleset allows public read access to all data, with no authentication required.
+ * All write operations (create, update, delete) are disabled, preventing any modifications to the data.
+ *
+ * Data Structure:
+ * The data is organized hierarchically, with the following structure:
+ * /genres/{genreId}
+ * /genres/{genreId}/hymns/{hymnId}
+ * /genres/{genreId}/hymns/{hymnId}/recordings/{recordingId}
+ * /genres/{genreId}/hymns/{hymnId}/recordings/{recordingId}/marks/{markId}
+ *
+ * Key Security Decisions:
+ * - Public Read Access: All `get` and `list` operations are allowed for all users, including unauthenticated users.
+ * - No Write Access: All `create`, `update`, and `delete` operations are explicitly denied to prevent unauthorized modifications.
+ * - No User Roles: The absence of authorization requirements simplifies the ruleset, making all data equally accessible to everyone.
+ * - No data validation: The rule set does not contain any data validation, meaning that the shape of the data is not enforced.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Allows public read access to hymn genres. All write operations are denied.
+     * @path /genres/{genreId}
+     * @allow (get, list) Allows any user to read a genre or list all genres.
+     * @deny (create, update, delete) Denies any user from creating, updating, or deleting genres.
+     * @principle Grants public read access while restricting write access.
+     */
+    match /genres/{genreId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    /**
+     * @description Allows public read access to hymns within a specific genre. All write operations are denied.
+     * @path /genres/{genreId}/hymns/{hymnId}
+     * @allow (get, list) Allows any user to read a hymn or list all hymns within a genre.
+     * @deny (create, update, delete) Denies any user from creating, updating, or deleting hymns.
+     * @principle Grants public read access while restricting write access.
+     */
+    match /genres/{genreId}/hymns/{hymnId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    /**
+     * @description Allows public read access to recordings within a specific hymn. All write operations are denied.
+     * @path /genres/{genreId}/hymns/{hymnId}/recordings/{recordingId}
+     * @allow (get, list) Allows any user to read a recording or list all recordings within a hymn.
+     * @deny (create, update, delete) Denies any user from creating, updating, or deleting recordings.
+     * @principle Grants public read access while restricting write access.
+     */
+    match /genres/{genreId}/hymns/{hymnId}/recordings/{recordingId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    /**
+     * @description Allows public read access to marks within a specific recording. All write operations are denied.
+     * @path /genres/{genreId}/hymns/{hymnId}/recordings/{recordingId}/marks/{markId}
+     * @allow (get, list) Allows any user to read a mark or list all marks within a recording.
+     * @deny (create, update, delete) Denies any user from creating, updating, or deleting marks.
+     * @principle Grants public read access while restricting write access.
+     */
+    match /genres/{genreId}/hymns/{hymnId}/recordings/{recordingId}/marks/{markId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+  }
+}
