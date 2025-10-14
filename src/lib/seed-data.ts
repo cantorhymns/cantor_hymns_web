@@ -27,18 +27,13 @@ export const hymns = [
         "genreId": "holy-week",
     },
     {
-        "id": "agios-o-theos",
-        "name": "Agios O Theos",
-        "genreId": "holy-week",
-    },
-    {
-        "id": "golgotha",
-        "name": "Golgotha",
-        "genreId": "holy-week",
-    },
-    {
         "id": "omonogenees",
         "name": "O Monogenees",
+        "genreId": "holy-week"
+    },
+    {
+        "id": "tarh",
+        "name": "Tarh",
         "genreId": "holy-week"
     },
     {
@@ -50,21 +45,6 @@ export const hymns = [
         "id": "phai-etafenf",
         "name": "Phai Etafenf",
         "genreId": "holy-week"
-    },
-    {
-        "id": "tarh",
-        "name": "Tarh",
-        "genreId": "holy-week"
-    },
-    {
-        "id": "ten-gowt",
-        "name": "Ten Gowt",
-        "genreId": "kiahk",
-    },
-    {
-        "id": "christos-anesti",
-        "name": "Christos Anesti",
-        "genreId": "resurrection",
     }
 ];
 
@@ -128,29 +108,5 @@ export const recordings = [
         "cantor": "HICS",
         "audioUrl": "HICS/HICS_Omonogenees.mp3",
         "marks": [0, 15, 30, 45, 60]
-    },
-    {
-        "hymnId": "agios-o-theos",
-        "cantor": "Cantor Farag",
-        "audioUrl": "CantorFarag/CantorFarag_Agios.mp3",
-        "marks": [0, 15, 30, 45, 60]
-    },
-     {
-        "hymnId": "golgotha",
-        "cantor": "HCOC",
-        "audioUrl": "HCOC/HCOC_Golgotha.mp3",
-        "marks": [0, 22, 45, 68, 90]
-    },
-    {
-        "hymnId": "ten-gowt",
-        "cantor": "HCOC",
-        "audioUrl": "HCOC/HCOC_TenGowt.mp3",
-        "marks": [0, 10, 20, 30]
-    },
-    {
-        "hymnId": "christos-anesti",
-        "cantor": "HCOC",
-        "audioUrl": "HCOC/HCOC_ChristosAnesti.mp3",
-        "marks": [0, 12, 24, 36]
     }
 ];
