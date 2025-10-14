@@ -5,9 +5,9 @@ import { collection, query, where } from 'firebase/firestore';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { Hymn, Recording } from '@/lib/types';
 
-export function useHymns(params?: { genreId?: string }) {
+export function useHymns(params?: { genreId?: string, genre?: string }) {
   const firestore = useFirestore();
-  const genreId = params?.genreId;
+  const genreId = params?.genreId || params?.genre;
 
   const hymnsQuery = useMemoFirebase(() => {
     if (!firestore || !genreId) return null;
@@ -26,7 +26,13 @@ export function useHymns(params?: { genreId?: string }) {
   const { data: recordings, isLoading: areRecordingsLoading, error: recordingsError } = useCollection<Recording>(recordingsQuery);
 
   const hymnsWithRecordings = useMemo(() => {
-    if (!hymns || !recordings) return hymns;
+    if (!hymns) return hymns; // Return null or empty array if hymns aren't loaded
+    if (!recordings) { // If recordings are loading, attach empty arrays for now
+        return hymns.map(hymn => ({
+            ...hymn,
+            recordings: []
+        }));
+    }
     
     const recordingsByHymnId = new Map<string, Recording[]>();
     recordings.forEach(rec => {
