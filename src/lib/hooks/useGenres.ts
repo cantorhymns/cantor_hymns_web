@@ -17,8 +17,10 @@ export function useGenres() {
   return { data: genres, ...rest };
 }
 
-export function useGenre(genreId?: string) {
+export function useGenre(params?: { genre?: string; genreId?: string } | string) {
     const firestore = useFirestore();
+
+    const genreId = typeof params === 'string' ? params : params?.genreId ?? params?.genre;
 
     const genreRef = useMemoFirebase(() => {
         if (!firestore || !genreId) return null;
