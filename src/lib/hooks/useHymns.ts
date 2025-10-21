@@ -5,9 +5,8 @@ import { collection, query, where } from 'firebase/firestore';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { Hymn, Recording } from '@/lib/types';
 
-export function useHymns(params?: { genre?: string }) {
+export function useHymns(genreId?: string) {
   const firestore = useFirestore();
-  const genreId = params?.genre;
 
   const hymnsQuery = useMemoFirebase(() => {
     if (!firestore || !genreId) return null;

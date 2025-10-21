@@ -15,8 +15,8 @@ import * as lucideIcons from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function GenrePage({ params }: { params: { genre: string } }) {
-  const { data: genre, isLoading: isGenreLoading } = useGenre(params);
-  const { data: hymns, isLoading: areHymnsLoading } = useHymns(params);
+  const { data: genre, isLoading: isGenreLoading } = useGenre(params.genre);
+  const { data: hymns, isLoading: areHymnsLoading } = useHymns(params.genre);
 
   if (!isGenreLoading && !genre) {
     notFound();
