@@ -7,15 +7,17 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { ArrowRight, Music } from 'lucide-react';
-import * as lucideIcons from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useGenres } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
+import * as lucideIcons from 'lucide-react';
+
 
 export default function Home() {
   const { data: genres, isLoading } = useGenres();
 
   const renderIcon = (iconName: string) => {
-    const Icon = (lucideIcons as any)[iconName] as lucideIcons.LucideIcon;
+    const Icon = (lucideIcons as Record<string, LucideIcon>)[iconName];
     if (!Icon) return <Music className="h-8 w-8 text-primary" />;
     return <Icon className="h-8 w-8 text-primary" />;
   };
