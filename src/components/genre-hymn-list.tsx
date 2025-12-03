@@ -9,12 +9,19 @@ import {
 } from '@/components/ui/card';
 import { ChevronLeft, Music, ArrowRight } from 'lucide-react';
 import { useHymns } from '@/lib/hooks/useHymns';
+import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Genre } from '@/lib/types';
 import * as lucideIcons from 'lucide-react';
+import { notFound } from 'next/navigation';
 
-export function GenreHymnList({ genreId, initialGenre }: { genreId: string, initialGenre: Genre }) {
+export function GenreHymnList({ genreId }: { genreId: string }) {
+  const { data: genre, isLoading: isGenreLoading } = useGenre(genreId);
   const { data: hymns, isLoading: areHymnsLoading } = useHymns(genreId);
+  
+  if (!isGenreLoading && !genre) {
+    notFound();
+  }
 
   const renderIcon = (iconName: string) => {
     const Icon = (lucideIcons as any)[iconName] as lucideIcons.LucideIcon;
@@ -33,19 +40,29 @@ export function GenreHymnList({ genreId, initialGenre }: { genreId: string, init
           Back to Genres
         </Link>
         <div className="flex items-center gap-4">
-          <>
-            <div className="bg-primary/10 p-3 rounded-lg">
-              {renderIcon(initialGenre.icon as string)}
-            </div>
-            <div>
-              <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight">
-                {initialGenre.name}
-              </h1>
-              <p className="mt-2 text-lg text-muted-foreground">
-                {initialGenre.description}
-              </p>
-            </div>
-          </>
+           {isGenreLoading || !genre ? (
+             <>
+                <Skeleton className="h-16 w-16 rounded-lg" />
+                <div className="w-2/3">
+                    <Skeleton className="h-10 w-48 mb-2" />
+                    <Skeleton className="h-6 w-full max-w-sm" />
+                </div>
+             </>
+           ) : (
+            <>
+                <div className="bg-primary/10 p-3 rounded-lg">
+                {renderIcon(genre.icon as string)}
+                </div>
+                <div>
+                <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight">
+                    {genre.name}
+                </h1>
+                <p className="mt-2 text-lg text-muted-foreground">
+                    {genre.description}
+                </p>
+                </div>
+            </>
+           )}
         </div>
       </div>
 
