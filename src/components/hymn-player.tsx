@@ -183,14 +183,21 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     }
   }, [currentTime, duration]);
 
-  const handlePlayPause = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
+  const handlePlayPause = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+    } else {
+      try {
+        await audio.play();
+        setIsPlaying(true);
+      } catch (error) {
+        console.error("Error playing audio:", error);
+        setIsPlaying(false);
       }
-      setIsPlaying(!isPlaying);
     }
   };
   
