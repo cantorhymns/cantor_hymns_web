@@ -28,8 +28,7 @@ import {
   Rewind,
 } from "lucide-react";
 import { getDownloadURL, ref } from "firebase/storage";
-import { useFirebase } from "@/firebase";
-import { getStorage } from "firebase/storage";
+import { useFirebase, getStorage } from "@/firebase";
 
 function formatTime(seconds: number) {
   const floorSeconds = Math.floor(seconds);
@@ -87,12 +86,22 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   useEffect(() => {
     const audio = audioRef.current;
     if (audio && audioSrc) {
+      // Store current playing state
+      const wasPlaying = !audio.paused;
+      
+      // Reset audio element
       audio.src = audioSrc;
       audio.load();
-      audio.pause();
-      setIsPlaying(false);
+      
+      // Reset component state
       setCurrentTime(0);
+      setIsPlaying(false);
       setActiveMarks(currentRecording?.marks || []);
+      
+      // If it was playing before the source change, pause it explicitly
+      if (wasPlaying) {
+        audio.pause();
+      }
     }
   }, [audioSrc, currentRecording]);
 
