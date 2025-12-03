@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useFirebase } from "@/firebase";
+import { getStorage } from "firebase/storage";
 
 function formatTime(seconds: number) {
   const floorSeconds = Math.floor(seconds);
@@ -40,8 +41,8 @@ function formatTime(seconds: number) {
 const VISIBLE_DURATION_S = 60; // 1 minute window
 
 export function HymnPlayer({ hymn }: { hymn: Hymn }) {
-  const { firestore: db, firebaseApp } = useFirebase();
-  const storage = useMemo(() => firebaseApp ? firebaseApp.storage() : null, [firebaseApp]);
+  const { firebaseApp } = useFirebase();
+  const storage = useMemo(() => firebaseApp ? getStorage(firebaseApp) : null, [firebaseApp]);
 
   const [currentRecording, setCurrentRecording] = useState<Recording | undefined>(
     hymn.recordings?.[0]
@@ -72,8 +73,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   
   useEffect(() => {
     if (currentRecording && storage) {
-      const audioRef = ref(storage, currentRecording.audioUrl);
-      getDownloadURL(audioRef)
+      const audioFileRef = ref(storage, currentRecording.audioUrl);
+      getDownloadURL(audioFileRef)
         .then((url) => {
           setAudioSrc(url);
         })
@@ -520,3 +521,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    
