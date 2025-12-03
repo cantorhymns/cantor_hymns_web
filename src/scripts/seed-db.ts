@@ -3,7 +3,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, writeBatch, doc, collection, getDocs } from 'firebase/firestore';
 import { getAuth, signInAnonymously } from 'firebase/auth';
 import { firebaseConfig } from '../firebase/config';
-import { genres, hymns, recordings } from '../lib/seed-data';
+import { genres, hymns, recordings, cantors } from '../lib/seed-data';
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
@@ -40,6 +40,7 @@ async function seedDatabase() {
     await deleteCollection('recordings');
     await deleteCollection('hymns');
     await deleteCollection('genres');
+    await deleteCollection('cantors');
     
     console.log('--- Database cleared. Starting to seed... ---');
 
@@ -54,6 +55,13 @@ async function seedDatabase() {
         description: genre.description,
         icon: genre.icon,
       });
+    });
+
+    // Seed Cantors
+    console.log(`Seeding ${cantors.length} cantors...`);
+    cantors.forEach((cantor) => {
+        const docRef = doc(db, 'cantors', cantor.id);
+        seedBatch.set(docRef, { name: cantor.name });
     });
 
     // Seed Hymns
@@ -71,7 +79,12 @@ async function seedDatabase() {
     recordings.forEach((recording) => {
       // Create a new document with an auto-generated ID in the 'recordings' collection
       const docRef = doc(collection(db, 'recordings'));
-      seedBatch.set(docRef, recording);
+      seedBatch.set(docRef, {
+        hymnId: recording.hymnId,
+        cantorId: recording.cantorId,
+        audioUrl: recording.audioUrl,
+        marks: recording.marks
+      });
     });
 
     // Commit the batch

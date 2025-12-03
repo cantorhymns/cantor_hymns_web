@@ -386,7 +386,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 <CardTitle className="font-headline text-3xl text-primary">
                 {hymn.name}
                 </CardTitle>
-                <CardDescription className="mt-1">{currentRecording.cantor}</CardDescription>
+                <CardDescription className="mt-1">{currentRecording.cantor?.name}</CardDescription>
             </div>
             <Select
                 value={currentRecording.id}
@@ -401,7 +401,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 <SelectContent>
                 {hymn.recordings.map((rec) => (
                     <SelectItem key={rec.id} value={rec.id}>
-                    {rec.cantor}
+                    {rec.cantor?.name}
                     </SelectItem>
                 ))}
                 </SelectContent>
@@ -537,5 +537,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    

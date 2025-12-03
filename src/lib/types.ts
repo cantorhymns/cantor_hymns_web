@@ -2,10 +2,16 @@
 import type { LucideIcon, LucideProps } from 'lucide-react';
 import type { ForwardRefExoticComponent, RefAttributes } from 'react';
 
+export interface Cantor {
+  id: string;
+  name: string;
+}
+
 export interface Recording {
   id: string;
   hymnId: string;
-  cantor: string;
+  cantorId: string;
+  cantor?: Cantor; // Optional, to be populated after fetching
   audioUrl: string;
   marks: number[];
 }

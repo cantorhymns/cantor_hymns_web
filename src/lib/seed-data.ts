@@ -20,6 +20,14 @@ export const genres = [
     }
 ];
 
+export const cantors = [
+    { "id": "cantor-bola", "name": "Cantor Bola" },
+    { "id": "cantor-gad", "name": "Cantor Gad" },
+    { "id": "cantor-ibrahim", "name": "Cantor Ibrahim" },
+    { "id": "cantor-tharwat", "name": "Cantor Tharwat" },
+    { "id": "hics", "name": "HICS" }
+];
+
 export const hymns = [
     {
         "id": "tai-shouri",
@@ -46,56 +54,56 @@ export const hymns = [
 export const recordings = [
     {
         "hymnId": "tai-shouri",
-        "cantor": "CantorBola",
+        "cantorId": "cantor-bola",
         "audioUrl": "CantorBola/CantorBola_MournfulTaishouri.mp3",
-        "marks": [0, 15, 30, 45, 60]
+        "marks": [0, 15, 30, 45, 60, 75, 90, 105, 120, 135]
     },
     {
         "hymnId": "omonogenees",
-        "cantor": "CantorBola",
+        "cantorId": "cantor-bola",
         "audioUrl": "CantorBola/CantorBola_Omonogenees.mp3",
-        "marks": [0, 15, 30, 45, 60]
+        "marks": [0, 15, 30, 45]
     },
     {
         "hymnId": "tarh",
-        "cantor": "CantorGad",
+        "cantorId": "cantor-gad",
         "audioUrl": "CantorGad/CantorGad_Tar7.mp3",
-        "marks": [0, 15, 30, 45, 60]
+        "marks": [0, 15, 30, 45, 60, 75]
     },
     {
         "hymnId": "kata-ni-khoros",
-        "cantor": "CantorIbrahim",
+        "cantorId": "cantor-ibrahim",
         "audioUrl": "CantorIbrahim/CantorIbrahim_KataNiKhoros7egab.mp3",
-        "marks": [0, 15, 30, 45, 60]
+        "marks": [0, 15, 30, 45, 60, 75, 90]
     },
     {
         "hymnId": "tarh",
-        "cantor": "CantorIbrahim",
+        "cantorId": "cantor-ibrahim",
         "audioUrl": "CantorIbrahim/CantorIbrahim_Tar7.mp3",
-        "marks": [0, 15, 30, 45, 60]
+        "marks": [0, 15, 30, 45, 60, 75]
     },
     {
         "hymnId": "tai-shouri",
-        "cantor": "CantorTharwat",
+        "cantorId": "cantor-tharwat",
         "audioUrl": "CantorTharwat/CantorTharwat_MournfulTaishouri.mp3",
-        "marks": [0, 18, 36, 54, 72, 90, 108]
+        "marks": [0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165]
     },
     {
         "hymnId": "kata-ni-khoros",
-        "cantor": "HICS",
+        "cantorId": "hics",
         "audioUrl": "HICS/HICS_KataNiKhoros7egab.mp3",
-        "marks": [0, 15, 30, 45, 60]
+        "marks": [0, 15, 30, 45, 60, 75, 90]
     },
     {
         "hymnId": "tai-shouri",
-        "cantor": "HICS",
+        "cantorId": "hics",
         "audioUrl": "HICS/HICS_MournfulTaishouri.mp3",
-        "marks": [0, 15, 30, 45, 60]
+        "marks": [0, 15, 30, 45, 60, 75, 90, 105, 120, 135]
     },
     {
         "hymnId": "omonogenees",
-        "cantor": "HICS",
+        "cantorId": "hics",
         "audioUrl": "HICS/HICS_Omonogenees.mp3",
-        "marks": [0, 15, 30, 45, 60]
+        "marks": [0, 15, 30, 45]
     }
 ];

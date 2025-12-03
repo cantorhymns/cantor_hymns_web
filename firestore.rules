@@ -1,3 +1,4 @@
+
 /**
  * @fileoverview Firestore Security Rules for the Hymns app.
  *
@@ -9,6 +10,7 @@
  * - /genres/{genreId}: Stores hymn genres.
  * - /hymns/{hymnId}: Stores hymns.
  * - /recordings/{recordingId}: Stores recordings of hymns.
+ * - /cantors/{cantorId}: Stores cantors.
  *
  * Key Security Decisions:
  * - Public read access is granted for all collections to allow anonymous users to browse content.
@@ -52,6 +54,7 @@ service cloud.firestore {
      * @description Allows anyone to read recordings; write access is restricted to authenticated users.
      * @path /recordings/{recordingId}
      * @allow (get, list): Any user can read recording data.
+     al
      * @allow (create, update, delete): Only authenticated users can modify recording data.
      * @deny (create, update, delete): Unauthenticated users cannot modify recording data.
      * @principle Public read, authenticated write.
@@ -59,6 +62,19 @@ service cloud.firestore {
     match /recordings/{recordingId} {
       allow get, list: if true;
       allow create, update, delete: if isSignedIn();
+    }
+
+    /**
+     * @description Allows anyone to read cantors; write access is restricted to authenticated users.
+     * @path /cantors/{cantorId}
+     * @allow (get, list): Any user can read cantor data.
+     * @allow (create, update, delete): Only authenticated users can modify cantor data.
+     * @deny (create, update, delete): Unauthenticated users cannot modify cantor data.
+     * @principle Public read, authenticated write.
+     */
+    match /cantors/{cantorId} {
+        allow get, list: if true;
+        allow create, update, delete: if isSignedIn();
     }
 
     // Helper function to check if a user is signed in.

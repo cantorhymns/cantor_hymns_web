@@ -5,11 +5,14 @@ import { cn } from '@/lib/utils';
 import { Header } from '@/components/header';
 import { Toaster } from '@/components/ui/toaster';
 import { FirebaseClientProvider } from '@/firebase';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 export const metadata: Metadata = {
   title: 'Cantor',
   description: 'An app to learn Coptic hymns',
 };
+
+const queryClient = new QueryClient();
 
 export default function RootLayout({
   children,
@@ -31,13 +34,15 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased">
-        <FirebaseClientProvider>
-          <div className="relative flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-          </div>
-          <Toaster />
-        </FirebaseClientProvider>
+        <QueryClientProvider client={queryClient}>
+            <FirebaseClientProvider>
+            <div className="relative flex min-h-screen flex-col">
+                <Header />
+                <main className="flex-1">{children}</main>
+            </div>
+            <Toaster />
+            </FirebaseClientProvider>
+        </QueryClientProvider>
       </body>
     </html>
   );
