@@ -13,16 +13,11 @@ import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Genre } from '@/lib/types';
 import * as lucideIcons from 'lucide-react';
-import { notFound } from 'next/navigation';
 
 export function GenreHymnList({ genreId }: { genreId: string }) {
   const { data: genre, isLoading: isGenreLoading } = useGenre(genreId);
   const { data: hymns, isLoading: areHymnsLoading } = useHymns(genreId);
   
-  if (!isGenreLoading && !genre) {
-    notFound();
-  }
-
   const renderIcon = (iconName: string) => {
     const Icon = (lucideIcons as any)[iconName] as lucideIcons.LucideIcon;
     if (!Icon) return <Music className="h-10 w-10 text-primary" />;

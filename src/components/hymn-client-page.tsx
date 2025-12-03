@@ -1,6 +1,5 @@
 
 'use client';
-import { notFound } from 'next/navigation';
 import { HymnPlayer } from '@/components/hymn-player';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
@@ -11,10 +10,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 export function HymnClientPage({ hymnId }: { hymnId: string }) {
   const { data: hymn, isLoading: isHymnLoading } = useHymn(hymnId);
   const { data: genre, isLoading: isGenreLoading } = useGenre(hymn?.genreId);
-
-  if (!isHymnLoading && !hymn) {
-    notFound();
-  }
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
