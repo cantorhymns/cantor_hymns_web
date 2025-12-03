@@ -1,7 +1,7 @@
 
 import { doc, getDoc } from 'firebase/firestore';
 import { notFound } from 'next/navigation';
-import { initializeFirebase } from '@/firebase';
+import { getFirestoreAdmin } from '@/firebase/server';
 import { GenreHymnList } from '@/components/genre-hymn-list';
 import type { Genre } from '@/lib/types';
 
@@ -9,8 +9,8 @@ import type { Genre } from '@/lib/types';
 export default async function GenrePage({ params }: { params: { genre: string } }) {
   const { genre: genreId } = params;
 
-  // Manually initialize and get firestore on the server
-  const { firestore } = initializeFirebase();
+  // Use the server-side admin SDK to fetch data
+  const firestore = getFirestoreAdmin();
   const genreRef = doc(firestore, 'genres', genreId);
   const genreSnap = await getDoc(genreRef);
 
