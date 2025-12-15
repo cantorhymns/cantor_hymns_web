@@ -314,29 +314,30 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const handlePrevSection = () => {
     const REWIND_THRESHOLD = 2; // in seconds
     if (!audioRef.current) return;
-
-    // Find the index of the last active mark that is before the current time.
-    const lastPassedMarkIndex = sortedActiveMarks.slice().reverse().findIndex(mark => mark < currentTime);
-
-    if (lastPassedMarkIndex === -1) {
-        // We are before the first mark. Go to the beginning.
-        seek(0);
-        return;
+  
+    // Create a reversed copy to find the most recent marker we've passed
+    const reversedMarks = [...sortedActiveMarks].reverse();
+    
+    // Find the first marker that is less than the current time
+    const currentSectionStartMarker = reversedMarks.find(mark => mark < currentTime);
+  
+    // If no such marker exists, we are before the first one, so go to 0
+    if (currentSectionStartMarker === undefined) {
+      seek(0);
+      return;
     }
-
-    // Get the actual index in the original sorted array.
-    const currentSectionIndex = sortedActiveMarks.length - 1 - lastPassedMarkIndex;
-    const currentSectionStart = sortedActiveMarks[currentSectionIndex];
-
-    // If we are more than the threshold past the start of the current section,
-    // rewind to the start of this section.
-    if (currentTime > currentSectionStart + REWIND_THRESHOLD) {
-        seek(currentSectionStart);
+  
+    // Check if we are past the rewind threshold of the current section
+    if (currentTime > currentSectionStartMarker + REWIND_THRESHOLD) {
+      // If so, just rewind to the start of this section
+      seek(currentSectionStartMarker);
     } else {
-        // Otherwise, go to the start of the PREVIOUS section.
-        // If there's no previous section (i.e., we are in the first one), go to 0.
-        const prevSectionStart = currentSectionIndex > 0 ? sortedActiveMarks[currentSectionIndex - 1] : 0;
-        seek(prevSectionStart);
+      // Otherwise, find the marker for the *previous* section
+      const currentMarkerIndex = reversedMarks.indexOf(currentSectionStartMarker);
+      const previousSectionStartMarker = reversedMarks[currentMarkerIndex + 1];
+  
+      // If a previous marker exists, seek to it. Otherwise, seek to the beginning.
+      seek(previousSectionStartMarker !== undefined ? previousSectionStartMarker : 0);
     }
   };
   
