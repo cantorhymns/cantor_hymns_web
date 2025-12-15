@@ -24,12 +24,14 @@ export function useHymn(hymnId?: string) {
 
   const cantorIds = useMemo(() => {
     if (!recordings) return [];
-    return [...new Set(recordings.map(r => r.cantorId).filter(Boolean))];
+    // Get unique, non-empty cantor IDs
+    return [...new Set(recordings.map(r => r.cantorId).filter(id => !!id))];
   }, [recordings]);
 
   const cantorsQuery = useMemoFirebase(() => {
     if (!firestore || cantorIds.length === 0) return null;
-    return query(collection(firestore, 'cantors'), where('__name__', 'in', cantorIds));
+    // Firestore 'in' query has a limit of 30 items.
+    return query(collection(firestore, 'cantors'), where('__name__', 'in', cantorIds.slice(0, 30)));
   }, [firestore, cantorIds]);
   
   const { data: cantors, isLoading: areCantorsLoading, error: cantorsError } = useCollection<Cantor>(cantorsQuery);
@@ -39,20 +41,26 @@ export function useHymn(hymnId?: string) {
     return new Map(cantors.map(c => [c.id, c]));
   }, [cantors]);
 
-
   const hymnWithRecordings = useMemo(() => {
-    if (!hymn || !recordings) return null;
+    // Wait until all data is loaded before attempting to merge
+    if (!hymn || !recordings || (cantorIds.length > 0 && areCantorsLoading) || !cantors) {
+      return null;
+    }
     
-    const populatedRecordings = recordings.map(rec => ({
-        ...rec,
-        cantor: cantorsMap?.get(rec.cantorId)
-    }));
+    // Create a new hymn object to avoid direct state mutation
+    const populatedHymn: Hymn = { ...hymn };
 
-    return {
-      ...hymn,
-      recordings: populatedRecordings,
-    };
-  }, [hymn, recordings, cantorsMap]);
+    // Populate recordings with cantor data
+    populatedHymn.recordings = recordings.map(rec => {
+      const cantor = cantorsMap.get(rec.cantorId);
+      return {
+        ...rec,
+        cantor: cantor // Attach the full cantor object, or undefined if not found
+      };
+    });
+
+    return populatedHymn;
+  }, [hymn, recordings, cantors, cantorsMap, areCantorsLoading, cantorIds.length]);
 
   return { 
     data: hymnWithRecordings, 
