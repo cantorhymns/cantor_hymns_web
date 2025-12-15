@@ -3,12 +3,12 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
     match /{allPaths=**} {
-      // Allow anyone to read (download) files. The `get` permission is required
-      // for the getDownloadURL() function to work. This is a common setup for public assets.
-      allow get, read: if true;
+      // Allow authenticated users to read (download) files.
+      // The AuthGate component ensures all users have at least an anonymous session.
+      allow read: if request.auth != null;
 
-      // Only allow authenticated users to write (upload, update, delete) files,
-      // and only if the file is less than 5MB. This helps prevent abuse.
+      // Allow authenticated users to write (upload, update, delete) files
+      // that are less than 5MB.
       allow write: if request.auth != null && request.resource.size < 5 * 1024 * 1024;
     }
   }

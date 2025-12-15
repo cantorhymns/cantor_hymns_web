@@ -30,47 +30,12 @@ service cloud.firestore {
     }
 
     /**
-     * @description Rules for the 'genres' collection.
-     * @path /genres/{genreId}
-     * @allow (get, list) - Read Access: `if true` means anyone can read genre data.
-     * @allow (create, update, delete) - Write Access: `if isSignedIn()` means only logged-in users can modify genres.
+     * @description Rules for all collections.
+     * Access is restricted to authenticated users only.
+     * The AuthGate component ensures all users have at least an anonymous session.
      */
-    match /genres/{genreId} {
-      allow get, list: if true;
-      allow write: if isSignedIn();
-    }
-
-    /**
-     * @description Rules for the 'hymns' collection.
-     * @path /hymns/{hymnId}
-     * @allow (get, list) - Read Access: `if true` means anyone can read hymn data.
-     * @allow (write) - Write Access: `if isSignedIn()` means only logged-in users can modify hymns.
-     */
-    match /hymns/{hymnId} {
-      allow get, list: if true;
-      allow write: if isSignedIn();
-    }
-
-    /**
-     * @description Rules for the 'recordings' collection.
-     * @path /recordings/{recordingId}
-     * @allow (get, list) - Read Access: `if true` means anyone can read recording metadata.
-     * @allow (write) - Write Access: `if isSignedIn()` means only logged-in users can modify recordings.
-     */
-    match /recordings/{recordingId} {
-      allow get, list: if true;
-      allow write: if isSignedIn();
-    }
-
-    /**
-     * @description Rules for the 'cantors' collection.
-     * @path /cantors/{cantorId}
-     * @allow (get, list) - Read Access: `if true` means anyone can read cantor data.
-     * @allow (write) - Write Access: `if isSignedIn()` means only logged-in users can modify cantors.
-     */
-    match /cantors/{cantorId} {
-        allow get, list: if true;
-        allow write: if isSignedIn();
+    match /{document=**} {
+      allow read, write: if isSignedIn();
     }
   }
 }
