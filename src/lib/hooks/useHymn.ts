@@ -43,9 +43,8 @@ export function useHymn(hymnId?: string) {
 
   const hymnWithRecordings = useMemo(() => {
     // Wait until all data is loaded before attempting to merge
-    if (!hymn || !recordings || (cantorIds.length > 0 && areCantorsLoading) || !cantors) {
-      return null;
-    }
+    if (isHymnLoading || areRecordingsLoading || areCantorsLoading) return null;
+    if (!hymn || !recordings || !cantors) return hymn;
     
     // Create a new hymn object to avoid direct state mutation
     const populatedHymn: Hymn = { ...hymn };
@@ -60,11 +59,15 @@ export function useHymn(hymnId?: string) {
     });
 
     return populatedHymn;
-  }, [hymn, recordings, cantors, cantorsMap, areCantorsLoading, cantorIds.length]);
+  }, [hymn, recordings, cantors, cantorsMap, isHymnLoading, areRecordingsLoading, areCantorsLoading]);
+  
+  // The isLoading logic must account for all dependent queries.
+  // It's loading if any of the core data fetching is in progress.
+  const isLoading = isHymnLoading || areRecordingsLoading || areCantorsLoading;
 
   return { 
     data: hymnWithRecordings, 
-    isLoading: isHymnLoading || areRecordingsLoading || (cantorIds.length > 0 && areCantorsLoading), 
+    isLoading: isLoading,
     error: hymnError || recordingsError || cantorsError
   };
 }
