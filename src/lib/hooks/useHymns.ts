@@ -27,7 +27,11 @@ export function useHymns(genreId?: string) {
 
   const hymnsWithRecordings = useMemo(() => {
     if (!hymns) return null;
-    if (hymnIds.length > 0 && areRecordingsLoading) return null; // Wait for recordings to load
+    
+    // Don't return partial data; wait for recordings to load if we have hymnIds
+    if (hymnIds.length > 0 && areRecordingsLoading) {
+      return null;
+    }
 
     const recordingsByHymnId = new Map<string, Recording[]>();
     if (recordings) {
@@ -49,7 +53,7 @@ export function useHymns(genreId?: string) {
 
   return { 
     data: hymnsWithRecordings, 
-    isLoading: areHymnsLoading || (hymns && !hymnsWithRecordings),
+    isLoading: areHymnsLoading || (hymns != null && hymnsWithRecordings === null),
     error: hymnsError || recordingsError
   };
 }

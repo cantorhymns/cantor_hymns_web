@@ -55,55 +55,55 @@ export const recordings = [
     {
         "hymnId": "tai-shouri",
         "cantorId": "cantor-bola",
-        "audioUrl": "/CantorBola/CantorBola_MournfulTaishouri.mp3",
+        "audioUrl": "CantorBola/CantorBola_MournfulTaishouri.mp3",
         "marks": [0, 15, 30, 45, 60, 75, 90, 105, 120, 135]
     },
     {
         "hymnId": "omonogenees",
         "cantorId": "cantor-bola",
-        "audioUrl": "/CantorBola/CantorBola_Omonogenees.mp3",
+        "audioUrl": "CantorBola/CantorBola_Omonogenees.mp3",
         "marks": [0, 15, 30, 45]
     },
     {
         "hymnId": "tarh",
         "cantorId": "cantor-gad",
-        "audioUrl": "/CantorGad/CantorGad_Tar7.mp3",
+        "audioUrl": "CantorGad/CantorGad_Tar7.mp3",
         "marks": [0, 15, 30, 45, 60, 75]
     },
     {
         "hymnId": "kata-ni-khoros",
         "cantorId": "cantor-ibrahim",
-        "audioUrl": "/CantorIbrahim/CantorIbrahim_KataNiKhoros7egab.mp3",
+        "audioUrl": "CantorIbrahim/CantorIbrahim_KataNiKhoros7egab.mp3",
         "marks": [0, 15, 30, 45, 60, 75, 90]
     },
     {
         "hymnId": "tarh",
         "cantorId": "cantor-ibrahim",
-        "audioUrl": "/CantorIbrahim/CantorIbrahim_Tar7.mp3",
+        "audioUrl": "CantorIbrahim/CantorIbrahim_Tar7.mp3",
         "marks": [0, 15, 30, 45, 60, 75]
     },
     {
         "hymnId": "tai-shouri",
         "cantorId": "cantor-tharwat",
-        "audioUrl": "/CantorTharwat/CantorTharwat_MournfulTaishouri.mp3",
+        "audioUrl": "CantorTharwat/CantorTharwat_MournfulTaishouri.mp3",
         "marks": [0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165]
     },
     {
         "hymnId": "kata-ni-khoros",
         "cantorId": "hics",
-        "audioUrl": "/HICS/HICS_KataNiKhoros7egab.mp3",
+        "audioUrl": "HICS/HICS_KataNiKhoros7egab.mp3",
         "marks": [0, 15, 30, 45, 60, 75, 90]
     },
     {
         "hymnId": "tai-shouri",
         "cantorId": "hics",
-        "audioUrl": "/HICS/HICS_MournfulTaishouri.mp3",
+        "audioUrl": "HICS/HICS_MournfulTaishouri.mp3",
         "marks": [0, 15, 30, 45, 60, 75, 90, 105, 120, 135]
     },
     {
         "hymnId": "omonogenees",
         "cantorId": "hics",
-        "audioUrl": "/HICS/HICS_Omonogenees.mp3",
+        "audioUrl": "HICS/HICS_Omonogenees.mp3",
         "marks": [0, 15, 30, 45]
     }
 ];
