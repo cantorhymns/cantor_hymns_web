@@ -65,12 +65,25 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
   
   useEffect(() => {
-    setCurrentRecording(hymn.recordings?.[0]);
-    setPlaybackRate(1);
-    setIsPlaying(false);
+    // When hymn changes, reset to the first recording
+    const firstRecording = hymn.recordings?.[0];
+    setCurrentRecording(firstRecording);
   }, [hymn]);
   
   useEffect(() => {
+    // This effect runs when the current recording changes.
+    // It resets the player state and fetches the new audio URL.
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+    }
+    
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setPlaybackRate(1);
+    setAudioSrc('');
+    setActiveMarks(currentRecording?.marks || []);
+
     if (currentRecording && storage) {
       const audioFileRef = ref(storage, currentRecording.audioUrl);
       getDownloadURL(audioFileRef)
@@ -83,27 +96,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     }
   }, [currentRecording, storage]);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (audio && audioSrc) {
-      // Store current playing state
-      const wasPlaying = !audio.paused;
-      
-      // Reset audio element
-      audio.src = audioSrc;
-      audio.load();
-      
-      // Reset component state
-      setCurrentTime(0);
-      setIsPlaying(false);
-      setActiveMarks(currentRecording?.marks || []);
-      
-      // If it was playing before the source change, pause it explicitly
-      if (wasPlaying) {
-        audio.pause();
-      }
-    }
-  }, [audioSrc, currentRecording]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -379,7 +371,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   return (
     <Card className="w-full max-w-3xl mx-auto shadow-xl">
-      <audio ref={audioRef} preload="metadata" />
+      <audio ref={audioRef} preload="metadata" src={audioSrc} />
       <CardHeader>
         <div className="flex justify-between items-start">
             <div>
@@ -537,3 +529,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    
