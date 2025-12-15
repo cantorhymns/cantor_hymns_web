@@ -1,85 +1,76 @@
 
 /**
- * @fileoverview Firestore Security Rules for the Hymns app.
+ * @fileoverview Firestore Security Rules for the Cantor app.
  *
  * Core Philosophy:
- * This ruleset adopts a public-read, owner-only-write model.  All data is readable by any client (including unauthenticated ones).
- * Data modification (create, update, delete) is only permitted by an authenticated user.
+ * This ruleset adopts a "public-read, authenticated-write" model. This is a very
+ * common pattern for apps that have public content that anyone can view, but
+ * require users to be logged in to create or modify content.
+ *
+ * -   **Public Read:** All data (hymn names, genres, recording details) is readable
+ *     by any client, including unauthenticated visitors. This allows your app to
+ *     display all the hymn information to everyone.
+ * -   **Authenticated Write:** Only authenticated users (users who have signed in)
+ *     are permitted to create, update, or delete data.
  *
  * Data Structure:
- * - /genres/{genreId}: Stores hymn genres.
- * - /hymns/{hymnId}: Stores hymns.
- * - /recordings/{recordingId}: Stores recordings of hymns.
- * - /cantors/{cantorId}: Stores cantors.
- *
- * Key Security Decisions:
- * - Public read access is granted for all collections to allow anonymous users to browse content.
- * - Write access is restricted and requires the user to be authenticated, but no ownership is validated.
- *
- * Potential Improvements:
- *  - Add user management and role-based access control for content moderation.
- *  - Consider rate limiting to prevent abuse.
+ * - /genres/{genreId}: Stores hymn genres (e.g., Holy Week).
+ * - /hymns/{hymnId}: Stores individual hymns.
+ * - /recordings/{recordingId}: Stores recording metadata (e.g., which cantor, what audio file path).
+ * - /cantors/{cantorId}: Stores the list of cantors.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Helper function to check if a user is signed in.
+    // This makes the rules more readable.
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
     /**
-     * @description Allows anyone to read genres; write access is restricted to authenticated users.
+     * @description Rules for the 'genres' collection.
      * @path /genres/{genreId}
-     * @allow (get, list): Any user can read genre data.
-     * @allow (create, update, delete): Only authenticated users can modify genre data.
-     * @deny (create, update, delete): Unauthenticated users cannot modify genre data.
-     * @principle Public read, authenticated write.
+     * @allow (get, list) - Read Access: `if true` means anyone can read genre data.
+     * @allow (create, update, delete) - Write Access: `if isSignedIn()` means only logged-in users can modify genres.
      */
     match /genres/{genreId} {
       allow get, list: if true;
-      allow create, update, delete: if isSignedIn();
+      allow write: if isSignedIn();
     }
 
     /**
-     * @description Allows anyone to read hymns; write access is restricted to authenticated users.
+     * @description Rules for the 'hymns' collection.
      * @path /hymns/{hymnId}
-     * @allow (get, list): Any user can read hymn data.
-     * @allow (create, update, delete): Only authenticated users can modify hymn data.
-     * @deny (create, update, delete): Unauthenticated users cannot modify hymn data.
-     * @principle Public read, authenticated write.
+     * @allow (get, list) - Read Access: `if true` means anyone can read hymn data.
+     * @allow (write) - Write Access: `if isSignedIn()` means only logged-in users can modify hymns.
      */
     match /hymns/{hymnId} {
       allow get, list: if true;
-      allow create, update, delete: if isSignedIn();
+      allow write: if isSignedIn();
     }
 
     /**
-     * @description Allows anyone to read recordings; write access is restricted to authenticated users.
+     * @description Rules for the 'recordings' collection.
      * @path /recordings/{recordingId}
-     * @allow (get, list): Any user can read recording data.
-     al
-     * @allow (create, update, delete): Only authenticated users can modify recording data.
-     * @deny (create, update, delete): Unauthenticated users cannot modify recording data.
-     * @principle Public read, authenticated write.
+     * @allow (get, list) - Read Access: `if true` means anyone can read recording metadata.
+     * @allow (write) - Write Access: `if isSignedIn()` means only logged-in users can modify recordings.
      */
     match /recordings/{recordingId} {
       allow get, list: if true;
-      allow create, update, delete: if isSignedIn();
+      allow write: if isSignedIn();
     }
 
     /**
-     * @description Allows anyone to read cantors; write access is restricted to authenticated users.
+     * @description Rules for the 'cantors' collection.
      * @path /cantors/{cantorId}
-     * @allow (get, list): Any user can read cantor data.
-     * @allow (create, update, delete): Only authenticated users can modify cantor data.
-     * @deny (create, update, delete): Unauthenticated users cannot modify cantor data.
-     * @principle Public read, authenticated write.
+     * @allow (get, list) - Read Access: `if true` means anyone can read cantor data.
+     * @allow (write) - Write Access: `if isSignedIn()` means only logged-in users can modify cantors.
      */
     match /cantors/{cantorId} {
         allow get, list: if true;
-        allow create, update, delete: if isSignedIn();
-    }
-
-    // Helper function to check if a user is signed in.
-    function isSignedIn() {
-      return request.auth != null;
+        allow write: if isSignedIn();
     }
   }
 }
