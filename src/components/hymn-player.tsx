@@ -312,24 +312,28 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   };
 
   const handlePrevSection = () => {
-    if (!audioRef.current) return;
+    const REWIND_THRESHOLD = 2; // in seconds
     
-    const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark < currentTime - 1.5);
-    
-    if (currentSectionStart !== undefined && currentTime > currentSectionStart + 1.5) {
-        seek(currentSectionStart);
-        return;
+    // Find the start of the section we are currently in.
+    const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= currentTime);
+
+    // Case 1: We are more than REWIND_THRESHOLD seconds into the current section.
+    // Action: Rewind to the beginning of this section.
+    if (currentSectionStart !== undefined && currentTime > currentSectionStart + REWIND_THRESHOLD) {
+      seek(currentSectionStart);
+      return;
     }
     
-    if (currentSectionStart !== undefined) {
-        const prevSectionStart = [...sortedActiveMarks].reverse().find(mark => mark < currentSectionStart);
-        if (prevSectionStart !== undefined) {
-            seek(prevSectionStart);
-        } else {
-            seek(0);
-        }
+    // Case 2: We are at the beginning of a section, or before the first section.
+    // Action: Go to the start of the PREVIOUS section.
+    const currentSectionIndex = sortedActiveMarks.findIndex(mark => mark === currentSectionStart);
+    
+    if (currentSectionIndex > 0) {
+      // There is a previous section, so go to it.
+      seek(sortedActiveMarks[currentSectionIndex - 1]);
     } else {
-        seek(0);
+      // We are in or before the first section, so just go to the very beginning.
+      seek(0);
     }
   };
   
@@ -520,7 +524,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
                 <div className="flex flex-col items-center gap-2">
                     <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="icon" onClick={handlePrevSection} disabled={sortedActiveMarks.length < 2}>
+                        <Button variant="ghost" size="icon" onClick={handlePrevSection} disabled={sortedActiveMarks.length === 0}>
                             <SkipBack className="h-6 w-6" />
                             <span className="sr-only">Previous Section</span>
                         </Button>
@@ -528,7 +532,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                             {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
                             <span className="sr-only">{isPlaying ? "Pause" : "Play"}</span>
                         </Button>
-                         <Button variant="ghost" size="icon" onClick={handleNextSection} disabled={sortedActiveMarks.length < 2}>
+                         <Button variant="ghost" size="icon" onClick={handleNextSection} disabled={sortedActiveMarks.length === 0}>
                             <SkipForward className="h-6 w-6" />
                             <span className="sr-only">Next Section</span>
                         </Button>
