@@ -26,11 +26,11 @@ import {
   SkipForward,
   FastForward,
   Rewind,
-  CheckCircle,
   XCircle,
 } from "lucide-react";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useFirebase, getStorage } from "@/firebase";
+import { Skeleton } from "./ui/skeleton";
 
 function formatTime(seconds: number) {
   const floorSeconds = Math.floor(seconds);
@@ -49,8 +49,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     hymn.recordings?.[0]
   );
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
-  const [audioStatus, setAudioStatus] = useState<'idle' | 'loading' | 'loaded' | 'error'>('idle');
   const [audioError, setAudioError] = useState<string | null>(null);
+  const [isLoadingAudio, setIsLoadingAudio] = useState(false);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
@@ -77,7 +77,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   
   useEffect(() => {
     // This effect runs when the current recording changes.
-    // It resets the player state.
+    // It resets the player state and fetches the new audio.
     const audio = audioRef.current;
     if (audio) {
       audio.pause();
@@ -87,36 +87,29 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     setCurrentTime(0);
     setPlaybackRate(1);
     setAudioSrc(null);
-    setAudioStatus('idle');
     setAudioError(null);
     setDuration(0);
     setActiveMarks(currentRecording?.marks || []);
 
-  }, [currentRecording]);
-
-  const handleLoadAudio = useCallback(async () => {
-    if (!currentRecording) {
-        setAudioStatus('error');
-        setAudioError('No recording selected.');
-        return;
-    }
-    if (!storage) {
-        setAudioStatus('error');
+    if (currentRecording && storage) {
+      setIsLoadingAudio(true);
+      setAudioError(null);
+      const audioFileRef = ref(storage, currentRecording.audioUrl);
+      getDownloadURL(audioFileRef)
+        .then(url => {
+          setAudioSrc(url);
+        })
+        .catch(error => {
+          console.error("Error getting download URL:", error);
+          setAudioError(error.code || error.message || 'Failed to fetch audio.');
+        })
+        .finally(() => {
+            setIsLoadingAudio(false);
+        });
+    } else if (currentRecording && !storage) {
         setAudioError('Storage service is not available.');
-        return;
     }
-    setAudioStatus('loading');
-    setAudioError(null);
-    try {
-        const audioFileRef = ref(storage, currentRecording.audioUrl);
-        const url = await getDownloadURL(audioFileRef);
-        setAudioSrc(url);
-        setAudioStatus('loaded');
-    } catch (error: any) {
-        console.error("Error getting download URL:", error);
-        setAudioStatus('error');
-        setAudioError(error.code || error.message || 'Failed to fetch audio.');
-    }
+
   }, [currentRecording, storage]);
 
 
@@ -321,26 +314,21 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const handlePrevSection = () => {
     if (!audioRef.current) return;
     
-    // Find the mark for the beginning of the current section.
-    // This is the last mark that is less than the current time.
     const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark < currentTime - 1.5);
     
-    // If we are more than 1.5s into a section, the first click should go to the start of *this* section.
     if (currentSectionStart !== undefined && currentTime > currentSectionStart + 1.5) {
         seek(currentSectionStart);
         return;
     }
     
-    // If we are already at the start of a section (or very close), find the section *before* it.
     if (currentSectionStart !== undefined) {
         const prevSectionStart = [...sortedActiveMarks].reverse().find(mark => mark < currentSectionStart);
         if (prevSectionStart !== undefined) {
             seek(prevSectionStart);
         } else {
-            seek(0); // If there's no section before, go to the beginning.
+            seek(0);
         }
     } else {
-        // If we are before the first mark, go to the beginning.
         seek(0);
     }
   };
@@ -386,27 +374,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   }, [currentTime, duration]);
 
-  const renderAudioStatus = () => {
-    switch(audioStatus) {
-      case 'loading':
-        return <span className="text-sm text-muted-foreground">Loading...</span>;
-      case 'loaded':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'error':
-        return (
-          <div className="flex items-center gap-2">
-            <XCircle className="h-5 w-5 text-destructive" />
-            <span className="text-sm text-destructive truncate" title={audioError || ''}>
-              Error
-            </span>
-          </div>
-        );
-      case 'idle':
-      default:
-        return <Button onClick={handleLoadAudio} size="sm">Load Audio</Button>;
-    }
-  }
-  
   if (!hymn.recordings || hymn.recordings.length === 0) {
       return (
         <Card className="w-full max-w-3xl mx-auto shadow-xl">
@@ -432,6 +399,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
         </Card>
       )
   }
+  
+  const isPlayerDisabled = !audioSrc || !!audioError;
 
   return (
     <Card className="w-full max-w-3xl mx-auto shadow-xl">
@@ -463,14 +432,11 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                   ))}
                   </SelectContent>
               </Select>
-              <div className="w-[100px] h-10 flex items-center justify-center">
-                {renderAudioStatus()}
-              </div>
             </div>
         </div>
       </CardHeader>
       <CardContent className="px-6 pb-6">
-        <div className={`space-y-6 transition-opacity ${audioStatus !== 'loaded' ? 'opacity-30 pointer-events-none' : ''}`}>
+        <div className={`space-y-6 transition-opacity ${isPlayerDisabled ? 'opacity-30 pointer-events-none' : ''}`}>
            <div 
                 ref={waveformContainerRef} 
                 className="relative w-full h-20 bg-secondary/50 rounded-lg group touch-none overflow-hidden"
@@ -594,7 +560,26 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 </div>
             </div>
         </div>
+        {isLoadingAudio && (
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center space-y-4">
+                <Skeleton className="h-20 w-full" />
+                <div className="w-full flex justify-between">
+                    <Skeleton className="h-5 w-12" />
+                    <Skeleton className="h-5 w-12" />
+                </div>
+                <Skeleton className="h-10 w-40" />
+            </div>
+        )}
+        {audioError && !isLoadingAudio && (
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center text-center p-4">
+                 <XCircle className="h-10 w-10 text-destructive mb-4" />
+                <p className="text-lg font-semibold text-destructive">Audio Failed to Load</p>
+                <p className="text-sm text-muted-foreground max-w-xs">{audioError}</p>
+            </div>
+        )}
       </CardContent>
     </Card>
   );
 }
+
+    
