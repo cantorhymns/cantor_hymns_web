@@ -46,8 +46,14 @@ export function useHymn(hymnId?: string) {
 
   const hymnWithRecordings = useMemo(() => {
     // Don't try to assemble the data until everything is loaded.
-    if (isLoading || !hymn) {
+    if (!hymn) {
       return null;
+    }
+    
+    // If we have a hymn but are still waiting on related data, return the basic hymn object.
+    // This allows the page title to render while recordings are still loading.
+    if (isLoading) {
+      return { ...hymn, recordings: [] };
     }
     
     // Create a new hymn object to avoid direct mutation.
@@ -69,7 +75,7 @@ export function useHymn(hymnId?: string) {
   
   return { 
     data: hymnWithRecordings, 
-    isLoading: isLoading,
+    isLoading: !hymnWithRecordings, // Loading is true if the final object hasn't been assembled
     error: hymnError || recordingsError || cantorsError
   };
 }
