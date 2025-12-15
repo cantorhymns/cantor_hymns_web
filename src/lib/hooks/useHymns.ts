@@ -26,33 +26,30 @@ export function useHymns(genreId?: string) {
   const { data: recordings, isLoading: areRecordingsLoading, error: recordingsError } = useCollection<Recording>(recordingsQuery);
 
   const hymnsWithRecordings = useMemo(() => {
-    if (!hymns) return null; 
-    if (!recordings) { 
-        return hymns.map(hymn => ({
-            ...hymn,
-            recordings: []
-        }));
-    }
-    
+    if (!hymns) return null;
+    if (hymnIds.length > 0 && areRecordingsLoading) return null; // Wait for recordings to load
+
     const recordingsByHymnId = new Map<string, Recording[]>();
-    recordings.forEach(rec => {
-        if (!recordingsByHymnId.has(rec.hymnId)) {
-            recordingsByHymnId.set(rec.hymnId, []);
-        }
-        recordingsByHymnId.get(rec.hymnId)!.push(rec);
-    });
+    if (recordings) {
+        recordings.forEach(rec => {
+            if (!recordingsByHymnId.has(rec.hymnId)) {
+                recordingsByHymnId.set(rec.hymnId, []);
+            }
+            recordingsByHymnId.get(rec.hymnId)!.push(rec);
+        });
+    }
 
     return hymns.map(hymn => ({
         ...hymn,
         recordings: recordingsByHymnId.get(hymn.id) || []
     }));
 
-  }, [hymns, recordings]);
+  }, [hymns, recordings, hymnIds, areRecordingsLoading]);
 
 
   return { 
     data: hymnsWithRecordings, 
-    isLoading: areHymnsLoading || (hymnIds.length > 0 && areRecordingsLoading),
+    isLoading: areHymnsLoading || (hymns && !hymnsWithRecordings),
     error: hymnsError || recordingsError
   };
 }

@@ -24,7 +24,7 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
     return <Icon className="h-10 w-10 text-primary" />;
   };
 
-  const isLoading = isGenreLoading;
+  const isLoading = isGenreLoading || areHymnsLoading;
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
@@ -37,7 +37,7 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
           Back to Genres
         </Link>
         <div className="flex items-center gap-4">
-           {isLoading || !genre ? (
+           {isGenreLoading || !genre ? (
              <>
                 <Skeleton className="h-16 w-16 rounded-lg" />
                 <div className="w-2/3">
@@ -63,7 +63,7 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
         </div>
       </div>
 
-      {areHymnsLoading ? (
+      {isLoading ? (
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {Array.from({length: 3}).map((_, i) => (
                 <Card key={i} className="h-full flex flex-col">
@@ -91,7 +91,7 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
                     {hymn.name}
                   </CardTitle>
                   <CardDescription>
-                    {hymn.recordings?.length || 0} recordings available
+                    {hymn.recordings ? `${hymn.recordings.length} ${hymn.recordings.length === 1 ? 'recording' : 'recordings'} available` : '0 recordings available'}
                   </CardDescription>
                 </CardHeader>
                  <div className="p-6 pt-0 flex justify-end items-center text-sm font-semibold text-primary/80 group-hover:text-primary">
