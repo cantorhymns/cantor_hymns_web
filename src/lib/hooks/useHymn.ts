@@ -24,13 +24,11 @@ export function useHymn(hymnId?: string) {
 
   const cantorIds = useMemo(() => {
     if (!recordings) return [];
-    // Get unique, non-empty cantor IDs
     return [...new Set(recordings.map(r => r.cantorId).filter(id => !!id))];
   }, [recordings]);
 
   const cantorsQuery = useMemoFirebase(() => {
     if (!firestore || cantorIds.length === 0) return null;
-    // Firestore 'in' query has a limit of 30 items.
     return query(collection(firestore, 'cantors'), where('__name__', 'in', cantorIds.slice(0, 30)));
   }, [firestore, cantorIds]);
   
@@ -40,31 +38,24 @@ export function useHymn(hymnId?: string) {
     if (!cantors) return new Map<string, Cantor>();
     return new Map(cantors.map(c => [c.id, c]));
   }, [cantors]);
+  
+  const isLoading = isHymnLoading || areRecordingsLoading || (cantorIds.length > 0 && areCantorsLoading);
 
   const hymnWithRecordings = useMemo(() => {
-    // Wait until all data is loaded before attempting to merge
-    if (isHymnLoading || areRecordingsLoading || areCantorsLoading) return null;
-    if (!hymn || !recordings || !cantors) return hymn;
+    if (isLoading || !hymn) return null;
     
-    // Create a new hymn object to avoid direct state mutation
-    const populatedHymn: Hymn = { ...hymn };
+    const populatedHymn: Hymn = { ...hymn, recordings: [] };
 
-    // Populate recordings with cantor data
-    populatedHymn.recordings = recordings.map(rec => {
-      const cantor = cantorsMap.get(rec.cantorId);
-      return {
-        ...rec,
-        cantor: cantor // Attach the full cantor object, or undefined if not found
-      };
-    });
+    if (recordings) {
+        populatedHymn.recordings = recordings.map(rec => ({
+            ...rec,
+            cantor: cantorsMap.get(rec.cantorId)
+        }));
+    }
 
     return populatedHymn;
-  }, [hymn, recordings, cantors, cantorsMap, isHymnLoading, areRecordingsLoading, areCantorsLoading]);
+  }, [hymn, recordings, cantorsMap, isLoading]);
   
-  // The isLoading logic must account for all dependent queries.
-  // It's loading if any of the core data fetching is in progress.
-  const isLoading = isHymnLoading || areRecordingsLoading || areCantorsLoading;
-
   return { 
     data: hymnWithRecordings, 
     isLoading: isLoading,
