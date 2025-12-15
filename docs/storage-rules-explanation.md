@@ -28,7 +28,7 @@ service firebase.storage {
 
 The most important permissions are `read` and `write`.
 
--   **`allow read`**: A general permission for reading files. For our case, we need to be more specific.
+-   **`allow read`**: A general permission that includes `get` and `list`.
 -   **`allow get`**: This specifically governs who can **download** a file using its URL. This is what was failing. For your app to play a hymn, it needs permission to `get` the audio file.
 -   **`allow write`**: Governs who can **upload**, **update**, or **delete** files.
 
@@ -50,13 +50,14 @@ service firebase.storage {
     match /{allPaths=**} {
       // Allow anyone to read (download) files.
       // This is necessary for the getDownloadURL() function to work for public audio.
-      allow get: if true;
+      allow get, read: if true;
 
-      // Only allow authenticated users to write (upload, update, delete) files.
-      allow write: if request.auth != null;
+      // Only allow authenticated users to write (upload, update, delete) files,
+      // and only if the file is less than 5MB.
+      allow write: if request.auth != null && request.resource.size < 5 * 1024 * 1024;
     }
   }
 }
 ```
 
-This configuration makes your audio files publicly downloadable (solving the error) while keeping your storage secure from unauthorized uploads.
+This configuration makes your audio files publicly downloadable (solving the error) while keeping your storage secure from unauthorized uploads and very large files.

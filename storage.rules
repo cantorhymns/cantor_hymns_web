@@ -2,12 +2,13 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
     match /{allPaths=**} {
-      // Allow anyone to read (download) files.
-      // This is necessary for the getDownloadURL() function to work for public audio.
-      allow get: if true;
+      // Allow anyone to read (download) files. The `get` permission is required
+      // for the getDownloadURL() function to work. We include `read` for broad
+      // public access. This is secure for public assets.
+      allow get, read: if true;
 
       // Only allow authenticated users to write (upload, update, delete) files.
-      // We also check that the user is uploading a file that is not too large.
+      // We also add a check to ensure uploaded files are not excessively large.
       allow write: if request.auth != null && request.resource.size < 5 * 1024 * 1024;
     }
   }
