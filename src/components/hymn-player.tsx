@@ -28,7 +28,6 @@ import {
   Rewind,
   CheckCircle,
   XCircle,
-  AlertTriangle,
 } from "lucide-react";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useFirebase, getStorage } from "@/firebase";
@@ -117,7 +116,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
         console.error("Error getting download URL:", error);
         setAudioStatus('error');
         setAudioError(error.code || error.message || 'Failed to fetch audio.');
-        // Additionally, we can emit this to a global error handler if needed
     }
   }, [currentRecording, storage]);
 
@@ -323,20 +321,27 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const handlePrevSection = () => {
     if (!audioRef.current) return;
     
-    // Find the start of the current section
-    const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= currentTime - 1.5);
-
+    // Find the mark for the beginning of the current section.
+    // This is the last mark that is less than the current time.
+    const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark < currentTime - 1.5);
+    
+    // If we are more than 1.5s into a section, the first click should go to the start of *this* section.
+    if (currentSectionStart !== undefined && currentTime > currentSectionStart + 1.5) {
+        seek(currentSectionStart);
+        return;
+    }
+    
+    // If we are already at the start of a section (or very close), find the section *before* it.
     if (currentSectionStart !== undefined) {
-      // Find the mark before the current section starts
-      const prevMark = [...sortedActiveMarks].reverse().find(mark => mark < currentSectionStart);
-       if (prevMark !== undefined) {
-         seek(prevMark);
-       } else {
-         seek(0);
-       }
+        const prevSectionStart = [...sortedActiveMarks].reverse().find(mark => mark < currentSectionStart);
+        if (prevSectionStart !== undefined) {
+            seek(prevSectionStart);
+        } else {
+            seek(0); // If there's no section before, go to the beginning.
+        }
     } else {
-      // If we are before the first mark, go to the beginning
-      seek(0);
+        // If we are before the first mark, go to the beginning.
+        seek(0);
     }
   };
   
@@ -593,5 +598,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    
