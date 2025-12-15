@@ -4,15 +4,10 @@ import { getFirestore, collection, getDocs, writeBatch, query } from 'firebase/f
 import { getAuth, signInAnonymously } from 'firebase/auth';
 import { firebaseConfig } from '../firebase/config';
 
-// Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig);
-const db = getFirestore(firebaseApp);
-const auth = getAuth(firebaseApp);
-
 // --- Source of Truth ---
 // These are the only cantors and hymns that should exist in the database.
 const APPROVED_CANTORS = ['cantor-bola', 'cantor-gad', 'cantor-ibrahim', 'cantor-tharwat', 'hics'];
-const APPROVED_HYMN_NAMES = ['Tai Shouri', 'O Monogenees', 'Tarh', 'Kata Ni Khoros', 'Phai Etafenf'];
+const APPROVED_HYMN_NAMES = ['Tai Shouri (Mournful)', 'O Monogenees', 'Tarh', 'Kata Ni Khoros', 'Phai Etafenf'];
 // --- End of Source of Truth ---
 
 async function cleanDatabase() {
@@ -68,9 +63,7 @@ async function cleanDatabase() {
       const hymnName = hymn.name;
 
       // Condition 3: Delete if hymn name is not approved
-      // We check for the base name, ignoring parenthetical parts like "(Mournful)"
-      const baseHymnName = hymnName.split(' (')[0];
-      if (!APPROVED_HYMN_NAMES.includes(baseHymnName)) {
+      if (!APPROVED_HYMN_NAMES.includes(hymnName)) {
         console.log(`- Deleting unapproved hymn: ${hymnName} (ID: ${doc.id})`);
         batch.delete(doc.ref);
         deletedHymnsCount++;
