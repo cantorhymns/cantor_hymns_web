@@ -65,7 +65,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const waveformContainerRef = useRef<HTMLDivElement>(null);
   const waveformInnerRef = useRef<HTMLDivElement>(null);
   const seekStartRef = useRef({ x: 0, time: 0 });
-  const lastKnownTimeRef = useRef(0);
 
   const sortedMarks = useMemo(() => [...(currentRecording?.marks || [])].sort((a, b) => a - b), [currentRecording]);
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
@@ -149,29 +148,27 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     if (audio && !isSeeking) {
       const newTime = audio.currentTime;
       setCurrentTime(newTime);
-      lastKnownTimeRef.current = newTime;
     }
   }, [isSeeking]);
 
-  // This is the new effect for section looping
+  // Section looping logic
   useEffect(() => {
-    if (!isRepeat || !isPlaying || sortedActiveMarks.length < 2) {
+    const audio = audioRef.current;
+    if (!isRepeat || !isPlaying || !audio || sortedActiveMarks.length < 2) {
       return;
     }
-  
-    const reversedMarks = [...sortedActiveMarks].reverse();
-    const lastTime = lastKnownTimeRef.current;
-    const currentTime = audioRef.current?.currentTime ?? 0;
-  
-    // Find the section we are currently in
-    const currentSectionStart = reversedMarks.find(mark => mark <= lastTime);
     
-    // Find the next marker after our current section start
-    const nextSectionStart = sortedActiveMarks.find(mark => mark > (currentSectionStart ?? -1));
+    const time = audio.currentTime;
 
-    // If there is a next marker and we just passed it, loop back
-    if (nextSectionStart !== undefined && lastTime < nextSectionStart && currentTime >= nextSectionStart) {
-        seek(currentSectionStart ?? 0);
+    // Find the start of the current section
+    const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= time) ?? 0;
+    
+    // Find the end of the current section (which is the next active marker)
+    const currentSectionEnd = sortedActiveMarks.find(mark => mark > currentSectionStart);
+
+    // If we have a valid section end and we've passed it, loop back
+    if (currentSectionEnd !== undefined && time >= currentSectionEnd) {
+      seek(currentSectionStart);
     }
 
   }, [currentTime, isRepeat, isPlaying, sortedActiveMarks, seek]);
@@ -616,5 +613,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    
