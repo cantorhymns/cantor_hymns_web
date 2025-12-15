@@ -46,7 +46,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const [currentRecording, setCurrentRecording] = useState<Recording | undefined>(
     hymn.recordings?.[0]
   );
-  const [audioSrc, setAudioSrc] = useState<string>('');
+  const [audioSrc, setAudioSrc] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -81,7 +81,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     setIsPlaying(false);
     setCurrentTime(0);
     setPlaybackRate(1);
-    setAudioSrc('');
+    setAudioSrc(null);
     setActiveMarks(currentRecording?.marks || []);
 
     if (currentRecording && storage) {
@@ -149,7 +149,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       audio.removeEventListener("timeupdate", handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
     };
-  }, [handleEnded, handleTimeUpdate]);
+  }, [handleEnded, handleTimeUpdate, audioSrc]);
 
   useEffect(() => {
     if (waveformContainerRef.current && waveformInnerRef.current && duration > VISIBLE_DURATION_S) {
@@ -371,7 +371,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   return (
     <Card className="w-full max-w-3xl mx-auto shadow-xl">
-      <audio ref={audioRef} preload="metadata" src={audioSrc} />
+      {audioSrc && <audio ref={audioRef} preload="metadata" src={audioSrc} />}
       <CardHeader>
         <div className="flex justify-between items-start">
             <div>
