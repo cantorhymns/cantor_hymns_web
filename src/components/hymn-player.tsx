@@ -65,6 +65,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const waveformContainerRef = useRef<HTMLDivElement>(null);
   const waveformInnerRef = useRef<HTMLDivElement>(null);
   const seekStartRef = useRef({ x: 0, time: 0 });
+  const lastKnownTimeRef = useRef(0);
 
   const sortedMarks = useMemo(() => [...(currentRecording?.marks || [])].sort((a, b) => a - b), [currentRecording]);
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
@@ -119,27 +120,62 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     }
   }, [playbackRate]);
 
-  const handleEnded = useCallback(() => {
-    setIsPlaying(false);
+  const seek = useCallback((time: number) => {
+    if (!audioRef.current || duration <= 0) return;
+    const newTime = Math.max(0, Math.min(time, duration));
     if (audioRef.current) {
-      audioRef.current.currentTime = 0;
+      audioRef.current.currentTime = newTime;
     }
-    if (isRepeat) {
-        if (audioRef.current) {
-            audioRef.current.play();
-            setIsPlaying(true);
-        }
+    setCurrentTime(newTime);
+  }, [duration]);
+
+  const handleEnded = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+  
+    // If repeat is for the whole track and we are not looping a section
+    if (isRepeat && sortedActiveMarks.length < 2) {
+      audio.currentTime = 0;
+      audio.play();
+      setIsPlaying(true);
+    } else {
+      setIsPlaying(false);
+      audio.currentTime = 0; // Reset to beginning if not repeating
     }
-  }, [isRepeat]);
+  }, [isRepeat, sortedActiveMarks]);
 
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
-    if (audio) {
-      if (!isSeeking) {
-          setCurrentTime(audio.currentTime);
-      }
+    if (audio && !isSeeking) {
+      const newTime = audio.currentTime;
+      setCurrentTime(newTime);
+      lastKnownTimeRef.current = newTime;
     }
   }, [isSeeking]);
+
+  // This is the new effect for section looping
+  useEffect(() => {
+    if (!isRepeat || !isPlaying || sortedActiveMarks.length < 2) {
+      return;
+    }
+  
+    const reversedMarks = [...sortedActiveMarks].reverse();
+    const lastTime = lastKnownTimeRef.current;
+    const currentTime = audioRef.current?.currentTime ?? 0;
+  
+    // Find the section we are currently in
+    const currentSectionStart = reversedMarks.find(mark => mark <= lastTime);
+    
+    // Find the next marker after our current section start
+    const nextSectionStart = sortedActiveMarks.find(mark => mark > (currentSectionStart ?? -1));
+
+    // If there is a next marker and we just passed it, loop back
+    if (nextSectionStart !== undefined && lastTime < nextSectionStart && currentTime >= nextSectionStart) {
+        seek(currentSectionStart ?? 0);
+    }
+
+  }, [currentTime, isRepeat, isPlaying, sortedActiveMarks, seek]);
+
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -208,15 +244,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       }
     }
   };
-  
-  const seek = useCallback((time: number) => {
-    if (!audioRef.current || duration <= 0) return;
-    const newTime = Math.max(0, Math.min(time, duration));
-    if (audioRef.current) {
-      audioRef.current.currentTime = newTime;
-    }
-    setCurrentTime(newTime);
-  }, [duration]);
 
   const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -589,3 +616,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    
