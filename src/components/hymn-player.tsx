@@ -313,27 +313,30 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   const handlePrevSection = () => {
     const REWIND_THRESHOLD = 2; // in seconds
-    
-    // Find the start of the section we are currently in.
-    const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= currentTime);
+    if (!audioRef.current) return;
 
-    // Case 1: We are more than REWIND_THRESHOLD seconds into the current section.
-    // Action: Rewind to the beginning of this section.
-    if (currentSectionStart !== undefined && currentTime > currentSectionStart + REWIND_THRESHOLD) {
-      seek(currentSectionStart);
-      return;
+    // Find the index of the last active mark that is before the current time.
+    const lastPassedMarkIndex = sortedActiveMarks.slice().reverse().findIndex(mark => mark < currentTime);
+
+    if (lastPassedMarkIndex === -1) {
+        // We are before the first mark. Go to the beginning.
+        seek(0);
+        return;
     }
-    
-    // Case 2: We are at the beginning of a section, or before the first section.
-    // Action: Go to the start of the PREVIOUS section.
-    const currentSectionIndex = sortedActiveMarks.findIndex(mark => mark === currentSectionStart);
-    
-    if (currentSectionIndex > 0) {
-      // There is a previous section, so go to it.
-      seek(sortedActiveMarks[currentSectionIndex - 1]);
+
+    // Get the actual index in the original sorted array.
+    const currentSectionIndex = sortedActiveMarks.length - 1 - lastPassedMarkIndex;
+    const currentSectionStart = sortedActiveMarks[currentSectionIndex];
+
+    // If we are more than the threshold past the start of the current section,
+    // rewind to the start of this section.
+    if (currentTime > currentSectionStart + REWIND_THRESHOLD) {
+        seek(currentSectionStart);
     } else {
-      // We are in or before the first section, so just go to the very beginning.
-      seek(0);
+        // Otherwise, go to the start of the PREVIOUS section.
+        // If there's no previous section (i.e., we are in the first one), go to 0.
+        const prevSectionStart = currentSectionIndex > 0 ? sortedActiveMarks[currentSectionIndex - 1] : 0;
+        seek(prevSectionStart);
     }
   };
   
@@ -585,5 +588,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    
