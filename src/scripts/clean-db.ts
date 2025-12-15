@@ -1,8 +1,7 @@
 
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, writeBatch, query } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, writeBatch } from 'firebase/firestore';
 import { getAuth, signInAnonymously } from 'firebase/auth';
-import { firebaseConfig } from '../firebase/config';
+import { initializeFirebase } from '@/firebase';
 
 // --- Source of Truth ---
 // These are the only cantors and hymns that should exist in the database.
@@ -11,16 +10,18 @@ const APPROVED_HYMN_NAMES = ['Tai Shouri (Mournful)', 'O Monogenees', 'Tarh', 'K
 // --- End of Source of Truth ---
 
 async function cleanDatabase() {
+    const { firestore, auth } = initializeFirebase();
+
   try {
     console.log('Authenticating anonymously...');
     await signInAnonymously(auth);
     console.log('Authentication successful.');
 
     console.log('Starting to clean the database...');
-    const batch = writeBatch(db);
+    const batch = writeBatch(firestore);
 
     // --- 1. Clean Recordings ---
-    const recordingsRef = collection(db, 'recordings');
+    const recordingsRef = collection(firestore, 'recordings');
     const recordingsSnapshot = await getDocs(recordingsRef);
     const seenHymnCantorPairs = new Set<string>();
     let deletedRecordingsCount = 0;
@@ -52,7 +53,7 @@ async function cleanDatabase() {
     }
 
     // --- 2. Clean Hymns ---
-    const hymnsRef = collection(db, 'hymns');
+    const hymnsRef = collection(firestore, 'hymns');
     const hymnsSnapshot = await getDocs(hymnsRef);
     let deletedHymnsCount = 0;
 

@@ -1,3 +1,2 @@
-
-// This file is obsolete and will be removed.
-// Data is now fetched from Firestore.
+// This file is obsolete and no longer used.
+// Data is seeded from `src/lib/seed-data.ts` and fetched from Firestore.
