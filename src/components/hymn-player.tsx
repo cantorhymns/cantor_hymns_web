@@ -96,7 +96,12 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   }, [currentRecording]);
 
   const handleLoadAudio = useCallback(async () => {
-    if (!currentRecording || !storage) {
+    if (!currentRecording) {
+        setAudioStatus('error');
+        setAudioError('No recording selected.');
+        return;
+    }
+    if (!storage) {
         setAudioStatus('error');
         setAudioError('Storage service is not available.');
         return;
@@ -587,5 +592,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    
