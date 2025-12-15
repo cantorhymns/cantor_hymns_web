@@ -26,21 +26,22 @@ service firebase.storage {
 
 ### 2. Permissions
 
-The two most important permissions are `read` and `write`.
+The most important permissions are `read` and `write`.
 
--   **`allow read`**: Governs who can **download** or **list** files. This is what was failing. For your app to play a hymn, it needs permission to `read` (specifically `get`) the audio file.
+-   **`allow read`**: A general permission for reading files. For our case, we need to be more specific.
+-   **`allow get`**: This specifically governs who can **download** a file using its URL. This is what was failing. For your app to play a hymn, it needs permission to `get` the audio file.
 -   **`allow write`**: Governs who can **upload**, **update**, or **delete** files.
 
 ### 3. Conditions
 
 Permissions are granted if a condition is met.
 
--   `if true;`: This is a public rule. It means "allow this for everyone, no questions asked." This is what we need for public read access.
+-   `if true;`: This is a public rule. It means "allow this for everyone, no questions asked." This is what we need for public download access.
 -   `if request.auth != null;`: This is a common private rule. It means "only allow this if the user is authenticated (logged in)." We use this to restrict who can upload files.
 
 ## The Fix for Your App
 
-The recurring `storage/retry-limit-exceeded` error was because the rules did not explicitly allow public read access. The correct ruleset is:
+The `storage/unauthorized` error was because the rules did not explicitly allow the `get` permission. The correct ruleset is:
 
 ```rules
 rules_version = '2';
@@ -49,7 +50,7 @@ service firebase.storage {
     match /{allPaths=**} {
       // Allow anyone to read (download) files.
       // This is necessary for the getDownloadURL() function to work for public audio.
-      allow get, list: if true;
+      allow get: if true;
 
       // Only allow authenticated users to write (upload, update, delete) files.
       allow write: if request.auth != null;
