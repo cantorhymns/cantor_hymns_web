@@ -41,27 +41,31 @@ export function useHymn(hymnId?: string) {
     return new Map(cantors.map(c => [c.id, c]));
   }, [cantors]);
   
-  // The main loading state is true if we are fetching the hymn, or the recordings,
-  // or if we have recordings but are still waiting for the cantors.
+  // The main loading state is true until the hymn, its recordings, and the cantors for those recordings are all loaded.
   const isLoading = isHymnLoading || areRecordingsLoading || (recordings && cantorIds.length > 0 && areCantorsLoading);
 
   const hymnWithRecordings = useMemo(() => {
     // Don't try to assemble the data until everything is loaded.
-    if (!hymn || !recordings || (cantorIds.length > 0 && !cantors)) {
+    if (isLoading || !hymn) {
       return null;
     }
     
     // Create a new hymn object to avoid direct mutation.
     const populatedHymn: Hymn = { ...hymn };
 
-    // Map over recordings and embed the full cantor object.
-    populatedHymn.recordings = recordings.map(rec => ({
-        ...rec,
-        cantor: cantorsMap.get(rec.cantorId)
-    })).sort((a, b) => a.cantor?.name.localeCompare(b.cantor?.name || '') || 0); // Sort by cantor name
+    if (recordings) {
+        // Map over recordings and embed the full cantor object.
+        populatedHymn.recordings = recordings.map(rec => ({
+            ...rec,
+            cantor: cantorsMap.get(rec.cantorId)
+        })).sort((a, b) => a.cantor?.name.localeCompare(b.cantor?.name || '') || 0); // Sort by cantor name
+    } else {
+        populatedHymn.recordings = [];
+    }
+
 
     return populatedHymn;
-  }, [hymn, recordings, cantors, cantorsMap, cantorIds.length]);
+  }, [hymn, recordings, cantorsMap, isLoading]);
   
   return { 
     data: hymnWithRecordings, 
@@ -69,3 +73,5 @@ export function useHymn(hymnId?: string) {
     error: hymnError || recordingsError || cantorsError
   };
 }
+
+    

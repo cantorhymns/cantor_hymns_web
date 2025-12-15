@@ -26,6 +26,9 @@ import {
   SkipForward,
   FastForward,
   Rewind,
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
 } from "lucide-react";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useFirebase, getStorage } from "@/firebase";
@@ -47,6 +50,9 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     hymn.recordings?.[0]
   );
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
+  const [audioStatus, setAudioStatus] = useState<'idle' | 'loading' | 'loaded' | 'error'>('idle');
+  const [audioError, setAudioError] = useState<string | null>(null);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -54,7 +60,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const [playbackRate, setPlaybackRate] = useState(1);
   const [isSeeking, setIsSeeking] = useState(false);
   
-  const [activeMarks, setActiveMarks] = useState<number[]>(currentRecording?.marks || []);
+  const [activeMarks, setActiveMarks] = useState<number[]>([]);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const waveformContainerRef = useRef<HTMLDivElement>(null);
@@ -72,7 +78,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   
   useEffect(() => {
     // This effect runs when the current recording changes.
-    // It resets the player state and fetches the new audio URL.
+    // It resets the player state.
     const audio = audioRef.current;
     if (audio) {
       audio.pause();
@@ -82,17 +88,30 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     setCurrentTime(0);
     setPlaybackRate(1);
     setAudioSrc(null);
+    setAudioStatus('idle');
+    setAudioError(null);
+    setDuration(0);
     setActiveMarks(currentRecording?.marks || []);
 
-    if (currentRecording && storage) {
-      const audioFileRef = ref(storage, currentRecording.audioUrl);
-      getDownloadURL(audioFileRef)
-        .then((url) => {
-          setAudioSrc(url);
-        })
-        .catch((error) => {
-          console.error("Error getting download URL:", error);
-        });
+  }, [currentRecording]);
+
+  const handleLoadAudio = useCallback(async () => {
+    if (!currentRecording || !storage) {
+        setAudioStatus('error');
+        setAudioError('Storage service is not available.');
+        return;
+    }
+    setAudioStatus('loading');
+    setAudioError(null);
+    try {
+        const audioFileRef = ref(storage, currentRecording.audioUrl);
+        const url = await getDownloadURL(audioFileRef);
+        setAudioSrc(url);
+        setAudioStatus('loaded');
+    } catch (error: any) {
+        console.error("Error getting download URL:", error);
+        setAudioStatus('error');
+        setAudioError(error.message || 'Failed to fetch audio.');
     }
   }, [currentRecording, storage]);
 
@@ -355,8 +374,29 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     return { left: '50%' };
 
   }, [currentTime, duration]);
+
+  const renderAudioStatus = () => {
+    switch(audioStatus) {
+      case 'loading':
+        return <span className="text-sm text-muted-foreground">Loading...</span>;
+      case 'loaded':
+        return <CheckCircle className="h-5 w-5 text-green-500" />;
+      case 'error':
+        return (
+          <div className="flex items-center gap-2">
+            <XCircle className="h-5 w-5 text-destructive" />
+            <span className="text-sm text-destructive truncate" title={audioError || ''}>
+              Error
+            </span>
+          </div>
+        );
+      case 'idle':
+      default:
+        return <Button onClick={handleLoadAudio} size="sm">Load Audio</Button>;
+    }
+  }
   
-  if (!hymn.recordings || hymn.recordings.length === 0 || !currentRecording) {
+  if (!hymn.recordings || hymn.recordings.length === 0) {
       return (
         <Card className="w-full max-w-3xl mx-auto shadow-xl">
             <CardHeader>
@@ -369,39 +409,57 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       )
   }
 
+  if (!currentRecording) {
+     return (
+        <Card className="w-full max-w-3xl mx-auto shadow-xl">
+            <CardHeader>
+                <CardTitle className="font-headline text-3xl text-primary">
+                    {hymn.name}
+                </CardTitle>
+                <CardDescription>Please select a recording.</CardDescription>
+            </CardHeader>
+        </Card>
+      )
+  }
+
   return (
     <Card className="w-full max-w-3xl mx-auto shadow-xl">
-      {audioSrc && <audio ref={audioRef} preload="metadata" src={audioSrc} />}
+      {audioSrc && <audio ref={audioRef} src={audioSrc} preload="metadata" />}
       <CardHeader>
-        <div className="flex justify-between items-start">
+        <div className="flex justify-between items-start flex-wrap gap-4">
             <div>
                 <CardTitle className="font-headline text-3xl text-primary">
                 {hymn.name}
                 </CardTitle>
-                <CardDescription className="mt-1">{currentRecording.cantor?.name}</CardDescription>
+                <CardDescription className="mt-1">{currentRecording.cantor?.name || 'Unknown Cantor'}</CardDescription>
             </div>
-            <Select
-                value={currentRecording.id}
-                onValueChange={(recId) => {
-                const newRec = hymn.recordings!.find((r) => r.id === recId);
-                if (newRec) setCurrentRecording(newRec);
-                }}
-            >
-                <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select Cantor" />
-                </SelectTrigger>
-                <SelectContent>
-                {hymn.recordings.map((rec) => (
-                    <SelectItem key={rec.id} value={rec.id}>
-                    {rec.cantor?.name}
-                    </SelectItem>
-                ))}
-                </SelectContent>
-            </Select>
+            <div className="flex items-center gap-2">
+              <Select
+                  value={currentRecording.id}
+                  onValueChange={(recId) => {
+                  const newRec = hymn.recordings!.find((r) => r.id === recId);
+                  if (newRec) setCurrentRecording(newRec);
+                  }}
+              >
+                  <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select Cantor" />
+                  </SelectTrigger>
+                  <SelectContent>
+                  {hymn.recordings.map((rec) => (
+                      <SelectItem key={rec.id} value={rec.id}>
+                      {rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}
+                      </SelectItem>
+                  ))}
+                  </SelectContent>
+              </Select>
+              <div className="w-[100px] h-10 flex items-center justify-center">
+                {renderAudioStatus()}
+              </div>
+            </div>
         </div>
       </CardHeader>
       <CardContent className="px-6 pb-6">
-        <div className="space-y-6">
+        <div className={`space-y-6 transition-opacity ${audioStatus !== 'loaded' ? 'opacity-30 pointer-events-none' : ''}`}>
            <div 
                 ref={waveformContainerRef} 
                 className="relative w-full h-20 bg-secondary/50 rounded-lg group touch-none overflow-hidden"
