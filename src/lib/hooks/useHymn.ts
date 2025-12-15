@@ -1,24 +1,9 @@
 
 'use client';
 import { useMemo } from 'react';
-import { doc, collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, collection, query, where } from 'firebase/firestore';
 import { useDoc, useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { Hymn, Recording, Cantor } from '@/lib/types';
-import { useQuery } from '@tanstack/react-query';
-
-async function fetchCantors(firestore: any, cantorIds: string[]): Promise<Map<string, Cantor>> {
-    if (cantorIds.length === 0) {
-      return new Map();
-    }
-    const cantorsRef = collection(firestore, 'cantors');
-    const q = query(cantorsRef, where('__name__', 'in', cantorIds));
-    const snapshot = await getDocs(q);
-    const cantorsMap = new Map<string, Cantor>();
-    snapshot.forEach(doc => {
-      cantorsMap.set(doc.id, { id: doc.id, ...doc.data() } as Cantor);
-    });
-    return cantorsMap;
-}
 
 export function useHymn(hymnId?: string) {
   const firestore = useFirestore();
@@ -39,17 +24,24 @@ export function useHymn(hymnId?: string) {
 
   const cantorIds = useMemo(() => {
     if (!recordings) return [];
-    return [...new Set(recordings.map(r => r.cantorId))];
+    return [...new Set(recordings.map(r => r.cantorId).filter(Boolean))];
   }, [recordings]);
 
-  const { data: cantorsMap, isLoading: areCantorsLoading, error: cantorsError } = useQuery({
-      queryKey: ['cantors', cantorIds],
-      queryFn: () => fetchCantors(firestore, cantorIds),
-      enabled: !!firestore && cantorIds.length > 0
-  });
+  const cantorsQuery = useMemoFirebase(() => {
+    if (!firestore || cantorIds.length === 0) return null;
+    return query(collection(firestore, 'cantors'), where('__name__', 'in', cantorIds));
+  }, [firestore, cantorIds]);
+  
+  const { data: cantors, isLoading: areCantorsLoading, error: cantorsError } = useCollection<Cantor>(cantorsQuery);
+
+  const cantorsMap = useMemo(() => {
+    if (!cantors) return new Map<string, Cantor>();
+    return new Map(cantors.map(c => [c.id, c]));
+  }, [cantors]);
+
 
   const hymnWithRecordings = useMemo(() => {
-    if (!hymn || !recordings || (cantorIds.length > 0 && !cantorsMap)) return null;
+    if (!hymn || !recordings) return null;
     
     const populatedRecordings = recordings.map(rec => ({
         ...rec,
@@ -60,11 +52,11 @@ export function useHymn(hymnId?: string) {
       ...hymn,
       recordings: populatedRecordings,
     };
-  }, [hymn, recordings, cantorsMap, cantorIds]);
+  }, [hymn, recordings, cantorsMap]);
 
   return { 
     data: hymnWithRecordings, 
-    isLoading: isHymnLoading || areRecordingsLoading || areCantorsLoading, 
+    isLoading: isHymnLoading || areRecordingsLoading || (cantorIds.length > 0 && areCantorsLoading), 
     error: hymnError || recordingsError || cantorsError
   };
 }

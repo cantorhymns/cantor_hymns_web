@@ -15,12 +15,13 @@ export function useHymns(genreId?: string) {
 
   const { data: hymns, isLoading: areHymnsLoading, error: hymnsError } = useCollection<Hymn>(hymnsQuery);
 
+  const hymnIds = useMemo(() => hymns?.map(h => h.id) || [], [hymns]);
+
   const recordingsQuery = useMemoFirebase(() => {
-    if (!firestore || !hymns || hymns.length === 0) return null;
-    const hymnIds = hymns.map(h => h.id);
+    if (!firestore || hymnIds.length === 0) return null;
     // Firestore 'in' query is limited to 30 items. If you expect more, you'll need to batch queries.
     return query(collection(firestore, 'recordings'), where('hymnId', 'in', hymnIds.slice(0,30)));
-  }, [firestore, hymns]);
+  }, [firestore, hymnIds]);
 
   const { data: recordings, isLoading: areRecordingsLoading, error: recordingsError } = useCollection<Recording>(recordingsQuery);
 
@@ -51,7 +52,7 @@ export function useHymns(genreId?: string) {
 
   return { 
     data: hymnsWithRecordings, 
-    isLoading: areHymnsLoading || areRecordingsLoading,
+    isLoading: areHymnsLoading || (hymnIds.length > 0 && areRecordingsLoading),
     error: hymnsError || recordingsError
   };
 }
