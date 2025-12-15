@@ -11,7 +11,7 @@ const auth = getAuth(firebaseApp);
 
 // --- Source of Truth ---
 // These are the only cantors and hymns that should exist in the database.
-const APPROVED_CANTORS = ['CantorBola', 'CantorGad', 'CantorIbrahim', 'CantorTharwat', 'HICS'];
+const APPROVED_CANTORS = ['cantor-bola', 'cantor-gad', 'cantor-ibrahim', 'cantor-tharwat', 'hics'];
 const APPROVED_HYMN_NAMES = ['Tai Shouri', 'O Monogenees', 'Tarh', 'Kata Ni Khoros', 'Phai Etafenf'];
 // --- End of Source of Truth ---
 
@@ -34,13 +34,13 @@ async function cleanDatabase() {
 
     for (const doc of recordingsSnapshot.docs) {
       const recording = doc.data();
-      const cantor = recording.cantor;
+      const cantorId = recording.cantorId;
       const hymnId = recording.hymnId;
-      const pair = `${hymnId}-${cantor}`;
+      const pair = `${hymnId}-${cantorId}`;
 
       // Condition 1: Delete if cantor is not approved
-      if (!APPROVED_CANTORS.includes(cantor)) {
-        console.log(`- Deleting recording ${doc.id} by unapproved cantor: ${cantor}`);
+      if (!APPROVED_CANTORS.includes(cantorId)) {
+        console.log(`- Deleting recording ${doc.id} by unapproved cantor: ${cantorId}`);
         batch.delete(doc.ref);
         deletedRecordingsCount++;
         continue; // Move to the next recording
