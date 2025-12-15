@@ -24,11 +24,13 @@ export function useHymn(hymnId?: string) {
 
   const cantorIds = useMemo(() => {
     if (!recordings) return [];
+    // Use a Set to ensure IDs are unique, then convert back to an array.
     return [...new Set(recordings.map(r => r.cantorId).filter(id => !!id))];
   }, [recordings]);
 
   const cantorsQuery = useMemoFirebase(() => {
     if (!firestore || cantorIds.length === 0) return null;
+    // Firestore 'in' queries are limited to 30 items.
     return query(collection(firestore, 'cantors'), where('__name__', 'in', cantorIds.slice(0, 30)));
   }, [firestore, cantorIds]);
   
@@ -39,22 +41,27 @@ export function useHymn(hymnId?: string) {
     return new Map(cantors.map(c => [c.id, c]));
   }, [cantors]);
   
-  const isLoading = isHymnLoading || areRecordingsLoading || (cantorIds.length > 0 && areCantorsLoading);
+  // The main loading state is true if we are fetching the hymn, or the recordings,
+  // or if we have recordings but are still waiting for the cantors.
+  const isLoading = isHymnLoading || areRecordingsLoading || (recordings && cantorIds.length > 0 && areCantorsLoading);
 
   const hymnWithRecordings = useMemo(() => {
-    if (isLoading || !hymn) return null;
-    
-    const populatedHymn: Hymn = { ...hymn, recordings: [] };
-
-    if (recordings) {
-        populatedHymn.recordings = recordings.map(rec => ({
-            ...rec,
-            cantor: cantorsMap.get(rec.cantorId)
-        }));
+    // Don't try to assemble the data until everything is loaded.
+    if (!hymn || !recordings || (cantorIds.length > 0 && !cantors)) {
+      return null;
     }
+    
+    // Create a new hymn object to avoid direct mutation.
+    const populatedHymn: Hymn = { ...hymn };
+
+    // Map over recordings and embed the full cantor object.
+    populatedHymn.recordings = recordings.map(rec => ({
+        ...rec,
+        cantor: cantorsMap.get(rec.cantorId)
+    })).sort((a, b) => a.cantor?.name.localeCompare(b.cantor?.name || '') || 0); // Sort by cantor name
 
     return populatedHymn;
-  }, [hymn, recordings, cantorsMap, isLoading]);
+  }, [hymn, recordings, cantors, cantorsMap, cantorIds.length]);
   
   return { 
     data: hymnWithRecordings, 
