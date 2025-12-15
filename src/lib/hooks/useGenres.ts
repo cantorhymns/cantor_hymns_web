@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { collection, query, DocumentData, doc } from 'firebase/firestore';
 import { useCollection, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { Genre } from '@/lib/types';
+import { useQuery } from '@tanstack/react-query';
 
 export function useGenres() {
   const firestore = useFirestore();
@@ -26,5 +27,6 @@ export function useGenre(genreId?: string) {
     }, [firestore, genreId]);
 
     const {data: genre, ...rest} = useDoc<Genre>(genreRef);
+    
     return { data: genre, ...rest };
 }

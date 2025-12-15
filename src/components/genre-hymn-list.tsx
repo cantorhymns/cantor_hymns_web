@@ -24,6 +24,8 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
     return <Icon className="h-10 w-10 text-primary" />;
   };
 
+  const isLoading = isGenreLoading;
+
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
       <div className="mb-12">
@@ -35,7 +37,7 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
           Back to Genres
         </Link>
         <div className="flex items-center gap-4">
-           {isGenreLoading || !genre ? (
+           {isLoading || !genre ? (
              <>
                 <Skeleton className="h-16 w-16 rounded-lg" />
                 <div className="w-2/3">
