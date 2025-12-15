@@ -1,6 +1,6 @@
 
 import { initializeApp } from 'firebase/app';
-import { getFirestore, writeBatch, doc, collection, getDocs } from 'firebase/firestore';
+import { getFirestore, writeBatch, doc, collection, getDocs, query, limit, runTransaction } from 'firebase/firestore';
 import { getAuth, signInAnonymously } from 'firebase/auth';
 import { firebaseConfig } from '../firebase/config';
 import { genres, hymns, recordings, cantors } from '../lib/seed-data';
@@ -12,19 +12,39 @@ const auth = getAuth(firebaseApp);
 
 async function deleteCollection(collectionName: string) {
     const collectionRef = collection(db, collectionName);
-    const snapshot = await getDocs(collectionRef);
-    if (snapshot.empty) {
-        console.log(`Collection '${collectionName}' is already empty.`);
-        return;
-    }
+    const q = query(collectionRef, limit(500)); // Firestore batch limit
 
-    const batch = writeBatch(db);
-    snapshot.docs.forEach(doc => {
-        batch.delete(doc.ref);
+    return new Promise<void>((resolve, reject) => {
+        deleteQueryBatch(q, resolve, reject);
     });
-    
-    await batch.commit();
-    console.log(`Successfully deleted ${snapshot.size} documents from '${collectionName}'.`);
+}
+
+async function deleteQueryBatch(q: any, resolve: () => void, reject: (reason?: any) => void) {
+    try {
+        const snapshot = await getDocs(q);
+        if (snapshot.size === 0) {
+            // When there are no documents left, we are done
+            console.log(`Collection is now empty.`);
+            resolve();
+            return;
+        }
+
+        // Delete documents in a batch
+        const batch = writeBatch(db);
+        snapshot.docs.forEach((doc) => {
+            batch.delete(doc.ref);
+        });
+        await batch.commit();
+
+        console.log(`Deleted ${snapshot.size} documents...`);
+
+        // Recurse on the same query to delete next batch
+        process.nextTick(() => {
+            deleteQueryBatch(q, resolve, reject);
+        });
+    } catch (error) {
+        reject(error);
+    }
 }
 
 
@@ -37,9 +57,13 @@ async function seedDatabase() {
     console.log('--- Starting Database Reset ---');
     
     // Delete existing data
+    console.log("Deleting 'recordings' collection...");
     await deleteCollection('recordings');
+    console.log("Deleting 'hymns' collection...");
     await deleteCollection('hymns');
+    console.log("Deleting 'genres' collection...");
     await deleteCollection('genres');
+    console.log("Deleting 'cantors' collection...");
     await deleteCollection('cantors');
     
     console.log('--- Database cleared. Starting to seed... ---');
