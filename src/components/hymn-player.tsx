@@ -139,28 +139,38 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       setIsPlaying(true);
     } else {
       setIsPlaying(false);
-      audio.currentTime = 0; // Reset to beginning if not repeating
+      // If not repeating, reset time to the start of the last section, or 0.
+      const lastSectionStart = [...sortedActiveMarks].reverse()[0] ?? 0;
+      audio.currentTime = lastSectionStart;
+      setCurrentTime(lastSectionStart);
     }
   }, [isRepeat, sortedActiveMarks]);
 
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || isSeeking) return;
+    setCurrentTime(audio.currentTime);
+  }, [isSeeking]);
 
-    if (!isSeeking) {
-        const newTime = audio.currentTime;
-        setCurrentTime(newTime);
+  // This effect handles the section repeat logic.
+  // It runs whenever the playback time updates.
+  useEffect(() => {
+    if (!isRepeat || !isPlaying || sortedActiveMarks.length < 2) return;
 
-        if (isRepeat && isPlaying && sortedActiveMarks.length >= 2) {
-            const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= newTime) ?? 0;
-            const currentSectionEnd = sortedActiveMarks.find(mark => mark > currentSectionStart);
-            
-            if (currentSectionEnd !== undefined && newTime >= currentSectionEnd) {
-                seek(currentSectionStart);
-            }
-        }
+    // Find the start of the section we are currently in.
+    const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= currentTime);
+    
+    // If we're not in any defined section, do nothing.
+    if (currentSectionStart === undefined) return;
+    
+    // Find the end of the current section.
+    const currentSectionEnd = sortedActiveMarks.find(mark => mark > currentSectionStart);
+    
+    // If there's an end marker and we've passed it, loop back.
+    if (currentSectionEnd !== undefined && currentTime >= currentSectionEnd) {
+      seek(currentSectionStart);
     }
-}, [isSeeking, isRepeat, isPlaying, sortedActiveMarks, seek]);
+  }, [currentTime, isRepeat, isPlaying, sortedActiveMarks, seek]);
 
 
   useEffect(() => {
@@ -602,5 +612,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    
