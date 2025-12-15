@@ -1,7 +1,10 @@
 rules_version = '2';
+
 service firebase.storage {
   match /b/{bucket}/o {
-    // Allow public read access to all files for audio playback
+    // Allow public read access for anyone to be able to listen to the hymns.
+    // Restrict write access to only authenticated users (e.g., admins) to prevent
+    // unauthorized uploads.
     match /{allPaths=**} {
       allow read: if true;
       allow write: if request.auth != null;
