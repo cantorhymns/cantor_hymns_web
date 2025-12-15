@@ -1,15 +1,16 @@
 rules_version = '2';
+
 service firebase.storage {
   match /b/{bucket}/o {
-    // Allow public read access to all files.
-    // This allows the app to download hymn audio files without authentication.
+    // Match all files in the bucket
     match /{allPaths=**} {
+      // Allow anyone to read the files (get, list).
+      // This is necessary for the public to stream the hymn audio files.
       allow get: if true;
       allow list: if true;
-      allow read: if true;
-      
-      // Restrict write access to only authenticated users (e.g., admins)
-      // to prevent unauthorized uploads.
+
+      // Only allow authenticated users to write (create, update, delete).
+      // This prevents unauthorized uploads and modifications.
       allow write: if request.auth != null;
     }
   }
