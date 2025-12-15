@@ -145,33 +145,22 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
-    if (audio && !isSeeking) {
-      const newTime = audio.currentTime;
-      setCurrentTime(newTime);
+    if (!audio) return;
+
+    if (!isSeeking) {
+        const newTime = audio.currentTime;
+        setCurrentTime(newTime);
+
+        if (isRepeat && isPlaying && sortedActiveMarks.length >= 2) {
+            const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= newTime) ?? 0;
+            const currentSectionEnd = sortedActiveMarks.find(mark => mark > currentSectionStart);
+            
+            if (currentSectionEnd !== undefined && newTime >= currentSectionEnd) {
+                seek(currentSectionStart);
+            }
+        }
     }
-  }, [isSeeking]);
-
-  // Section looping logic
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!isRepeat || !isPlaying || !audio || sortedActiveMarks.length < 2) {
-      return;
-    }
-    
-    const time = audio.currentTime;
-
-    // Find the start of the current section
-    const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= time) ?? 0;
-    
-    // Find the end of the current section (which is the next active marker)
-    const currentSectionEnd = sortedActiveMarks.find(mark => mark > currentSectionStart);
-
-    // If we have a valid section end and we've passed it, loop back
-    if (currentSectionEnd !== undefined && time >= currentSectionEnd) {
-      seek(currentSectionStart);
-    }
-
-  }, [currentTime, isRepeat, isPlaying, sortedActiveMarks, seek]);
+}, [isSeeking, isRepeat, isPlaying, sortedActiveMarks, seek]);
 
 
   useEffect(() => {
@@ -613,3 +602,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    
