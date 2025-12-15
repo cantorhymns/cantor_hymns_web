@@ -1,3 +1,4 @@
+
 # Understanding the `storage.rules` File
 
 This file defines the security rules for your project's Firebase Storage. It controls who can upload, download, list, and delete files. Every request to Firebase Storage is checked against these rules.
@@ -41,7 +42,7 @@ Permissions are granted if a condition is met.
 
 ## The Fix for Your App
 
-The `storage/unauthorized` error was because the rules did not explicitly allow the `get` permission. The correct ruleset is:
+The `storage/unauthorized` error was because the rules did not explicitly allow the `get` permission for unauthenticated requests. The correct ruleset is:
 
 ```rules
 rules_version = '2';
@@ -61,3 +62,5 @@ service firebase.storage {
 ```
 
 This configuration makes your audio files publicly downloadable (solving the error) while keeping your storage secure from unauthorized uploads and very large files.
+
+    

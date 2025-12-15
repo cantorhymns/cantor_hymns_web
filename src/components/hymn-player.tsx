@@ -116,7 +116,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     } catch (error: any) {
         console.error("Error getting download URL:", error);
         setAudioStatus('error');
-        setAudioError(error.message || 'Failed to fetch audio.');
+        setAudioError(error.code || error.message || 'Failed to fetch audio.');
+        // Additionally, we can emit this to a global error handler if needed
     }
   }, [currentRecording, storage]);
 
@@ -592,3 +593,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    

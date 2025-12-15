@@ -1,14 +1,17 @@
+
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
     match /{allPaths=**} {
       // Allow anyone to read (download) files. The `get` permission is required
-      // for the getDownloadURL() function to work, and `read` is included for
-      // broad public access. This is a common setup for public assets.
+      // for the getDownloadURL() function to work. This is a common setup for public assets.
       allow get, read: if true;
 
-      // By omitting an `allow write` rule, all write operations (create, update,
-      // delete) are denied by default.
+      // Only allow authenticated users to write (upload, update, delete) files,
+      // and only if the file is less than 5MB. This helps prevent abuse.
+      allow write: if request.auth != null && request.resource.size < 5 * 1024 * 1024;
     }
   }
 }
+
+    
