@@ -130,17 +130,19 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     setCurrentTime(newTime);
   }, [duration]);
   
-  const handleEnded = useCallback(() => {
+ const handleEnded = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
   
-    // If we are in section repeat mode, the `useEffect` handles it. Let it do its job.
+    // If section repeat is on, let the other useEffect handle it.
     if (isRepeat && sortedActiveMarks.length > 1) {
-      // Find the last section and loop it if we're at the very end
       const lastSectionStart = sortedActiveMarks[sortedActiveMarks.length - 1];
       if (currentTime >= lastSectionStart) {
           seek(lastSectionStart);
-          if(!isPlaying) setIsPlaying(true);
+          if(!isPlaying) {
+            audio.play().catch(console.error);
+            setIsPlaying(true);
+          }
       }
       return;
     }
@@ -148,8 +150,9 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     // Handle repeating the entire track if that's the only repeat option on.
     if (isRepeat) {
       audio.currentTime = 0;
+      setCurrentTime(0);
       if (!isPlaying) {
-        audio.play();
+        audio.play().catch(console.error);
         setIsPlaying(true);
       }
       return;
@@ -635,5 +638,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    
