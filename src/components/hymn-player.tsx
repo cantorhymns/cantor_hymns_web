@@ -146,31 +146,33 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     }
   }, [isRepeat, sortedActiveMarks]);
 
-  const handleTimeUpdate = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio || isSeeking) return;
-    setCurrentTime(audio.currentTime);
-  }, [isSeeking]);
-
   // This effect handles the section repeat logic.
   // It runs whenever the playback time updates.
   useEffect(() => {
-    if (!isRepeat || !isPlaying || sortedActiveMarks.length < 2) return;
-
+    if (!isRepeat || !isPlaying || isSeeking || sortedActiveMarks.length < 2) {
+      return;
+    }
+    
     // Find the start of the section we are currently in.
-    const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= currentTime);
-    
-    // If we're not in any defined section, do nothing.
-    if (currentSectionStart === undefined) return;
-    
-    // Find the end of the current section.
-    const currentSectionEnd = sortedActiveMarks.find(mark => mark > currentSectionStart);
-    
-    // If there's an end marker and we've passed it, loop back.
+    const currentSectionStart = [...sortedActiveMarks]
+      .reverse()
+      .find((mark) => mark <= currentTime);
+
+    if (currentSectionStart === undefined) {
+      // Not in any section, do nothing.
+      return;
+    }
+
+    // Find the end of the current section. This is the next marker after the start.
+    const currentSectionEnd = sortedActiveMarks.find(
+      (mark) => mark > currentSectionStart
+    );
+
+    // If there is an end marker and we've passed it, loop back.
     if (currentSectionEnd !== undefined && currentTime >= currentSectionEnd) {
       seek(currentSectionStart);
     }
-  }, [currentTime, isRepeat, isPlaying, sortedActiveMarks, seek]);
+  }, [currentTime, isRepeat, isPlaying, isSeeking, sortedActiveMarks, seek]);
 
 
   useEffect(() => {
@@ -185,6 +187,12 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       }
       setCurrentTime(audio.currentTime);
     };
+
+    const handleTimeUpdate = () => {
+      if (audioRef.current && !isSeeking) {
+        setCurrentTime(audioRef.current.currentTime);
+      }
+    };
     
     audio.addEventListener("loadeddata", setAudioData);
     audio.addEventListener("durationchange", setAudioData);
@@ -197,7 +205,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       audio.removeEventListener("timeupdate", handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
     };
-  }, [handleEnded, handleTimeUpdate, audioSrc]);
+  }, [handleEnded, audioSrc, isSeeking]);
 
   useEffect(() => {
     if (waveformContainerRef.current && waveformInnerRef.current && duration > VISIBLE_DURATION_S) {
