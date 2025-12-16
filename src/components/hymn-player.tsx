@@ -129,8 +129,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const audio = audioRef.current;
     if (!audio) return;
   
-    // This function now ONLY handles repeating the ENTIRE track.
-    // Section looping is handled in handleTimeUpdate.
     if (isRepeat && sortedActiveMarks.length < 2) {
       audio.currentTime = 0;
       setCurrentTime(0);
@@ -142,6 +140,16 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     setIsPlaying(false);
 
   }, [isRepeat, sortedActiveMarks]);
+
+  useEffect(() => {
+    if (isRepeat && currentTime > 30) {
+      console.log('%cDEBUG: HARDCODED TEST: Time > 30, seeking to 15!', 'color: #ff00ff; font-weight: bold;');
+      if (audioRef.current) {
+        audioRef.current.currentTime = 15;
+      }
+    }
+  }, [currentTime, isRepeat]);
+
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -172,7 +180,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
       console.log(`DEBUG: LOOP CHECK: Potential Section Start: ${currentSectionStart}`);
       console.log(`DEBUG: LOOP CHECK: Section Start: ${currentSectionStart}, Section End: ${currentSectionEnd}`);
-      console.log('DEBUG: LOOP CHECK: Dependencies:', { isRepeat, isPlaying, isSeeking, sortedActiveMarks: sortedActiveMarks.join(','), audioSrc: !!audioSrc, handleEnded: !!handleEnded });
+      const depString = JSON.stringify({ isRepeat, isPlaying, isSeeking, sortedActiveMarks: sortedActiveMarks.join(','), audioSrc: !!audioSrc });
+      console.log(`DEBUG: LOOP CHECK: Dependencies: ${depString}`);
 
 
       if (currentSectionStart !== undefined && currentSectionEnd !== undefined && time >= currentSectionEnd) {
@@ -604,4 +613,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
