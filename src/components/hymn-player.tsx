@@ -125,7 +125,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     setCurrentTime(newTime);
   }, [duration]);
   
- const handleEnded = useCallback(() => {
+  const handleEnded = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
   
@@ -160,34 +160,45 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       const time = audio.currentTime;
       setCurrentTime(time);
       
-      console.log(`DEBUG: Time: ${time}, isRepeat: ${isRepeat}, isPlaying: ${isPlaying}`);
-      console.log(`DEBUG: Active Marks:`, sortedActiveMarks);
+      console.log(`DEBUG: Time Update Fired. Time: ${time.toFixed(4)}, isRepeat: ${isRepeat}, isPlaying: ${isPlaying}, isSeeking: ${isSeeking}`);
 
-      if (!isRepeat || !isPlaying || isSeeking || sortedActiveMarks.length < 2) {
-        console.log("DEBUG: Repeat conditions not met. Exiting.");
+      if (!isRepeat) {
+        console.log(`DEBUG: LOOP CHECK: isRepeat is false. No loop.`);
+        return;
+      }
+      if (!isPlaying) {
+        console.log(`DEBUG: LOOP CHECK: isPlaying is false. No loop.`);
+        return;
+      }
+      if (isSeeking) {
+        console.log(`DEBUG: LOOP CHECK: isSeeking is true. No loop.`);
+        return;
+      }
+       if (sortedActiveMarks.length < 2) {
+        console.log(`DEBUG: LOOP CHECK: Not enough active marks (${sortedActiveMarks.length}). No loop.`);
         return;
       }
       
       const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= time);
-      console.log(`DEBUG: Potential Section Start: ${currentSectionStart}`);
+      console.log(`DEBUG: LOOP CHECK: Potential Section Start: ${currentSectionStart}`);
 
       if (currentSectionStart === undefined) {
-        console.log("DEBUG: No current section found. Exiting.");
+        console.log("DEBUG: LOOP CHECK: No current section found. No loop.");
         return;
       }
 
       const currentSectionEnd = sortedActiveMarks.find(mark => mark > currentSectionStart);
-      console.log(`DEBUG: Section Start: ${currentSectionStart}, Section End: ${currentSectionEnd}`);
+      console.log(`DEBUG: LOOP CHECK: Section Start: ${currentSectionStart}, Section End: ${currentSectionEnd}`);
 
 
       if (currentSectionEnd !== undefined && time >= currentSectionEnd) {
-        console.log(`DEBUG: LOOPING! Time (${time}) passed end of section (${currentSectionEnd}). Seeking back to ${currentSectionStart}.`);
+        console.log(`%cDEBUG: LOOPING! Time (${time.toFixed(4)}) passed/is at end of section (${currentSectionEnd}). Seeking back to ${currentSectionStart}.`, 'color: #00ff00; font-weight: bold;');
         // Directly manipulate the audio element to prevent re-render loop
         audio.currentTime = currentSectionStart;
       } else if (currentSectionEnd !== undefined) {
-        console.log(`DEBUG: Not looping. Time (${time}) has not passed end of section (${currentSectionEnd}).`);
+        console.log(`DEBUG: LOOP CHECK: Not looping. Time (${time.toFixed(4)}) has not passed end of section (${currentSectionEnd}).`);
       } else {
-        console.log(`DEBUG: Not looping. At the end of the last section.`);
+        console.log(`DEBUG: LOOP CHECK: Not looping. At the end of the last section.`);
       }
     };
     
