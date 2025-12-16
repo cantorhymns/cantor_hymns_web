@@ -182,16 +182,12 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= time);
       console.log(`DEBUG: LOOP CHECK: Potential Section Start: ${currentSectionStart}`);
 
-      if (currentSectionStart === undefined) {
-        console.log("DEBUG: LOOP CHECK: No current section found. No loop.");
-        return;
-      }
-
-      const currentSectionEnd = sortedActiveMarks.find(mark => mark > currentSectionStart);
+      const currentSectionEnd = sortedActiveMarks.find(mark => mark > (currentSectionStart ?? -1));
       console.log(`DEBUG: LOOP CHECK: Section Start: ${currentSectionStart}, Section End: ${currentSectionEnd}`);
+      console.log('DEBUG: LOOP CHECK: Dependencies:', { isRepeat, isPlaying, isSeeking, sortedActiveMarks: sortedActiveMarks.join(','), audioSrc: !!audioSrc });
 
 
-      if (currentSectionEnd !== undefined && time >= currentSectionEnd) {
+      if (currentSectionStart !== undefined && currentSectionEnd !== undefined && time >= currentSectionEnd) {
         console.log(`%cDEBUG: LOOPING! Time (${time.toFixed(4)}) passed/is at end of section (${currentSectionEnd}). Seeking back to ${currentSectionStart}.`, 'color: #00ff00; font-weight: bold;');
         // Directly manipulate the audio element to prevent re-render loop
         audio.currentTime = currentSectionStart;
