@@ -127,7 +127,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     }
     setCurrentTime(newTime);
   }, [duration]);
-
+  
   const handleEnded = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -145,26 +145,40 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   // This effect handles the section repeat logic.
   useEffect(() => {
     if (!isRepeat || !isPlaying || isSeeking || sortedActiveMarks.length < 2) {
+      if (!isRepeat) console.log("DEBUG: Repeat is OFF.");
+      if (!isPlaying) console.log("DEBUG: Player is PAUSED.");
+      if (isSeeking) console.log("DEBUG: Player is SEEKING.");
+      if (sortedActiveMarks.length < 2) console.log("DEBUG: Not enough active marks for section repeat.");
       return;
     }
+    
+    console.log(`DEBUG: Time: ${currentTime.toFixed(2)}, isRepeat: ${isRepeat}, isPlaying: ${isPlaying}`);
+    console.log("DEBUG: Active Marks:", sortedActiveMarks);
   
-    // Find the start of the section we are currently in.
     const currentSectionStart = [...sortedActiveMarks]
       .reverse()
       .find((mark) => mark <= currentTime);
 
     if (currentSectionStart === undefined) {
+      console.log("DEBUG: No current section start found.");
       return;
     }
     
-    // Find the end of the current section. This is the next marker after the start.
     const currentSectionEnd = sortedActiveMarks.find(
       (mark) => mark > currentSectionStart
     );
     
-    // If there is an end marker and we've passed it, loop back.
+    console.log(`DEBUG: Section Start: ${currentSectionStart}, Section End: ${currentSectionEnd ?? 'N/A'}`);
+
     if (currentSectionEnd !== undefined && currentTime >= currentSectionEnd) {
+      console.log(`%cDEBUG: LOOPING! Time (${currentTime.toFixed(2)}) passed end of section (${currentSectionEnd}). Seeking to ${currentSectionStart}.`, "color: yellow; font-weight: bold;");
       seek(currentSectionStart);
+    } else {
+      if (currentSectionEnd !== undefined) {
+        console.log(`DEBUG: Not looping. Time (${currentTime.toFixed(2)}) has not passed end of section (${currentSectionEnd}).`);
+      } else {
+        console.log("DEBUG: Not looping. End of track, no end marker for current section.");
+      }
     }
   }, [currentTime, isRepeat, isPlaying, isSeeking, sortedActiveMarks, seek]);
 
@@ -340,28 +354,21 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const REWIND_THRESHOLD = 2; // in seconds
     if (!audioRef.current) return;
   
-    // Create a reversed copy to find the most recent marker we've passed
     const reversedMarks = [...sortedActiveMarks].reverse();
     
-    // Find the first marker that is less than the current time
     const currentSectionStartMarker = reversedMarks.find(mark => mark < currentTime);
   
-    // If no such marker exists, we are before the first one, so go to 0
     if (currentSectionStartMarker === undefined) {
       seek(0);
       return;
     }
   
-    // Check if we are past the rewind threshold of the current section
     if (currentTime > currentSectionStartMarker + REWIND_THRESHOLD) {
-      // If so, just rewind to the start of this section
       seek(currentSectionStartMarker);
     } else {
-      // Otherwise, find the marker for the *previous* section
       const currentMarkerIndex = reversedMarks.indexOf(currentSectionStartMarker);
       const previousSectionStartMarker = reversedMarks[currentMarkerIndex + 1];
   
-      // If a previous marker exists, seek to it. Otherwise, seek to the beginning.
       seek(previousSectionStartMarker !== undefined ? previousSectionStartMarker : 0);
     }
   };
@@ -615,4 +622,4 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   );
 }
 
-
+  
