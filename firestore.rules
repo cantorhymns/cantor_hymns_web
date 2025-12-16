@@ -29,13 +29,25 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    /**
-     * @description Rules for all collections.
-     * Access is restricted to authenticated users only.
-     * The AuthGate component ensures all users have at least an anonymous session.
-     */
+    // By default, nobody can write to any document.
+    // Read access is granted on a per-collection basis below.
     match /{document=**} {
-      allow read, write: if isSignedIn();
+      allow write: if isSignedIn();
+      allow read: if false; // Default deny read
+    }
+
+    // Public collections can be read by anyone.
+    match /genres/{genreId} {
+      allow read: if true;
+    }
+    match /hymns/{hymnId} {
+      allow read: if true;
+    }
+    match /recordings/{recordingId} {
+      allow read: if true;
+    }
+    match /cantors/{cantorId} {
+        allow read: if true;
     }
   }
 }
