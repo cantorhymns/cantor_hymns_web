@@ -65,21 +65,16 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const waveformContainerRef = useRef<HTMLDivElement>(null);
   const waveformInnerRef = useRef<HTMLDivElement>(null);
   const seekStartRef = useRef({ x: 0, time: 0 });
-  const previousTimeRef = useRef(0);
-
 
   const sortedMarks = useMemo(() => [...(currentRecording?.marks || [])].sort((a, b) => a - b), [currentRecording]);
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
   
   useEffect(() => {
-    // When hymn changes, reset to the first recording
     const firstRecording = hymn.recordings?.[0];
     setCurrentRecording(firstRecording);
   }, [hymn]);
   
   useEffect(() => {
-    // This effect runs when the current recording changes.
-    // It resets the player state and fetches the new audio.
     const audio = audioRef.current;
     if (audio) {
       audio.pause();
@@ -134,71 +129,19 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const audio = audioRef.current;
     if (!audio) return;
   
-    // If section repeat is on, let the other useEffect handle it.
-    if (isRepeat && sortedActiveMarks.length > 1) {
-      const lastSectionStart = sortedActiveMarks[sortedActiveMarks.length - 1];
-      if (currentTime >= lastSectionStart) {
-          seek(lastSectionStart);
-          if(!isPlaying) {
-            audio.play().catch(console.error);
-            setIsPlaying(true);
-          }
-      }
-      return;
-    }
-
-    // Handle repeating the entire track if that's the only repeat option on.
+    // This function now ONLY handles repeating the ENTIRE track.
+    // Section looping is handled in handleTimeUpdate.
     if (isRepeat) {
       audio.currentTime = 0;
       setCurrentTime(0);
-      if (!isPlaying) {
-        audio.play().catch(console.error);
-        setIsPlaying(true);
-      }
+      audio.play().catch(console.error);
+      setIsPlaying(true);
       return;
     }
     
-    // If no repeat is on, stop playback.
     setIsPlaying(false);
 
-  }, [isRepeat, sortedActiveMarks, seek, isPlaying, currentTime]);
-
-  useEffect(() => {
-    console.log(`DEBUG: Time: ${currentTime}, isRepeat: ${isRepeat}, isPlaying: ${isPlaying}`);
-    console.log(`DEBUG: Active Marks:`, sortedActiveMarks);
-  
-    if (!isRepeat || !isPlaying || isSeeking || sortedActiveMarks.length < 2) {
-      console.log("DEBUG: Repeat conditions not met. Exiting.");
-      return;
-    }
-  
-    // Find the start of the section we were in *just before* this time update
-    const previousSectionStart = [...sortedActiveMarks]
-      .reverse()
-      .find((mark) => mark <= previousTimeRef.current);
-      
-    // Find the start of the section we are in *now*
-    const currentSectionStart = [...sortedActiveMarks]
-      .reverse()
-      .find((mark) => mark <= currentTime);
-    
-    console.log(`DEBUG: Potential Previous Section Start: ${previousSectionStart}`);
-    console.log(`DEBUG: Potential Current Section Start: ${currentSectionStart}`);
-  
-    if (previousSectionStart !== undefined && currentSectionStart !== previousSectionStart) {
-      // We have crossed a marker into a new section.
-      // This is our trigger to loop back.
-      console.log(`DEBUG: LOOPING! Crossed marker. Seeking back to ${previousSectionStart}.`);
-      seek(previousSectionStart);
-    } else {
-       console.log("DEBUG: Not looping. Still in the same section.");
-    }
-
-    // Update previous time for the next render.
-    previousTimeRef.current = currentTime;
-
-  }, [currentTime, isRepeat, isPlaying, isSeeking, sortedActiveMarks, seek]);
-
+  }, [isRepeat]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -214,8 +157,37 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     };
 
     const handleTimeUpdate = () => {
-      if (audioRef.current && !isSeeking) {
-        setCurrentTime(audioRef.current.currentTime);
+      const time = audio.currentTime;
+      setCurrentTime(time);
+      
+      console.log(`DEBUG: Time: ${time}, isRepeat: ${isRepeat}, isPlaying: ${isPlaying}`);
+      console.log(`DEBUG: Active Marks:`, sortedActiveMarks);
+
+      if (!isRepeat || !isPlaying || isSeeking || sortedActiveMarks.length < 2) {
+        console.log("DEBUG: Repeat conditions not met. Exiting.");
+        return;
+      }
+      
+      const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= time);
+      console.log(`DEBUG: Potential Section Start: ${currentSectionStart}`);
+
+      if (currentSectionStart === undefined) {
+        console.log("DEBUG: No current section found. Exiting.");
+        return;
+      }
+
+      const currentSectionEnd = sortedActiveMarks.find(mark => mark > currentSectionStart);
+      console.log(`DEBUG: Section Start: ${currentSectionStart}, Section End: ${currentSectionEnd}`);
+
+
+      if (currentSectionEnd !== undefined && time >= currentSectionEnd) {
+        console.log(`DEBUG: LOOPING! Time (${time}) passed end of section (${currentSectionEnd}). Seeking back to ${currentSectionStart}.`);
+        // Directly manipulate the audio element to prevent re-render loop
+        audio.currentTime = currentSectionStart;
+      } else if (currentSectionEnd !== undefined) {
+        console.log(`DEBUG: Not looping. Time (${time}) has not passed end of section (${currentSectionEnd}).`);
+      } else {
+        console.log(`DEBUG: Not looping. At the end of the last section.`);
       }
     };
     
@@ -230,7 +202,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       audio.removeEventListener("timeupdate", handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
     };
-  }, [handleEnded, audioSrc, isSeeking]);
+  }, [isRepeat, isPlaying, isSeeking, sortedActiveMarks, handleEnded, audioSrc]);
 
   useEffect(() => {
     if (waveformContainerRef.current && waveformInnerRef.current && duration > VISIBLE_DURATION_S) {
