@@ -132,53 +132,45 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const audio = audioRef.current;
     if (!audio) return;
   
-    // If repeat is on for the whole track (not a section loop), restart the track.
+    // This function now *only* handles repeating the entire track.
+    // Section looping is managed by the useEffect hook below.
     if (isRepeat && sortedActiveMarks.length < 2) {
       audio.currentTime = 0;
       audio.play();
       setIsPlaying(true);
     } else {
+      // If it's the end of the track and we are not on a full-track repeat, just stop.
       setIsPlaying(false);
     }
   }, [isRepeat, sortedActiveMarks]);
 
-  // This effect handles the section repeat logic.
+  // This is the primary logic for section looping.
   useEffect(() => {
+    // Exit if the repeat feature isn't active, if we're not playing, or if it's not a section loop.
     if (!isRepeat || !isPlaying || isSeeking || sortedActiveMarks.length < 2) {
-      if (!isRepeat) console.log("DEBUG: Repeat is OFF.");
-      if (!isPlaying) console.log("DEBUG: Player is PAUSED.");
-      if (isSeeking) console.log("DEBUG: Player is SEEKING.");
-      if (sortedActiveMarks.length < 2) console.log("DEBUG: Not enough active marks for section repeat.");
       return;
     }
     
-    console.log(`DEBUG: Time: ${currentTime.toFixed(2)}, isRepeat: ${isRepeat}, isPlaying: ${isPlaying}`);
-    console.log("DEBUG: Active Marks:", sortedActiveMarks);
-  
+    // Find the marker for the start of the current section.
+    // It's the last marker that is less than or equal to the current time.
     const currentSectionStart = [...sortedActiveMarks]
       .reverse()
       .find((mark) => mark <= currentTime);
 
+    // If there's no start marker (e.g., we are before the first marker), we can't loop.
     if (currentSectionStart === undefined) {
-      console.log("DEBUG: No current section start found.");
       return;
     }
     
+    // Find the marker for the end of the current section.
+    // It's the first marker that comes *after* the start marker.
     const currentSectionEnd = sortedActiveMarks.find(
       (mark) => mark > currentSectionStart
     );
     
-    console.log(`DEBUG: Section Start: ${currentSectionStart}, Section End: ${currentSectionEnd ?? 'N/A'}`);
-
+    // If there's an end marker and our playback time has reached or passed it, loop back.
     if (currentSectionEnd !== undefined && currentTime >= currentSectionEnd) {
-      console.log(`%cDEBUG: LOOPING! Time (${currentTime.toFixed(2)}) passed end of section (${currentSectionEnd}). Seeking to ${currentSectionStart}.`, "color: yellow; font-weight: bold;");
       seek(currentSectionStart);
-    } else {
-      if (currentSectionEnd !== undefined) {
-        console.log(`DEBUG: Not looping. Time (${currentTime.toFixed(2)}) has not passed end of section (${currentSectionEnd}).`);
-      } else {
-        console.log("DEBUG: Not looping. End of track, no end marker for current section.");
-      }
     }
   }, [currentTime, isRepeat, isPlaying, isSeeking, sortedActiveMarks, seek]);
 
@@ -622,4 +614,4 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   );
 }
 
-  
+    
