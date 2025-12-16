@@ -11,7 +11,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "db:seed": "tsx src/scripts/seed-db.ts",
-    "db:clean": "tsx src/scripts/clean-db.ts"
+    "db:clean": "tsx src/scripts/clean-db.ts",
+    "db:update-marks": "tsx src/scripts/update-tarh-marks.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
