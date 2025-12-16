@@ -124,14 +124,12 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     if (audioRef.current) {
       audioRef.current.currentTime = newTime;
     }
-    // setCurrentTime is handled by the timeupdate event
   }, [duration]);
   
   const handleEnded = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
   
-    // Only loop the entire track if section repeat is off.
     if (isRepeat && sortedActiveMarks.length < 2) {
       audio.currentTime = 0;
       setCurrentTime(0);
@@ -166,24 +164,13 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const newTime = audio.currentTime;
     setCurrentTime(newTime);
     
-    console.log(`DEBUG: Time Update Fired. Time: ${newTime.toFixed(4)}, isRepeat: ${isRepeat}, isPlaying: ${isPlaying}, isSeeking: ${isSeeking}`);
-
     const loop = loopSectionRef.current;
     if (isRepeat && isPlaying && !isSeeking && loop) {
-        const depString = JSON.stringify({ isRepeat, isPlaying, isSeeking, sortedActiveMarks: sortedActiveMarks.join(','), audioSrc: !!audioSrc });
-        console.log(`DEBUG: LOOP CHECK: Section Start: ${loop.start}, Section End: ${loop.end}`);
-        console.log(`DEBUG: LOOP CHECK: Dependencies:`, JSON.parse(depString));
-        
         if (newTime >= loop.end) {
-            console.log(`%cDEBUG: LOOPING! Time (${newTime.toFixed(4)}) passed/is at end of section (${loop.end}). Seeking back to ${loop.start}.`, 'color: #00ff00; font-weight: bold;');
             audio.currentTime = loop.start;
-        } else {
-            console.log(`DEBUG: LOOP CHECK: Not looping. Time (${newTime.toFixed(4)}) has not passed end of section (${loop.end}).`);
         }
-    } else if (isRepeat) {
-        console.log(`DEBUG: LOOP CHECK: Main conditions not met. Bailing. isPlaying: ${isPlaying}, isSeeking: ${isSeeking}, loopSection: ${JSON.stringify(loop)}`);
     }
-  }, [isRepeat, isPlaying, isSeeking, sortedActiveMarks, audioSrc]);
+  }, [isRepeat, isPlaying, isSeeking]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -617,5 +604,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    
