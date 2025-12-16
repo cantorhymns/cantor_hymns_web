@@ -131,7 +131,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   
     // This function now ONLY handles repeating the ENTIRE track.
     // Section looping is handled in handleTimeUpdate.
-    if (isRepeat) {
+    if (isRepeat && sortedActiveMarks.length < 2) {
       audio.currentTime = 0;
       setCurrentTime(0);
       audio.play().catch(console.error);
@@ -141,7 +141,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     
     setIsPlaying(false);
 
-  }, [isRepeat]);
+  }, [isRepeat, sortedActiveMarks]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -621,3 +621,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    
