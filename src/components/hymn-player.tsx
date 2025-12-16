@@ -144,33 +144,39 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     }
   }, [isRepeat, sortedActiveMarks]);
 
-  // This is the primary logic for section looping.
   useEffect(() => {
-    // Exit if the repeat feature isn't active, if we're not playing, or if it's not a section loop.
+    console.log(`DEBUG: Time: ${currentTime}, isRepeat: ${isRepeat}, isPlaying: ${isPlaying}`);
+    console.log("DEBUG: Active Marks:", sortedActiveMarks);
     if (!isRepeat || !isPlaying || isSeeking || sortedActiveMarks.length < 2) {
+      console.log("DEBUG: Repeat conditions not met. Exiting.");
       return;
     }
-    
-    // Find the marker for the start of the current section.
-    // It's the last marker that is less than or equal to the current time.
+
     const currentSectionStart = [...sortedActiveMarks]
       .reverse()
       .find((mark) => mark <= currentTime);
+    
+    console.log("DEBUG: Potential Section Start:", currentSectionStart);
 
-    // If there's no start marker (e.g., we are before the first marker), we can't loop.
     if (currentSectionStart === undefined) {
+      console.log("DEBUG: No current section start found.");
       return;
     }
-    
-    // Find the marker for the end of the current section.
-    // It's the first marker that comes *after* the start marker.
+
     const currentSectionEnd = sortedActiveMarks.find(
       (mark) => mark > currentSectionStart
     );
-    
-    // If there's an end marker and our playback time has reached or passed it, loop back.
+    console.log(`DEBUG: Section Start: ${currentSectionStart}, Section End: ${currentSectionEnd}`);
+
     if (currentSectionEnd !== undefined && currentTime >= currentSectionEnd) {
+      console.log(`DEBUG: LOOPING! Time (${currentTime}) has passed end of section (${currentSectionEnd}). Seeking to ${currentSectionStart}.`);
       seek(currentSectionStart);
+    } else {
+        if (currentSectionEnd !== undefined) {
+            console.log(`DEBUG: Not looping. Time (${currentTime}) has not passed end of section (${currentSectionEnd}).`);
+        } else {
+            console.log(`DEBUG: Not looping. At the end of the last section.`);
+        }
     }
   }, [currentTime, isRepeat, isPlaying, isSeeking, sortedActiveMarks, seek]);
 
@@ -613,5 +619,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    
