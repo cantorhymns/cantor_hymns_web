@@ -148,48 +148,27 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   // This effect handles the section repeat logic.
   useEffect(() => {
-    console.log(`[Debug] Repeat Effect Triggered. isRepeat: ${isRepeat}, isPlaying: ${isPlaying}, isSeeking: ${isSeeking}`);
-
     if (!isRepeat || !isPlaying || isSeeking || sortedActiveMarks.length < 2) {
-      if (!isRepeat) console.log('[Debug] Exiting: Repeat is OFF.');
-      if (!isPlaying) console.log('[Debug] Exiting: Not Playing.');
-      if (isSeeking) console.log('[Debug] Exiting: Currently Seeking.');
-      if (sortedActiveMarks.length < 2) console.log('[Debug] Exiting: Not enough active marks for a section.');
       return;
     }
-    
-    console.log(`[Debug] Current Time: ${currentTime.toFixed(2)}`);
-    console.log('[Debug] Active Marks:', sortedActiveMarks);
-
+  
     // Find the start of the section we are currently in.
     const currentSectionStart = [...sortedActiveMarks]
       .reverse()
       .find((mark) => mark <= currentTime);
 
     if (currentSectionStart === undefined) {
-      console.log('[Debug] Not in any defined section. Doing nothing.');
       return;
     }
     
-    console.log(`[Debug] Current Section Start: ${currentSectionStart}`);
-
     // Find the end of the current section. This is the next marker after the start.
     const currentSectionEnd = sortedActiveMarks.find(
       (mark) => mark > currentSectionStart
     );
     
-    console.log(`[Debug] Current Section End: ${currentSectionEnd}`);
-
     // If there is an end marker and we've passed it, loop back.
     if (currentSectionEnd !== undefined && currentTime >= currentSectionEnd) {
-      console.log(`%c[Debug] LOOP! Time (${currentTime.toFixed(2)}) >= End (${currentSectionEnd}). Seeking to ${currentSectionStart}.`, 'color: lightgreen; font-weight: bold;');
       seek(currentSectionStart);
-    } else {
-        if (currentSectionEnd === undefined) {
-             console.log('[Debug] No end marker found for this section.');
-        } else {
-             console.log(`[Debug] Not looping. Time (${currentTime.toFixed(2)}) < End (${currentSectionEnd})`);
-        }
     }
   }, [currentTime, isRepeat, isPlaying, isSeeking, sortedActiveMarks, seek]);
 
@@ -639,3 +618,4 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
