@@ -129,43 +129,61 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   }, [duration]);
   
   const handleEnded = useCallback(() => {
+    console.log("DEBUG: handleEnded triggered.");
     const audio = audioRef.current;
     if (!audio) return;
   
     // Only handle repeating the *entire track*.
     // Section looping is managed by the useEffect hook watching currentTime.
     if (isRepeat && sortedActiveMarks.length < 2) {
+      console.log("DEBUG: Repeating entire track.");
       audio.currentTime = 0;
       audio.play();
       // isPlaying is already true and will remain true.
     } else if (isRepeat && sortedActiveMarks.length > 1) {
       // If we are in section repeat mode, the `useEffect` handles it.
       // Do nothing here to prevent isPlaying from being set to false.
+      console.log("DEBUG: In section repeat mode, handleEnded does nothing.");
     } else {
       // If not repeating at all, then stop playback.
+      console.log("DEBUG: Not repeating, setting isPlaying to false.");
       setIsPlaying(false);
     }
   }, [isRepeat, sortedActiveMarks]);
 
-  useEffect(() => {
+useEffect(() => {
+    console.log(`DEBUG: Time: ${currentTime}, isRepeat: ${isRepeat}, isPlaying: ${isPlaying}`);
+    console.log(`DEBUG: Active Marks:`, sortedActiveMarks);
+
     if (!isRepeat || !isPlaying || isSeeking || sortedActiveMarks.length < 2) {
-      return;
+        console.log("DEBUG: Repeat conditions not met. Exiting.");
+        return;
     }
 
     const currentSectionStart = [...sortedActiveMarks]
       .reverse()
       .find((mark) => mark <= currentTime);
+    
+    console.log(`DEBUG: Potential Section Start: ${currentSectionStart}`);
 
     if (currentSectionStart === undefined) {
-      return;
+        console.log("DEBUG: No current section start found.");
+        return;
     }
 
     const currentSectionEnd = sortedActiveMarks.find(
       (mark) => mark > currentSectionStart
     );
+    
+    console.log(`DEBUG: Section Start: ${currentSectionStart}, Section End: ${currentSectionEnd}`);
 
     if (currentSectionEnd !== undefined && currentTime >= currentSectionEnd) {
+      console.log(`DEBUG: LOOPING! Time (${currentTime}) has passed end of section (${currentSectionEnd}). Seeking to ${currentSectionStart}.`);
       seek(currentSectionStart);
+    } else if (currentSectionEnd !== undefined) {
+        console.log(`DEBUG: Not looping. Time (${currentTime}) has not passed end of section (${currentSectionEnd}).`);
+    } else {
+        console.log("DEBUG: Not looping. At the last section.");
     }
   }, [currentTime, isRepeat, isPlaying, isSeeking, sortedActiveMarks, seek]);
 
