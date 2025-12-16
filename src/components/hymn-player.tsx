@@ -132,17 +132,13 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const audio = audioRef.current;
     if (!audio) return;
   
-    // If repeat is for the whole track and we are not looping a section
+    // If repeat is on for the whole track (not a section loop), restart the track.
     if (isRepeat && sortedActiveMarks.length < 2) {
       audio.currentTime = 0;
       audio.play();
       setIsPlaying(true);
     } else {
       setIsPlaying(false);
-      // If not repeating, reset time to the start of the last section, or 0.
-      const lastSectionStart = [...sortedActiveMarks].reverse()[0] ?? 0;
-      audio.currentTime = lastSectionStart;
-      setCurrentTime(lastSectionStart);
     }
   }, [isRepeat, sortedActiveMarks]);
 
@@ -618,4 +614,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
 
