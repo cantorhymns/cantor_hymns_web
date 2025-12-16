@@ -65,6 +65,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const waveformContainerRef = useRef<HTMLDivElement>(null);
   const waveformInnerRef = useRef<HTMLDivElement>(null);
   const seekStartRef = useRef({ x: 0, time: 0 });
+  const loopSectionRef = useRef<{start: number, end: number} | null>(null);
+
 
   const sortedMarks = useMemo(() => [...(currentRecording?.marks || [])].sort((a, b) => a - b), [currentRecording]);
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
@@ -142,49 +144,46 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   }, [isRepeat, sortedActiveMarks]);
   
+  useEffect(() => {
+    if (isRepeat && sortedActiveMarks.length > 1) {
+        const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= currentTime);
+        const currentSectionEnd = sortedActiveMarks.find(mark => mark > (currentSectionStart ?? -1));
+
+        if(currentSectionStart !== undefined && currentSectionEnd !== undefined) {
+            loopSectionRef.current = { start: currentSectionStart, end: currentSectionEnd };
+        } else {
+            loopSectionRef.current = null;
+        }
+    } else {
+        loopSectionRef.current = null;
+    }
+  }, [isRepeat, sortedActiveMarks, currentTime]);
+
+
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    setCurrentTime(audio.currentTime);
-  }, []);
-
-  useEffect(() => {
-    console.log(`DEBUG: Time Update Fired. Time: ${currentTime.toFixed(4)}, isRepeat: ${isRepeat}, isPlaying: ${isPlaying}, isSeeking: ${isSeeking}`);
-
-    if (!isRepeat || !isPlaying || isSeeking || sortedActiveMarks.length < 2 || !audioRef.current) {
-      console.log(`DEBUG: LOOP CHECK: Main conditions not met. Bailing. isRepeat: ${isRepeat}, isPlaying: ${isPlaying}, isSeeking: ${isSeeking}, marks: ${sortedActiveMarks.length}`);
-      return;
-    }
-
-    const audio = audioRef.current;
+    const newTime = audio.currentTime;
+    setCurrentTime(newTime);
     
-    // Find the start of the current section ("next smaller number")
-    const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= currentTime);
-    console.log(`DEBUG: LOOP CHECK: Potential Section Start: ${currentSectionStart}`);
+    console.log(`DEBUG: Time Update Fired. Time: ${newTime.toFixed(4)}, isRepeat: ${isRepeat}, isPlaying: ${isPlaying}, isSeeking: ${isSeeking}`);
 
-    if (currentSectionStart === undefined) {
-      console.log(`DEBUG: LOOP CHECK: No section start found for time ${currentTime}.`);
-      return;
+    const loop = loopSectionRef.current;
+    if (isRepeat && isPlaying && !isSeeking && loop) {
+        const depString = JSON.stringify({ isRepeat, isPlaying, isSeeking, sortedActiveMarks: sortedActiveMarks.join(','), audioSrc: !!audioSrc });
+        console.log(`DEBUG: LOOP CHECK: Section Start: ${loop.start}, Section End: ${loop.end}`);
+        console.log(`DEBUG: LOOP CHECK: Dependencies:`, JSON.parse(depString));
+        
+        if (newTime >= loop.end) {
+            console.log(`%cDEBUG: LOOPING! Time (${newTime.toFixed(4)}) passed/is at end of section (${loop.end}). Seeking back to ${loop.start}.`, 'color: #00ff00; font-weight: bold;');
+            audio.currentTime = loop.start;
+        } else {
+            console.log(`DEBUG: LOOP CHECK: Not looping. Time (${newTime.toFixed(4)}) has not passed end of section (${loop.end}).`);
+        }
+    } else if (isRepeat) {
+        console.log(`DEBUG: LOOP CHECK: Main conditions not met. Bailing. isPlaying: ${isPlaying}, isSeeking: ${isSeeking}, loopSection: ${JSON.stringify(loop)}`);
     }
-
-    // Find the end of the current section ("next larger number")
-    const currentSectionEnd = sortedActiveMarks.find(mark => mark > currentSectionStart);
-    console.log(`DEBUG: LOOP CHECK: Section Start: ${currentSectionStart}, Section End: ${currentSectionEnd}`);
-
-    const depString = JSON.stringify({ isRepeat, isPlaying, isSeeking, sortedActiveMarks: sortedActiveMarks.join(','), audioSrc: !!audioSrc });
-    console.log(`DEBUG: LOOP CHECK: Dependencies:`, JSON.parse(depString));
-    
-    // Check if we passed the end of a valid section
-    if (currentSectionEnd !== undefined && currentTime >= currentSectionEnd) {
-      console.log(`%cDEBUG: LOOPING! Time (${currentTime.toFixed(4)}) passed/is at end of section (${currentSectionEnd}). Seeking back to ${currentSectionStart}.`, 'color: #00ff00; font-weight: bold;');
-      seek(currentSectionStart);
-    } else if (currentSectionEnd !== undefined) {
-      console.log(`DEBUG: LOOP CHECK: Not looping. Time (${currentTime.toFixed(4)}) has not passed end of section (${currentSectionEnd}).`);
-    } else {
-       console.log(`DEBUG: LOOP CHECK: Not looping. At the end of the last section.`);
-    }
-
-  }, [currentTime, isRepeat, isPlaying, isSeeking, sortedActiveMarks, seek, audioSrc]);
+  }, [isRepeat, isPlaying, isSeeking, sortedActiveMarks, audioSrc]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -618,3 +617,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    
