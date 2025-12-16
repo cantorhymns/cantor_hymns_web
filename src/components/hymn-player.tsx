@@ -162,34 +162,21 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       
       console.log(`DEBUG: Time Update Fired. Time: ${time.toFixed(4)}, isRepeat: ${isRepeat}, isPlaying: ${isPlaying}, isSeeking: ${isSeeking}`);
 
-      if (!isRepeat) {
-        console.log(`DEBUG: LOOP CHECK: isRepeat is false. No loop.`);
-        return;
-      }
-      if (!isPlaying) {
-        console.log(`DEBUG: LOOP CHECK: isPlaying is false. No loop.`);
-        return;
-      }
-      if (isSeeking) {
-        console.log(`DEBUG: LOOP CHECK: isSeeking is true. No loop.`);
-        return;
-      }
-       if (sortedActiveMarks.length < 2) {
-        console.log(`DEBUG: LOOP CHECK: Not enough active marks (${sortedActiveMarks.length}). No loop.`);
-        return;
+      if (!isRepeat || !isPlaying || isSeeking || sortedActiveMarks.length < 2) {
+         console.log(`DEBUG: LOOP CHECK: Main conditions not met. Bailing. isRepeat: ${isRepeat}, isPlaying: ${isPlaying}, isSeeking: ${isSeeking}, marks: ${sortedActiveMarks.length}`);
+         return;
       }
       
       const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= time);
-      console.log(`DEBUG: LOOP CHECK: Potential Section Start: ${currentSectionStart}`);
-
       const currentSectionEnd = sortedActiveMarks.find(mark => mark > (currentSectionStart ?? -1));
+
+      console.log(`DEBUG: LOOP CHECK: Potential Section Start: ${currentSectionStart}`);
       console.log(`DEBUG: LOOP CHECK: Section Start: ${currentSectionStart}, Section End: ${currentSectionEnd}`);
-      console.log('DEBUG: LOOP CHECK: Dependencies:', { isRepeat, isPlaying, isSeeking, sortedActiveMarks: sortedActiveMarks.join(','), audioSrc: !!audioSrc });
+      console.log('DEBUG: LOOP CHECK: Dependencies:', { isRepeat, isPlaying, isSeeking, sortedActiveMarks: sortedActiveMarks.join(','), audioSrc: !!audioSrc, handleEnded: !!handleEnded });
 
 
       if (currentSectionStart !== undefined && currentSectionEnd !== undefined && time >= currentSectionEnd) {
         console.log(`%cDEBUG: LOOPING! Time (${time.toFixed(4)}) passed/is at end of section (${currentSectionEnd}). Seeking back to ${currentSectionStart}.`, 'color: #00ff00; font-weight: bold;');
-        // Directly manipulate the audio element to prevent re-render loop
         audio.currentTime = currentSectionStart;
       } else if (currentSectionEnd !== undefined) {
         console.log(`DEBUG: LOOP CHECK: Not looping. Time (${time.toFixed(4)}) has not passed end of section (${currentSectionEnd}).`);
@@ -617,3 +604,4 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
