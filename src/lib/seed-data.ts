@@ -56,7 +56,7 @@ export const recordings = [
         "hymnId": "tai-shouri",
         "cantorId": "cantor-bola",
         "audioUrl": "CantorBola/CantorBola_MournfulTaishouri.mp3",
-        "marks": [0, 15, 30, 45, 60, 75, 90, 105, 120, 135]
+        "marks": [0, 14, 28, 42, 57, 71, 85, 99, 114, 128, 142, 156, 171]
     },
     {
         "hymnId": "omonogenees",
