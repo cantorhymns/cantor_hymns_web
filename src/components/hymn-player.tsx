@@ -545,12 +545,14 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         </Button>
                     </div>
                     <div className="flex items-center gap-6 mt-2">
-                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full" onClick={() => handleSkip(-10)}>
+                        <Button variant="ghost" size="icon" className="group h-10 w-10 rounded-full relative" onClick={() => handleSkip(-10)}>
                             <Rewind className="h-6 w-6" />
+                            <span className="absolute text-xs font-bold text-muted-foreground group-hover:text-primary transition-colors">10</span>
                             <span className="sr-only">Rewind 10 seconds</span>
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full" onClick={() => handleSkip(10)}>
+                        <Button variant="ghost" size="icon" className="group h-10 w-10 rounded-full relative" onClick={() => handleSkip(10)}>
                             <FastForward className="h-6 w-6" />
+                            <span className="absolute text-xs font-bold text-muted-foreground group-hover:text-primary transition-colors">10</span>
                             <span className="sr-only">Fast Forward 10 seconds</span>
                         </Button>
                     </div>
