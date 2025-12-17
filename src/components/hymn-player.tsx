@@ -65,12 +65,16 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const waveformContainerRef = useRef<HTMLDivElement>(null);
   const waveformInnerRef = useRef<HTMLDivElement>(null);
   const seekStartRef = useRef({ x: 0, time: 0 });
-  const loopSectionRef = useRef<{start: number, end: number} | null>(null);
-
 
   const sortedMarks = useMemo(() => [...(currentRecording?.marks || [])].sort((a, b) => a - b), [currentRecording]);
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
   
+  // This memoized array includes the implicit '0' mark for looping calculations.
+  const loopMarks = useMemo(() => {
+    const marks = [...new Set([0, ...sortedActiveMarks])];
+    return marks.sort((a, b) => a - b);
+  }, [sortedActiveMarks]);
+
   useEffect(() => {
     const firstRecording = hymn.recordings?.[0];
     setCurrentRecording(firstRecording);
@@ -99,7 +103,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
           setAudioSrc(url);
         })
         .catch(error => {
-          console.error("Error getting download URL:", error);
           setAudioError(error.code || error.message || 'Failed to fetch audio.');
         })
         .finally(() => {
@@ -130,7 +133,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const audio = audioRef.current;
     if (!audio) return;
   
-    if (isRepeat && sortedActiveMarks.length < 2) {
+    // If repeat is on but there's only one mark (the implicit '0'), loop the whole track.
+    if (isRepeat && loopMarks.length <= 1) {
       audio.currentTime = 0;
       setCurrentTime(0);
       audio.play().catch(console.error);
@@ -140,37 +144,26 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     
     setIsPlaying(false);
 
-  }, [isRepeat, sortedActiveMarks]);
-  
-  useEffect(() => {
-    if (isRepeat && sortedActiveMarks.length > 1) {
-        const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= currentTime);
-        const currentSectionEnd = sortedActiveMarks.find(mark => mark > (currentSectionStart ?? -1));
-
-        if(currentSectionStart !== undefined && currentSectionEnd !== undefined) {
-            loopSectionRef.current = { start: currentSectionStart, end: currentSectionEnd };
-        } else {
-            loopSectionRef.current = null;
-        }
-    } else {
-        loopSectionRef.current = null;
-    }
-  }, [isRepeat, sortedActiveMarks, currentTime]);
-
+  }, [isRepeat, loopMarks]);
 
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
+
     const newTime = audio.currentTime;
     setCurrentTime(newTime);
     
-    const loop = loopSectionRef.current;
-    if (isRepeat && isPlaying && !isSeeking && loop) {
-        if (newTime >= loop.end) {
-            audio.currentTime = loop.start;
+    if (isRepeat && isPlaying && !isSeeking && loopMarks.length > 1) {
+        const currentSectionStart = [...loopMarks].reverse().find(mark => mark <= newTime);
+        const currentSectionEnd = loopMarks.find(mark => mark > (currentSectionStart ?? -1));
+
+        if (currentSectionStart !== undefined && currentSectionEnd !== undefined) {
+             if (newTime >= currentSectionEnd) {
+                audio.currentTime = currentSectionStart;
+             }
         }
     }
-  }, [isRepeat, isPlaying, isSeeking]);
+  }, [isRepeat, isPlaying, isSeeking, loopMarks]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -337,8 +330,9 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const REWIND_THRESHOLD = 2; // in seconds
     if (!audioRef.current) return;
   
-    const reversedMarks = [...sortedActiveMarks].reverse();
+    const reversedMarks = [...loopMarks].reverse();
     
+    // Find the start of the current section
     const currentSectionStartMarker = reversedMarks.find(mark => mark < currentTime);
   
     if (currentSectionStartMarker === undefined) {
@@ -346,9 +340,11 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       return;
     }
   
+    // If we are more than 2s into the current section, jump to its start.
     if (currentTime > currentSectionStartMarker + REWIND_THRESHOLD) {
       seek(currentSectionStartMarker);
     } else {
+      // Otherwise, jump to the start of the PREVIOUS section.
       const currentMarkerIndex = reversedMarks.indexOf(currentSectionStartMarker);
       const previousSectionStartMarker = reversedMarks[currentMarkerIndex + 1];
   
@@ -604,3 +600,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    
