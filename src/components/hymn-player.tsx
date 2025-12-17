@@ -138,7 +138,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     
     if (isRepeat && isPlaying && loopSectionRef.current) {
         const { start, end } = loopSectionRef.current;
-        if (newTime > end) {
+        if (newTime >= end) {
             seek(start);
         }
     }
@@ -517,16 +517,19 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
             <div className="flex justify-between items-center">
                 <div className="w-[100px] justify-start" />
 
-                <div className="flex flex-col items-center gap-2">
-                    <Button
-                        variant={isRepeat ? "secondary" : "ghost"}
-                        size="icon"
-                        onClick={() => setIsRepeat(!isRepeat)}
-                        className={`mb-2 ${isRepeat ? "text-primary ring-2 ring-primary" : ""}`}
-                    >
-                        <Repeat className="h-5 w-5" />
-                        <span className="sr-only">Repeat Section</span>
-                    </Button>
+                <div className="flex flex-col items-center gap-4">
+                    <div className="flex flex-col items-center gap-1">
+                        <Button
+                            variant={isRepeat ? "secondary" : "ghost"}
+                            size="icon"
+                            onClick={() => setIsRepeat(!isRepeat)}
+                            className={`${isRepeat ? "text-primary ring-2 ring-primary" : ""}`}
+                        >
+                            <Repeat className="h-5 w-5" />
+                            <span className="sr-only">Repeat Section</span>
+                        </Button>
+                        <span className="text-xs font-medium text-muted-foreground">Learn Mode</span>
+                    </div>
                     <div className="flex items-center gap-4">
                         <Button variant="ghost" size="icon" onClick={handlePrevSection} disabled={sortedActiveMarks.length === 0}>
                             <SkipBack className="h-6 w-6" />
