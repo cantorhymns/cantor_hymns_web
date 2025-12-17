@@ -65,15 +65,10 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const waveformContainerRef = useRef<HTMLDivElement>(null);
   const waveformInnerRef = useRef<HTMLDivElement>(null);
   const seekStartRef = useRef({ x: 0, time: 0 });
+  const loopSectionRef = useRef<{ start: number, end: number } | null>(null);
 
   const sortedMarks = useMemo(() => [...(currentRecording?.marks || [])].sort((a, b) => a - b), [currentRecording]);
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
-  
-  // This memoized array includes the implicit '0' mark for looping calculations.
-  const loopMarks = useMemo(() => {
-    const marks = [...new Set([0, ...sortedActiveMarks])];
-    return marks.sort((a, b) => a - b);
-  }, [sortedActiveMarks]);
 
   useEffect(() => {
     const firstRecording = hymn.recordings?.[0];
@@ -126,44 +121,32 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const newTime = Math.max(0, Math.min(time, duration));
     if (audioRef.current) {
       audioRef.current.currentTime = newTime;
+      // We manually set currentTime here as well to ensure UI responsiveness,
+      // especially if the 'timeupdate' event is delayed.
+      setCurrentTime(newTime);
     }
   }, [duration]);
   
   const handleEnded = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-  
-    // If repeat is on but there's only one mark (the implicit '0'), loop the whole track.
-    if (isRepeat && loopMarks.length <= 1) {
-      audio.currentTime = 0;
-      setCurrentTime(0);
-      audio.play().catch(console.error);
-      setIsPlaying(true);
-      return;
-    }
-    
     setIsPlaying(false);
-
-  }, [isRepeat, loopMarks]);
+  }, []);
 
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || isSeeking) return;
 
     const newTime = audio.currentTime;
     setCurrentTime(newTime);
     
-    if (isRepeat && isPlaying && !isSeeking && loopMarks.length > 1) {
-        const currentSectionStart = [...loopMarks].reverse().find(mark => mark <= newTime);
-        const currentSectionEnd = loopMarks.find(mark => mark > (currentSectionStart ?? -1));
-
-        if (currentSectionStart !== undefined && currentSectionEnd !== undefined) {
-             if (newTime >= currentSectionEnd) {
-                audio.currentTime = currentSectionStart;
-             }
+    if (isRepeat && isPlaying && loopSectionRef.current) {
+        const { start, end } = loopSectionRef.current;
+        // The loop check must be `>` not `>=` to avoid an instant loop-back
+        // if the time update fires exactly at the end mark.
+        if (newTime > end) {
+            seek(start);
         }
     }
-  }, [isRepeat, isPlaying, isSeeking, loopMarks]);
+  }, [isRepeat, isPlaying, isSeeking, seek]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -190,6 +173,27 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       audio.removeEventListener('ended', handleEnded);
     };
   }, [handleEnded, handleTimeUpdate, audioSrc]);
+
+  // Effect to update the stable loop section ref ONLY when relevant state changes
+  useEffect(() => {
+    if (isRepeat && sortedActiveMarks.length > 0) {
+      // Find the section that CONTAINS the currentTime
+      const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= currentTime);
+      const currentSectionEnd = sortedActiveMarks.find(mark => mark > (currentSectionStart ?? -1));
+
+      if (currentSectionStart !== undefined && currentSectionEnd !== undefined) {
+        loopSectionRef.current = { start: currentSectionStart, end: currentSectionEnd };
+      } else {
+        // If we are outside any defined section, don't set a loop
+        loopSectionRef.current = null;
+      }
+    } else {
+      // If repeat is off or no marks are active, there is no loop section
+      loopSectionRef.current = null;
+    }
+  // This effect runs when repeat is toggled or marks change, NOT on every time update.
+  // We include currentTime so that turning on repeat mid-track establishes the correct loop section.
+  }, [isRepeat, sortedActiveMarks, currentTime]);
 
   useEffect(() => {
     if (waveformContainerRef.current && waveformInnerRef.current && duration > VISIBLE_DURATION_S) {
@@ -330,7 +334,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const REWIND_THRESHOLD = 2; // in seconds
     if (!audioRef.current) return;
   
-    const reversedMarks = [...loopMarks].reverse();
+    const reversedMarks = [...sortedActiveMarks].reverse();
     
     // Find the start of the current section
     const currentSectionStartMarker = reversedMarks.find(mark => mark < currentTime);
@@ -600,5 +604,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    
