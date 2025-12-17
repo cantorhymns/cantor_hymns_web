@@ -9,7 +9,7 @@ const newMarks = [
     16.143336, 24.306601, 47.254447, 56.778256, 71.608188, 87.980071, 98.456261, 118.320207,
     139.635399, 148.252179, 161.909776, 180.639934, 197.238574, 208.576442, 223.950592,
     246.898438, 267.533359, 295.379163, 329.099003, 360.173833, 391.332563, 422.223719,
-    452.362041, 482.69991, 514.31669, 544.386985, 570.40966, 596.797415, 625.278141,
+    452.362041, 482.699910, 514.316690, 544.386985, 570.409660, 596.797415, 625.278141,
     653.579728, 670.860907, 699.296282, 716.076327, 729.046849, 752.040046, 768.729388,
     782.289479, 797.255465, 810.135284, 825.509434, 843.468617, 866.869978, 890.094468,
     906.661361, 920.040046, 945.890386, 976.502631
@@ -26,9 +26,9 @@ async function updatePsalm150Marks() {
         console.log('Authentication successful.');
 
         const recordingsRef = collection(db, 'recordings');
-        const q = query(recordingsRef, where('hymnId', '==', 'psalm-150'), where('cantorId', '==', 'cantor-ibrahim'));
+        const q = query(recordingsRef, where('hymnId', '==', 'psalm-150-kiahk'), where('cantorId', '==', 'cantor-ibrahim'));
 
-        console.log("Searching for the 'Psalm 150' recording by 'Cantor Ibrahim'...");
+        console.log("Searching for the 'psalm-150-kiahk' recording by 'Cantor Ibrahim'...");
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
