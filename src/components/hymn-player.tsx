@@ -118,7 +118,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   const seek = useCallback((time: number) => {
     if (!audioRef.current || duration <= 0) return;
-    const newTime = Math.max(0, Math.min(time, duration));
+    const newTime = Math.max(0, Math.min(time, time, duration));
     if (audioRef.current) {
       audioRef.current.currentTime = newTime;
       setCurrentTime(newTime);
@@ -544,15 +544,15 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                             <span className="sr-only">Next Section</span>
                         </Button>
                     </div>
-                    <div className="flex items-center gap-6 mt-2">
-                        <Button variant="ghost" size="icon" className="group h-10 w-10 rounded-full relative" onClick={() => handleSkip(-10)}>
-                            <Rewind className="h-6 w-6" />
-                            <span className="absolute text-xs font-bold text-muted-foreground group-hover:text-primary transition-colors">10</span>
+                    <div className="flex items-center gap-2">
+                        <Button variant="ghost" size="sm" className="h-10 rounded-full px-4 text-muted-foreground hover:text-primary transition-colors" onClick={() => handleSkip(-10)}>
+                            <span className="text-sm font-bold mr-2">10</span>
+                            <Rewind className="h-5 w-5" />
                             <span className="sr-only">Rewind 10 seconds</span>
                         </Button>
-                        <Button variant="ghost" size="icon" className="group h-10 w-10 rounded-full relative" onClick={() => handleSkip(10)}>
-                            <FastForward className="h-6 w-6" />
-                            <span className="absolute text-xs font-bold text-muted-foreground group-hover:text-primary transition-colors">10</span>
+                        <Button variant="ghost" size="sm" className="h-10 rounded-full px-4 text-muted-foreground hover:text-primary transition-colors" onClick={() => handleSkip(10)}>
+                            <FastForward className="h-5 w-5" />
+                            <span className="text-sm font-bold ml-2">10</span>
                             <span className="sr-only">Fast Forward 10 seconds</span>
                         </Button>
                     </div>
@@ -594,3 +594,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    
