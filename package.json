@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "db:seed": "tsx src/scripts/seed-db.ts",
     "db:clean": "tsx src/scripts/clean-db.ts",
-    "db:update-marks": "tsx src/scripts/update-tarh-marks.ts"
+    "db:update-marks": "tsx src/scripts/update-tarh-marks.ts",
+    "db:update-psalm-150": "tsx src/scripts/update-psalm-150-marks.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
