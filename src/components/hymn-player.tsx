@@ -529,7 +529,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                             <Repeat className="h-5 w-5" />
                             <span className="sr-only">Repeat Section</span>
                         </Button>
-                        <span className="text-xs font-medium text-muted-foreground">Learn Mode</span>
+                        <span className="text-xs font-medium text-muted-foreground">Repeat Section</span>
                     </div>
                     <div className="flex items-center gap-4">
                         <Button variant="ghost" size="icon" onClick={handlePrevSection} disabled={sortedActiveMarks.length === 0}>
@@ -595,3 +595,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    
