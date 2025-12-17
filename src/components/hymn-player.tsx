@@ -546,13 +546,13 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                     </div>
                     <div className="flex items-center gap-2">
                         <Button variant="ghost" size="sm" className="h-10 rounded-full px-4 text-muted-foreground hover:text-primary transition-colors" onClick={() => handleSkip(-10)}>
-                            <span className="text-sm font-bold mr-2">10</span>
+                            <span className="text-sm font-bold mr-2">10s</span>
                             <Rewind className="h-5 w-5" />
                             <span className="sr-only">Rewind 10 seconds</span>
                         </Button>
                         <Button variant="ghost" size="sm" className="h-10 rounded-full px-4 text-muted-foreground hover:text-primary transition-colors" onClick={() => handleSkip(10)}>
                             <FastForward className="h-5 w-5" />
-                            <span className="text-sm font-bold ml-2">10</span>
+                            <span className="text-sm font-bold ml-2">10s</span>
                             <span className="sr-only">Fast Forward 10 seconds</span>
                         </Button>
                     </div>
