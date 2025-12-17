@@ -121,8 +121,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const newTime = Math.max(0, Math.min(time, duration));
     if (audioRef.current) {
       audioRef.current.currentTime = newTime;
-      // We manually set currentTime here as well to ensure UI responsiveness,
-      // especially if the 'timeupdate' event is delayed.
       setCurrentTime(newTime);
     }
   }, [duration]);
@@ -140,8 +138,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     
     if (isRepeat && isPlaying && loopSectionRef.current) {
         const { start, end } = loopSectionRef.current;
-        // The loop check must be `>` not `>=` to avoid an instant loop-back
-        // if the time update fires exactly at the end mark.
         if (newTime > end) {
             seek(start);
         }
@@ -174,25 +170,19 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     };
   }, [handleEnded, handleTimeUpdate, audioSrc]);
 
-  // Effect to update the stable loop section ref ONLY when relevant state changes
   useEffect(() => {
     if (isRepeat && sortedActiveMarks.length > 0) {
-      // Find the section that CONTAINS the currentTime
       const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= currentTime);
       const currentSectionEnd = sortedActiveMarks.find(mark => mark > (currentSectionStart ?? -1));
 
       if (currentSectionStart !== undefined && currentSectionEnd !== undefined) {
         loopSectionRef.current = { start: currentSectionStart, end: currentSectionEnd };
       } else {
-        // If we are outside any defined section, don't set a loop
         loopSectionRef.current = null;
       }
     } else {
-      // If repeat is off or no marks are active, there is no loop section
       loopSectionRef.current = null;
     }
-  // This effect runs when repeat is toggled or marks change, NOT on every time update.
-  // We include currentTime so that turning on repeat mid-track establishes the correct loop section.
   }, [isRepeat, sortedActiveMarks, currentTime]);
 
   useEffect(() => {
@@ -231,7 +221,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
         await audio.play();
         setIsPlaying(true);
       } catch (error) {
-        console.error("Error playing audio:", error);
         setIsPlaying(false);
       }
     }
@@ -336,7 +325,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   
     const reversedMarks = [...sortedActiveMarks].reverse();
     
-    // Find the start of the current section
     const currentSectionStartMarker = reversedMarks.find(mark => mark < currentTime);
   
     if (currentSectionStartMarker === undefined) {
@@ -344,11 +332,9 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
       return;
     }
   
-    // If we are more than 2s into the current section, jump to its start.
     if (currentTime > currentSectionStartMarker + REWIND_THRESHOLD) {
       seek(currentSectionStartMarker);
     } else {
-      // Otherwise, jump to the start of the PREVIOUS section.
       const currentMarkerIndex = reversedMarks.indexOf(currentSectionStartMarker);
       const previousSectionStartMarker = reversedMarks[currentMarkerIndex + 1];
   
@@ -529,19 +515,18 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
             </div>
 
             <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2 w-[100px] justify-start">
+                <div className="w-[100px] justify-start" />
+
+                <div className="flex flex-col items-center gap-2">
                     <Button
                         variant={isRepeat ? "secondary" : "ghost"}
                         size="icon"
                         onClick={() => setIsRepeat(!isRepeat)}
-                        className={isRepeat ? "text-primary ring-2 ring-primary" : ""}
+                        className={`mb-2 ${isRepeat ? "text-primary ring-2 ring-primary" : ""}`}
                     >
                         <Repeat className="h-5 w-5" />
                         <span className="sr-only">Repeat Section</span>
                     </Button>
-                </div>
-
-                <div className="flex flex-col items-center gap-2">
                     <div className="flex items-center gap-4">
                         <Button variant="ghost" size="icon" onClick={handlePrevSection} disabled={sortedActiveMarks.length === 0}>
                             <SkipBack className="h-6 w-6" />
