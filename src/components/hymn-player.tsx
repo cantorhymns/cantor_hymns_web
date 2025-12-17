@@ -172,8 +172,9 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   useEffect(() => {
     if (isRepeat && sortedActiveMarks.length > 0) {
-      const currentSectionStart = [...sortedActiveMarks].reverse().find(mark => mark <= currentTime);
-      const currentSectionEnd = sortedActiveMarks.find(mark => mark > (currentSectionStart ?? -1));
+      const marksForLooping = [0, ...sortedActiveMarks];
+      const currentSectionStart = [...marksForLooping].reverse().find(mark => mark <= currentTime);
+      const currentSectionEnd = marksForLooping.find(mark => mark > (currentSectionStart ?? -1));
 
       if (currentSectionStart !== undefined && currentSectionEnd !== undefined) {
         loopSectionRef.current = { start: currentSectionStart, end: currentSectionEnd };
@@ -594,5 +595,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    
