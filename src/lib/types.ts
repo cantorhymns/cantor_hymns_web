@@ -5,6 +5,7 @@ import type { ForwardRefExoticComponent, RefAttributes } from 'react';
 export interface Cantor {
   id: string;
   name: string;
+  rank: number;
 }
 
 export interface Recording {

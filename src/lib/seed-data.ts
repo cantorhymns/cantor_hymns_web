@@ -21,11 +21,11 @@ export const genres = [
 ];
 
 export const cantors = [
-    { "id": "cantor-bola", "name": "Cantor Bola" },
-    { "id": "cantor-gad", "name": "Cantor Gad" },
-    { "id": "cantor-ibrahim", "name": "Cantor Ibrahim" },
-    { "id": "cantor-tharwat", "name": "Cantor Tharwat" },
-    { "id": "hics", "name": "HICS" }
+    { "id": "cantor-bola", "name": "Cantor Bola", "rank": 2 },
+    { "id": "cantor-gad", "name": "Cantor Gad", "rank": 3 },
+    { "id": "cantor-ibrahim", "name": "Cantor Ibrahim", "rank": 4 },
+    { "id": "cantor-tharwat", "name": "Cantor Tharwat", "rank": 5 },
+    { "id": "hics", "name": "HICS", "rank": 1 }
 ];
 
 export const hymns = [
@@ -128,5 +128,3 @@ export const recordings = [
         ]
     }
 ];
-
-    

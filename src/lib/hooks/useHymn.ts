@@ -64,7 +64,7 @@ export function useHymn(hymnId?: string) {
         populatedHymn.recordings = recordings.map(rec => ({
             ...rec,
             cantor: cantorsMap.get(rec.cantorId)
-        })).sort((a, b) => a.cantor?.name.localeCompare(b.cantor?.name || '') || 0); // Sort by cantor name
+        })).sort((a, b) => (a.cantor?.rank || 99) - (b.cantor?.rank || 99)); // Sort by cantor rank
     } else {
         populatedHymn.recordings = [];
     }
@@ -79,5 +79,3 @@ export function useHymn(hymnId?: string) {
     error: hymnError || recordingsError || cantorsError
   };
 }
-
-    
