@@ -68,13 +68,18 @@
                 "type": "number"
             },
             "description": "An array of timestamps (in seconds) for section marks."
+        },
+        "active": {
+          "type": "boolean",
+          "description": "Indicates if the recording is active and should be displayed."
         }
       },
       "required": [
         "hymnId",
         "cantorId",
         "audioUrl",
-        "marks"
+        "marks",
+        "active"
       ]
     },
     "Cantor": {

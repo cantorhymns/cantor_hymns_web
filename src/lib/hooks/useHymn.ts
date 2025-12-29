@@ -17,7 +17,7 @@ export function useHymn(hymnId?: string) {
 
   const recordingsQuery = useMemoFirebase(() => {
     if (!firestore || !hymnId) return null;
-    return query(collection(firestore, 'recordings'), where('hymnId', '==', hymnId));
+    return query(collection(firestore, 'recordings'), where('hymnId', '==', hymnId), where('active', '==', true));
   }, [firestore, hymnId]);
 
   const { data: recordings, isLoading: areRecordingsLoading, error: recordingsError } = useCollection<Recording>(recordingsQuery);

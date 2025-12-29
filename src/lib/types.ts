@@ -15,6 +15,7 @@ export interface Recording {
   cantor?: Cantor; // Optional, to be populated after fetching
   audioUrl: string;
   marks: number[];
+  active: boolean;
 }
 
 export interface Hymn {

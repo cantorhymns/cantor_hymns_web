@@ -20,7 +20,7 @@ export function useHymns(genreId?: string) {
   const recordingsQuery = useMemoFirebase(() => {
     if (!firestore || hymnIds.length === 0) return null;
     // Firestore 'in' query is limited to 30 items. If you expect more, you'll need to batch queries.
-    return query(collection(firestore, 'recordings'), where('hymnId', 'in', hymnIds.slice(0,30)));
+    return query(collection(firestore, 'recordings'), where('hymnId', 'in', hymnIds.slice(0,30)), where('active', '==', true));
   }, [firestore, hymnIds]);
 
   const { data: recordings, isLoading: areRecordingsLoading, error: recordingsError } = useCollection<Recording>(recordingsQuery);
