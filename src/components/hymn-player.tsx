@@ -428,7 +428,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 <CardTitle className="font-headline text-3xl text-primary">
                 {hymn.name}
                 </CardTitle>
-                <CardDescription className="mt-1">{currentRecording.cantor?.name || 'Unknown Cantor'}</CardDescription>
             </div>
             <div className="flex items-center gap-2">
               <Select
@@ -608,3 +607,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    
