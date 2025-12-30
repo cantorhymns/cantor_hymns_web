@@ -80,27 +80,46 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
          </div>
       ) : hymns && hymns.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {hymns.map((hymn) => (
-            <Link href={`/hymn/${hymn.id}`} key={hymn.id} className="group">
-              <Card className="h-full flex flex-col transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 group-hover:border-primary/50">
-                <CardHeader className="flex-grow">
-                  <div className="mb-3">
-                    <Music className="h-8 w-8 text-primary/50" />
-                  </div>
-                  <CardTitle className="font-headline text-2xl text-primary">
-                    {hymn.name}
-                  </CardTitle>
-                  <CardDescription>
-                    {hymn.recordings ? `${hymn.recordings.length} ${hymn.recordings.length === 1 ? 'recording' : 'recordings'} available` : '0 recordings available'}
-                  </CardDescription>
-                </CardHeader>
-                 <div className="p-6 pt-0 flex justify-end items-center text-sm font-semibold text-primary/80 group-hover:text-primary">
-                  Practice Hymn
-                  <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
-                </div>
-              </Card>
-            </Link>
-          ))}
+          {hymns.map((hymn) => {
+            const learnCount = hymn.recordings?.filter(r => r.active).length || 0;
+            const listenCount = hymn.recordings?.filter(r => !r.active).length || 0;
+            return (
+                <Link href={`/hymn/${hymn.id}`} key={hymn.id} className="group">
+                <Card className="h-full flex flex-col transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 group-hover:border-primary/50">
+                    <CardHeader className="flex-grow">
+                    <div className="mb-3">
+                        <Music className="h-8 w-8 text-primary/50" />
+                    </div>
+                    <CardTitle className="font-headline text-2xl text-primary">
+                        {hymn.name}
+                    </CardTitle>
+                    <CardDescription className="flex items-center gap-4 text-base">
+                        {learnCount > 0 && (
+                            <div className="flex items-center gap-1.5 font-medium">
+                                <div className="h-2 w-2 rounded-full bg-green-500" />
+                                <span>{learnCount} Learn</span>
+                            </div>
+                        )}
+                        {listenCount > 0 && (
+                             <div className="flex items-center gap-1.5 font-medium text-muted-foreground/80">
+                                <span>{listenCount} Listen</span>
+                            </div>
+                        )}
+                        {(learnCount === 0 && listenCount === 0) && (
+                             <div className="flex items-center gap-1.5 font-medium text-muted-foreground/80">
+                                <span>No recordings</span>
+                            </div>
+                        )}
+                    </CardDescription>
+                    </CardHeader>
+                    <div className="p-6 pt-0 flex justify-end items-center text-sm font-semibold text-primary/80 group-hover:text-primary">
+                    Practice Hymn
+                    <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
+                    </div>
+                </Card>
+                </Link>
+            )
+          })}
         </div>
       ) : (
         <div className="text-center py-16">
