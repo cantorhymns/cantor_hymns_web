@@ -101,13 +101,14 @@ async function seedDatabase() {
     // Seed Recordings
     console.log(`Seeding ${recordings.length} recordings...`);
     recordings.forEach((recording) => {
-      // Create a new document with an auto-generated ID in the 'recordings' collection
-      const docRef = doc(collection(db, 'recordings'));
+      const docId = `${recording.cantorId}_${recording.hymnId}`;
+      const docRef = doc(db, 'recordings', docId);
       seedBatch.set(docRef, {
         hymnId: recording.hymnId,
         cantorId: recording.cantorId,
         audioUrl: recording.audioUrl,
-        marks: recording.marks
+        marks: recording.marks,
+        active: recording.active
       });
     });
 
