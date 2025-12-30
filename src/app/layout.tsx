@@ -10,6 +10,9 @@ import { AuthGate } from '@/components/auth-gate';
 export const metadata: Metadata = {
   title: 'Cantor',
   description: 'An app to learn Coptic hymns',
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({
