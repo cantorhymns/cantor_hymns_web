@@ -27,7 +27,8 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
   const recordingsQuery = useMemoFirebase(() => {
     if (!firestore || hymnIds.length === 0) return null;
     // Firestore 'in' query is limited to 30 items. If you expect more, you'll need to batch queries.
-    return query(collection(firestore, 'recordings'), where('hymnId', 'in', hymnIds.slice(0,30)), where('active', '==', true));
+    // Fetch all recordings for the hymns, and filter for active ones on the client.
+    return query(collection(firestore, 'recordings'), where('hymnId', 'in', hymnIds.slice(0,30)));
   }, [firestore, hymnIds]);
 
   const { data: recordings, isLoading: areRecordingsLoading, error: recordingsError } = useCollection<Recording>(recordingsQuery);
@@ -42,7 +43,9 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
 
     const recordingsByHymnId = new Map<string, Recording[]>();
     if (recordings) {
-        recordings.forEach(rec => {
+        // Only consider active recordings for whether a hymn should be displayed in a list.
+        const activeRecordings = recordings.filter(r => r.active);
+        activeRecordings.forEach(rec => {
             if (!recordingsByHymnId.has(rec.hymnId)) {
                 recordingsByHymnId.set(rec.hymnId, []);
             }
@@ -53,7 +56,7 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
     return hymns.map(hymn => ({
         ...hymn,
         recordings: recordingsByHymnId.get(hymn.id) || []
-    })).filter(hymn => hymn.recordings.length > 0); // Only return hymns that have recordings
+    })).filter(hymn => hymn.recordings.length > 0); // Only return hymns that have active recordings
 
   }, [hymns, recordings, hymnIds, areRecordingsLoading]);
 

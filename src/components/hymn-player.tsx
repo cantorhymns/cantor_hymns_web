@@ -46,7 +46,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const storage = useMemo(() => firebaseApp ? getStorage(firebaseApp) : null, [firebaseApp]);
 
   const [currentRecording, setCurrentRecording] = useState<Recording | undefined>(
-    hymn.recordings?.[0]
+    hymn.recordings?.sort((a, b) => (a.cantor?.rank ?? 99) - (b.cantor?.rank ?? 99))[0]
   );
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
   const [audioError, setAudioError] = useState<string | null>(null);
@@ -69,10 +69,14 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   const sortedMarks = useMemo(() => [...(currentRecording?.marks || [])].sort((a, b) => a - b), [currentRecording]);
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
+  
+  // Conditionally get marks based on whether the recording is active
+  const displayedMarks = useMemo(() => currentRecording?.active ? sortedMarks : [], [currentRecording, sortedMarks]);
 
   useEffect(() => {
-    const firstRecording = hymn.recordings?.[0];
-    setCurrentRecording(firstRecording);
+    // Set the initial recording, respecting cantor rank
+    const sortedRecordings = hymn.recordings?.sort((a, b) => (a.cantor?.rank ?? 99) - (b.cantor?.rank ?? 99));
+    setCurrentRecording(sortedRecordings?.[0]);
   }, [hymn]);
   
   useEffect(() => {
@@ -87,7 +91,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     setAudioSrc(null);
     setAudioError(null);
     setDuration(0);
-    setActiveMarks(currentRecording?.marks || []);
+    // Set active marks only if the recording is active
+    setActiveMarks(currentRecording?.active ? (currentRecording.marks || []) : []);
 
     if (currentRecording && storage) {
       setIsLoadingAudio(true);
@@ -411,6 +416,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   }
   
   const isPlayerDisabled = !audioSrc || !!audioError;
+  const showControls = currentRecording?.active ?? false;
+
 
   return (
     <Card className="w-full max-w-3xl mx-auto shadow-xl">
@@ -475,7 +482,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                           />
                        )
                     })}
-                     {duration > 0 && sortedMarks.map((mark, index) => {
+                     {duration > 0 && displayedMarks.map((mark, index) => {
                         const isActive = activeMarks.includes(mark);
                         return (
                         <div
@@ -519,31 +526,37 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 <div className="w-[100px] justify-start" />
 
                 <div className="flex flex-col items-center gap-4">
-                    <div className="flex flex-col items-center gap-1">
-                        <Button
-                            variant={isRepeat ? "secondary" : "ghost"}
-                            size="icon"
-                            onClick={() => setIsRepeat(!isRepeat)}
-                            className={`${isRepeat ? "text-primary ring-2 ring-primary" : ""}`}
-                        >
-                            <Repeat className="h-5 w-5" />
-                            <span className="sr-only">Repeat Section</span>
-                        </Button>
-                        <span className="text-xs font-medium text-muted-foreground">Repeat Section</span>
-                    </div>
+                    {showControls && (
+                        <div className="flex flex-col items-center gap-1">
+                            <Button
+                                variant={isRepeat ? "secondary" : "ghost"}
+                                size="icon"
+                                onClick={() => setIsRepeat(!isRepeat)}
+                                className={`${isRepeat ? "text-primary ring-2 ring-primary" : ""}`}
+                            >
+                                <Repeat className="h-5 w-5" />
+                                <span className="sr-only">Repeat Section</span>
+                            </Button>
+                            <span className="text-xs font-medium text-muted-foreground">Repeat Section</span>
+                        </div>
+                    )}
                     <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="icon" onClick={handlePrevSection} disabled={sortedActiveMarks.length === 0}>
-                            <SkipBack className="h-6 w-6" />
-                            <span className="sr-only">Previous Section</span>
-                        </Button>
+                        {showControls ? (
+                            <Button variant="ghost" size="icon" onClick={handlePrevSection} disabled={sortedActiveMarks.length === 0}>
+                                <SkipBack className="h-6 w-6" />
+                                <span className="sr-only">Previous Section</span>
+                            </Button>
+                        ) : <div className="w-10" />}
                         <Button size="icon" className="h-16 w-16 rounded-full" onClick={handlePlayPause}>
                             {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
                             <span className="sr-only">{isPlaying ? "Pause" : "Play"}</span>
                         </Button>
-                         <Button variant="ghost" size="icon" onClick={handleNextSection} disabled={sortedActiveMarks.length === 0}>
-                            <SkipForward className="h-6 w-6" />
-                            <span className="sr-only">Next Section</span>
-                        </Button>
+                         {showControls ? (
+                            <Button variant="ghost" size="icon" onClick={handleNextSection} disabled={sortedActiveMarks.length === 0}>
+                                <SkipForward className="h-6 w-6" />
+                                <span className="sr-only">Next Section</span>
+                            </Button>
+                         ) : <div className="w-10" />}
                     </div>
                     <div className="flex items-center gap-2">
                         <Button variant="ghost" size="sm" className="h-10 rounded-full px-4 text-muted-foreground hover:text-primary transition-colors" onClick={() => handleSkip(-10)}>
@@ -595,5 +608,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    

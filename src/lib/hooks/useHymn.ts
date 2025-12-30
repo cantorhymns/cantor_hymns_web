@@ -17,7 +17,8 @@ export function useHymn(hymnId?: string) {
 
   const recordingsQuery = useMemoFirebase(() => {
     if (!firestore || !hymnId) return null;
-    return query(collection(firestore, 'recordings'), where('hymnId', '==', hymnId), where('active', '==', true));
+    // Fetch all recordings, not just active ones. The player will handle the logic.
+    return query(collection(firestore, 'recordings'), where('hymnId', '==', hymnId));
   }, [firestore, hymnId]);
 
   const { data: recordings, isLoading: areRecordingsLoading, error: recordingsError } = useCollection<Recording>(recordingsQuery);
