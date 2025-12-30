@@ -62,10 +62,23 @@ export function useHymn(hymnId?: string) {
 
     if (recordings) {
         // Map over recordings and embed the full cantor object.
-        populatedHymn.recordings = recordings.map(rec => ({
+        const populatedRecordings = recordings.map(rec => ({
             ...rec,
             cantor: cantorsMap.get(rec.cantorId)
-        })).sort((a, b) => (a.cantor?.rank || 99) - (b.cantor?.rank || 99)); // Sort by cantor rank
+        }));
+
+        // Sort according to the new logic: active first, then rank.
+        populatedRecordings.sort((a, b) => {
+            if (a.active && !b.active) return -1; // a is active, b is not -> a comes first
+            if (!a.active && b.active) return 1;  // b is active, a is not -> b comes first
+            
+            // If both have the same active status, sort by rank.
+            const rankA = a.cantor?.rank ?? 99;
+            const rankB = b.cantor?.rank ?? 99;
+            return rankA - rankB;
+        });
+
+        populatedHymn.recordings = populatedRecordings;
     } else {
         populatedHymn.recordings = [];
     }

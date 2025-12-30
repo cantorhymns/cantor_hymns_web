@@ -8,7 +8,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -46,7 +45,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const storage = useMemo(() => firebaseApp ? getStorage(firebaseApp) : null, [firebaseApp]);
 
   const [currentRecording, setCurrentRecording] = useState<Recording | undefined>(
-    hymn.recordings?.sort((a, b) => (a.cantor?.rank ?? 99) - (b.cantor?.rank ?? 99))[0]
+    hymn.recordings?.[0]
   );
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
   const [audioError, setAudioError] = useState<string | null>(null);
@@ -74,9 +73,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const displayedMarks = useMemo(() => currentRecording?.active ? sortedMarks : [], [currentRecording, sortedMarks]);
 
   useEffect(() => {
-    // Set the initial recording, respecting cantor rank
-    const sortedRecordings = hymn.recordings?.sort((a, b) => (a.cantor?.rank ?? 99) - (b.cantor?.rank ?? 99));
-    setCurrentRecording(sortedRecordings?.[0]);
+    // The list from useHymn is already sorted, so we can just take the first one.
+    setCurrentRecording(hymn.recordings?.[0]);
   }, [hymn]);
   
   useEffect(() => {
@@ -396,7 +394,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 <CardTitle className="font-headline text-3xl text-primary">
                     {hymn.name}
                 </CardTitle>
-                <CardDescription>No recordings available for this hymn yet.</CardDescription>
+                <p className="text-muted-foreground">No recordings available for this hymn yet.</p>
             </CardHeader>
         </Card>
       )
@@ -409,7 +407,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 <CardTitle className="font-headline text-3xl text-primary">
                     {hymn.name}
                 </CardTitle>
-                <CardDescription>Please select a recording.</CardDescription>
+                <p className="text-muted-foreground">Please select a recording.</p>
             </CardHeader>
         </Card>
       )
@@ -443,7 +441,10 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                   <SelectContent>
                   {hymn.recordings.map((rec) => (
                       <SelectItem key={rec.id} value={rec.id}>
-                      {rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}
+                        <div className="flex items-center gap-2">
+                            {rec.active && <div className="h-2 w-2 rounded-full bg-green-500" />}
+                            <span>{rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}</span>
+                        </div>
                       </SelectItem>
                   ))}
                   </SelectContent>
@@ -607,5 +608,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    
