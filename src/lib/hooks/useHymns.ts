@@ -5,13 +5,20 @@ import { collection, query, where } from 'firebase/firestore';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { Hymn, Recording } from '@/lib/types';
 
-export function useHymns(genreId?: string) {
+export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
   const firestore = useFirestore();
 
   const hymnsQuery = useMemoFirebase(() => {
-    if (!firestore || !genreId) return null;
-    return query(collection(firestore, 'hymns'), where('genreId', '==', genreId));
-  }, [firestore, genreId]);
+    if (!firestore) return null;
+    if (genreId) {
+        return query(collection(firestore, 'hymns'), where('genreId', '==', genreId));
+    }
+    if (hymnIdsFilter && hymnIdsFilter.length > 0) {
+        // Limited to 30 hymnIds
+        return query(collection(firestore, 'hymns'), where('__name__', 'in', hymnIdsFilter.slice(0, 30)));
+    }
+    return collection(firestore, 'hymns');
+  }, [firestore, genreId, hymnIdsFilter]);
 
   const { data: hymns, isLoading: areHymnsLoading, error: hymnsError } = useCollection<Hymn>(hymnsQuery);
 
@@ -42,11 +49,11 @@ export function useHymns(genreId?: string) {
             recordingsByHymnId.get(rec.hymnId)!.push(rec);
         });
     }
-
+    
     return hymns.map(hymn => ({
         ...hymn,
         recordings: recordingsByHymnId.get(hymn.id) || []
-    }));
+    })).filter(hymn => hymn.recordings.length > 0); // Only return hymns that have recordings
 
   }, [hymns, recordings, hymnIds, areRecordingsLoading]);
 

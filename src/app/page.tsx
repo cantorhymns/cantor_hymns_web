@@ -1,6 +1,7 @@
 
 'use client';
 import Link from 'next/link';
+import { useMemo } from 'react';
 import {
   Card,
   CardHeader,
@@ -9,12 +10,26 @@ import {
 import { ArrowRight, Music } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useGenres } from '@/lib/hooks/useGenres';
+import { useHymns } from '@/lib/hooks/useHymns';
 import { Skeleton } from '@/components/ui/skeleton';
 import * as lucideIcons from 'lucide-react';
 
 
 export default function Home() {
-  const { data: genres, isLoading } = useGenres();
+  const { data: genres, isLoading: areGenresLoading } = useGenres();
+  const { data: allHymns, isLoading: areHymnsLoading } = useHymns();
+
+  const activeGenreIds = useMemo(() => {
+    if (!allHymns) return new Set<string>();
+    return new Set(allHymns.map(hymn => hymn.genreId));
+  }, [allHymns]);
+
+  const activeGenres = useMemo(() => {
+    if (!genres) return [];
+    return genres.filter(genre => activeGenreIds.has(genre.id));
+  }, [genres, activeGenreIds]);
+
+  const isLoading = areGenresLoading || areHymnsLoading;
 
   const renderIcon = (iconName: string) => {
     const Icon = (lucideIcons as Record<string, LucideIcon>)[iconName];
@@ -46,7 +61,7 @@ export default function Home() {
           </Card>
         ))}
 
-        {genres && genres.map((genre) => (
+        {!isLoading && activeGenres.map((genre) => (
           <Link href={`/hymns/${genre.id}`} key={genre.id} className="group">
             <Card className="h-full flex flex-col justify-between transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 group-hover:border-primary/50">
               <CardHeader className="flex-row items-center gap-4">
@@ -67,6 +82,11 @@ export default function Home() {
           </Link>
         ))}
       </div>
+      {!isLoading && activeGenres.length === 0 && (
+        <div className="text-center py-16 col-span-full">
+          <p className="text-muted-foreground">No hymns with active recordings are available at this time.</p>
+        </div>
+      )}
     </div>
   );
 }
