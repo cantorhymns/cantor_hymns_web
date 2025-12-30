@@ -16,7 +16,8 @@
     "db:update-tarh": "tsx src/scripts/update-tarh-marks.ts",
     "db:update-psalm-150": "tsx src/scripts/update-psalm-150-marks.ts",
     "db:migrate-ids": "tsx src/scripts/migrate-recording-ids.ts",
-    "db:update-alleluia": "tsx src/scripts/update-alleluia-marks.ts"
+    "db:update-alleluia": "tsx src/scripts/update-alleluia-marks.ts",
+    "db:update-meghalo": "tsx src/scripts/update-meghalo-marks.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
