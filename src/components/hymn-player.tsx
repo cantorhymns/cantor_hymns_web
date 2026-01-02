@@ -30,6 +30,7 @@ import {
 import { getDownloadURL, ref } from "firebase/storage";
 import { useFirebase, getStorage } from "@/firebase";
 import { Skeleton } from "./ui/skeleton";
+import { cn } from "@/lib/utils";
 
 function formatTime(seconds: number) {
   const floorSeconds = Math.floor(seconds);
@@ -529,10 +530,13 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                     {showControls && (
                         <div className="flex flex-col items-center gap-1">
                             <Button
-                                variant={isRepeat ? "secondary" : "ghost"}
+                                variant="ghost"
                                 size="icon"
                                 onClick={() => setIsRepeat(!isRepeat)}
-                                className={`${isRepeat ? "text-primary ring-2 ring-primary" : ""}`}
+                                className={cn(
+                                    "transition-colors",
+                                    isRepeat ? "bg-green-600 text-white hover:bg-green-700" : "text-muted-foreground"
+                                )}
                             >
                                 <Repeat className="h-5 w-5" />
                                 <span className="sr-only">Repeat Section</span>
