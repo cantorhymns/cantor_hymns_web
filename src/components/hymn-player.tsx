@@ -274,7 +274,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     const timePerPixel = duration / scrollerWidth;
     const timeDelta = dragDeltaX * timePerPixel;
     
-    const newTime = seekStartRef.current.time + timeDelta;
+    // REVERSED: Subtract timeDelta instead of adding it
+    const newTime = seekStartRef.current.time - timeDelta;
 
     if (audioRef.current) {
         const newClampedTime = Math.max(0, Math.min(newTime, duration));
