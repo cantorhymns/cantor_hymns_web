@@ -528,21 +528,18 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
                 <div className="flex flex-col items-center gap-4">
                     {showControls && (
-                        <div className="flex flex-col items-center gap-1">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setIsRepeat(!isRepeat)}
-                                className={cn(
-                                    "transition-colors",
-                                    isRepeat ? "bg-green-600 text-white hover:bg-green-700" : "text-muted-foreground"
-                                )}
-                            >
-                                <Repeat className="h-5 w-5" />
-                                <span className="sr-only">Repeat Section</span>
-                            </Button>
-                            <span className="text-xs font-medium text-muted-foreground">Repeat Section</span>
-                        </div>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setIsRepeat(!isRepeat)}
+                            className={cn(
+                                "transition-colors px-4",
+                                isRepeat ? "bg-green-600 text-white hover:bg-green-700" : "text-muted-foreground"
+                            )}
+                        >
+                            <Repeat className="h-5 w-5" />
+                            <span>Repeat Section</span>
+                        </Button>
                     )}
                     <div className="flex items-center gap-4">
                         {showControls ? (
@@ -612,3 +609,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
+
+    
