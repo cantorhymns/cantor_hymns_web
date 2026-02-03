@@ -19,6 +19,7 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
   const { data: hymns, isLoading: areHymnsLoading } = useHymns(genreId);
   
   const isLoading = isGenreLoading || areHymnsLoading;
+  const isValidIconUrl = genre?.icon && (genre.icon.startsWith('http://') || genre.icon.startsWith('https://'));
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
@@ -42,7 +43,7 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
            ) : (
             <>
                 <div className="bg-primary/10 p-2 rounded-lg flex items-center justify-center">
-                  {genre.icon && (
+                  {isValidIconUrl && (
                     <Image
                       src={genre.icon}
                       alt={`${genre.name} icon`}

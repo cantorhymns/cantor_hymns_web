@@ -59,6 +59,7 @@ export default function Home() {
         {!isLoading && activeGenres.map((genre) => {
           const imageKey = genre.backgroundImageKey as keyof (typeof placeholderImages)['genre-backgrounds'] | undefined;
           const imageData = imageKey ? placeholderImages['genre-backgrounds'][imageKey as keyof typeof placeholderImages['genre-backgrounds']] : null;
+          const isValidIconUrl = genre.icon && (genre.icon.startsWith('http://') || genre.icon.startsWith('https://'));
           
           return (
           <Link href={`/hymns/${genre.id}`} key={genre.id} className="group">
@@ -76,7 +77,7 @@ export default function Home() {
               <div className="relative h-full flex flex-col justify-between">
                 <CardHeader className="flex-row items-center gap-4">
                   <div className={cn("p-2 rounded-lg flex items-center justify-center", imageData ? 'bg-white/10 backdrop-blur-sm' : 'bg-primary/10')}>
-                    {genre.icon && (
+                    {isValidIconUrl && (
                       <Image
                         src={genre.icon}
                         alt={`${genre.name} icon`}
