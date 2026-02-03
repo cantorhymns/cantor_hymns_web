@@ -78,7 +78,8 @@ async function seedDatabase() {
         name: genre.name,
         description: genre.description,
         icon: genre.icon,
-        backgroundUrl: genre.backgroundUrl || ""
+        backgroundUrl: genre.backgroundUrl || "",
+        active: genre.active
       });
     });
 

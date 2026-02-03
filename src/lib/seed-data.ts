@@ -5,21 +5,24 @@ export const genres = [
         "name": "Holy Week",
         "description": "Hymns for the Holy Pascha week.",
         "icon": "https://picsum.photos/seed/icon-holy-week/48/48",
-        "backgroundUrl": "backgrounds/holy-week.jpg"
+        "backgroundUrl": "backgrounds/holy-week.jpg",
+        "active": true
     },
     {
         "id": "kiahk",
         "name": "Kiahk",
         "description": "Praises for the month of Kiahk.",
         "icon": "https://picsum.photos/seed/icon-kiahk/48/48",
-        "backgroundUrl": "backgrounds/kiahk.jpg"
+        "backgroundUrl": "backgrounds/kiahk.jpg",
+        "active": true
     },
     {
         "id": "resurrection",
         "name": "Resurrection",
         "description": "Hymns for the Resurrection feast.",
         "icon": "https://picsum.photos/seed/icon-resurrection/48/48",
-        "backgroundUrl": "backgrounds/resurrection.jpg"
+        "backgroundUrl": "backgrounds/resurrection.jpg",
+        "active": true
     }
 ];
 

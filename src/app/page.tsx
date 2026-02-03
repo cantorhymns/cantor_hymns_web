@@ -7,7 +7,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useGenres } from '@/lib/hooks/useGenres';
-import { useHymns } from '@/lib/hooks/useHymns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
@@ -16,35 +15,21 @@ import { useFirebase } from '@/firebase';
 
 export default function Home() {
   const { data: genres, isLoading: areGenresLoading } = useGenres();
-  const { data: allHymns, isLoading: areHymnsLoading } = useHymns();
 
   const { firebaseApp } = useFirebase();
   const storage = useMemo(() => (firebaseApp ? getStorage(firebaseApp) : null), [
     firebaseApp,
   ]);
   const [backgroundUrls, setBackgroundUrls] = useState<Record<string, string>>({});
-  const [areUrlsLoading, setAreUrlsLoading] = useState(true);
-
-  const activeGenreIds = useMemo(() => {
-    if (!allHymns) return new Set<string>();
-    return new Set(allHymns.map(hymn => hymn.genreId));
-  }, [allHymns]);
-
-  const activeGenres = useMemo(() => {
-    if (!genres) return [];
-    return genres.filter(genre => activeGenreIds.has(genre.id));
-  }, [genres, activeGenreIds]);
 
   useEffect(() => {
-    if (!storage || activeGenres.length === 0) {
-      if (!areGenresLoading) setAreUrlsLoading(false);
+    if (!storage || !genres || genres.length === 0) {
       return;
     }
 
     const fetchUrls = async () => {
-      setAreUrlsLoading(true);
       const urls: Record<string, string> = {};
-      const promises = activeGenres.map(async (genre) => {
+      const promises = genres.map(async (genre) => {
         if (genre.backgroundUrl) {
           try {
             const storageRef = ref(storage, genre.backgroundUrl);
@@ -58,14 +43,12 @@ export default function Home() {
       });
       await Promise.all(promises);
       setBackgroundUrls(urls);
-      setAreUrlsLoading(false);
     };
 
     fetchUrls();
-  }, [activeGenres, storage, areGenresLoading]);
+  }, [genres, storage]);
 
-
-  const isLoading = areGenresLoading || areHymnsLoading;
+  const isLoading = areGenresLoading;
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
@@ -83,7 +66,7 @@ export default function Home() {
           </Card>
         ))}
 
-        {!isLoading && activeGenres.map((genre) => {
+        {!isLoading && genres && genres.map((genre) => {
           const backgroundUrl = backgroundUrls[genre.id];
           const isValidIconUrl = genre.icon && (genre.icon.startsWith('http://') || genre.icon.startsWith('https://'));
           
@@ -119,9 +102,9 @@ export default function Home() {
           </Link>
         )})}
       </div>
-      {!isLoading && activeGenres.length === 0 && (
+      {!isLoading && genres && genres.length === 0 && (
         <div className="text-center py-16 col-span-full">
-          <p className="text-muted-foreground">No hymns with active recordings are available at this time.</p>
+          <p className="text-muted-foreground">No genres are available at this time.</p>
         </div>
       )}
     </div>

@@ -32,4 +32,5 @@ export interface Genre {
   description: string;
   icon: string;
   backgroundUrl?: string;
+  active: boolean;
 }

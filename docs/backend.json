@@ -21,12 +21,17 @@
         "backgroundUrl": {
             "type": "string",
             "description": "Path to the background image file in Firebase Storage."
+        },
+        "active": {
+            "type": "boolean",
+            "description": "Indicates if the genre is available to be displayed in the app."
         }
       },
       "required": [
         "name",
         "description",
-        "icon"
+        "icon",
+        "active"
       ]
     },
     "Hymn": {
