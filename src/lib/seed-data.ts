@@ -56,6 +56,11 @@ export const hymns = [
         "id": "psalm-150",
         "name": "Psalm 150",
         "genreId": "kiahk"
+    },
+    {
+        "id": "christos-anesti",
+        "name": "Christos Anesti",
+        "genreId": "resurrection"
     }
 ];
 
@@ -230,6 +235,14 @@ export const recordings = [
             782.289479, 797.255465, 810.135284, 825.509434, 843.468617, 866.869978, 890.094468,
             906.661361, 920.040046, 945.890386, 976.502631
         ],
+        "active": true,
+        "mode": "learn"
+    },
+    {
+        "hymnId": "christos-anesti",
+        "cantorId": "hics",
+        "audioUrl": "HICS/HICS_ChristosAnesti.mp3",
+        "marks": [0, 10, 20, 30],
         "active": true,
         "mode": "learn"
     }
