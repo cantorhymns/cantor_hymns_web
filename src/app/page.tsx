@@ -13,6 +13,8 @@ import { useGenres } from '@/lib/hooks/useGenres';
 import { useHymns } from '@/lib/hooks/useHymns';
 import { Skeleton } from '@/components/ui/skeleton';
 import * as lucideIcons from 'lucide-react';
+import { cn } from '@/lib/utils';
+import placeholderImages from '@/lib/placeholder-images.json';
 
 
 export default function Home() {
@@ -31,10 +33,10 @@ export default function Home() {
 
   const isLoading = areGenresLoading || areHymnsLoading;
 
-  const renderIcon = (iconName: string) => {
+  const renderIcon = (iconName: string, className?: string) => {
     const Icon = (lucideIcons as Record<string, LucideIcon>)[iconName];
-    if (!Icon) return <Music className="h-8 w-8 text-primary" />;
-    return <Icon className="h-8 w-8 text-primary" />;
+    if (!Icon) return <Music className={cn("h-8 w-8", className)} />;
+    return <Icon className={cn("h-8 w-8", className)} />;
   };
 
   return (
@@ -61,26 +63,42 @@ export default function Home() {
           </Card>
         ))}
 
-        {!isLoading && activeGenres.map((genre) => (
+        {!isLoading && activeGenres.map((genre) => {
+          const imageKey = genre.backgroundImageKey as keyof (typeof placeholderImages)['genre-backgrounds'] | undefined;
+          const imageData = imageKey ? placeholderImages['genre-backgrounds'][imageKey as keyof typeof placeholderImages['genre-backgrounds']] : null;
+          
+          return (
           <Link href={`/hymns/${genre.id}`} key={genre.id} className="group">
-            <Card className="h-full flex flex-col justify-between transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 group-hover:border-primary/50">
-              <CardHeader className="flex-row items-center gap-4">
-                <div className="bg-primary/10 p-3 rounded-lg">
-                  {renderIcon(genre.icon as string)}
+            <Card className="h-full flex flex-col justify-between transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 overflow-hidden relative">
+              {imageData && (
+                <>
+                  <div
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
+                    style={{ backgroundImage: `url(${imageData.url})` }}
+                    data-ai-hint={imageData.hint}
+                  />
+                  <div className="absolute inset-0 bg-black/50" />
+                </>
+              )}
+              <div className="relative h-full flex flex-col justify-between">
+                <CardHeader className="flex-row items-center gap-4">
+                  <div className={cn("p-3 rounded-lg", imageData ? 'bg-white/10 backdrop-blur-sm' : 'bg-primary/10')}>
+                    {renderIcon(genre.icon as string, imageData ? 'text-white' : 'text-primary')}
+                  </div>
+                  <div>
+                    <CardTitle className={cn("font-headline text-2xl", imageData ? 'text-white' : 'text-primary')}>
+                      {genre.name}
+                    </CardTitle>
+                  </div>
+                </CardHeader>
+                <div className={cn("p-6 pt-0 flex justify-end items-center text-sm font-semibold", imageData ? 'text-white/90 group-hover:text-white' : 'text-primary/80 group-hover:text-primary')}>
+                  View Hymns
+                  <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
                 </div>
-                <div>
-                  <CardTitle className="font-headline text-2xl text-primary">
-                    {genre.name}
-                  </CardTitle>
-                </div>
-              </CardHeader>
-              <div className="p-6 pt-0 flex justify-end items-center text-sm font-semibold text-primary/80 group-hover:text-primary">
-                View Hymns
-                <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
               </div>
             </Card>
           </Link>
-        ))}
+        )})}
       </div>
       {!isLoading && activeGenres.length === 0 && (
         <div className="text-center py-16 col-span-full">

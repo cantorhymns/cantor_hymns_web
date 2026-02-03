@@ -4,19 +4,22 @@ export const genres = [
         "id": "holy-week",
         "name": "Holy Week",
         "description": "Hymns for the Holy Pascha week.",
-        "icon": "Candlestick"
+        "icon": "Candlestick",
+        "backgroundImageKey": "holy-week"
     },
     {
         "id": "kiahk",
         "name": "Kiahk",
         "description": "Praises for the month of Kiahk.",
-        "icon": "Star"
+        "icon": "Star",
+        "backgroundImageKey": "kiahk"
     },
     {
         "id": "resurrection",
         "name": "Resurrection",
         "description": "Hymns for the Resurrection feast.",
-        "icon": "Sunrise"
+        "icon": "Sunrise",
+        "backgroundImageKey": "resurrection"
     }
 ];
 

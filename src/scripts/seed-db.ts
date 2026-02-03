@@ -78,6 +78,7 @@ async function seedDatabase() {
         name: genre.name,
         description: genre.description,
         icon: genre.icon,
+        backgroundImageKey: genre.backgroundImageKey
       });
     });
 

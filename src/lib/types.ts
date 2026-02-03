@@ -30,4 +30,5 @@ export interface Genre {
   name: string;
   description: string;
   icon: string | ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
+  backgroundImageKey?: string;
 }

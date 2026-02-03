@@ -17,6 +17,10 @@
         "icon": {
             "type": "string",
             "description": "The name of a lucide-react icon."
+        },
+        "backgroundImageKey": {
+            "type": "string",
+            "description": "A key to reference a background image in placeholder-images.json."
         }
       },
       "required": [
