@@ -21,7 +21,8 @@
     "db:update-genethlion": "tsx src/scripts/update-genethlion-marks.ts",
     "db:update-pek-ethronos": "tsx src/scripts/update-pek-ethronos-marks.ts",
     "db:update-omonogenees": "tsx src/scripts/update-omonogenees-marks.ts",
-    "db:update-praxeon-ton": "tsx src/scripts/update-praxeon-ton-marks.ts"
+    "db:update-praxeon-ton": "tsx src/scripts/update-praxeon-ton-marks.ts",
+    "db:update-ibrahim-taishouri": "tsx src/scripts/update-ibrahim-taishouri-marks.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",

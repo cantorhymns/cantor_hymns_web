@@ -109,6 +109,29 @@ export const recordings = [
         "mode": "learn"
     },
     {
+        "hymnId": "tai-shouri",
+        "cantorId": "cantor-ibrahim",
+        "audioUrl": "CantorIbrahim/CantorIbrahim_MournfulTaishouri.mp3",
+        "marks": [
+            20.907029,
+            41.224490,
+            65.215420,
+            86.167800,
+            107.392290,
+            125.124717,
+            141.878832,
+            157.933254,
+            187.547766,
+            210.404909,
+            241.561372,
+            255.620328,
+            262.422643,
+            282.082652
+        ],
+        "active": true,
+        "mode": "learn"
+    },
+    {
         "hymnId": "omonogenees",
         "cantorId": "cantor-bola",
         "audioUrl": "CantorBola/CantorBola_Omonogenees.mp3",
