@@ -8,7 +8,7 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card';
-import { ChevronLeft, Music, ArrowRight } from 'lucide-react';
+import { ChevronLeft, Music } from 'lucide-react';
 import { useHymns } from '@/lib/hooks/useHymns';
 import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -75,9 +75,6 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
                         <Skeleton className="h-7 w-3/4 mb-2" />
                         <Skeleton className="h-4 w-1/2" />
                     </CardHeader>
-                    <div className="p-6 pt-0 flex justify-end items-center">
-                        <Skeleton className="h-6 w-24" />
-                    </div>
                 </Card>
             ))}
          </div>
@@ -115,10 +112,6 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
                         )}
                     </CardDescription>
                     </CardHeader>
-                    <div className="p-6 pt-0 flex justify-end items-center text-sm font-semibold text-primary/80 group-hover:text-primary">
-                    Practice Hymn
-                    <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
-                    </div>
                 </Card>
                 </Link>
             )
