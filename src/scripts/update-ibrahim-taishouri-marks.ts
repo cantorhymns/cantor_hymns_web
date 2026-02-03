@@ -23,7 +23,7 @@ const newMarks = [
 ];
 
 // The ID of the document to update
-const documentId = 'cantor-ibrahim_tai-shouri';
+const documentId = 'cantor-ibrahim_ti-shouri';
 
 async function updateMarks() {
     const firebaseApp = initializeApp(firebaseConfig);

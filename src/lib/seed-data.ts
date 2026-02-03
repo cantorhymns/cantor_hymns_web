@@ -41,6 +41,11 @@ export const hymns = [
         "genreId": "holy-week",
     },
     {
+        "id": "ti-shouri",
+        "name": "Ti-Shouri (Mournful)",
+        "genreId": "holy-week",
+    },
+    {
         "id": "omonogenees",
         "name": "O Monogenees",
         "genreId": "holy-week"
@@ -109,9 +114,9 @@ export const recordings = [
         "mode": "learn"
     },
     {
-        "hymnId": "tai-shouri",
+        "hymnId": "ti-shouri",
         "cantorId": "cantor-ibrahim",
-        "audioUrl": "CantorIbrahim/CantorIbrahim_MournfulTaishouri.mp3",
+        "audioUrl": "CantorIbrahim/CantorIbrahim_MournfulTishouri.mp3",
         "marks": [
             20.907029,
             41.224490,
