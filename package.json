@@ -19,7 +19,8 @@
     "db:update-alleluia": "tsx src/scripts/update-alleluia-marks.ts",
     "db:update-meghalo": "tsx src/scripts/update-meghalo-marks.ts",
     "db:update-genethlion": "tsx src/scripts/update-genethlion-marks.ts",
-    "db:update-pek-ethronos": "tsx src/scripts/update-pek-ethronos-marks.ts"
+    "db:update-pek-ethronos": "tsx src/scripts/update-pek-ethronos-marks.ts",
+    "db:update-omonogenees": "tsx src/scripts/update-omonogenees-marks.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
