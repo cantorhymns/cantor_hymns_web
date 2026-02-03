@@ -1,14 +1,11 @@
-
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useMemo, useState, useEffect } from 'react';
 import {
   Card,
-  CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { ArrowRight } from 'lucide-react';
 import { useGenres } from '@/lib/hooks/useGenres';
 import { useHymns } from '@/lib/hooks/useHymns';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -78,18 +75,11 @@ export default function Home() {
         </h1>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-        {isLoading && Array.from({ length: 3 }).map((_, i) => (
-          <Card key={i} className="h-full flex flex-col justify-between min-h-[250px]">
-            <CardHeader>
-              <Skeleton className="h-12 w-12 rounded-lg" />
-              <div className="w-full pt-4">
-                <Skeleton className="h-7 w-2/3 mb-2" />
-              </div>
-            </CardHeader>
-            <div className="p-6 pt-0 flex justify-end items-center">
-              <Skeleton className="h-6 w-24" />
-            </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        {isLoading && Array.from({ length: 5 }).map((_, i) => (
+          <Card key={i} className="flex flex-col justify-center items-center text-center p-6 min-h-[300px]">
+            <Skeleton className="h-10 w-10 rounded-lg mb-4" />
+            <Skeleton className="h-7 w-2/3" />
           </Card>
         ))}
 
@@ -99,7 +89,7 @@ export default function Home() {
           
           return (
           <Link href={`/hymns/${genre.id}`} key={genre.id} className="group">
-            <Card className="h-full flex flex-col justify-between transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 overflow-hidden relative min-h-[250px]">
+            <Card className="h-full flex flex-col justify-center items-center p-6 text-center transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 overflow-hidden relative min-h-[300px]">
               {backgroundUrl && (
                 <>
                   <div
@@ -109,9 +99,8 @@ export default function Home() {
                   <div className="absolute inset-0 bg-black/50" />
                 </>
               )}
-              <div className="relative h-full flex flex-col justify-between">
-                <CardHeader>
-                  <div className={cn("p-2 rounded-lg inline-block", backgroundUrl ? 'bg-white/10 backdrop-blur-sm' : 'bg-primary/10')}>
+              <div className="relative">
+                <div className={cn("p-2 rounded-lg inline-block", backgroundUrl ? 'bg-white/10 backdrop-blur-sm' : 'bg-primary/10')}>
                     {isValidIconUrl && (
                       <Image
                         src={genre.icon}
@@ -121,15 +110,10 @@ export default function Home() {
                         className="h-10 w-10 object-contain"
                       />
                     )}
-                  </div>
-                  <CardTitle className={cn("font-headline text-2xl pt-4", backgroundUrl ? 'text-white' : 'text-primary')}>
-                    {genre.name}
-                  </CardTitle>
-                </CardHeader>
-                <div className={cn("p-6 pt-0 flex justify-end items-center text-sm font-semibold", backgroundUrl ? 'text-white/90 group-hover:text-white' : 'text-primary/80 group-hover:text-primary')}>
-                  View Hymns
-                  <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
                 </div>
+                <CardTitle className={cn("font-headline text-2xl pt-4", backgroundUrl ? 'text-white' : 'text-primary')}>
+                    {genre.name}
+                </CardTitle>
               </div>
             </Card>
           </Link>
