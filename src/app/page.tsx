@@ -78,14 +78,13 @@ export default function Home() {
         </h1>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
         {isLoading && Array.from({ length: 3 }).map((_, i) => (
-          <Card key={i} className="h-full flex flex-col justify-between">
-            <CardHeader className="flex-row items-center gap-4">
-              <Skeleton className="h-14 w-14 rounded-lg" />
-              <div className="w-2/3">
-                <Skeleton className="h-7 w-full mb-2" />
-                <Skeleton className="h-4 w-1/2" />
+          <Card key={i} className="h-full flex flex-col justify-between min-h-[250px]">
+            <CardHeader>
+              <Skeleton className="h-12 w-12 rounded-lg" />
+              <div className="w-full pt-4">
+                <Skeleton className="h-7 w-2/3 mb-2" />
               </div>
             </CardHeader>
             <div className="p-6 pt-0 flex justify-end items-center">
@@ -100,7 +99,7 @@ export default function Home() {
           
           return (
           <Link href={`/hymns/${genre.id}`} key={genre.id} className="group">
-            <Card className="h-full flex flex-col justify-between transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 overflow-hidden relative">
+            <Card className="h-full flex flex-col justify-between transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 overflow-hidden relative min-h-[250px]">
               {backgroundUrl && (
                 <>
                   <div
@@ -111,23 +110,21 @@ export default function Home() {
                 </>
               )}
               <div className="relative h-full flex flex-col justify-between">
-                <CardHeader className="flex-row items-center gap-4">
-                  <div className={cn("p-2 rounded-lg flex items-center justify-center", backgroundUrl ? 'bg-white/10 backdrop-blur-sm' : 'bg-primary/10')}>
+                <CardHeader>
+                  <div className={cn("p-2 rounded-lg inline-block", backgroundUrl ? 'bg-white/10 backdrop-blur-sm' : 'bg-primary/10')}>
                     {isValidIconUrl && (
                       <Image
                         src={genre.icon}
                         alt={`${genre.name} icon`}
-                        width={32}
-                        height={32}
-                        className="h-8 w-8 object-contain"
+                        width={40}
+                        height={40}
+                        className="h-10 w-10 object-contain"
                       />
                     )}
                   </div>
-                  <div>
-                    <CardTitle className={cn("font-headline text-2xl", backgroundUrl ? 'text-white' : 'text-primary')}>
-                      {genre.name}
-                    </CardTitle>
-                  </div>
+                  <CardTitle className={cn("font-headline text-2xl pt-4", backgroundUrl ? 'text-white' : 'text-primary')}>
+                    {genre.name}
+                  </CardTitle>
                 </CardHeader>
                 <div className={cn("p-6 pt-0 flex justify-end items-center text-sm font-semibold", backgroundUrl ? 'text-white/90 group-hover:text-white' : 'text-primary/80 group-hover:text-primary')}>
                   View Hymns
