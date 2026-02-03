@@ -16,7 +16,7 @@
         },
         "icon": {
             "type": "string",
-            "description": "The name of a lucide-react icon."
+            "description": "A URL to an icon image for the genre."
         },
         "backgroundImageKey": {
             "type": "string",

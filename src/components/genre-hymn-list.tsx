@@ -1,6 +1,7 @@
 
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Card,
   CardHeader,
@@ -12,18 +13,11 @@ import { useHymns } from '@/lib/hooks/useHymns';
 import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Genre } from '@/lib/types';
-import * as lucideIcons from 'lucide-react';
 
 export function GenreHymnList({ genreId }: { genreId: string }) {
   const { data: genre, isLoading: isGenreLoading } = useGenre(genreId);
   const { data: hymns, isLoading: areHymnsLoading } = useHymns(genreId);
   
-  const renderIcon = (iconName: string) => {
-    const Icon = (lucideIcons as any)[iconName] as lucideIcons.LucideIcon;
-    if (!Icon) return <Music className="h-10 w-10 text-primary" />;
-    return <Icon className="h-10 w-10 text-primary" />;
-  };
-
   const isLoading = isGenreLoading || areHymnsLoading;
 
   return (
@@ -47,8 +41,16 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
              </>
            ) : (
             <>
-                <div className="bg-primary/10 p-3 rounded-lg">
-                {renderIcon(genre.icon as string)}
+                <div className="bg-primary/10 p-2 rounded-lg flex items-center justify-center">
+                  {genre.icon && (
+                    <Image
+                      src={genre.icon}
+                      alt={`${genre.name} icon`}
+                      width={40}
+                      height={40}
+                      className="h-10 w-10 object-contain"
+                    />
+                  )}
                 </div>
                 <div>
                 <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight">

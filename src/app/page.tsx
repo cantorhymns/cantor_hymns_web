@@ -1,18 +1,17 @@
 
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useMemo } from 'react';
 import {
   Card,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { ArrowRight, Music } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useGenres } from '@/lib/hooks/useGenres';
 import { useHymns } from '@/lib/hooks/useHymns';
 import { Skeleton } from '@/components/ui/skeleton';
-import * as lucideIcons from 'lucide-react';
 import { cn } from '@/lib/utils';
 import placeholderImages from '@/lib/placeholder-images.json';
 
@@ -32,12 +31,6 @@ export default function Home() {
   }, [genres, activeGenreIds]);
 
   const isLoading = areGenresLoading || areHymnsLoading;
-
-  const renderIcon = (iconName: string, className?: string) => {
-    const Icon = (lucideIcons as Record<string, LucideIcon>)[iconName];
-    if (!Icon) return <Music className={cn("h-8 w-8", className)} />;
-    return <Icon className={cn("h-8 w-8", className)} />;
-  };
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
@@ -82,8 +75,16 @@ export default function Home() {
               )}
               <div className="relative h-full flex flex-col justify-between">
                 <CardHeader className="flex-row items-center gap-4">
-                  <div className={cn("p-3 rounded-lg", imageData ? 'bg-white/10 backdrop-blur-sm' : 'bg-primary/10')}>
-                    {renderIcon(genre.icon as string, imageData ? 'text-white' : 'text-primary')}
+                  <div className={cn("p-2 rounded-lg flex items-center justify-center", imageData ? 'bg-white/10 backdrop-blur-sm' : 'bg-primary/10')}>
+                    {genre.icon && (
+                      <Image
+                        src={genre.icon}
+                        alt={`${genre.name} icon`}
+                        width={32}
+                        height={32}
+                        className="h-8 w-8 object-contain"
+                      />
+                    )}
                   </div>
                   <div>
                     <CardTitle className={cn("font-headline text-2xl", imageData ? 'text-white' : 'text-primary')}>
