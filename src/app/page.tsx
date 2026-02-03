@@ -75,9 +75,9 @@ export default function Home() {
         </h1>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-        {isLoading && Array.from({ length: 5 }).map((_, i) => (
-          <Card key={i} className="flex flex-col justify-center items-center text-center p-6 min-h-[300px]">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {isLoading && Array.from({ length: 4 }).map((_, i) => (
+          <Card key={i} className="flex flex-col justify-center items-center text-center p-6 min-h-[320px]">
             <Skeleton className="h-10 w-10 rounded-lg mb-4" />
             <Skeleton className="h-7 w-2/3" />
           </Card>
@@ -89,7 +89,7 @@ export default function Home() {
           
           return (
           <Link href={`/hymns/${genre.id}`} key={genre.id} className="group">
-            <Card className="h-full flex flex-col justify-center items-center p-6 text-center transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 overflow-hidden relative min-h-[300px]">
+            <Card className="h-full flex flex-col justify-center items-center p-6 text-center transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 overflow-hidden relative min-h-[320px]">
               {backgroundUrl && (
                 <>
                   <div
