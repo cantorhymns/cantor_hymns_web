@@ -1,16 +1,1 @@
-{
-  "genre-backgrounds": {
-    "holy-week": {
-      "url": "https://picsum.photos/seed/holy-week/600/400",
-      "hint": "candle church"
-    },
-    "kiahk": {
-      "url": "https://picsum.photos/seed/kiahk/600/400",
-      "hint": "night star"
-    },
-    "resurrection": {
-      "url": "https://picsum.photos/seed/resurrection/600/400",
-      "hint": "sunrise dawn"
-    }
-  }
-}
+{}

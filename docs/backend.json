@@ -18,9 +18,9 @@
             "type": "string",
             "description": "A URL to an icon image for the genre."
         },
-        "backgroundImageKey": {
+        "backgroundUrl": {
             "type": "string",
-            "description": "A key to reference a background image in placeholder-images.json."
+            "description": "Path to the background image file in Firebase Storage."
         }
       },
       "required": [

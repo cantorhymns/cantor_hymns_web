@@ -2,7 +2,7 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
   Card,
   CardHeader,
@@ -13,12 +13,20 @@ import { useGenres } from '@/lib/hooks/useGenres';
 import { useHymns } from '@/lib/hooks/useHymns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import placeholderImages from '@/lib/placeholder-images.json';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+import { useFirebase } from '@/firebase';
 
 
 export default function Home() {
   const { data: genres, isLoading: areGenresLoading } = useGenres();
   const { data: allHymns, isLoading: areHymnsLoading } = useHymns();
+
+  const { firebaseApp } = useFirebase();
+  const storage = useMemo(() => (firebaseApp ? getStorage(firebaseApp) : null), [
+    firebaseApp,
+  ]);
+  const [backgroundUrls, setBackgroundUrls] = useState<Record<string, string>>({});
+  const [areUrlsLoading, setAreUrlsLoading] = useState(true);
 
   const activeGenreIds = useMemo(() => {
     if (!allHymns) return new Set<string>();
@@ -29,6 +37,36 @@ export default function Home() {
     if (!genres) return [];
     return genres.filter(genre => activeGenreIds.has(genre.id));
   }, [genres, activeGenreIds]);
+
+  useEffect(() => {
+    if (!storage || activeGenres.length === 0) {
+      if (!areGenresLoading) setAreUrlsLoading(false);
+      return;
+    }
+
+    const fetchUrls = async () => {
+      setAreUrlsLoading(true);
+      const urls: Record<string, string> = {};
+      const promises = activeGenres.map(async (genre) => {
+        if (genre.backgroundUrl) {
+          try {
+            const storageRef = ref(storage, genre.backgroundUrl);
+            const url = await getDownloadURL(storageRef);
+            urls[genre.id] = url;
+          } catch (error) {
+            console.error(`Failed to get background URL for ${genre.name}:`, error);
+            // If a URL fails, it just won't be in the map, so no background will be shown.
+          }
+        }
+      });
+      await Promise.all(promises);
+      setBackgroundUrls(urls);
+      setAreUrlsLoading(false);
+    };
+
+    fetchUrls();
+  }, [activeGenres, storage, areGenresLoading]);
+
 
   const isLoading = areGenresLoading || areHymnsLoading;
 
@@ -57,26 +95,24 @@ export default function Home() {
         ))}
 
         {!isLoading && activeGenres.map((genre) => {
-          const imageKey = genre.backgroundImageKey as keyof (typeof placeholderImages)['genre-backgrounds'] | undefined;
-          const imageData = imageKey ? placeholderImages['genre-backgrounds'][imageKey as keyof typeof placeholderImages['genre-backgrounds']] : null;
+          const backgroundUrl = backgroundUrls[genre.id];
           const isValidIconUrl = genre.icon && (genre.icon.startsWith('http://') || genre.icon.startsWith('https://'));
           
           return (
           <Link href={`/hymns/${genre.id}`} key={genre.id} className="group">
             <Card className="h-full flex flex-col justify-between transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 overflow-hidden relative">
-              {imageData && (
+              {backgroundUrl && (
                 <>
                   <div
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
-                    style={{ backgroundImage: `url(${imageData.url})` }}
-                    data-ai-hint={imageData.hint}
+                    style={{ backgroundImage: `url(${backgroundUrl})` }}
                   />
                   <div className="absolute inset-0 bg-black/50" />
                 </>
               )}
               <div className="relative h-full flex flex-col justify-between">
                 <CardHeader className="flex-row items-center gap-4">
-                  <div className={cn("p-2 rounded-lg flex items-center justify-center", imageData ? 'bg-white/10 backdrop-blur-sm' : 'bg-primary/10')}>
+                  <div className={cn("p-2 rounded-lg flex items-center justify-center", backgroundUrl ? 'bg-white/10 backdrop-blur-sm' : 'bg-primary/10')}>
                     {isValidIconUrl && (
                       <Image
                         src={genre.icon}
@@ -88,12 +124,12 @@ export default function Home() {
                     )}
                   </div>
                   <div>
-                    <CardTitle className={cn("font-headline text-2xl", imageData ? 'text-white' : 'text-primary')}>
+                    <CardTitle className={cn("font-headline text-2xl", backgroundUrl ? 'text-white' : 'text-primary')}>
                       {genre.name}
                     </CardTitle>
                   </div>
                 </CardHeader>
-                <div className={cn("p-6 pt-0 flex justify-end items-center text-sm font-semibold", imageData ? 'text-white/90 group-hover:text-white' : 'text-primary/80 group-hover:text-primary')}>
+                <div className={cn("p-6 pt-0 flex justify-end items-center text-sm font-semibold", backgroundUrl ? 'text-white/90 group-hover:text-white' : 'text-primary/80 group-hover:text-primary')}>
                   View Hymns
                   <ArrowRight className="ml-2 h-4 w-4 transform transition-transform duration-300 group-hover:translate-x-1" />
                 </div>
