@@ -70,8 +70,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const sortedMarks = useMemo(() => [...(currentRecording?.marks || [])].sort((a, b) => a - b), [currentRecording]);
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
   
-  // Conditionally get marks based on whether the recording is active
-  const displayedMarks = useMemo(() => currentRecording?.active ? sortedMarks : [], [currentRecording, sortedMarks]);
+  // Conditionally get marks based on whether the recording is in 'learn' mode
+  const displayedMarks = useMemo(() => currentRecording?.mode === 'learn' ? sortedMarks : [], [currentRecording, sortedMarks]);
 
   useEffect(() => {
     // The list from useHymn is already sorted, so we can just take the first one.
@@ -90,8 +90,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     setAudioSrc(null);
     setAudioError(null);
     setDuration(0);
-    // Set active marks only if the recording is active
-    setActiveMarks(currentRecording?.active ? (currentRecording.marks || []) : []);
+    // Set active marks only if the recording is in 'learn' mode
+    setActiveMarks(currentRecording?.mode === 'learn' ? (currentRecording.marks || []) : []);
 
     if (currentRecording && storage) {
       setIsLoadingAudio(true);
@@ -396,7 +396,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 <CardTitle className="font-headline text-3xl text-primary">
                     {hymn.name}
                 </CardTitle>
-                <p className="text-muted-foreground">No recordings available for this hymn yet.</p>
+                <p className="text-muted-foreground">No active recordings available for this hymn yet.</p>
             </CardHeader>
         </Card>
       )
@@ -416,7 +416,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   }
   
   const isPlayerDisabled = !audioSrc || !!audioError;
-  const showControls = currentRecording?.active ?? false;
+  const showControls = currentRecording?.mode === 'learn';
 
 
   return (
@@ -444,7 +444,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                   {hymn.recordings.map((rec) => (
                       <SelectItem key={rec.id} value={rec.id}>
                         <div className="flex items-center gap-2">
-                            {rec.active && <div className="h-2 w-2 rounded-full bg-green-500" />}
+                            {rec.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
                             <span>{rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}</span>
                         </div>
                       </SelectItem>
@@ -610,5 +610,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </Card>
   );
 }
-
-    

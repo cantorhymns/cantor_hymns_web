@@ -17,8 +17,8 @@ export function useHymn(hymnId?: string) {
 
   const recordingsQuery = useMemoFirebase(() => {
     if (!firestore || !hymnId) return null;
-    // Fetch all recordings, not just active ones. The player will handle the logic.
-    return query(collection(firestore, 'recordings'), where('hymnId', '==', hymnId));
+    // Fetch only active recordings for this hymn.
+    return query(collection(firestore, 'recordings'), where('hymnId', '==', hymnId), where('active', '==', true));
   }, [firestore, hymnId]);
 
   const { data: recordings, isLoading: areRecordingsLoading, error: recordingsError } = useCollection<Recording>(recordingsQuery);
@@ -67,12 +67,13 @@ export function useHymn(hymnId?: string) {
             cantor: cantorsMap.get(rec.cantorId)
         }));
 
-        // Sort according to the new logic: active first, then rank.
+        // Sort by mode ('learn' first), then by cantor rank.
         populatedRecordings.sort((a, b) => {
-            if (a.active && !b.active) return -1; // a is active, b is not -> a comes first
-            if (!a.active && b.active) return 1;  // b is active, a is not -> b comes first
+            // "learn" mode comes before "listen" mode
+            if (a.mode === 'learn' && b.mode !== 'learn') return -1;
+            if (a.mode !== 'learn' && b.mode === 'learn') return 1;
             
-            // If both have the same active status, sort by rank.
+            // If modes are the same, sort by cantor rank.
             const rankA = a.cantor?.rank ?? 99;
             const rankB = b.cantor?.rank ?? 99;
             return rankA - rankB;

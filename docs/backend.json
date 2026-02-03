@@ -75,7 +75,12 @@
         },
         "active": {
           "type": "boolean",
-          "description": "Indicates if the recording is active and should be displayed."
+          "description": "Indicates if the recording is available to be displayed in the app."
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["learn", "listen"],
+          "description": "Determines the player mode. 'learn' shows all controls, 'listen' is for simple playback."
         }
       },
       "required": [
@@ -83,7 +88,8 @@
         "cantorId",
         "audioUrl",
         "marks",
-        "active"
+        "active",
+        "mode"
       ]
     },
     "Cantor": {

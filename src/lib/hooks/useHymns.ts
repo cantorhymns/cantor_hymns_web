@@ -27,8 +27,8 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
   const recordingsQuery = useMemoFirebase(() => {
     if (!firestore || hymnIds.length === 0) return null;
     // Firestore 'in' query is limited to 30 items. If you expect more, you'll need to batch queries.
-    // Fetch all recordings for the hymns, active or not.
-    return query(collection(firestore, 'recordings'), where('hymnId', 'in', hymnIds.slice(0,30)));
+    // Fetch only active recordings for the hymns.
+    return query(collection(firestore, 'recordings'), where('hymnId', 'in', hymnIds.slice(0,30)), where('active', '==', true));
   }, [firestore, hymnIds]);
 
   const { data: recordings, isLoading: areRecordingsLoading, error: recordingsError } = useCollection<Recording>(recordingsQuery);
@@ -43,7 +43,7 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
 
     const recordingsByHymnId = new Map<string, Recording[]>();
     if (recordings) {
-        // Group ALL recordings (active and inactive) by hymnId
+        // Group all active recordings by hymnId
         recordings.forEach(rec => {
             if (!recordingsByHymnId.has(rec.hymnId)) {
                 recordingsByHymnId.set(rec.hymnId, []);
@@ -52,8 +52,6 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
         });
     }
     
-    // The key change is here: we now filter based on having ANY recording, not just active ones.
-    // This allows the genre to be shown on the home page.
     return hymns.map(hymn => ({
         ...hymn,
         recordings: recordingsByHymnId.get(hymn.id) || []

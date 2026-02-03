@@ -16,6 +16,7 @@ export interface Recording {
   audioUrl: string;
   marks: number[];
   active: boolean;
+  mode: 'learn' | 'listen';
 }
 
 export interface Hymn {

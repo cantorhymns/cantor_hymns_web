@@ -84,8 +84,8 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
       ) : hymns && hymns.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {hymns.map((hymn) => {
-            const learnCount = hymn.recordings?.filter(r => r.active).length || 0;
-            const listenCount = hymn.recordings?.filter(r => !r.active).length || 0;
+            const learnCount = hymn.recordings?.filter(r => r.mode === 'learn').length || 0;
+            const listenCount = hymn.recordings?.filter(r => r.mode === 'listen').length || 0;
             return (
                 <Link href={`/hymn/${hymn.id}`} key={hymn.id} className="group">
                 <Card className="h-full flex flex-col transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 group-hover:border-primary/50">
@@ -110,7 +110,7 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
                         )}
                         {(learnCount === 0 && listenCount === 0) && (
                              <div className="flex items-center gap-1.5 font-medium text-muted-foreground/80">
-                                <span>No recordings</span>
+                                <span>No active recordings</span>
                             </div>
                         )}
                     </CardDescription>

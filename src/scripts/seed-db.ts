@@ -109,7 +109,8 @@ async function seedDatabase() {
         cantorId: recording.cantorId,
         audioUrl: recording.audioUrl,
         marks: recording.marks,
-        active: recording.active
+        active: recording.active,
+        mode: recording.mode
       });
     });
 
