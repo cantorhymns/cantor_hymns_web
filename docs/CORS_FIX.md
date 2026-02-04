@@ -24,9 +24,11 @@ This method uses the graphical user interface and doesn't require any local tool
 
     The direct link *should* select the correct project for you, but if it doesn't, you may need to select it manually before proceeding.
 
-3.  **Go to Permissions**: Select the **Permissions** tab.
+3.  **Go to Permissions**: After clicking the link above and confirming you see your bucket, you will be on the **Objects** tab. Look for a row of tabs at the top of the page that says **Objects**, **Permissions**, **Lifecycle**, etc. Click on the **Permissions** tab.
 
-4.  **Find CORS Configuration**: Scroll down to the "Cross-origin resource sharing (CORS)" section and click the **Edit** button.
+    *Note: If you see "View by principals" and "View by roles", you are on the wrong screen. You need to be on the bucket details page first.*
+
+4.  **Find CORS Configuration**: On the **Permissions** tab, scroll down. You should see a section titled "Cross-origin resource sharing (CORS)". Click the **Edit** button in that section.
 
 5.  **Add a New Entry**: Click **Add an entry**. A form will appear. Fill it out as follows:
     *   **Origin**: Enter `*` (a single asterisk). This allows any website to request files.
