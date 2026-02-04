@@ -39,49 +39,57 @@ export const hymns = [
         "id": "tai-shouri",
         "name": "Tai Shouri (Mournful)",
         "genreId": "holy-week",
-        "description": "The hymn of the censer, offered during the Vespers and Matins prayers, sung in a mournful tune for Holy Week."
+        "description": "The hymn of the censer, offered during the Vespers and Matins prayers, sung in a mournful tune for Holy Week.",
+        "lyrics": "Tai shouri ti-parthenos T-smou epschois nem o-pi-spirit-ma ethouab.\n(This censer of the virgin is blessed by the Father and the Holy Spirit.)"
     },
     {
         "id": "ti-shouri",
         "name": "Ti-Shouri (Mournful)",
         "genreId": "holy-week",
-        "description": "The feminine version of 'Tai Shouri', the hymn of the censer, sung in a mournful tune for Holy Week."
+        "description": "The feminine version of 'Tai Shouri', the hymn of the censer, sung in a mournful tune for Holy Week.",
+        "lyrics": "Lyrics for this hymn are not yet available."
     },
     {
         "id": "omonogenees",
         "name": "O Monogenees",
         "genreId": "holy-week",
-        "description": "'O Only-Begotten Son', a hymn about the incarnation of Christ, sung during Holy Week."
+        "description": "'O Only-Begotten Son', a hymn about the incarnation of Christ, sung during Holy Week.",
+        "lyrics": "Lyrics for this hymn are not yet available."
     },
     {
         "id": "tarh",
         "name": "Tarh",
         "genreId": "holy-week",
-        "description": "A mournful hymn sung during the Holy Pascha week, reflecting on the Passion of Christ."
+        "description": "A mournful hymn sung during the Holy Pascha week, reflecting on the Passion of Christ.",
+        "lyrics": "Lyrics for this hymn are not yet available."
     },
     {
         "id": "kata-ni-khoros",
         "name": "Kata Ni Khoros",
         "genreId": "holy-week",
-        "description": "'Like the choirs of angels', a hymn sung during the midnight praises of Holy Week."
+        "description": "'Like the choirs of angels', a hymn sung during the midnight praises of Holy Week.",
+        "lyrics": "Lyrics for this hymn are not yet available."
     },
     {
         "id": "psalm-150",
         "name": "Psalm 150",
         "genreId": "kiahk",
-        "description": "A joyful psalm of praise, often sung during the Kiahk praises before the birth of Christ."
+        "description": "A joyful psalm of praise, often sung during the Kiahk praises before the birth of Christ.",
+        "lyrics": "Lyrics for this hymn are not yet available."
     },
     {
         "id": "christos-anesti",
         "name": "Christos Anesti",
         "genreId": "resurrection",
-        "description": "'Christ is Risen', the primary hymn of the Resurrection, sung throughout the 50 days of Pentecost."
+        "description": "'Christ is Risen', the primary hymn of the Resurrection, sung throughout the 50 days of Pentecost.",
+        "lyrics": "Christos anesti ek nekron, thanato thanaton patisas, kai tis en tis mnemasi, zo-in charisamenos.\n(Christ is risen from the dead, trampling down death by death, and upon those in the tombs bestowing life.)"
     },
     {
         "id": "mournful-agios",
         "name": "Agios (Mournful)",
         "genreId": "holy-week",
-        "description": "'Holy God, Holy Mighty, Holy Immortal', sung in a mournful tune during the prayers of Holy Week."
+        "description": "'Holy God, Holy Mighty, Holy Immortal', sung in a mournful tune during the prayers of Holy Week.",
+        "lyrics": "Agios O Theos, Agios Ischyros, Agios Athanatos, eleison imas.\n(Holy God, Holy Mighty, Holy Immortal, have mercy on us.)"
     }
 ];
 

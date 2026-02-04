@@ -24,6 +24,7 @@ export interface Hymn {
   name: string;
   genreId: string;
   description?: string;
+  lyrics?: string;
   recordings?: Recording[]; // Optional because they are fetched separately
 }
 

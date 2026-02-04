@@ -50,6 +50,10 @@
         "description": {
           "type": "string",
           "description": "A short description of the hymn."
+        },
+        "lyrics": {
+            "type": "string",
+            "description": "The lyrics for the hymn, which can be a long text."
         }
       },
       "required": [

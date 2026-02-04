@@ -31,6 +31,13 @@ import { getDownloadURL, ref } from "firebase/storage";
 import { useFirebase, getStorage } from "@/firebase";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "@/lib/utils";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
 
 function formatTime(seconds: number) {
   const floorSeconds = Math.floor(seconds);
@@ -399,6 +406,18 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 {hymn.description && (
                   <p className="text-muted-foreground mt-2 max-w-prose">{hymn.description}</p>
                 )}
+                {hymn.lyrics && (
+                    <Accordion type="single" collapsible className="w-full pt-4">
+                        <AccordionItem value="item-1">
+                        <AccordionTrigger>View Lyrics</AccordionTrigger>
+                        <AccordionContent>
+                            <div className="whitespace-pre-wrap text-muted-foreground font-body text-base max-h-96 overflow-y-auto pr-4">
+                                {hymn.lyrics}
+                            </div>
+                        </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
+                )}
                 <p className="text-muted-foreground pt-4">No active recordings available for this hymn yet.</p>
             </CardHeader>
         </Card>
@@ -414,6 +433,18 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 </CardTitle>
                  {hymn.description && (
                   <p className="text-muted-foreground mt-2 max-w-prose">{hymn.description}</p>
+                )}
+                {hymn.lyrics && (
+                    <Accordion type="single" collapsible className="w-full pt-4">
+                        <AccordionItem value="item-1">
+                        <AccordionTrigger>View Lyrics</AccordionTrigger>
+                        <AccordionContent>
+                            <div className="whitespace-pre-wrap text-muted-foreground font-body text-base max-h-96 overflow-y-auto pr-4">
+                                {hymn.lyrics}
+                            </div>
+                        </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
                 )}
                 <p className="text-muted-foreground pt-4">Please select a recording.</p>
             </CardHeader>
@@ -462,6 +493,18 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
               </Select>
             </div>
         </div>
+        {hymn.lyrics && (
+            <Accordion type="single" collapsible className="w-full pt-4">
+                <AccordionItem value="item-1">
+                <AccordionTrigger>View Lyrics</AccordionTrigger>
+                <AccordionContent>
+                    <div className="whitespace-pre-wrap text-muted-foreground font-body text-base max-h-96 overflow-y-auto pr-4">
+                        {hymn.lyrics}
+                    </div>
+                </AccordionContent>
+                </AccordionItem>
+            </Accordion>
+        )}
       </CardHeader>
       <CardContent className="px-6 pb-6">
         <div className={`space-y-6 transition-opacity ${isPlayerDisabled ? 'opacity-30 pointer-events-none' : ''}`}>
