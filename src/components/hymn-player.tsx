@@ -61,73 +61,37 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
     arabic: { content: null as string | null, loading: false },
   });
 
-  const lyricsPaths = useMemo(() => ({
-      english: hymn.lyricsEnglish,
-      coptic: hymn.lyricsCoptic,
-      arabic: hymn.lyricsArabic,
-  }), [hymn.lyricsEnglish, hymn.lyricsCoptic, hymn.lyricsArabic]);
-
   useEffect(() => {
-    if (!storage) {
-      // Ensure lyrics state is cleared if storage is not available
-      setLyrics({
-        english: { content: null, loading: false },
-        coptic: { content: null, loading: false },
-        arabic: { content: null, loading: false },
-      });
-      return;
-    }
+    if (!storage) return;
 
-    const lyricsToFetch = (Object.keys(lyricsPaths) as Array<keyof typeof lyricsPaths>)
-      .map(lang => ({ lang, path: lyricsPaths[lang] }))
-      .filter(item => item.path);
+    const fetchLyric = async (lang: 'english' | 'coptic' | 'arabic', path: string | undefined | null) => {
+      if (!path) {
+        setLyrics(prev => ({ ...prev, [lang]: { content: null, loading: false } }));
+        return;
+      }
 
-    // Set initial loading state for all lyrics that will be fetched,
-    // and clear out any old lyrics that are no longer relevant.
-    const initialLoadingState: typeof lyrics = {
-        english: { content: null, loading: false },
-        coptic: { content: null, loading: false },
-        arabic: { content: null, loading: false },
-    };
-    lyricsToFetch.forEach(({ lang }) => {
-        initialLoadingState[lang] = { content: null, loading: true };
-    });
-    setLyrics(initialLoadingState);
+      setLyrics(prev => ({ ...prev, [lang]: { content: null, loading: true } }));
 
-    if (lyricsToFetch.length === 0) {
-      return;
-    }
-
-    const fetchPromises = lyricsToFetch.map(({ lang, path }) =>
-      getBytes(ref(storage, path!))
-        .then(bytes => ({
-          lang,
-          status: 'fulfilled',
-          value: new TextDecoder().decode(bytes),
-        }))
-        .catch(error => {
-          console.error(`Failed to fetch lyrics for ${lang} from ${path}`, error);
-          return {
-            lang,
-            status: 'rejected' as 'rejected',
-            value: `Error: Could not load lyrics.`,
-          };
-        })
-    );
-
-    Promise.all(fetchPromises).then(results => {
-      setLyrics(prevState => {
-        const newState = { ...prevState };
-        results.forEach(result => {
-          newState[result.lang] = {
-            content: result.value,
+      try {
+        const bytes = await getBytes(ref(storage, path));
+        const content = new TextDecoder().decode(bytes);
+        setLyrics(prev => ({ ...prev, [lang]: { content, loading: false } }));
+      } catch (error) {
+        console.error(`Failed to fetch lyrics for ${lang} from ${path}`, error);
+        setLyrics(prev => ({
+          ...prev,
+          [lang]: {
+            content: `Error: Could not load lyrics from ${path}.`,
             loading: false,
-          };
-        });
-        return newState;
-      });
-    });
-  }, [lyricsPaths, storage]);
+          },
+        }));
+      }
+    };
+
+    fetchLyric('english', hymn.lyricsEnglish);
+    fetchLyric('coptic', hymn.lyricsCoptic);
+    fetchLyric('arabic', hymn.lyricsArabic);
+  }, [hymn.lyricsEnglish, hymn.lyricsCoptic, hymn.lyricsArabic, storage]);
 
 
   const available = {
