@@ -39,52 +39,73 @@ export const hymns = [
         "id": "tai-shouri",
         "name": "Tai Shouri (Mournful)",
         "genreId": "holy-week",
-        "description": "The hymn of the censer, offered during the Vespers and Matins prayers, sung in a mournful tune for Holy Week."
+        "description": "The hymn of the censer, offered during the Vespers and Matins prayers, sung in a mournful tune for Holy Week.",
+        "lyricsEnglish": "",
+        "lyricsCoptic": "",
+        "lyricsArabic": ""
     },
     {
         "id": "ti-shouri",
         "name": "Ti-Shouri (Mournful)",
         "genreId": "holy-week",
-        "description": "The feminine version of 'Tai Shouri', the hymn of the censer, sung in a mournful tune for Holy Week."
+        "description": "The feminine version of 'Tai Shouri', the hymn of the censer, sung in a mournful tune for Holy Week.",
+        "lyricsEnglish": "",
+        "lyricsCoptic": "",
+        "lyricsArabic": ""
     },
     {
         "id": "omonogenees",
         "name": "O Monogenees",
         "genreId": "holy-week",
-        "description": "'O Only-Begotten Son', a hymn about the incarnation of Christ, sung during Holy Week."
+        "description": "'O Only-Begotten Son', a hymn about the incarnation of Christ, sung during Holy Week.",
+        "lyricsEnglish": "",
+        "lyricsCoptic": "",
+        "lyricsArabic": ""
     },
     {
         "id": "tarh",
         "name": "Tarh",
         "genreId": "holy-week",
-        "description": "A mournful hymn sung during the Holy Pascha week, reflecting on the Passion of Christ."
+        "description": "A mournful hymn sung during the Holy Pascha week, reflecting on the Passion of Christ.",
+        "lyricsEnglish": "",
+        "lyricsCoptic": "",
+        "lyricsArabic": ""
     },
     {
         "id": "kata-ni-khoros",
         "name": "Kata Ni Khoros",
         "genreId": "resurrection",
         "description": "'Like the choirs of angels', a joyful hymn of praise sung after the Resurrection.",
-        "lyricsEnglish": "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033{\\fonttbl{\\f0\\fnil\\fcharset0 Calibri;}{\\f1\\fnil\\fcharset2 Symbol;}}\\n{\\*\\generator Riched20 10.0.19041}\\viewkind4\\uc1 \\n\\pard\\sa200\\sl276\\slmult1\\f0\\fs22\\lang9 Like the choirs of angels,\\par\nhos er-anastas ek nekron\\par\nChristos Anesti.\\par\n}",
-        "lyricsCoptic": "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033{\\fonttbl{\\f0\\fnil\\fcharset0 Calibri;}{\\f1\\fnil\\fcharset2 Symbol;}}\\n{\\*\\generator Riched20 10.0.19041}\\viewkind4\\uc1 \\n\\pard\\sa200\\sl276\\slmult1\\f0\\fs22\\lang9 Kata ni khoros non angelos,\\par\nhos er-anastas ek nekron\\par\nChristos Anesti.\\par\n}",
-        "lyricsArabic": "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033{\\fonttbl{\\f0\\fnil\\fcharset0 Calibri;}{\\f1\\fnil\\fcharset2 Symbol;}}\\n{\\*\\generator Riched20 10.0.19041}\\viewkind4\\uc1 \\n\\pard\\sa200\\sl276\\slmult1\\f0\\fs22\\lang9 'Akhpergerem neni-angelos,\\par\n'Akhpergerem neni-angelos,\\par\nChristos Anesti.\\par\n}"
+        "lyricsEnglish": "Like the **choirs** of angels,\n\nhos er-anastas ek nekron\n\n_Christos Anesti._",
+        "lyricsCoptic": "Κατὰ τὰς χοροστασίας τῶν ἀγγέλων,\n\nὡς ὁ ἀναστὰς ἐκ νεκρῶν\n\nΧριστὸς Ἀνέστη.",
+        "lyricsArabic": "مثل **طقوس** الملائكة\n\nالقائم من الأموات\n\n_المسيح قام_"
     },
     {
         "id": "psalm-150",
         "name": "Psalm 150",
         "genreId": "kiahk",
-        "description": "A joyful psalm of praise, often sung during the Kiahk praises before the birth of Christ."
+        "description": "A joyful psalm of praise, often sung during the Kiahk praises before the birth of Christ.",
+        "lyricsEnglish": "",
+        "lyricsCoptic": "",
+        "lyricsArabic": ""
     },
     {
         "id": "christos-anesti",
         "name": "Christos Anesti",
         "genreId": "resurrection",
-        "description": "'Christ is Risen', the primary hymn of the Resurrection, sung throughout the 50 days of Pentecost."
+        "description": "'Christ is Risen', the primary hymn of the Resurrection, sung throughout the 50 days of Pentecost.",
+        "lyricsEnglish": "",
+        "lyricsCoptic": "",
+        "lyricsArabic": ""
     },
     {
         "id": "mournful-agios",
         "name": "Agios (Mournful)",
         "genreId": "holy-week",
-        "description": "'Holy God, Holy Mighty, Holy Immortal', sung in a mournful tune during the prayers of Holy Week."
+        "description": "'Holy God, Holy Mighty, Holy Immortal', sung in a mournful tune during the prayers of Holy Week.",
+        "lyricsEnglish": "",
+        "lyricsCoptic": "",
+        "lyricsArabic": ""
     }
 ];
 

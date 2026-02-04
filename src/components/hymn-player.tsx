@@ -32,6 +32,8 @@ import { getDownloadURL, ref } from "firebase/storage";
 import { useFirebase, getStorage } from "@/firebase";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "@/lib/utils";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 
 function formatTime(seconds: number) {
@@ -81,7 +83,9 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                   <X className="h-4 w-4" />
                 </Button>
               </div>
-              <pre className="whitespace-pre-wrap font-body text-sm text-muted-foreground overflow-x-auto">{available.english}</pre>
+              <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{available.english}</ReactMarkdown>
+              </div>
             </div>
           )}
           {visible.coptic && available.coptic && (
@@ -92,7 +96,9 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                   <X className="h-4 w-4" />
                 </Button>
               </div>
-              <pre className="whitespace-pre-wrap font-body text-sm text-muted-foreground overflow-x-auto">{available.coptic}</pre>
+              <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{available.coptic}</ReactMarkdown>
+              </div>
             </div>
           )}
           {visible.arabic && available.arabic && (
@@ -103,7 +109,9 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                   <X className="h-4 w-4" />
                 </Button>
               </div>
-              <pre className="whitespace-pre-wrap font-body text-sm text-muted-foreground overflow-x-auto">{available.arabic}</pre>
+              <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{available.arabic}</ReactMarkdown>
+              </div>
             </div>
           )}
         </div>
@@ -119,14 +127,6 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
               ))}
           </div>
       )}
-
-      {visibleLangs.length > 0 && (
-        <div className="mt-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 rounded-r-md">
-            <p className="font-bold">Developer Note:</p>
-            <p className="text-sm">The text above is raw RTF code. A special library is needed to parse and render RTF content as formatted text, which is not currently implemented.</p>
-        </div>
-      )}
-
     </div>
   );
 };
