@@ -28,7 +28,7 @@ import {
   XCircle,
   X
 } from "lucide-react";
-import { getDownloadURL, ref, getStorage, getBytes } from "firebase/storage";
+import { getDownloadURL, ref, getStorage } from "firebase/storage";
 import { useFirebase } from "@/firebase";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -67,8 +67,13 @@ function useLyricContent(path?: string) {
       setError(null);
       try {
         const storageRef = ref(storage, path);
-        const bytes = await getBytes(storageRef);
-        const textContent = new TextDecoder().decode(bytes);
+        const url = await getDownloadURL(storageRef);
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+        const textContent = await response.text();
+
         if (!isCancelled) {
           setContent(textContent.trim() || `(File is empty at path: ${path})`);
         }
