@@ -1,10 +1,36 @@
 # Fixing the CORS Issue for Firebase Storage
 
-The error `Failed to fetch` confirms that your app is being blocked by a security feature called CORS (Cross-Origin Resource Sharing).
+The error `Failed to fetch` confirms that your app is being blocked by a security feature called CORS (Cross-Origin Resource Sharing). This is not a bug in the application code; it's a security setting on your Google Cloud Storage bucket that needs to be configured once.
 
-This is not a bug in the application code. It's a security setting on your Google Cloud Storage bucket that needs to be configured once.
+You can fix this using either the web-based Google Cloud Console or the command-line interface (CLI).
 
-Here are the step-by-step instructions to fix it. You will need to have the [Google Cloud CLI (`gcloud`)](https://cloud.google.com/sdk/docs/install) installed on your local machine.
+---
+
+## Option 1: Using the Google Cloud Console (Web Browser)
+
+This method uses the graphical user interface and doesn't require any local tools.
+
+1.  **Open the Google Cloud Console**: Navigate to the Cloud Storage browser for your project by clicking this link:
+    [https://console.cloud.google.com/storage/browser/studio-127742305-c9528.appspot.com](https://console.cloud.google.com/storage/browser/studio-127742305-c9528.appspot.com)
+
+2.  **Go to Permissions**: Select the **Permissions** tab.
+
+3.  **Find CORS Configuration**: Scroll down to the "Cross-origin resource sharing (CORS)" section and click the **Edit** button.
+
+4.  **Add a New Entry**: Click **Add an entry**. A form will appear. Fill it out as follows:
+    *   **Origin**: Enter `*` (a single asterisk). This allows any website to request files.
+    *   **Methods**: Check the box for `GET`. This allows read-only access for downloading files.
+    *   **Max-age (seconds)**: Enter `3600`.
+
+5.  **Save**: Click the **Save** button.
+
+It may take a minute for the settings to apply. After saving, refresh your app's web page, and the lyrics should now load correctly.
+
+---
+
+## Option 2: Using the Google Cloud CLI (Command Line)
+
+This method is faster if you have the [Google Cloud CLI (`gcloud`)](https://cloud.google.com/sdk/docs/install) installed.
 
 ### Step 1: Create a `cors.json` file
 
@@ -20,12 +46,9 @@ Create a new file on your local computer (e.g., on your Desktop) and name it `co
 ]
 ```
 
-- **`"origin": ["*"]`**: This allows any website to request files. This is safe because your `storage.rules` still protect against unauthorized uploads.
-- **`"method": ["GET"]`**: This allows read-only access for downloading the files.
-
 ### Step 2: Apply the CORS Configuration
 
-Open a terminal or command prompt on your local computer. Navigate to the directory where you saved the `cors.json` file (e.g., `cd Desktop`). Then, run the following command:
+Open a terminal or command prompt on your local computer. Then, run the following command:
 
 ```bash
 gcloud storage buckets update gs://studio-127742305-c9528.appspot.com --cors-file=cors.json
@@ -35,6 +58,4 @@ This command tells Google Cloud to apply the rules from your `cors.json` file to
 
 ### Step 3: Verify
 
-After the command completes successfully, it may take up to a minute for the settings to apply. Refresh your app's web page, and the lyrics should now load correctly.
-
-Once it's working, you can safely delete the `cors.json` file from your computer.
+After the command completes successfully, it may take up to a minute for the settings to apply. Refresh your app's web page, and the lyrics should now load correctly. You can safely delete the `cors.json` file from your computer after the fix is confirmed.
