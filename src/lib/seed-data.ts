@@ -70,9 +70,13 @@ export const hymns = [
     {
         "id": "kata-ni-khoros",
         "name": "Kata Ni Khoros",
-        "genreId": "holy-week",
-        "description": "'Like the choirs of angels', a hymn sung during the midnight praises of Holy Week.",
-        "lyrics": {}
+        "genreId": "resurrection",
+        "description": "'Like the choirs of angels', a joyful hymn of praise sung after the Resurrection.",
+        "lyrics": {
+            "coptic": "Kata ni khoros non angelos, hōs er-anastas ek nekron.",
+            "english": "Like the choirs of angels, for you have risen from the dead.",
+            "arabic": "مثل جوقات الملائكة، لأنك قمت من بين الأموات."
+        }
     },
     {
         "id": "psalm-150",
