@@ -2,6 +2,9 @@
 
 The error `Failed to fetch` confirms that your app is being blocked by a security feature called CORS (Cross-Origin Resource Sharing). This is not a bug in the application code; it's a security setting on your Google Cloud Storage bucket that needs to be configured once.
 
+**Why the Google Cloud Console?**
+Firebase Storage is built directly on top of Google Cloud Storage. While the Firebase Console is great for everyday tasks, some advanced settings like CORS are managed in the more powerful Google Cloud Console. The link below will take you to the correct page for your project's storage bucket.
+
 You can fix this using either the web-based Google Cloud Console or the command-line interface (CLI).
 
 ---
