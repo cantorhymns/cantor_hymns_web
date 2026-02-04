@@ -39,61 +39,52 @@ export const hymns = [
         "id": "tai-shouri",
         "name": "Tai Shouri (Mournful)",
         "genreId": "holy-week",
-        "description": "The hymn of the censer, offered during the Vespers and Matins prayers, sung in a mournful tune for Holy Week.",
-        "lyrics": {}
+        "description": "The hymn of the censer, offered during the Vespers and Matins prayers, sung in a mournful tune for Holy Week."
     },
     {
         "id": "ti-shouri",
         "name": "Ti-Shouri (Mournful)",
         "genreId": "holy-week",
-        "description": "The feminine version of 'Tai Shouri', the hymn of the censer, sung in a mournful tune for Holy Week.",
-        "lyrics": {}
+        "description": "The feminine version of 'Tai Shouri', the hymn of the censer, sung in a mournful tune for Holy Week."
     },
     {
         "id": "omonogenees",
         "name": "O Monogenees",
         "genreId": "holy-week",
-        "description": "'O Only-Begotten Son', a hymn about the incarnation of Christ, sung during Holy Week.",
-        "lyrics": {}
+        "description": "'O Only-Begotten Son', a hymn about the incarnation of Christ, sung during Holy Week."
     },
     {
         "id": "tarh",
         "name": "Tarh",
         "genreId": "holy-week",
-        "description": "A mournful hymn sung during the Holy Pascha week, reflecting on the Passion of Christ.",
-        "lyrics": {}
+        "description": "A mournful hymn sung during the Holy Pascha week, reflecting on the Passion of Christ."
     },
     {
         "id": "kata-ni-khoros",
         "name": "Kata Ni Khoros",
         "genreId": "resurrection",
         "description": "'Like the choirs of angels', a joyful hymn of praise sung after the Resurrection.",
-        "lyrics": {
-            "coptic": "Kata ni khoros non angelos, hōs er-anastas ek nekron.",
-            "english": "Like the choirs of angels, for you have risen from the dead.",
-            "arabic": "مثل جوقات الملائكة، لأنك قمت من بين الأموات."
-        }
+        "lyricsEnglish": "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033{\\fonttbl{\\f0\\fnil\\fcharset0 Calibri;}{\\f1\\fnil\\fcharset2 Symbol;}}\\n{\\*\\generator Riched20 10.0.19041}\\viewkind4\\uc1 \\n\\pard\\sa200\\sl276\\slmult1\\f0\\fs22\\lang9 Like the choirs of angels,\\par\nhos er-anastas ek nekron\\par\nChristos Anesti.\\par\n}",
+        "lyricsCoptic": "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033{\\fonttbl{\\f0\\fnil\\fcharset0 Calibri;}{\\f1\\fnil\\fcharset2 Symbol;}}\\n{\\*\\generator Riched20 10.0.19041}\\viewkind4\\uc1 \\n\\pard\\sa200\\sl276\\slmult1\\f0\\fs22\\lang9 Kata ni khoros non angelos,\\par\nhos er-anastas ek nekron\\par\nChristos Anesti.\\par\n}",
+        "lyricsArabic": "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033{\\fonttbl{\\f0\\fnil\\fcharset0 Calibri;}{\\f1\\fnil\\fcharset2 Symbol;}}\\n{\\*\\generator Riched20 10.0.19041}\\viewkind4\\uc1 \\n\\pard\\sa200\\sl276\\slmult1\\f0\\fs22\\lang9 'Akhpergerem neni-angelos,\\par\n'Akhpergerem neni-angelos,\\par\nChristos Anesti.\\par\n}"
     },
     {
         "id": "psalm-150",
         "name": "Psalm 150",
         "genreId": "kiahk",
-        "description": "A joyful psalm of praise, often sung during the Kiahk praises before the birth of Christ.",
-        "lyrics": {}
+        "description": "A joyful psalm of praise, often sung during the Kiahk praises before the birth of Christ."
     },
     {
         "id": "christos-anesti",
         "name": "Christos Anesti",
         "genreId": "resurrection",
-        "description": "'Christ is Risen', the primary hymn of the Resurrection, sung throughout the 50 days of Pentecost.",
-        "lyrics": {}
+        "description": "'Christ is Risen', the primary hymn of the Resurrection, sung throughout the 50 days of Pentecost."
     },
     {
         "id": "mournful-agios",
         "name": "Agios (Mournful)",
         "genreId": "holy-week",
-        "description": "'Holy God, Holy Mighty, Holy Immortal', sung in a mournful tune during the prayers of Holy Week.",
-        "lyrics": {}
+        "description": "'Holy God, Holy Mighty, Holy Immortal', sung in a mournful tune during the prayers of Holy Week."
     }
 ];
 

@@ -26,12 +26,12 @@ import {
   FastForward,
   Rewind,
   XCircle,
+  X
 } from "lucide-react";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useFirebase, getStorage } from "@/firebase";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "@/lib/utils";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 
 function formatTime(seconds: number) {
@@ -44,48 +44,93 @@ function formatTime(seconds: number) {
 const VISIBLE_DURATION_S = 60; // 1 minute window
 
 const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
-    const hasLyrics = hymn.lyrics && (hymn.lyrics.coptic || hymn.lyrics.english || hymn.lyrics.arabic);
+  const [visible, setVisible] = useState({
+    english: true,
+    coptic: true,
+    arabic: true,
+  });
 
-    if (!hasLyrics) {
-        return null;
-    }
+  const available = {
+    english: hymn.lyricsEnglish,
+    coptic: hymn.lyricsCoptic,
+    arabic: hymn.lyricsArabic,
+  };
 
-    const defaultTab = hymn.lyrics?.english ? "english" : hymn.lyrics?.coptic ? "coptic" : "arabic";
+  const visibleLangs = (Object.keys(available) as Array<keyof typeof available>)
+    .filter(lang => available[lang] && visible[lang]);
+  
+  const hiddenLangs = (Object.keys(available) as Array<keyof typeof available>)
+    .filter(lang => available[lang] && !visible[lang]);
 
-    return (
-        <div className="w-full pt-4">
-            <h3 className="text-lg font-semibold mb-2 font-headline text-primary">Lyrics</h3>
-            <Tabs defaultValue={defaultTab} className="w-full">
-                <TabsList>
-                    {hymn.lyrics?.english && <TabsTrigger value="english">English</TabsTrigger>}
-                    {hymn.lyrics?.coptic && <TabsTrigger value="coptic">Coptic</TabsTrigger>}
-                    {hymn.lyrics?.arabic && <TabsTrigger value="arabic">Arabic</TabsTrigger>}
-                </TabsList>
-                {hymn.lyrics?.english && (
-                    <TabsContent value="english">
-                        <div className="whitespace-pre-wrap text-muted-foreground font-body text-base max-h-96 overflow-y-auto p-4 border rounded-md bg-secondary/30">
-                            {hymn.lyrics.english}
-                        </div>
-                    </TabsContent>
-                )}
-                {hymn.lyrics?.coptic && (
-                    <TabsContent value="coptic">
-                        <div className="whitespace-pre-wrap text-muted-foreground font-body text-base max-h-96 overflow-y-auto p-4 border rounded-md bg-secondary/30">
-                            {hymn.lyrics.coptic}
-                        </div>
-                    </TabsContent>
-                )}
-                {hymn.lyrics?.arabic && (
-                    <TabsContent value="arabic">
-                        <div className="whitespace-pre-wrap text-muted-foreground font-body text-base max-h-96 overflow-y-auto p-4 border rounded-md bg-secondary/30 text-right" dir="rtl">
-                            {hymn.lyrics.arabic}
-                        </div>
-                    </TabsContent>
-                )}
-            </Tabs>
+  const hasAnyLyrics = Object.values(available).some(Boolean);
+
+  if (!hasAnyLyrics) {
+    return null;
+  }
+
+  return (
+    <div className="w-full pt-4">
+      <h3 className="text-lg font-semibold mb-2 font-headline text-primary">Lyrics</h3>
+      {visibleLangs.length > 0 && (
+        <div className="flex flex-col md:flex-row gap-4">
+          {visible.english && available.english && (
+            <div className="flex-1 border rounded-md p-4 bg-secondary/30 min-w-0">
+              <div className="flex justify-between items-center mb-2">
+                <h4 className="font-semibold text-muted-foreground">English</h4>
+                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setVisible(v => ({ ...v, english: false }))}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <pre className="whitespace-pre-wrap font-body text-sm text-muted-foreground overflow-x-auto">{available.english}</pre>
+            </div>
+          )}
+          {visible.coptic && available.coptic && (
+            <div className="flex-1 border rounded-md p-4 bg-secondary/30 min-w-0">
+              <div className="flex justify-between items-center mb-2">
+                <h4 className="font-semibold text-muted-foreground">Coptic</h4>
+                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setVisible(v => ({ ...v, coptic: false }))}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <pre className="whitespace-pre-wrap font-body text-sm text-muted-foreground overflow-x-auto">{available.coptic}</pre>
+            </div>
+          )}
+          {visible.arabic && available.arabic && (
+            <div className="flex-1 border rounded-md p-4 bg-secondary/30 min-w-0 text-right" dir="rtl">
+              <div className="flex justify-between items-center mb-2">
+                <h4 className="font-semibold text-muted-foreground">Arabic</h4>
+                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setVisible(v => ({ ...v, arabic: false }))}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <pre className="whitespace-pre-wrap font-body text-sm text-muted-foreground overflow-x-auto">{available.arabic}</pre>
+            </div>
+          )}
         </div>
-    );
+      )}
+      
+      {hiddenLangs.length > 0 && (
+          <div className="mt-4 flex gap-2 items-center">
+              <span className="text-sm text-muted-foreground">Show lyrics:</span>
+              {hiddenLangs.map(lang => (
+                  <Button key={lang} variant="outline" size="sm" onClick={() => setVisible(v => ({ ...v, [lang]: true }))}>
+                      {lang.charAt(0).toUpperCase() + lang.slice(1)}
+                  </Button>
+              ))}
+          </div>
+      )}
+
+      {visibleLangs.length > 0 && (
+        <div className="mt-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 rounded-r-md">
+            <p className="font-bold">Developer Note:</p>
+            <p className="text-sm">The text above is raw RTF code. A special library is needed to parse and render RTF content as formatted text, which is not currently implemented.</p>
+        </div>
+      )}
+
+    </div>
+  );
 };
+
 
 export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const { firebaseApp } = useFirebase();
