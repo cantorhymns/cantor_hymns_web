@@ -56,65 +56,45 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
   const storage = useMemo(() => (firebaseApp ? getStorage(firebaseApp) : null), [firebaseApp]);
 
   const [lyrics, setLyrics] = useState({
-    english: { content: null as string | null, loading: true },
-    coptic: { content: null as string | null, loading: true },
-    arabic: { content: null as string | null, loading: true },
+    english: { content: null as string | null, loading: false },
+    coptic: { content: null as string | null, loading: false },
+    arabic: { content: null as string | null, loading: false },
   });
 
-  useEffect(() => {
-    if (!storage || !hymn.id) {
-        setLyrics({
-            english: { content: null, loading: false },
-            coptic: { content: null, loading: false },
-            arabic: { content: null, loading: false },
-        });
-        return;
-    };
-
-    const lyricsPaths = {
+  const lyricsPaths = useMemo(() => ({
       english: hymn.lyricsEnglish,
       coptic: hymn.lyricsCoptic,
       arabic: hymn.lyricsArabic,
-    };
-    
-    // Set loading state to true for all defined paths
-    const initialLoadingState = {
-        english: { content: null, loading: !!lyricsPaths.english },
-        coptic: { content: null, loading: !!lyricsPaths.coptic },
-        arabic: { content: null, loading: !!lyricsPaths.arabic },
-    };
-    setLyrics(initialLoadingState);
+  }), [hymn.lyricsEnglish, hymn.lyricsCoptic, hymn.lyricsArabic]);
 
-    const promises = (Object.keys(lyricsPaths) as Array<keyof typeof lyricsPaths>).map(lang => {
-      const path = lyricsPaths[lang];
-      if (path) {
+  useEffect(() => {
+    if (!storage) return;
+
+    const fetchLyrics = (lang: keyof typeof lyricsPaths, path: string) => {
+        setLyrics(prev => ({ ...prev, [lang]: { content: null, loading: true }}));
         const storageRef = ref(storage, path);
-        return getBytes(storageRef)
-          .then(bytes => ({ lang, content: new TextDecoder().decode(bytes), error: null }))
-          .catch(error => ({ lang, content: null, error }));
-      }
-      return null;
-    }).filter(Boolean) as Promise<{lang: string, content: string | null, error: Error | null}>[];
+        getBytes(storageRef)
+          .then(bytes => {
+              setLyrics(prev => ({...prev, [lang]: { content: new TextDecoder().decode(bytes), loading: false }}));
+          })
+          .catch(error => {
+              console.error(`Failed to fetch lyrics for ${lang} from ${path}`, error);
+              setLyrics(prev => ({...prev, [lang]: { content: `Error: Could not load lyrics.`, loading: false }}));
+          });
+    }
 
-    Promise.all(promises).then(results => {
-      setLyrics(prev => {
-        const newState = { ...prev };
-        results.forEach(result => {
-          if (result) {
-              const langKey = result.lang as keyof typeof lyrics;
-              if (result.error) {
-                  console.error(`Failed to fetch lyrics for ${result.lang} from ${lyricsPaths[langKey]}`, result.error);
-                  newState[langKey] = { content: `Error: Could not load lyrics.`, loading: false };
-              } else {
-                  newState[langKey] = { content: result.content, loading: false };
-              }
-          }
-        });
-        return newState;
-      });
+    (Object.keys(lyricsPaths) as Array<keyof typeof lyricsPaths>).forEach(lang => {
+        const path = lyricsPaths[lang];
+        if (path) {
+            fetchLyrics(lang, path);
+        } else {
+            // If path is not available, ensure it's not in a loading state from a previous render
+            setLyrics(prev => ({ ...prev, [lang]: { content: null, loading: false }}));
+        }
     });
 
-  }, [hymn.id, storage]); // Depend on hymn.id to re-fetch when hymn changes
+  }, [lyricsPaths, storage]);
+
 
   const available = {
     english: hymn.lyricsEnglish,
@@ -798,5 +778,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </>
   );
 }
-
-    
