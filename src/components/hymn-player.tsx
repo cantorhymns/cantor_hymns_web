@@ -62,7 +62,7 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
   });
 
   useEffect(() => {
-    if (!storage) {
+    if (!storage || !hymn.id) {
         setLyrics({
             english: { content: null, loading: false },
             coptic: { content: null, loading: false },
@@ -76,27 +76,45 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
       coptic: hymn.lyricsCoptic,
       arabic: hymn.lyricsArabic,
     };
+    
+    // Set loading state to true for all defined paths
+    const initialLoadingState = {
+        english: { content: null, loading: !!lyricsPaths.english },
+        coptic: { content: null, loading: !!lyricsPaths.coptic },
+        arabic: { content: null, loading: !!lyricsPaths.arabic },
+    };
+    setLyrics(initialLoadingState);
 
-    (Object.keys(lyricsPaths) as Array<keyof typeof lyricsPaths>).forEach(lang => {
+    const promises = (Object.keys(lyricsPaths) as Array<keyof typeof lyricsPaths>).map(lang => {
       const path = lyricsPaths[lang];
       if (path) {
-        setLyrics(prev => ({ ...prev, [lang]: { content: null, loading: true } }));
         const storageRef = ref(storage, path);
-        getBytes(storageRef)
-          .then(bytes => {
-            const textContent = new TextDecoder().decode(bytes);
-            setLyrics(prev => ({ ...prev, [lang]: { content: textContent, loading: false } }));
-          })
-          .catch(error => {
-            console.error(`Failed to fetch lyrics for ${lang} from ${path}`, error);
-            setLyrics(prev => ({ ...prev, [lang]: { content: "Error: Could not load lyrics.", loading: false } }));
-          });
-      } else {
-        setLyrics(prev => ({ ...prev, [lang]: { content: null, loading: false } }));
+        return getBytes(storageRef)
+          .then(bytes => ({ lang, content: new TextDecoder().decode(bytes), error: null }))
+          .catch(error => ({ lang, content: null, error }));
       }
+      return null;
+    }).filter(Boolean) as Promise<{lang: string, content: string | null, error: Error | null}>[];
+
+    Promise.all(promises).then(results => {
+      setLyrics(prev => {
+        const newState = { ...prev };
+        results.forEach(result => {
+          if (result) {
+              const langKey = result.lang as keyof typeof lyrics;
+              if (result.error) {
+                  console.error(`Failed to fetch lyrics for ${result.lang} from ${lyricsPaths[langKey]}`, result.error);
+                  newState[langKey] = { content: `Error: Could not load lyrics.`, loading: false };
+              } else {
+                  newState[langKey] = { content: result.content, loading: false };
+              }
+          }
+        });
+        return newState;
+      });
     });
 
-  }, [hymn.lyricsEnglish, hymn.lyricsCoptic, hymn.lyricsArabic, storage]);
+  }, [hymn.id, storage]); // Depend on hymn.id to re-fetch when hymn changes
 
   const available = {
     english: hymn.lyricsEnglish,

@@ -94,10 +94,14 @@ async function seedDatabase() {
     console.log(`Seeding ${hymns.length} hymns...`);
     hymns.forEach((hymn) => {
         const docRef = doc(db, 'hymns', hymn.id);
-        const { id, ...hymnData } = hymn; // Exclude id from the data to be written
+        // Explicitly map the fields to ensure they are all included
         seedBatch.set(docRef, {
-            ...hymnData,
-            description: hymn.description || '', // ensure description exists
+            name: hymn.name,
+            genreId: hymn.genreId,
+            description: hymn.description || '',
+            lyricsEnglish: hymn.lyricsEnglish || '',
+            lyricsCoptic: hymn.lyricsCoptic || '',
+            lyricsArabic: hymn.lyricsArabic || ''
         });
     });
 
