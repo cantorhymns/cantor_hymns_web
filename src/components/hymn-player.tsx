@@ -68,31 +68,65 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
   }), [hymn.lyricsEnglish, hymn.lyricsCoptic, hymn.lyricsArabic]);
 
   useEffect(() => {
-    if (!storage) return;
-
-    const fetchLyrics = (lang: keyof typeof lyricsPaths, path: string) => {
-        setLyrics(prev => ({ ...prev, [lang]: { content: null, loading: true }}));
-        const storageRef = ref(storage, path);
-        getBytes(storageRef)
-          .then(bytes => {
-              setLyrics(prev => ({...prev, [lang]: { content: new TextDecoder().decode(bytes), loading: false }}));
-          })
-          .catch(error => {
-              console.error(`Failed to fetch lyrics for ${lang} from ${path}`, error);
-              setLyrics(prev => ({...prev, [lang]: { content: `Error: Could not load lyrics.`, loading: false }}));
-          });
+    if (!storage) {
+      // Ensure lyrics state is cleared if storage is not available
+      setLyrics({
+        english: { content: null, loading: false },
+        coptic: { content: null, loading: false },
+        arabic: { content: null, loading: false },
+      });
+      return;
     }
 
-    (Object.keys(lyricsPaths) as Array<keyof typeof lyricsPaths>).forEach(lang => {
-        const path = lyricsPaths[lang];
-        if (path) {
-            fetchLyrics(lang, path);
-        } else {
-            // If path is not available, ensure it's not in a loading state from a previous render
-            setLyrics(prev => ({ ...prev, [lang]: { content: null, loading: false }}));
-        }
-    });
+    const lyricsToFetch = (Object.keys(lyricsPaths) as Array<keyof typeof lyricsPaths>)
+      .map(lang => ({ lang, path: lyricsPaths[lang] }))
+      .filter(item => item.path);
 
+    // Set initial loading state for all lyrics that will be fetched,
+    // and clear out any old lyrics that are no longer relevant.
+    const initialLoadingState: typeof lyrics = {
+        english: { content: null, loading: false },
+        coptic: { content: null, loading: false },
+        arabic: { content: null, loading: false },
+    };
+    lyricsToFetch.forEach(({ lang }) => {
+        initialLoadingState[lang] = { content: null, loading: true };
+    });
+    setLyrics(initialLoadingState);
+
+    if (lyricsToFetch.length === 0) {
+      return;
+    }
+
+    const fetchPromises = lyricsToFetch.map(({ lang, path }) =>
+      getBytes(ref(storage, path!))
+        .then(bytes => ({
+          lang,
+          status: 'fulfilled',
+          value: new TextDecoder().decode(bytes),
+        }))
+        .catch(error => {
+          console.error(`Failed to fetch lyrics for ${lang} from ${path}`, error);
+          return {
+            lang,
+            status: 'rejected' as 'rejected',
+            value: `Error: Could not load lyrics.`,
+          };
+        })
+    );
+
+    Promise.all(fetchPromises).then(results => {
+      setLyrics(prevState => {
+        const newState = { ...prevState };
+        results.forEach(result => {
+          newState[result.lang] = {
+            content: result.value,
+            loading: false,
+          };
+        });
+        return newState;
+      });
+    });
   }, [lyricsPaths, storage]);
 
 
@@ -218,9 +252,16 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const displayedMarks = useMemo(() => currentRecording?.mode === 'learn' ? sortedMarks : [], [currentRecording, sortedMarks]);
 
   useEffect(() => {
-    // The list from useHymn is already sorted, so we can just take the first one.
-    setCurrentRecording(hymn.recordings?.[0]);
-  }, [hymn]);
+    // This effect now specifically handles setting the initial recording
+    // It will only run when hymn.recordings becomes available or changes.
+    if (hymn && hymn.recordings && hymn.recordings.length > 0) {
+      // The list from useHymn is already sorted, so we can just take the first one.
+      setCurrentRecording(hymn.recordings[0]);
+    } else {
+      // If there are no recordings, ensure nothing is selected.
+      setCurrentRecording(undefined);
+    }
+  }, [hymn?.recordings]);
   
   useEffect(() => {
     const audio = audioRef.current;
