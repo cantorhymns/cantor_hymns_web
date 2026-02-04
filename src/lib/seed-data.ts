@@ -69,6 +69,11 @@ export const hymns = [
         "id": "christos-anesti",
         "name": "Christos Anesti",
         "genreId": "resurrection"
+    },
+    {
+        "id": "mournful-agios",
+        "name": "Agios (Mournful)",
+        "genreId": "holy-week"
     }
 ];
 
@@ -274,6 +279,49 @@ export const recordings = [
         "cantorId": "hics",
         "audioUrl": "HICS/HICS_ChristosAnesti.mp3",
         "marks": [0, 10, 20, 30],
+        "active": true,
+        "mode": "learn"
+    },
+    {
+        "hymnId": "mournful-agios",
+        "cantorId": "cantor-ibrahim",
+        "audioUrl": "CantorIbrahim/CantorIbrahim_MournfulAgios.mp3",
+        "marks": [
+            18.049887,
+            30.702948,
+            48.369615,
+            60.492063,
+            81.172336,
+            93.598639,
+            103.621315,
+            113.780045,
+            129.925170,
+            142.324263,
+            163.512472,
+            175.133787,
+            184.798186,
+            199.918367,
+            219.519274,
+            231.102041,
+            241.079365,
+            250.875283,
+            266.839002,
+            278.462585,
+            421.272109,
+            478.587302,
+            558.097506,
+            702.106576,
+            760.780045,
+            839.301587,
+            897.618751,
+            978.124420,
+            1037.475894,
+            1115.745735,
+            1141.623286,
+            1165.423740,
+            1199.401064,
+            1250.181109
+        ],
         "active": true,
         "mode": "learn"
     }
