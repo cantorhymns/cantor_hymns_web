@@ -28,8 +28,8 @@ import {
   XCircle,
   X
 } from "lucide-react";
-import { getDownloadURL, ref } from "firebase/storage";
-import { useFirebase, getStorage } from "@/firebase";
+import { getDownloadURL, ref, getStorage, getBytes } from "firebase/storage";
+import { useFirebase } from "@/firebase";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
@@ -51,6 +51,52 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
     coptic: true,
     arabic: true,
   });
+
+  const { firebaseApp } = useFirebase();
+  const storage = useMemo(() => (firebaseApp ? getStorage(firebaseApp) : null), [firebaseApp]);
+
+  const [lyrics, setLyrics] = useState({
+    english: { content: null as string | null, loading: true },
+    coptic: { content: null as string | null, loading: true },
+    arabic: { content: null as string | null, loading: true },
+  });
+
+  useEffect(() => {
+    if (!storage) {
+        setLyrics({
+            english: { content: null, loading: false },
+            coptic: { content: null, loading: false },
+            arabic: { content: null, loading: false },
+        });
+        return;
+    };
+
+    const lyricsPaths = {
+      english: hymn.lyricsEnglish,
+      coptic: hymn.lyricsCoptic,
+      arabic: hymn.lyricsArabic,
+    };
+
+    (Object.keys(lyricsPaths) as Array<keyof typeof lyricsPaths>).forEach(lang => {
+      const path = lyricsPaths[lang];
+      if (path) {
+        setLyrics(prev => ({ ...prev, [lang]: { content: null, loading: true } }));
+        const storageRef = ref(storage, path);
+        getBytes(storageRef)
+          .then(bytes => {
+            const textContent = new TextDecoder().decode(bytes);
+            setLyrics(prev => ({ ...prev, [lang]: { content: textContent, loading: false } }));
+          })
+          .catch(error => {
+            console.error(`Failed to fetch lyrics for ${lang} from ${path}`, error);
+            setLyrics(prev => ({ ...prev, [lang]: { content: "Error: Could not load lyrics.", loading: false } }));
+          });
+      } else {
+        setLyrics(prev => ({ ...prev, [lang]: { content: null, loading: false } }));
+      }
+    });
+
+  }, [hymn.lyricsEnglish, hymn.lyricsCoptic, hymn.lyricsArabic, storage]);
 
   const available = {
     english: hymn.lyricsEnglish,
@@ -84,7 +130,10 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                 </Button>
               </div>
               <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{available.english}</ReactMarkdown>
+                {lyrics.english.loading 
+                  ? <Skeleton className="h-24 w-full" /> 
+                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.english.content || 'No lyrics provided.'}</ReactMarkdown>
+                }
               </div>
             </div>
           )}
@@ -97,7 +146,10 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                 </Button>
               </div>
               <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{available.coptic}</ReactMarkdown>
+                {lyrics.coptic.loading 
+                  ? <Skeleton className="h-24 w-full" /> 
+                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.coptic.content || 'No lyrics provided.'}</ReactMarkdown>
+                }
               </div>
             </div>
           )}
@@ -110,7 +162,10 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                 </Button>
               </div>
               <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{available.arabic}</ReactMarkdown>
+                {lyrics.arabic.loading 
+                  ? <Skeleton className="h-24 w-full" /> 
+                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.arabic.content || 'No lyrics provided.'}</ReactMarkdown>
+                }
               </div>
             </div>
           )}
