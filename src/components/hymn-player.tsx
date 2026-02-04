@@ -176,7 +176,7 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                   <X className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
+              <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none font-coptic" lang="cop">
                  {renderContent(isLoadingCoptic, errorCoptic, copticContent)}
               </div>
             </div>

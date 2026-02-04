@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -20,6 +21,7 @@ export default {
         body: ['Alegreya', 'serif'],
         headline: ['Alegreya', 'serif'],
         code: ['monospace'],
+        coptic: ['"Noto Sans Coptic"', 'sans-serif'],
       },
       colors: {
         background: 'hsl(var(--background))',
