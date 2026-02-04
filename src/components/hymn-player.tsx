@@ -31,12 +31,7 @@ import { getDownloadURL, ref } from "firebase/storage";
 import { useFirebase, getStorage } from "@/firebase";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "@/lib/utils";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 
 function formatTime(seconds: number) {
@@ -47,6 +42,50 @@ function formatTime(seconds: number) {
 }
 
 const VISIBLE_DURATION_S = 60; // 1 minute window
+
+const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
+    const hasLyrics = hymn.lyrics && (hymn.lyrics.coptic || hymn.lyrics.english || hymn.lyrics.arabic);
+
+    if (!hasLyrics) {
+        return null;
+    }
+
+    const defaultTab = hymn.lyrics?.english ? "english" : hymn.lyrics?.coptic ? "coptic" : "arabic";
+
+    return (
+        <div className="w-full pt-4">
+            <h3 className="text-lg font-semibold mb-2 font-headline text-primary">Lyrics</h3>
+            <Tabs defaultValue={defaultTab} className="w-full">
+                <TabsList>
+                    {hymn.lyrics?.english && <TabsTrigger value="english">English</TabsTrigger>}
+                    {hymn.lyrics?.coptic && <TabsTrigger value="coptic">Coptic</TabsTrigger>}
+                    {hymn.lyrics?.arabic && <TabsTrigger value="arabic">Arabic</TabsTrigger>}
+                </TabsList>
+                {hymn.lyrics?.english && (
+                    <TabsContent value="english">
+                        <div className="whitespace-pre-wrap text-muted-foreground font-body text-base max-h-96 overflow-y-auto p-4 border rounded-md bg-secondary/30">
+                            {hymn.lyrics.english}
+                        </div>
+                    </TabsContent>
+                )}
+                {hymn.lyrics?.coptic && (
+                    <TabsContent value="coptic">
+                        <div className="whitespace-pre-wrap text-muted-foreground font-body text-base max-h-96 overflow-y-auto p-4 border rounded-md bg-secondary/30">
+                            {hymn.lyrics.coptic}
+                        </div>
+                    </TabsContent>
+                )}
+                {hymn.lyrics?.arabic && (
+                    <TabsContent value="arabic">
+                        <div className="whitespace-pre-wrap text-muted-foreground font-body text-base max-h-96 overflow-y-auto p-4 border rounded-md bg-secondary/30 text-right" dir="rtl">
+                            {hymn.lyrics.arabic}
+                        </div>
+                    </TabsContent>
+                )}
+            </Tabs>
+        </div>
+    );
+};
 
 export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   const { firebaseApp } = useFirebase();
@@ -406,18 +445,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 {hymn.description && (
                   <p className="text-muted-foreground mt-2 max-w-prose">{hymn.description}</p>
                 )}
-                {hymn.lyrics && (
-                    <Accordion type="single" collapsible className="w-full pt-4">
-                        <AccordionItem value="item-1">
-                        <AccordionTrigger>View Lyrics</AccordionTrigger>
-                        <AccordionContent>
-                            <div className="whitespace-pre-wrap text-muted-foreground font-body text-base max-h-96 overflow-y-auto pr-4">
-                                {hymn.lyrics}
-                            </div>
-                        </AccordionContent>
-                        </AccordionItem>
-                    </Accordion>
-                )}
+                <LyricsDisplay hymn={hymn} />
                 <p className="text-muted-foreground pt-4">No active recordings available for this hymn yet.</p>
             </CardHeader>
         </Card>
@@ -434,18 +462,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                  {hymn.description && (
                   <p className="text-muted-foreground mt-2 max-w-prose">{hymn.description}</p>
                 )}
-                {hymn.lyrics && (
-                    <Accordion type="single" collapsible className="w-full pt-4">
-                        <AccordionItem value="item-1">
-                        <AccordionTrigger>View Lyrics</AccordionTrigger>
-                        <AccordionContent>
-                            <div className="whitespace-pre-wrap text-muted-foreground font-body text-base max-h-96 overflow-y-auto pr-4">
-                                {hymn.lyrics}
-                            </div>
-                        </AccordionContent>
-                        </AccordionItem>
-                    </Accordion>
-                )}
+                <LyricsDisplay hymn={hymn} />
                 <p className="text-muted-foreground pt-4">Please select a recording.</p>
             </CardHeader>
         </Card>
@@ -493,18 +510,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
               </Select>
             </div>
         </div>
-        {hymn.lyrics && (
-            <Accordion type="single" collapsible className="w-full pt-4">
-                <AccordionItem value="item-1">
-                <AccordionTrigger>View Lyrics</AccordionTrigger>
-                <AccordionContent>
-                    <div className="whitespace-pre-wrap text-muted-foreground font-body text-base max-h-96 overflow-y-auto pr-4">
-                        {hymn.lyrics}
-                    </div>
-                </AccordionContent>
-                </AccordionItem>
-            </Accordion>
-        )}
+        <LyricsDisplay hymn={hymn} />
       </CardHeader>
       <CardContent className="px-6 pb-6">
         <div className={`space-y-6 transition-opacity ${isPlayerDisabled ? 'opacity-30 pointer-events-none' : ''}`}>

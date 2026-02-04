@@ -24,7 +24,11 @@ export interface Hymn {
   name: string;
   genreId: string;
   description?: string;
-  lyrics?: string;
+  lyrics?: {
+    coptic?: string;
+    english?: string;
+    arabic?: string;
+  };
   recordings?: Recording[]; // Optional because they are fetched separately
 }
 

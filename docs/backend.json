@@ -52,8 +52,22 @@
           "description": "A short description of the hymn."
         },
         "lyrics": {
-            "type": "string",
-            "description": "The lyrics for the hymn, which can be a long text."
+            "type": "object",
+            "description": "The lyrics for the hymn, in multiple languages.",
+            "properties": {
+                "coptic": {
+                    "type": "string",
+                    "description": "The Coptic lyrics for the hymn, which can be a long text."
+                },
+                "english": {
+                    "type": "string",
+                    "description": "The English lyrics for the hymn, which can be a long text."
+                },
+                "arabic": {
+                    "type": "string",
+                    "description": "The Arabic lyrics for the hymn, which can be a long text."
+                }
+            }
         }
       },
       "required": [

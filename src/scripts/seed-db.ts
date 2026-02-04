@@ -98,7 +98,7 @@ async function seedDatabase() {
         name: hymn.name,
         genreId: hymn.genreId,
         description: hymn.description || '',
-        lyrics: hymn.lyrics || '',
+        lyrics: hymn.lyrics || {},
       });
     });
 
