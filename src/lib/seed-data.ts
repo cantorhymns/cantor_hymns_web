@@ -76,9 +76,9 @@ export const hymns = [
         "name": "Kata Ni Khoros",
         "genreId": "resurrection",
         "description": "'Like the choirs of angels', a joyful hymn of praise sung after the Resurrection.",
-        "lyricsEnglish": "Like the **choirs** of angels,\n\nhos er-anastas ek nekron\n\n_Christos Anesti._",
-        "lyricsCoptic": "Κατὰ τὰς χοροστασίας τῶν ἀγγέλων,\n\nὡς ὁ ἀναστὰς ἐκ νεκρῶν\n\nΧριστὸς Ἀνέστη.",
-        "lyricsArabic": "مثل **طقوس** الملائكة\n\nالقائم من الأموات\n\n_المسيح قام_"
+        "lyricsEnglish": "Lyrics/English/kata-ni-khoros_english.md",
+        "lyricsCoptic": "Lyrics/Coptic/kata-ni-khoros_coptic.md",
+        "lyricsArabic": "Lyrics/Arabic/kata-ni-khoros_arabic.md"
     },
     {
         "id": "psalm-150",
