@@ -79,7 +79,12 @@ function useLyricContent(path?: string) {
         }
       } catch (e: any) {
         if (!isCancelled) {
-          setError(`Failed to fetch from ${path}. Error: ${e.code || e.message}`);
+          let detailedError = `Failed to fetch from ${path}. Error: ${e.message}`;
+          // Check for the classic CORS error signature
+          if (e.message.toLowerCase().includes('failed to fetch')) {
+            detailedError += `\n\nThis is often a Cross-Origin (CORS) issue. Your web app domain may not be authorized to fetch from Firebase Storage. Please check your bucket's CORS configuration in the Google Cloud Console.`;
+          }
+          setError(detailedError);
         }
       } finally {
         if (!isCancelled) {
