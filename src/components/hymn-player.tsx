@@ -45,27 +45,53 @@ function formatTime(seconds: number) {
 
 const VISIBLE_DURATION_S = 60; // 1 minute window
 
-const DebugPanel = ({ hymn, isLoading, lyrics, storage }: { hymn: Hymn, isLoading: boolean, lyrics: any, storage: any }) => (
-    <div className="w-full p-4 my-4 border-2 border-dashed border-red-500 bg-red-50 text-red-900 text-xs font-mono">
-        <h3 className="font-bold text-base mb-2">DEBUG PANEL</h3>
-        <div className="grid grid-cols-1 gap-2">
-            <div>
-                <strong>hymn prop:</strong>
-                <pre className="whitespace-pre-wrap break-all">{JSON.stringify(hymn, null, 2)}</pre>
-            </div>
-            <div>
-                <strong>isLoading state:</strong> {isLoading.toString()}
-            </div>
-             <div>
-                <strong>Storage available:</strong> {storage ? 'true' : 'false'}
-            </div>
-            <div>
-                <strong>lyrics state:</strong>
-                <pre className="whitespace-pre-wrap break-all">{JSON.stringify(lyrics, null, 2)}</pre>
-            </div>
-        </div>
-    </div>
-);
+function useLyricContent(path?: string) {
+  const [content, setContent] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const { firebaseApp } = useFirebase();
+  const storage = useMemo(() => (firebaseApp ? getStorage(firebaseApp) : null), [firebaseApp]);
+
+  useEffect(() => {
+    if (!path || !storage) {
+      setContent(null);
+      setIsLoading(false);
+      setError(null);
+      return;
+    }
+
+    let isCancelled = false;
+    const fetchContent = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const storageRef = ref(storage, path);
+        const bytes = await getBytes(storageRef);
+        const textContent = new TextDecoder().decode(bytes);
+        if (!isCancelled) {
+          setContent(textContent.trim() || `(File is empty at path: ${path})`);
+        }
+      } catch (e: any) {
+        if (!isCancelled) {
+          setError(`Failed to fetch from ${path}. Error: ${e.code || e.message}`);
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchContent();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [path, storage]);
+
+  return { content, isLoading, error };
+}
 
 
 const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
@@ -75,61 +101,9 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
     arabic: true,
   });
 
-  const { firebaseApp } = useFirebase();
-  const storage = useMemo(() => (firebaseApp ? getStorage(firebaseApp) : null), [firebaseApp]);
-
-  const [lyrics, setLyrics] = useState({
-    english: null as string | null,
-    coptic: null as string | null,
-    arabic: null as string | null,
-  });
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (!storage || !hymn) {
-        setIsLoading(false);
-        return;
-    };
-
-    const fetchAllLyrics = async () => {
-        setIsLoading(true);
-        
-        const paths = {
-            english: hymn.lyricsEnglish,
-            coptic: hymn.lyricsCoptic,
-            arabic: hymn.lyricsArabic
-        };
-
-        const promises = Object.entries(paths).map(async ([lang, path]) => {
-            if (!path) {
-                return [lang, null]; // No path, no content
-            }
-            try {
-                const storageRef = ref(storage, path);
-                const bytes = await getBytes(storageRef);
-                const content = new TextDecoder().decode(bytes);
-                return [lang, content.trim() || `File is empty at path: ${path}`];
-
-            } catch (error: any) {
-                const errorMessage = `An error occurred while fetching lyrics.\nPath: ${path}\nError: ${error.message || 'Unknown error'}`;
-                return [lang, errorMessage];
-            }
-        });
-
-        try {
-            const results = await Promise.all(promises);
-            const newLyrics = Object.fromEntries(results);
-            setLyrics(newLyrics as any);
-        } catch (e) {
-            console.error("Failed to fetch one or more lyrics files", e);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    fetchAllLyrics();
-  }, [hymn, storage]);
-
+  const { content: englishContent, isLoading: isLoadingEnglish, error: errorEnglish } = useLyricContent(hymn.lyricsEnglish);
+  const { content: copticContent, isLoading: isLoadingCoptic, error: errorCoptic } = useLyricContent(hymn.lyricsCoptic);
+  const { content: arabicContent, isLoading: isLoadingArabic, error: errorArabic } = useLyricContent(hymn.lyricsArabic);
 
   const available = {
     english: hymn.lyricsEnglish,
@@ -148,15 +122,26 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
   if (!hasAnyLyrics) {
     return (
         <div className="w-full pt-4">
-             <DebugPanel hymn={hymn} isLoading={isLoading} lyrics={lyrics} storage={storage} />
              <p className="text-muted-foreground">No lyric paths defined for this hymn.</p>
         </div>
     );
   }
 
+  const renderContent = (isLoading: boolean, error: string | null, content: string | null) => {
+    if (isLoading) {
+      return <Skeleton className="h-24 w-full" />;
+    }
+    if (error) {
+      return <p className="text-sm text-destructive whitespace-pre-wrap">{error}</p>;
+    }
+    if (content) {
+      return <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>;
+    }
+    return <p className="text-sm text-muted-foreground">No content.</p>;
+  };
+
   return (
     <div className="w-full pt-4">
-      <DebugPanel hymn={hymn} isLoading={isLoading} lyrics={lyrics} storage={storage} />
       <h3 className="text-lg font-semibold mb-2 font-headline text-primary">Lyrics</h3>
       {visibleLangs.length > 0 && (
         <div className="flex flex-col md:flex-row gap-4">
@@ -169,10 +154,7 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                 </Button>
               </div>
               <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
-                {isLoading 
-                  ? <Skeleton className="h-24 w-full" /> 
-                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.english || ''}</ReactMarkdown>
-                }
+                {renderContent(isLoadingEnglish, errorEnglish, englishContent)}
               </div>
             </div>
           )}
@@ -185,10 +167,7 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                 </Button>
               </div>
               <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
-                {isLoading
-                  ? <Skeleton className="h-24 w-full" /> 
-                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.coptic || ''}</ReactMarkdown>
-                }
+                 {renderContent(isLoadingCoptic, errorCoptic, copticContent)}
               </div>
             </div>
           )}
@@ -201,10 +180,7 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                 </Button>
               </div>
               <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
-                {isLoading
-                  ? <Skeleton className="h-24 w-full" /> 
-                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.arabic || ''}</ReactMarkdown>
-                }
+                {renderContent(isLoadingArabic, errorArabic, arabicContent)}
               </div>
             </div>
           )}
@@ -495,8 +471,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     } else {
       window.removeEventListener('mousemove', handleSeekMove);
       window.removeEventListener('touchmove', handleSeekMove);
-      window.addEventListener('mouseup', handleSeekEnd);
-      window.addEventListener('touchend', handleSeekEnd);
+      window.removeEventListener('mouseup', handleSeekEnd);
+      window.removeEventListener('touchend', handleSeekEnd);
     }
 
     return () => {
@@ -827,3 +803,4 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   );
 }
 
+    
