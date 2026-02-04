@@ -76,12 +76,12 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
         const bytes = await getBytes(ref(storage, path));
         const content = new TextDecoder().decode(bytes);
         setLyrics(prev => ({ ...prev, [lang]: { content, loading: false } }));
-      } catch (error) {
+      } catch (error: any) {
         console.error(`Failed to fetch lyrics for ${lang} from ${path}`, error);
         setLyrics(prev => ({
           ...prev,
           [lang]: {
-            content: `Error: Could not load lyrics from ${path}.`,
+            content: `**DEBUG INFO: An error occurred while fetching lyrics.**\n\n*   **Attempted Path:** \`${path}\`\n*   **Error Message:** \`${error.message || 'Unknown error'}\`\n\nThis usually means the file doesn't exist at this exact case-sensitive path in Firebase Storage, or your security rules are blocking access.`,
             loading: false,
           },
         }));
@@ -128,7 +128,7 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
               <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
                 {lyrics.english.loading 
                   ? <Skeleton className="h-24 w-full" /> 
-                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.english.content || 'No lyrics provided.'}</ReactMarkdown>
+                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.english.content || `**DEBUG INFO: No content loaded.**\n\n*   **Attempted Path:** \`${hymn.lyricsEnglish}\``}</ReactMarkdown>
                 }
               </div>
             </div>
@@ -144,7 +144,7 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
               <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
                 {lyrics.coptic.loading 
                   ? <Skeleton className="h-24 w-full" /> 
-                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.coptic.content || 'No lyrics provided.'}</ReactMarkdown>
+                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.coptic.content || `**DEBUG INFO: No content loaded.**\n\n*   **Attempted Path:** \`${hymn.lyricsCoptic}\``}</ReactMarkdown>
                 }
               </div>
             </div>
@@ -160,7 +160,7 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
               <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
                 {lyrics.arabic.loading 
                   ? <Skeleton className="h-24 w-full" /> 
-                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.arabic.content || 'No lyrics provided.'}</ReactMarkdown>
+                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.arabic.content || `**DEBUG INFO: No content loaded.**\n\n*   **Attempted Path:** \`${hymn.lyricsArabic}\``}</ReactMarkdown>
                 }
               </div>
             </div>
@@ -783,3 +783,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </>
   );
 }
+
+    
