@@ -97,6 +97,7 @@ async function seedDatabase() {
       seedBatch.set(docRef, {
         name: hymn.name,
         genreId: hymn.genreId,
+        description: hymn.description || '',
       });
     });
 

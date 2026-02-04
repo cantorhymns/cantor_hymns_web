@@ -46,6 +46,10 @@
         "genreId": {
           "type": "string",
           "description": "Reference to Genre. (Relationship: Genre 1:N Hymn)"
+        },
+        "description": {
+          "type": "string",
+          "description": "A short description of the hymn."
         }
       },
       "required": [

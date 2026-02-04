@@ -396,7 +396,10 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 <CardTitle className="font-headline text-3xl text-primary">
                     {hymn.name}
                 </CardTitle>
-                <p className="text-muted-foreground">No active recordings available for this hymn yet.</p>
+                {hymn.description && (
+                  <p className="text-muted-foreground mt-2 max-w-prose">{hymn.description}</p>
+                )}
+                <p className="text-muted-foreground pt-4">No active recordings available for this hymn yet.</p>
             </CardHeader>
         </Card>
       )
@@ -409,7 +412,10 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 <CardTitle className="font-headline text-3xl text-primary">
                     {hymn.name}
                 </CardTitle>
-                <p className="text-muted-foreground">Please select a recording.</p>
+                 {hymn.description && (
+                  <p className="text-muted-foreground mt-2 max-w-prose">{hymn.description}</p>
+                )}
+                <p className="text-muted-foreground pt-4">Please select a recording.</p>
             </CardHeader>
         </Card>
       )
@@ -428,6 +434,9 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                 <CardTitle className="font-headline text-3xl text-primary">
                 {hymn.name}
                 </CardTitle>
+                {hymn.description && (
+                  <p className="text-muted-foreground mt-2 max-w-prose">{hymn.description}</p>
+                )}
             </div>
             <div className="flex items-center gap-2">
               <Select

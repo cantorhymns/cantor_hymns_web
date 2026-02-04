@@ -36,7 +36,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
             <div className="flex justify-between items-start">
                 <div>
                     <Skeleton className="h-9 w-48 mb-2" />
-                    <Skeleton className="h-5 w-32" />
+                    <Skeleton className="h-5 w-full max-w-md" />
                 </div>
                 <Skeleton className="h-10 w-[180px]" />
             </div>
