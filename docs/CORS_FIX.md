@@ -16,16 +16,24 @@ This method uses the graphical user interface and doesn't require any local tool
 1.  **Open the Google Cloud Console**: Navigate to the Cloud Storage browser for your project by clicking this link:
     [https://console.cloud.google.com/storage/browser/studio-127742305-c9528.appspot.com](https://console.cloud.google.com/storage/browser/studio-127742305-c9528.appspot.com)
 
-2.  **Go to Permissions**: Select the **Permissions** tab.
+2.  **IMPORTANT: If you don't see a bucket after clicking the link...**
 
-3.  **Find CORS Configuration**: Scroll down to the "Cross-origin resource sharing (CORS)" section and click the **Edit** button.
+    This usually happens for one of two reasons:
+    *   **You're logged into the wrong Google Account:** Make sure the Google account you are using in the Cloud Console is the same one associated with your Firebase project.
+    *   **The wrong project is selected:** The Google Cloud Console can manage many projects. At the top of the page, there is a project selector dropdown. Click on it and ensure that the project named **`studio-127742305-c9528`** is selected.
 
-4.  **Add a New Entry**: Click **Add an entry**. A form will appear. Fill it out as follows:
+    The direct link *should* select the correct project for you, but if it doesn't, you may need to select it manually before proceeding.
+
+3.  **Go to Permissions**: Select the **Permissions** tab.
+
+4.  **Find CORS Configuration**: Scroll down to the "Cross-origin resource sharing (CORS)" section and click the **Edit** button.
+
+5.  **Add a New Entry**: Click **Add an entry**. A form will appear. Fill it out as follows:
     *   **Origin**: Enter `*` (a single asterisk). This allows any website to request files.
     *   **Methods**: Check the box for `GET`. This allows read-only access for downloading files.
     *   **Max-age (seconds)**: Enter `3600`.
 
-5.  **Save**: Click the **Save** button.
+6.  **Save**: Click the **Save** button.
 
 It may take a minute for the settings to apply. After saving, refresh your app's web page, and the lyrics should now load correctly.
 
