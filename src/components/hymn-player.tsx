@@ -482,35 +482,43 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
   if (!hymn.recordings || hymn.recordings.length === 0) {
       return (
-        <Card className="w-full max-w-3xl mx-auto shadow-xl">
-            <CardHeader>
-                <CardTitle className="font-headline text-3xl text-primary">
-                    {hymn.name}
-                </CardTitle>
-                {hymn.description && (
-                  <p className="text-muted-foreground mt-2 max-w-prose">{hymn.description}</p>
-                )}
+        <>
+            <Card className="w-full max-w-3xl mx-auto shadow-xl">
+                <CardHeader>
+                    <CardTitle className="font-headline text-3xl text-primary">
+                        {hymn.name}
+                    </CardTitle>
+                    {hymn.description && (
+                    <p className="text-muted-foreground mt-2 max-w-prose">{hymn.description}</p>
+                    )}
+                    <p className="text-muted-foreground pt-4">No active recordings available for this hymn yet.</p>
+                </CardHeader>
+            </Card>
+            <div className="w-full max-w-3xl mx-auto mt-8">
                 <LyricsDisplay hymn={hymn} />
-                <p className="text-muted-foreground pt-4">No active recordings available for this hymn yet.</p>
-            </CardHeader>
-        </Card>
+            </div>
+        </>
       )
   }
 
   if (!currentRecording) {
      return (
-        <Card className="w-full max-w-3xl mx-auto shadow-xl">
-            <CardHeader>
-                <CardTitle className="font-headline text-3xl text-primary">
-                    {hymn.name}
-                </CardTitle>
-                 {hymn.description && (
-                  <p className="text-muted-foreground mt-2 max-w-prose">{hymn.description}</p>
-                )}
+        <>
+            <Card className="w-full max-w-3xl mx-auto shadow-xl">
+                <CardHeader>
+                    <CardTitle className="font-headline text-3xl text-primary">
+                        {hymn.name}
+                    </CardTitle>
+                    {hymn.description && (
+                    <p className="text-muted-foreground mt-2 max-w-prose">{hymn.description}</p>
+                    )}
+                    <p className="text-muted-foreground pt-4">Please select a recording.</p>
+                </CardHeader>
+            </Card>
+            <div className="w-full max-w-3xl mx-auto mt-8">
                 <LyricsDisplay hymn={hymn} />
-                <p className="text-muted-foreground pt-4">Please select a recording.</p>
-            </CardHeader>
-        </Card>
+            </div>
+        </>
       )
   }
   
@@ -519,197 +527,203 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
 
 
   return (
-    <Card className="w-full max-w-3xl mx-auto shadow-xl">
-      {audioSrc && <audio ref={audioRef} src={audioSrc} preload="metadata" />}
-      <CardHeader>
-        <div className="flex justify-between items-start flex-wrap gap-4">
-            <div>
-                <CardTitle className="font-headline text-3xl text-primary">
-                {hymn.name}
-                </CardTitle>
-                {hymn.description && (
-                  <p className="text-muted-foreground mt-2 max-w-prose">{hymn.description}</p>
-                )}
-            </div>
-            <div className="flex items-center gap-2">
-              <Select
-                  value={currentRecording.id}
-                  onValueChange={(recId) => {
-                  const newRec = hymn.recordings!.find((r) => r.id === recId);
-                  if (newRec) setCurrentRecording(newRec);
-                  }}
-              >
-                  <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Select Cantor" />
-                  </SelectTrigger>
-                  <SelectContent>
-                  {hymn.recordings.map((rec) => (
-                      <SelectItem key={rec.id} value={rec.id}>
-                        <div className="flex items-center gap-2">
-                            {rec.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
-                            <span>{rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}</span>
-                        </div>
-                      </SelectItem>
-                  ))}
-                  </SelectContent>
-              </Select>
-            </div>
-        </div>
-        <LyricsDisplay hymn={hymn} />
-      </CardHeader>
-      <CardContent className="px-6 pb-6">
-        <div className={`space-y-6 transition-opacity ${isPlayerDisabled ? 'opacity-30 pointer-events-none' : ''}`}>
-           <div 
-                ref={waveformContainerRef} 
-                className="relative w-full h-20 bg-secondary/50 rounded-lg group touch-none overflow-hidden"
-                onMouseDown={handleSeekStart}
-                onTouchStart={handleSeekStart}
-            >
-                <div 
-                    ref={waveformInnerRef}
-                    className="absolute top-0 left-0 h-full"
-                    style={{
-                        ...waveformWidthStyle,
-                        willChange: 'transform',
+    <>
+      <Card className="w-full max-w-3xl mx-auto shadow-xl">
+        {audioSrc && <audio ref={audioRef} src={audioSrc} preload="metadata" />}
+        <CardHeader>
+          <div className="flex justify-between items-start flex-wrap gap-4">
+              <div>
+                  <CardTitle className="font-headline text-3xl text-primary">
+                  {hymn.name}
+                  </CardTitle>
+                  {hymn.description && (
+                    <p className="text-muted-foreground mt-2 max-w-prose">{hymn.description}</p>
+                  )}
+              </div>
+              <div className="flex items-center gap-2">
+                <Select
+                    value={currentRecording.id}
+                    onValueChange={(recId) => {
+                    const newRec = hymn.recordings!.find((r) => r.id === recId);
+                    if (newRec) setCurrentRecording(newRec);
                     }}
                 >
-                    {duration > 0 && Array.from({ length: Math.ceil(duration) * 2 }).map((_, i) => {
-                       const seed = i + (currentRecording?.audioUrl.length || 0);
-                       const barHeight = ((Math.sin(seed) + 1) / 2) * 60 + 20;
-                       return (
-                          <div
-                            key={i}
-                            className="absolute bottom-0 w-px bg-muted/50"
-                            style={{
-                                left: `${(i / (Math.ceil(duration) * 2)) * 100}%`,
-                                height: `${barHeight}%`,
-                            }}
-                          />
-                       )
-                    })}
-                     {duration > 0 && displayedMarks.map((mark, index) => {
-                        const isActive = activeMarks.includes(mark);
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select Cantor" />
+                    </SelectTrigger>
+                    <SelectContent>
+                    {hymn.recordings.map((rec) => (
+                        <SelectItem key={rec.id} value={rec.id}>
+                          <div className="flex items-center gap-2">
+                              {rec.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
+                              <span>{rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}</span>
+                          </div>
+                        </SelectItem>
+                    ))}
+                    </SelectContent>
+                </Select>
+              </div>
+          </div>
+        </CardHeader>
+        <CardContent className="px-6 pb-6">
+          <div className={`space-y-6 transition-opacity ${isPlayerDisabled ? 'opacity-30 pointer-events-none' : ''}`}>
+            <div 
+                  ref={waveformContainerRef} 
+                  className="relative w-full h-20 bg-secondary/50 rounded-lg group touch-none overflow-hidden"
+                  onMouseDown={handleSeekStart}
+                  onTouchStart={handleSeekStart}
+              >
+                  <div 
+                      ref={waveformInnerRef}
+                      className="absolute top-0 left-0 h-full"
+                      style={{
+                          ...waveformWidthStyle,
+                          willChange: 'transform',
+                      }}
+                  >
+                      {duration > 0 && Array.from({ length: Math.ceil(duration) * 2 }).map((_, i) => {
+                        const seed = i + (currentRecording?.audioUrl.length || 0);
+                        const barHeight = ((Math.sin(seed) + 1) / 2) * 60 + 20;
                         return (
-                        <div
-                            key={index}
-                            className="absolute top-0 w-0.5 h-full z-10 pointer-events-none"
-                            style={{ 
-                                left: `${(mark / duration) * 100}%`,
-                                backgroundColor: isActive ? 'hsl(var(--primary) / 0.75)' : 'hsl(var(--muted-foreground) / 0.5)',
-                            }}
-                        >
-                            <button
-                                data-marker-toggle
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    toggleMark(mark)
-                                }}
-                                className={`absolute top-1/2 -translate-y-[calc(50%+18px)] -left-3 w-6 h-6 rounded-full font-bold text-xs flex items-center justify-center pointer-events-auto cursor-pointer transition-colors ${
-                                    isActive ? 'bg-primary/75 text-primary-foreground' : 'bg-muted-foreground/50 text-muted-foreground'
-                                }`}
-                            >
-                                {index + 1}
-                            </button>
-                        </div>
-                    )})}
-                </div>
+                            <div
+                              key={i}
+                              className="absolute bottom-0 w-px bg-muted/50"
+                              style={{
+                                  left: `${(i / (Math.ceil(duration) * 2)) * 100}%`,
+                                  height: `${barHeight}%`,
+                              }}
+                            />
+                        )
+                      })}
+                      {duration > 0 && displayedMarks.map((mark, index) => {
+                          const isActive = activeMarks.includes(mark);
+                          return (
+                          <div
+                              key={index}
+                              className="absolute top-0 w-0.5 h-full z-10 pointer-events-none"
+                              style={{ 
+                                  left: `${(mark / duration) * 100}%`,
+                                  backgroundColor: isActive ? 'hsl(var(--primary) / 0.75)' : 'hsl(var(--muted-foreground) / 0.5)',
+                              }}
+                          >
+                              <button
+                                  data-marker-toggle
+                                  onClick={(e) => {
+                                      e.stopPropagation();
+                                      toggleMark(mark)
+                                  }}
+                                  className={`absolute top-1/2 -translate-y-[calc(50%+18px)] -left-3 w-6 h-6 rounded-full font-bold text-xs flex items-center justify-center pointer-events-auto cursor-pointer transition-colors ${
+                                      isActive ? 'bg-primary/75 text-primary-foreground' : 'bg-muted-foreground/50 text-muted-foreground'
+                                  }`}
+                              >
+                                  {index + 1}
+                              </button>
+                          </div>
+                      )})}
+                  </div>
 
-                <div 
-                    className="absolute top-0 h-full w-0.5 bg-red-500 z-30 pointer-events-none -translate-x-1/2"
-                    style={playheadPositionStyle}
-                >
-                    <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-3 h-3 bg-red-500 rounded-full"></div>
-                </div>
-            </div>
+                  <div 
+                      className="absolute top-0 h-full w-0.5 bg-red-500 z-30 pointer-events-none -translate-x-1/2"
+                      style={playheadPositionStyle}
+                  >
+                      <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                  </div>
+              </div>
 
-            <div className="flex justify-between items-center text-sm text-muted-foreground">
-                <span>{formatTime(currentTime)}</span>
-                <span>{formatTime(duration)}</span>
-            </div>
+              <div className="flex justify-between items-center text-sm text-muted-foreground">
+                  <span>{formatTime(currentTime)}</span>
+                  <span>{formatTime(duration)}</span>
+              </div>
 
-            <div className="flex justify-between items-center">
-                <div className="w-[100px] justify-start" />
+              <div className="flex justify-between items-center">
+                  <div className="w-[100px] justify-start" />
 
-                <div className="flex flex-col items-center gap-4">
-                    {showControls && (
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setIsRepeat(!isRepeat)}
-                            className={cn(
-                                "transition-colors px-4",
-                                isRepeat ? "bg-green-600 text-white hover:bg-green-700" : "text-muted-foreground"
-                            )}
-                        >
-                            <Repeat className="h-5 w-5" />
-                            <span>Repeat Section</span>
-                        </Button>
-                    )}
-                    <div className="flex items-center gap-4">
-                        {showControls ? (
-                            <Button variant="ghost" size="icon" onClick={handlePrevSection} disabled={sortedActiveMarks.length === 0}>
-                                <SkipBack className="h-6 w-6" />
-                                <span className="sr-only">Previous Section</span>
-                            </Button>
-                        ) : <div className="w-10" />}
-                        <Button size="icon" className="h-16 w-16 rounded-full" onClick={handlePlayPause}>
-                            {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
-                            <span className="sr-only">{isPlaying ? "Pause" : "Play"}</span>
-                        </Button>
-                         {showControls ? (
-                            <Button variant="ghost" size="icon" onClick={handleNextSection} disabled={sortedActiveMarks.length === 0}>
-                                <SkipForward className="h-6 w-6" />
-                                <span className="sr-only">Next Section</span>
-                            </Button>
-                         ) : <div className="w-10" />}
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="sm" className="h-10 rounded-full px-4 text-muted-foreground hover:text-primary transition-colors" onClick={() => handleSkip(-10)}>
-                            <span className="text-sm font-bold mr-2">10s</span>
-                            <Rewind className="h-5 w-5" />
-                            <span className="sr-only">Rewind 10 seconds</span>
-                        </Button>
-                        <Button variant="ghost" size="sm" className="h-10 rounded-full px-4 text-muted-foreground hover:text-primary transition-colors" onClick={() => handleSkip(10)}>
-                            <FastForward className="h-5 w-5" />
-                            <span className="text-sm font-bold ml-2">10s</span>
-                            <span className="sr-only">Fast Forward 10 seconds</span>
-                        </Button>
-                    </div>
-                </div>
-                
-                <div className="flex items-center gap-2 w-[100px] justify-end">
-                    <Select value={String(playbackRate)} onValueChange={(val) => setPlaybackRate(Number(val))}>
-                        <SelectTrigger className="w-full">
-                            <FastForward className="h-4 w-4 mr-1 text-muted-foreground"/>
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {[0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map((speed) => (
-                                <SelectItem key={speed} value={String(speed)}>{speed.toFixed(2)}x</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
-            </div>
-        </div>
-        {isLoadingAudio && (
-            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center space-y-4">
-                <Skeleton className="h-20 w-full" />
-                <div className="w-full flex justify-between">
-                    <Skeleton className="h-5 w-12" />
-                    <Skeleton className="h-5 w-12" />
-                </div>
-                <Skeleton className="h-10 w-40" />
-            </div>
-        )}
-        {audioError && !isLoadingAudio && (
-            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center text-center p-4">
-                 <XCircle className="h-10 w-10 text-destructive mb-4" />
-                <p className="text-lg font-semibold text-destructive">Audio Failed to Load</p>
-                <p className="text-sm text-muted-foreground max-w-xs">{audioError}</p>
-            </div>
-        )}
-      </CardContent>
-    </Card>
+                  <div className="flex flex-col items-center gap-4">
+                      {showControls && (
+                          <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setIsRepeat(!isRepeat)}
+                              className={cn(
+                                  "transition-colors px-4",
+                                  isRepeat ? "bg-green-600 text-white hover:bg-green-700" : "text-muted-foreground"
+                              )}
+                          >
+                              <Repeat className="h-5 w-5" />
+                              <span>Repeat Section</span>
+                          </Button>
+                      )}
+                      <div className="flex items-center gap-4">
+                          {showControls ? (
+                              <Button variant="ghost" size="icon" onClick={handlePrevSection} disabled={sortedActiveMarks.length === 0}>
+                                  <SkipBack className="h-6 w-6" />
+                                  <span className="sr-only">Previous Section</span>
+                              </Button>
+                          ) : <div className="w-10" />}
+                          <Button size="icon" className="h-16 w-16 rounded-full" onClick={handlePlayPause}>
+                              {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
+                              <span className="sr-only">{isPlaying ? "Pause" : "Play"}</span>
+                          </Button>
+                          {showControls ? (
+                              <Button variant="ghost" size="icon" onClick={handleNextSection} disabled={sortedActiveMarks.length === 0}>
+                                  <SkipForward className="h-6 w-6" />
+                                  <span className="sr-only">Next Section</span>
+                              </Button>
+                          ) : <div className="w-10" />}
+                      </div>
+                      <div className="flex items-center gap-2">
+                          <Button variant="ghost" size="sm" className="h-10 rounded-full px-4 text-muted-foreground hover:text-primary transition-colors" onClick={() => handleSkip(-10)}>
+                              <span className="text-sm font-bold mr-2">10s</span>
+                              <Rewind className="h-5 w-5" />
+                              <span className="sr-only">Rewind 10 seconds</span>
+                          </Button>
+                          <Button variant="ghost" size="sm" className="h-10 rounded-full px-4 text-muted-foreground hover:text-primary transition-colors" onClick={() => handleSkip(10)}>
+                              <FastForward className="h-5 w-5" />
+                              <span className="text-sm font-bold ml-2">10s</span>
+                              <span className="sr-only">Fast Forward 10 seconds</span>
+                          </Button>
+                      </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 w-[100px] justify-end">
+                      <Select value={String(playbackRate)} onValueChange={(val) => setPlaybackRate(Number(val))}>
+                          <SelectTrigger className="w-full">
+                              <FastForward className="h-4 w-4 mr-1 text-muted-foreground"/>
+                              <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                              {[0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map((speed) => (
+                                  <SelectItem key={speed} value={String(speed)}>{speed.toFixed(2)}x</SelectItem>
+                              ))}
+                          </SelectContent>
+                      </Select>
+                  </div>
+              </div>
+          </div>
+          {isLoadingAudio && (
+              <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center space-y-4">
+                  <Skeleton className="h-20 w-full" />
+                  <div className="w-full flex justify-between">
+                      <Skeleton className="h-5 w-12" />
+                      <Skeleton className="h-5 w-12" />
+                  </div>
+                  <Skeleton className="h-10 w-40" />
+              </div>
+          )}
+          {audioError && !isLoadingAudio && (
+              <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center text-center p-4">
+                  <XCircle className="h-10 w-10 text-destructive mb-4" />
+                  <p className="text-lg font-semibold text-destructive">Audio Failed to Load</p>
+                  <p className="text-sm text-muted-foreground max-w-xs">{audioError}</p>
+              </div>
+          )}
+        </CardContent>
+      </Card>
+      <div className="w-full max-w-3xl mx-auto mt-8">
+        <LyricsDisplay hymn={hymn} />
+      </div>
+    </>
   );
 }
+
+    
