@@ -24,18 +24,18 @@ This method uses the graphical user interface and doesn't require any local tool
 
     The direct link *should* select the correct project for you, but if it doesn't, you may need to select it manually before proceeding.
 
-3.  **Go to Permissions**: After clicking the link above and confirming you see your bucket, you will be on the **Objects** tab. Look for a row of tabs at the top of the page that says **Objects**, **Permissions**, **Lifecycle**, etc. Click on the **Permissions** tab.
+3.  **Click the Bucket Name**: From the list of buckets, click on the name of your bucket. The name will be a blue link and will look like `studio-127742305-c9528.appspot.com`. This will take you to the **Bucket details** page.
 
-    *Note: If you see "View by principals" and "View by roles", you are on the wrong screen. You need to be on the bucket details page first.*
+4.  **Go to the Permissions Tab**: Now that you are on the "Bucket details" page, you will see a row of tabs near the top (Objects, Permissions, Lifecycle, etc.). Click on the **Permissions** tab.
 
-4.  **Find CORS Configuration**: On the **Permissions** tab, scroll down. You should see a section titled "Cross-origin resource sharing (CORS)". Click the **Edit** button in that section.
+5.  **Find CORS Configuration**: On the **Permissions** tab, scroll down. You should see a section titled "Cross-origin resource sharing (CORS)". Click the **Edit** button in that section.
 
-5.  **Add a New Entry**: Click **Add an entry**. A form will appear. Fill it out as follows:
+6.  **Add a New Entry**: Click **Add an entry**. A form will appear. Fill it out as follows:
     *   **Origin**: Enter `*` (a single asterisk). This allows any website to request files.
     *   **Methods**: Check the box for `GET`. This allows read-only access for downloading files.
     *   **Max-age (seconds)**: Enter `3600`.
 
-6.  **Save**: Click the **Save** button.
+7.  **Save**: Click the **Save** button.
 
 It may take a minute for the settings to apply. After saving, refresh your app's web page, and the lyrics should now load correctly.
 
