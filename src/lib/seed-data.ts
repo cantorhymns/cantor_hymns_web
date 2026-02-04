@@ -40,11 +40,7 @@ export const hymns = [
         "name": "Tai Shouri (Mournful)",
         "genreId": "holy-week",
         "description": "The hymn of the censer, offered during the Vespers and Matins prayers, sung in a mournful tune for Holy Week.",
-        "lyrics": {
-            "coptic": "Tai shouri ti-parthenos T-smou epschois nem o-pi-spirit-ma ethouab.",
-            "english": "This censer of the virgin is blessed by the Father and the Holy Spirit.",
-            "arabic": "هذا المجمرة العذراء تبارك الآب والروح القدس."
-        }
+        "lyrics": {}
     },
     {
         "id": "ti-shouri",
@@ -90,22 +86,14 @@ export const hymns = [
         "name": "Christos Anesti",
         "genreId": "resurrection",
         "description": "'Christ is Risen', the primary hymn of the Resurrection, sung throughout the 50 days of Pentecost.",
-        "lyrics": {
-            "coptic": "Christos anesti ek nekron, thanato thanaton patisas, kai tis en tis mnemasi, zo-in charisamenos.",
-            "english": "Christ is risen from the dead, trampling down death by death, and upon those in the tombs bestowing life.",
-            "arabic": "المسيح قام من بين الأموات، وداس الموت بالموت، ووهب الحياة للذين في القبور."
-        }
+        "lyrics": {}
     },
     {
         "id": "mournful-agios",
         "name": "Agios (Mournful)",
         "genreId": "holy-week",
         "description": "'Holy God, Holy Mighty, Holy Immortal', sung in a mournful tune during the prayers of Holy Week.",
-        "lyrics": {
-            "coptic": "Agios O Theos, Agios Ischyros, Agios Athanatos, eleison imas.",
-            "english": "Holy God, Holy Mighty, Holy Immortal, have mercy on us.",
-            "arabic": "قدوس الله، قدوس القوي، قدوس الذي لا يموت، ارحمنا."
-        }
+        "lyrics": {}
     }
 ];
 
