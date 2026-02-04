@@ -45,6 +45,29 @@ function formatTime(seconds: number) {
 
 const VISIBLE_DURATION_S = 60; // 1 minute window
 
+const DebugPanel = ({ hymn, isLoading, lyrics, storage }: { hymn: Hymn, isLoading: boolean, lyrics: any, storage: any }) => (
+    <div className="w-full p-4 my-4 border-2 border-dashed border-red-500 bg-red-50 text-red-900 text-xs font-mono">
+        <h3 className="font-bold text-base mb-2">DEBUG PANEL</h3>
+        <div className="grid grid-cols-1 gap-2">
+            <div>
+                <strong>hymn prop:</strong>
+                <pre className="whitespace-pre-wrap break-all">{JSON.stringify(hymn, null, 2)}</pre>
+            </div>
+            <div>
+                <strong>isLoading state:</strong> {isLoading.toString()}
+            </div>
+             <div>
+                <strong>Storage available:</strong> {storage ? 'true' : 'false'}
+            </div>
+            <div>
+                <strong>lyrics state:</strong>
+                <pre className="whitespace-pre-wrap break-all">{JSON.stringify(lyrics, null, 2)}</pre>
+            </div>
+        </div>
+    </div>
+);
+
+
 const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
   const [visible, setVisible] = useState({
     english: true,
@@ -84,9 +107,11 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
             try {
                 const storageRef = ref(storage, path);
                 const bytes = await getBytes(storageRef);
-                return [lang, new TextDecoder().decode(bytes)];
+                const content = new TextDecoder().decode(bytes);
+                return [lang, content.trim() || `File is empty at path: ${path}`];
+
             } catch (error: any) {
-                const errorMessage = `**DEBUG INFO: An error occurred while fetching lyrics.**\n\n*   **Attempted Path:** \`${path}\`\n*   **Error Code:** \`${error.code || 'unknown'}\`\n*   **Error Message:** \`${error.message || 'Unknown error'}\`\n\nThis usually means the file does not exist at this exact case-sensitive path in Firebase Storage, or your security rules are blocking read access.`;
+                const errorMessage = `An error occurred while fetching lyrics.\nPath: ${path}\nError: ${error.message || 'Unknown error'}`;
                 return [lang, errorMessage];
             }
         });
@@ -121,11 +146,17 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
   const hasAnyLyrics = Object.values(available).some(Boolean);
 
   if (!hasAnyLyrics) {
-    return null;
+    return (
+        <div className="w-full pt-4">
+             <DebugPanel hymn={hymn} isLoading={isLoading} lyrics={lyrics} storage={storage} />
+             <p className="text-muted-foreground">No lyric paths defined for this hymn.</p>
+        </div>
+    );
   }
 
   return (
     <div className="w-full pt-4">
+      <DebugPanel hymn={hymn} isLoading={isLoading} lyrics={lyrics} storage={storage} />
       <h3 className="text-lg font-semibold mb-2 font-headline text-primary">Lyrics</h3>
       {visibleLangs.length > 0 && (
         <div className="flex flex-col md:flex-row gap-4">
@@ -464,8 +495,8 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     } else {
       window.removeEventListener('mousemove', handleSeekMove);
       window.removeEventListener('touchmove', handleSeekMove);
-      window.removeEventListener('mouseup', handleSeekEnd);
-      window.removeEventListener('touchend', handleSeekEnd);
+      window.addEventListener('mouseup', handleSeekEnd);
+      window.addEventListener('touchend', handleSeekEnd);
     }
 
     return () => {
