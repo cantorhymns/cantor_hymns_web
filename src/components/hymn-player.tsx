@@ -56,42 +56,54 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
   const storage = useMemo(() => (firebaseApp ? getStorage(firebaseApp) : null), [firebaseApp]);
 
   const [lyrics, setLyrics] = useState({
-    english: { content: null as string | null, loading: false },
-    coptic: { content: null as string | null, loading: false },
-    arabic: { content: null as string | null, loading: false },
+    english: null as string | null,
+    coptic: null as string | null,
+    arabic: null as string | null,
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!storage) return;
-
-    const fetchLyric = async (lang: 'english' | 'coptic' | 'arabic', path: string | undefined | null) => {
-      if (!path) {
-        setLyrics(prev => ({ ...prev, [lang]: { content: null, loading: false } }));
+    if (!storage || !hymn) {
+        setIsLoading(false);
         return;
-      }
-
-      setLyrics(prev => ({ ...prev, [lang]: { content: null, loading: true } }));
-
-      try {
-        const bytes = await getBytes(ref(storage, path));
-        const content = new TextDecoder().decode(bytes);
-        setLyrics(prev => ({ ...prev, [lang]: { content, loading: false } }));
-      } catch (error: any) {
-        console.error(`Failed to fetch lyrics for ${lang} from ${path}`, error);
-        setLyrics(prev => ({
-          ...prev,
-          [lang]: {
-            content: `**DEBUG INFO: An error occurred while fetching lyrics.**\n\n*   **Attempted Path:** \`${path}\`\n*   **Error Message:** \`${error.message || 'Unknown error'}\`\n\nThis usually means the file doesn't exist at this exact case-sensitive path in Firebase Storage, or your security rules are blocking access.`,
-            loading: false,
-          },
-        }));
-      }
     };
 
-    fetchLyric('english', hymn.lyricsEnglish);
-    fetchLyric('coptic', hymn.lyricsCoptic);
-    fetchLyric('arabic', hymn.lyricsArabic);
-  }, [hymn.lyricsEnglish, hymn.lyricsCoptic, hymn.lyricsArabic, storage]);
+    const fetchAllLyrics = async () => {
+        setIsLoading(true);
+        
+        const paths = {
+            english: hymn.lyricsEnglish,
+            coptic: hymn.lyricsCoptic,
+            arabic: hymn.lyricsArabic
+        };
+
+        const promises = Object.entries(paths).map(async ([lang, path]) => {
+            if (!path) {
+                return [lang, null]; // No path, no content
+            }
+            try {
+                const storageRef = ref(storage, path);
+                const bytes = await getBytes(storageRef);
+                return [lang, new TextDecoder().decode(bytes)];
+            } catch (error: any) {
+                const errorMessage = `**DEBUG INFO: An error occurred while fetching lyrics.**\n\n*   **Attempted Path:** \`${path}\`\n*   **Error Code:** \`${error.code || 'unknown'}\`\n*   **Error Message:** \`${error.message || 'Unknown error'}\`\n\nThis usually means the file does not exist at this exact case-sensitive path in Firebase Storage, or your security rules are blocking read access.`;
+                return [lang, errorMessage];
+            }
+        });
+
+        try {
+            const results = await Promise.all(promises);
+            const newLyrics = Object.fromEntries(results);
+            setLyrics(newLyrics as any);
+        } catch (e) {
+            console.error("Failed to fetch one or more lyrics files", e);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    fetchAllLyrics();
+  }, [hymn, storage]);
 
 
   const available = {
@@ -126,9 +138,9 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                 </Button>
               </div>
               <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
-                {lyrics.english.loading 
+                {isLoading 
                   ? <Skeleton className="h-24 w-full" /> 
-                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.english.content || `**DEBUG INFO: No content loaded.**\n\n*   **Attempted Path:** \`${hymn.lyricsEnglish}\``}</ReactMarkdown>
+                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.english || ''}</ReactMarkdown>
                 }
               </div>
             </div>
@@ -142,9 +154,9 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                 </Button>
               </div>
               <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
-                {lyrics.coptic.loading 
+                {isLoading
                   ? <Skeleton className="h-24 w-full" /> 
-                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.coptic.content || `**DEBUG INFO: No content loaded.**\n\n*   **Attempted Path:** \`${hymn.lyricsCoptic}\``}</ReactMarkdown>
+                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.coptic || ''}</ReactMarkdown>
                 }
               </div>
             </div>
@@ -158,9 +170,9 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                 </Button>
               </div>
               <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
-                {lyrics.arabic.loading 
+                {isLoading
                   ? <Skeleton className="h-24 w-full" /> 
-                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.arabic.content || `**DEBUG INFO: No content loaded.**\n\n*   **Attempted Path:** \`${hymn.lyricsArabic}\``}</ReactMarkdown>
+                  : <ReactMarkdown remarkPlugins={[remarkGfm]}>{lyrics.arabic || ''}</ReactMarkdown>
                 }
               </div>
             </div>
@@ -784,4 +796,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   );
 }
 
-    
