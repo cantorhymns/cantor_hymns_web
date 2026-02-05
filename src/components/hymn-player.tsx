@@ -130,14 +130,6 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
 
   const hasAnyLyrics = Object.values(available).some(Boolean);
 
-  if (!hasAnyLyrics) {
-    return (
-        <div className="w-full pt-4">
-             <p className="text-muted-foreground">No lyric paths defined for this hymn.</p>
-        </div>
-    );
-  }
-
   const renderContent = (isLoading: boolean, error: string | null, content: string | null) => {
     if (isLoading) {
       return <Skeleton className="h-24 w-full" />;
@@ -159,7 +151,7 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
 
   return (
     <div className="w-full pt-4">
-      {visibleLangs.length > 0 && (
+      {hasAnyLyrics && (
         <div className="border rounded-md bg-secondary/20 flex flex-col md:flex-row min-w-0">
           {visibleLangs.map((lang, index) => {
             const config = langConfigs[lang];
@@ -198,6 +190,11 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                   </Button>
               ))}
           </div>
+      )}
+      {!hasAnyLyrics && (
+         <div className="w-full pt-4">
+            <p className="text-muted-foreground">No lyric paths defined for this hymn.</p>
+        </div>
       )}
     </div>
   );
@@ -568,7 +565,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         {hymn.name}
                     </CardTitle>
                     {hymn.description && (
-                    <p className="text-muted-foreground mt-2 max-w-prose">{hymn.description}</p>
+                    <p className="text-muted-foreground mt-2">{hymn.description}</p>
                     )}
                     <p className="text-muted-foreground pt-4">No active recordings available for this hymn yet.</p>
                 </CardHeader>
@@ -589,7 +586,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         {hymn.name}
                     </CardTitle>
                     {hymn.description && (
-                    <p className="text-muted-foreground mt-2 max-w-prose">{hymn.description}</p>
+                    <p className="text-muted-foreground mt-2">{hymn.description}</p>
                     )}
                     <p className="text-muted-foreground pt-4">Please select a recording.</p>
                 </CardHeader>
@@ -616,7 +613,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                   {hymn.name}
                   </CardTitle>
                   {hymn.description && (
-                    <p className="text-muted-foreground mt-2 max-w-prose">{hymn.description}</p>
+                    <p className="text-muted-foreground mt-2">{hymn.description}</p>
                   )}
               </div>
               <div className="flex items-center gap-2">
@@ -804,5 +801,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </>
   );
 }
-
-    
