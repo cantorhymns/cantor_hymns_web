@@ -109,7 +109,7 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
   const [visible, setVisible] = useState({
     english: true,
     coptic: true,
-    arabic: true,
+    arabic: false,
   });
 
   const { content: englishContent, isLoading: isLoadingEnglish, error: errorEnglish } = useLyricContent(hymn.lyricsEnglish);
@@ -565,7 +565,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         {hymn.name}
                     </CardTitle>
                     {hymn.description && (
-                    <p className="text-muted-foreground mt-2">{hymn.description}</p>
+                    <p className="text-muted-foreground mt-2 max-w-full">{hymn.description}</p>
                     )}
                     <p className="text-muted-foreground pt-4">No active recordings available for this hymn yet.</p>
                 </CardHeader>
@@ -586,7 +586,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         {hymn.name}
                     </CardTitle>
                     {hymn.description && (
-                    <p className="text-muted-foreground mt-2">{hymn.description}</p>
+                    <p className="text-muted-foreground mt-2 max-w-full">{hymn.description}</p>
                     )}
                     <p className="text-muted-foreground pt-4">Please select a recording.</p>
                 </CardHeader>
@@ -613,7 +613,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                   {hymn.name}
                   </CardTitle>
                   {hymn.description && (
-                    <p className="text-muted-foreground mt-2">{hymn.description}</p>
+                    <p className="text-muted-foreground mt-2 max-w-full">{hymn.description}</p>
                   )}
               </div>
               <div className="flex items-center gap-2">
