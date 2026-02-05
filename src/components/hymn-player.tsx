@@ -150,51 +150,42 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
     }
     return <p className="text-sm text-muted-foreground">No content.</p>;
   };
+  
+  const langConfigs = {
+    english: { dir: 'ltr', lang: 'en', isLoading: isLoadingEnglish, error: errorEnglish, content: englishContent },
+    coptic:  { dir: 'ltr', lang: 'cop', isLoading: isLoadingCoptic, error: errorCoptic, content: copticContent },
+    arabic:  { dir: 'rtl', lang: 'ar', isLoading: isLoadingArabic, error: errorArabic, content: arabicContent },
+  } as const;
 
   return (
     <div className="w-full pt-4">
-      <h3 className="text-lg font-semibold mb-2 font-headline text-primary">Lyrics</h3>
       {visibleLangs.length > 0 && (
-        <div className="flex flex-col md:flex-row gap-4">
-          {visible.english && available.english && (
-            <div className="flex-1 border rounded-md p-4 bg-secondary/30 min-w-0">
-              <div className="flex justify-between items-center mb-2">
-                <h4 className="font-semibold text-muted-foreground">English</h4>
-                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setVisible(v => ({ ...v, english: false }))}>
+        <div className="border rounded-md bg-secondary/20 flex flex-col md:flex-row min-w-0">
+          {visibleLangs.map((lang, index) => {
+            const config = langConfigs[lang];
+            return (
+              <div
+                key={lang}
+                className={cn(
+                  "flex-1 p-4 relative min-w-0",
+                  index > 0 && "border-t md:border-t-0 md:border-l border-border"
+                )}
+                dir={config.dir}
+              >
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-1 right-1 h-6 w-6 z-10"
+                  onClick={() => setVisible(v => ({ ...v, [lang]: false }))}
+                >
                   <X className="h-4 w-4" />
                 </Button>
+                <div lang={config.lang} className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
+                  {renderContent(config.isLoading, config.error, config.content)}
+                </div>
               </div>
-              <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
-                {renderContent(isLoadingEnglish, errorEnglish, englishContent)}
-              </div>
-            </div>
-          )}
-          {visible.coptic && available.coptic && (
-            <div className="flex-1 border rounded-md p-4 bg-secondary/30 min-w-0">
-              <div className="flex justify-between items-center mb-2">
-                <h4 className="font-semibold text-muted-foreground">Coptic</h4>
-                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setVisible(v => ({ ...v, coptic: false }))}>
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none" lang="cop">
-                 {renderContent(isLoadingCoptic, errorCoptic, copticContent)}
-              </div>
-            </div>
-          )}
-          {visible.arabic && available.arabic && (
-            <div className="flex-1 border rounded-md p-4 bg-secondary/30 min-w-0 text-right" dir="rtl">
-              <div className="flex justify-between items-center mb-2">
-                <h4 className="font-semibold text-muted-foreground">Arabic</h4>
-                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setVisible(v => ({ ...v, arabic: false }))}>
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="text-sm text-muted-foreground prose dark:prose-invert max-w-none">
-                {renderContent(isLoadingArabic, errorArabic, arabicContent)}
-              </div>
-            </div>
-          )}
+            )
+          })}
         </div>
       )}
       
