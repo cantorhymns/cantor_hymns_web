@@ -34,6 +34,7 @@ import { Skeleton } from "./ui/skeleton";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 
 
 function formatTime(seconds: number) {
@@ -145,7 +146,7 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
       return <p className="text-sm text-destructive whitespace-pre-wrap">{error}</p>;
     }
     if (content) {
-      return <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>;
+      return <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{content}</ReactMarkdown>;
     }
     return <p className="text-sm text-muted-foreground">No content.</p>;
   };
