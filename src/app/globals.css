@@ -69,4 +69,8 @@
   [lang="cop"] {
     font-family: "Noto Sans Coptic", sans-serif;
   }
+  /* Add vertical margin to paragraphs inside the rendered markdown */
+  .prose p {
+    @apply my-3;
+  }
 }
