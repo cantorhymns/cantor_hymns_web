@@ -26,6 +26,8 @@ import {
   FastForward,
   Rewind,
   XCircle,
+  Maximize2,
+  Minimize2,
 } from "lucide-react";
 import { getDownloadURL, ref, getStorage } from "firebase/storage";
 import { useFirebase } from "@/firebase";
@@ -112,6 +114,7 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
     coptic: true,
     arabic: false,
   });
+  const [isContained, setIsContained] = useState(true);
 
   const { content: englishContent, isLoading: isLoadingEnglish, error: errorEnglish } = useLyricContent(hymn.lyricsEnglish);
   const { content: copticContent, isLoading: isLoadingCoptic, error: errorCoptic } = useLyricContent(hymn.lyricsCoptic);
@@ -193,10 +196,20 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                       {langConfigs[lang].label}
                   </Button>
               ))}
+              <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsContained(v => !v)}
+                  title={isContained ? 'Expand lyrics' : 'Collapse lyrics'}
+                  className="ml-auto"
+              >
+                  {isContained ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+                  <span className="sr-only">{isContained ? 'Expand lyrics' : 'Collapse lyrics'}</span>
+              </Button>
           </div>
       )}
       
-      <ScrollArea className="h-[40vh] w-full rounded-md border bg-secondary/20">
+      <ScrollArea className={cn("w-full rounded-md border bg-secondary/20", isContained && "h-[40vh]")}>
         <div className="min-w-0">
           {isLoading ? (
             <div className="p-4">
@@ -623,7 +636,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         {hymn.name}
                     </CardTitle>
                     {hymn.description && (
-                    <p className="text-muted-foreground mt-2">{hymn.description}</p>
+                    <p className="text-muted-foreground mt-2 max-w-full">{hymn.description}</p>
                     )}
                     <p className="text-muted-foreground pt-4">No active recordings available for this hymn yet.</p>
                 </CardHeader>
@@ -644,7 +657,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                         {hymn.name}
                     </CardTitle>
                     {hymn.description && (
-                    <p className="text-muted-foreground mt-2">{hymn.description}</p>
+                    <p className="text-muted-foreground mt-2 max-w-full">{hymn.description}</p>
                     )}
                     <p className="text-muted-foreground pt-4">Please select a recording.</p>
                 </CardHeader>
