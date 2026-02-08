@@ -26,7 +26,6 @@ import {
   FastForward,
   Rewind,
   XCircle,
-  X
 } from "lucide-react";
 import { getDownloadURL, ref, getStorage } from "firebase/storage";
 import { useFirebase } from "@/firebase";
@@ -35,6 +34,7 @@ import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
+import { ScrollArea } from "./ui/scroll-area";
 
 
 function formatTime(seconds: number) {
@@ -74,9 +74,10 @@ function useLyricContent(path?: string) {
             throw new Error(`Request failed with status ${response.status}`);
         }
         const textContent = await response.text();
+        const trimmedContent = textContent.trim();
 
         if (!isCancelled) {
-          setContent(textContent.trim());
+          setContent(trimmedContent);
         }
       } catch (e: any) {
         if (!isCancelled) {
@@ -127,13 +128,13 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
 
   const hiddenLangs = useMemo(() => (Object.keys(available) as Array<keyof typeof available>)
     .filter(lang => available[lang] && !visible[lang]), [available, visible]);
-
+    
   const hasAnyLyrics = useMemo(() => Object.values(available).some(Boolean), [available]);
 
   const langConfigs = useMemo(() => ({
-    english: { dir: 'ltr', lang: 'en', isLoading: isLoadingEnglish, error: errorEnglish, content: englishContent },
-    coptic:  { dir: 'ltr', lang: 'cop', isLoading: isLoadingCoptic, error: errorCoptic, content: copticContent },
-    arabic:  { dir: 'rtl', lang: 'ar', isLoading: isLoadingArabic, error: errorArabic, content: arabicContent },
+    english: { dir: 'ltr', lang: 'en', isLoading: isLoadingEnglish, error: errorEnglish, content: englishContent, label: "English" },
+    coptic:  { dir: 'ltr', lang: 'cop', isLoading: isLoadingCoptic, error: errorCoptic, content: copticContent, label: "Coptic" },
+    arabic:  { dir: 'rtl', lang: 'ar', isLoading: isLoadingArabic, error: errorArabic, content: arabicContent, label: "Arabic" },
   } as const), [isLoadingEnglish, errorEnglish, englishContent, isLoadingCoptic, errorCoptic, copticContent, isLoadingArabic, errorArabic, arabicContent]);
 
   const versesByLang = useMemo(() => {
@@ -141,7 +142,6 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
     visibleLangs.forEach(lang => {
       const config = langConfigs[lang];
       if (config.content) {
-        // Split by one or more newlines to handle paragraphs. This treats one or more blank lines as a verse separator.
         result[lang] = config.content.split(/\n\s*\n/).map(v => v.trim());
       } else {
         result[lang] = [];
@@ -158,19 +158,33 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
   const isLoading = visibleLangs.some(lang => langConfigs[lang].isLoading);
 
   const renderVerseContent = (content: string | undefined) => {
-    // If content is empty or just a non-breaking space, render one to maintain cell height
     if (!content || content.trim() === '') {
-        return <p>&nbsp;</p>; // Render a paragraph with a non-breaking space
+        return <p>&nbsp;</p>;
     }
     return <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} className="prose dark:prose-invert max-w-none">{content}</ReactMarkdown>;
   };
   
   const anyError = visibleLangs.map(lang => langConfigs[lang].error).find(Boolean);
 
+  if (!hasAnyLyrics) {
+    return null;
+  }
+
   return (
     <div className="w-full pt-4">
-      {hasAnyLyrics && (
-        <div className="border rounded-md bg-secondary/20 min-w-0">
+      {hiddenLangs.length > 0 && (
+          <div className="mb-2 flex gap-2 items-center">
+              <span className="text-sm text-muted-foreground">Languages:</span>
+              {hiddenLangs.map(lang => (
+                  <Button key={lang} variant="outline" size="sm" onClick={() => setVisible(v => ({ ...v, [lang]: true }))}>
+                      {langConfigs[lang].label}
+                  </Button>
+              ))}
+          </div>
+      )}
+      
+      <ScrollArea className="h-[40vh] w-full rounded-md border bg-secondary/20">
+        <div className="min-w-0">
           {isLoading ? (
             <div className="p-4">
               <Skeleton className="h-24 w-full" />
@@ -181,32 +195,24 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
              </div>
           ) : (
             <>
-              {/* Header with close buttons */}
               {visibleLangs.length > 0 && (
-                <div className="flex flex-row border-b">
+                <div className="flex flex-row border-b sticky top-0 bg-secondary/50 backdrop-blur-sm z-10">
                   {visibleLangs.map((lang, index) => (
                     <div
                       key={lang}
                       className={cn(
-                        "flex-1 p-2 relative min-w-0",
+                        "flex-1 p-2 min-w-0 text-center font-bold text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors",
                         index > 0 && "border-l"
                       )}
+                      onClick={() => setVisible(v => ({ ...v, [lang]: false }))}
+                      title={`Hide ${langConfigs[lang].label} lyrics`}
                     >
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 z-10"
-                        onClick={() => setVisible(v => ({ ...v, [lang]: false }))}
-                        aria-label={`Hide ${lang} lyrics`}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
+                      {langConfigs[lang].label}
                     </div>
                   ))}
                 </div>
               )}
               
-              {/* Verses */}
               {Array.from({ length: maxVerses }).map((_, verseIndex) => (
                 <div key={verseIndex} className={cn(
                   "flex flex-row",
@@ -235,24 +241,7 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
             </>
           )}
         </div>
-      )}
-      
-      {hiddenLangs.length > 0 && (
-          <div className="mt-4 flex gap-2 items-center">
-              <span className="text-sm text-muted-foreground">Show lyrics:</span>
-              {hiddenLangs.map(lang => (
-                  <Button key={lang} variant="outline" size="sm" onClick={() => setVisible(v => ({ ...v, [lang]: true }))}>
-                      {lang.charAt(0).toUpperCase() + lang.slice(1)}
-                  </Button>
-              ))}
-          </div>
-      )}
-
-      {!hasAnyLyrics && (
-        <div className="w-full pt-4">
-            {/* Renders an empty space if no lyrics are defined at all */}
-        </div>
-      )}
+      </ScrollArea>
     </div>
   );
 };
@@ -858,3 +847,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </>
   );
 }
+
+    
