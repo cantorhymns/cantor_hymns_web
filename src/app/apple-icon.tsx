@@ -5,13 +5,13 @@ export const runtime = 'edge';
 
 // Image metadata
 export const size = {
-  width: 32,
-  height: 32,
+  width: 180,
+  height: 180,
 };
 export const contentType = 'image/png';
 
 // Image generation
-export default function Icon() {
+export default function AppleIcon() {
   return new ImageResponse(
     (
       // ImageResponse JSX element
@@ -31,8 +31,8 @@ export default function Icon() {
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 100 100"
           fill="currentColor"
-          width="24"
-          height="24"
+          width="140"
+          height="140"
         >
           <circle cx="50" cy="50" r="6" />
           <path d="M47 10h6v80h-6z" />
