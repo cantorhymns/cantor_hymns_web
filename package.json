@@ -25,7 +25,8 @@
     "db:update-ibrahim-taishouri": "tsx src/scripts/update-ibrahim-taishouri-marks.ts",
     "db:update-agios": "tsx src/scripts/update-agios-marks.ts",
     "db:update-ethvetee": "tsx src/scripts/update-ethvetee-marks.ts",
-    "db:update-ke-eperto": "tsx src/scripts/update-ke-eperto-marks.ts"
+    "db:update-ke-eperto": "tsx src/scripts/update-ke-eperto-marks.ts",
+    "db:update-phat-etaf-enf": "tsx src/scripts/update-phat-etaf-enf-marks.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
