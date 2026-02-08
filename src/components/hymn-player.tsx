@@ -76,7 +76,7 @@ function useLyricContent(path?: string) {
         const textContent = await response.text();
 
         if (!isCancelled) {
-          setContent(textContent.trim() || `(File is empty at path: ${path})`);
+          setContent(textContent.trim());
         }
       } catch (e: any) {
         if (!isCancelled) {
@@ -116,68 +116,124 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
   const { content: copticContent, isLoading: isLoadingCoptic, error: errorCoptic } = useLyricContent(hymn.lyricsCoptic);
   const { content: arabicContent, isLoading: isLoadingArabic, error: errorArabic } = useLyricContent(hymn.lyricsArabic);
 
-  const available = {
+  const available = useMemo(() => ({
     english: hymn.lyricsEnglish,
     coptic: hymn.lyricsCoptic,
     arabic: hymn.lyricsArabic,
-  };
+  }), [hymn.lyricsEnglish, hymn.lyricsCoptic, hymn.lyricsArabic]);
 
-  const visibleLangs = (Object.keys(available) as Array<keyof typeof available>)
-    .filter(lang => available[lang] && visible[lang]);
-  
-  const hiddenLangs = (Object.keys(available) as Array<keyof typeof available>)
-    .filter(lang => available[lang] && !visible[lang]);
+  const visibleLangs = useMemo(() => (Object.keys(available) as Array<keyof typeof available>)
+    .filter(lang => available[lang] && visible[lang]), [available, visible]);
 
-  const hasAnyLyrics = Object.values(available).some(Boolean);
+  const hiddenLangs = useMemo(() => (Object.keys(available) as Array<keyof typeof available>)
+    .filter(lang => available[lang] && !visible[lang]), [available, visible]);
 
-  const renderContent = (isLoading: boolean, error: string | null, content: string | null) => {
-    if (isLoading) {
-      return <Skeleton className="h-24 w-full" />;
-    }
-    if (error) {
-      return <p className="text-sm text-destructive whitespace-pre-wrap">{error}</p>;
-    }
-    if (content) {
-      return <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} className="prose dark:prose-invert max-w-none">{content}</ReactMarkdown>;
-    }
-    return <p className="text-sm text-muted-foreground">No content.</p>;
-  };
-  
-  const langConfigs = {
+  const hasAnyLyrics = useMemo(() => Object.values(available).some(Boolean), [available]);
+
+  const langConfigs = useMemo(() => ({
     english: { dir: 'ltr', lang: 'en', isLoading: isLoadingEnglish, error: errorEnglish, content: englishContent },
     coptic:  { dir: 'ltr', lang: 'cop', isLoading: isLoadingCoptic, error: errorCoptic, content: copticContent },
     arabic:  { dir: 'rtl', lang: 'ar', isLoading: isLoadingArabic, error: errorArabic, content: arabicContent },
-  } as const;
+  } as const), [isLoadingEnglish, errorEnglish, englishContent, isLoadingCoptic, errorCoptic, copticContent, isLoadingArabic, errorArabic, arabicContent]);
+
+  const versesByLang = useMemo(() => {
+    const result: Record<string, string[]> = {};
+    visibleLangs.forEach(lang => {
+      const config = langConfigs[lang];
+      if (config.content) {
+        // Split by one or more newlines to handle paragraphs. This treats one or more blank lines as a verse separator.
+        result[lang] = config.content.split(/\n\s*\n/).map(v => v.trim());
+      } else {
+        result[lang] = [];
+      }
+    });
+    return result;
+  }, [visibleLangs, langConfigs]);
+
+  const maxVerses = useMemo(() => {
+    if (Object.keys(versesByLang).length === 0) return 0;
+    return Math.max(0, ...Object.values(versesByLang).map(verses => verses.length));
+  }, [versesByLang]);
+
+  const isLoading = visibleLangs.some(lang => langConfigs[lang].isLoading);
+
+  const renderVerseContent = (content: string | undefined) => {
+    // If content is empty or just a non-breaking space, render one to maintain cell height
+    if (!content || content.trim() === '') {
+        return <p>&nbsp;</p>; // Render a paragraph with a non-breaking space
+    }
+    return <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} className="prose dark:prose-invert max-w-none">{content}</ReactMarkdown>;
+  };
+  
+  const anyError = visibleLangs.map(lang => langConfigs[lang].error).find(Boolean);
 
   return (
     <div className="w-full pt-4">
       {hasAnyLyrics && (
-        <div className="border rounded-md bg-secondary/20 flex flex-col md:flex-row min-w-0">
-          {visibleLangs.map((lang, index) => {
-            const config = langConfigs[lang];
-            return (
-              <div
-                key={lang}
-                className={cn(
-                  "flex-1 p-4 relative min-w-0",
-                  index > 0 && "border-t md:border-t-0 md:border-l border-border"
-                )}
-                dir={config.dir}
-              >
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute top-1 right-1 h-6 w-6 z-10"
-                  onClick={() => setVisible(v => ({ ...v, [lang]: false }))}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-                <div lang={config.lang} className="text-sm text-muted-foreground">
-                  {renderContent(config.isLoading, config.error, config.content)}
+        <div className="border rounded-md bg-secondary/20 min-w-0">
+          {isLoading ? (
+            <div className="p-4">
+              <Skeleton className="h-24 w-full" />
+            </div>
+          ) : anyError ? (
+             <div className="p-4">
+                <p className="text-sm text-destructive whitespace-pre-wrap">{anyError}</p>
+             </div>
+          ) : (
+            <>
+              {/* Header with close buttons */}
+              {visibleLangs.length > 0 && (
+                <div className="flex flex-row border-b">
+                  {visibleLangs.map((lang, index) => (
+                    <div
+                      key={lang}
+                      className={cn(
+                        "flex-1 p-2 relative min-w-0",
+                        index > 0 && "border-l"
+                      )}
+                    >
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 z-10"
+                        onClick={() => setVisible(v => ({ ...v, [lang]: false }))}
+                        aria-label={`Hide ${lang} lyrics`}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
                 </div>
-              </div>
-            )
-          })}
+              )}
+              
+              {/* Verses */}
+              {Array.from({ length: maxVerses }).map((_, verseIndex) => (
+                <div key={verseIndex} className={cn(
+                  "flex flex-row",
+                  verseIndex > 0 && "border-t"
+                )}>
+                  {visibleLangs.map((lang, langIndex) => {
+                    const config = langConfigs[lang];
+                    const verse = versesByLang[lang]?.[verseIndex];
+                    return (
+                      <div
+                        key={lang}
+                        className={cn(
+                          "flex-1 p-4 min-w-0",
+                          langIndex > 0 && "border-l"
+                        )}
+                        dir={config.dir}
+                      >
+                        <div lang={config.lang} className="text-sm text-muted-foreground">
+                          {renderVerseContent(verse)}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </>
+          )}
         </div>
       )}
       
@@ -190,6 +246,12 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                   </Button>
               ))}
           </div>
+      )}
+
+      {!hasAnyLyrics && (
+        <div className="w-full pt-4">
+            {/* Renders an empty space if no lyrics are defined at all */}
+        </div>
       )}
     </div>
   );
@@ -608,7 +670,7 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                   {hymn.name}
                   </CardTitle>
                   {hymn.description && (
-                    <p className="text-muted-foreground mt-2">{hymn.description}</p>
+                    <p className="text-muted-foreground mt-2 max-w-full">{hymn.description}</p>
                   )}
               </div>
               <div className="flex items-center gap-2">
