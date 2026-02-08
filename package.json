@@ -26,7 +26,8 @@
     "db:update-agios": "tsx src/scripts/update-agios-marks.ts",
     "db:update-ethvetee": "tsx src/scripts/update-ethvetee-marks.ts",
     "db:update-ke-eperto": "tsx src/scripts/update-ke-eperto-marks.ts",
-    "db:update-phat-etaf-enf": "tsx src/scripts/update-phat-etaf-enf-marks.ts"
+    "db:update-phai-etaf-enf": "tsx src/scripts/update-phat-etaf-enf.ts",
+    "db:fix-phai-typo": "tsx src/scripts/migrate-phai-etaf-enf-typo.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
