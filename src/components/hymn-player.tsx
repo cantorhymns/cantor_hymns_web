@@ -172,6 +172,9 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
     return Math.max(0, ...Object.values(versesByLang).map(verses => verses.length));
   }, [versesByLang]);
 
+  const LYRIC_SCROLL_THRESHOLD = 4;
+  const canBeContained = maxVerses > LYRIC_SCROLL_THRESHOLD;
+
   const isLoading = visibleLangs.some(lang => langConfigs[lang].isLoading);
 
   const renderVerseContent = (content: string | undefined) => {
@@ -215,20 +218,22 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                     <Type className="h-4 w-4" />
                     <span className="sr-only">Change text size</span>
                 </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsContained(v => !v)}
-                    title={isContained ? 'Expand lyrics' : 'Collapse lyrics'}
-                >
-                    {isContained ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
-                    <span className="sr-only">{isContained ? 'Expand lyrics' : 'Collapse lyrics'}</span>
-                </Button>
+                {canBeContained && (
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsContained(v => !v)}
+                        title={isContained ? 'Expand lyrics' : 'Collapse lyrics'}
+                    >
+                        {isContained ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+                        <span className="sr-only">{isContained ? 'Expand lyrics' : 'Collapse lyrics'}</span>
+                    </Button>
+                )}
               </div>
           </div>
       )}
       
-      <ScrollArea className={cn("w-full rounded-md border bg-secondary/20", isContained && "h-[40vh]")}>
+      <ScrollArea className={cn("w-full rounded-md border bg-secondary/20", isContained && canBeContained && "h-[40vh]")}>
         <div className="min-w-0">
           {isLoading ? (
             <div className="p-4">
