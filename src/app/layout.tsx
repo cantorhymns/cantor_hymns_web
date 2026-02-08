@@ -8,10 +8,22 @@ import { FirebaseClientProvider } from '@/firebase';
 import { AuthGate } from '@/components/auth-gate';
 
 export const metadata: Metadata = {
-  title: 'Cantor',
+  title: {
+    default: 'Cantor',
+    template: '%s | Cantor',
+  },
   description: 'An app to learn Coptic hymns',
-  icons: {
-    icon: '/favicon.svg',
+  openGraph: {
+    title: 'Cantor',
+    description: 'An app to learn Coptic hymns',
+    siteName: 'Cantor',
+    locale: 'en-US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Cantor',
+    description: 'An app to learn Coptic hymns',
   },
 };
 
