@@ -240,23 +240,6 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
              </div>
           ) : (
             <>
-              {visibleLangs.length > 0 && (
-                <div className="flex flex-row border-b sticky top-0 bg-secondary/50 backdrop-blur-sm z-10">
-                  {visibleLangs.map((lang, index) => (
-                    <div
-                      key={lang}
-                      className={cn(
-                        "flex-1 p-2 min-w-0 text-center font-bold text-muted-foreground",
-                        index > 0 && "border-l"
-                      )}
-                      title={`${langConfigs[lang].label} lyrics`}
-                    >
-                      {langConfigs[lang].label}
-                    </div>
-                  ))}
-                </div>
-              )}
-              
               {Array.from({ length: maxVerses }).map((_, verseIndex) => (
                 <div key={verseIndex} className={cn(
                   "flex flex-row",
