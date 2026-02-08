@@ -28,6 +28,7 @@ import {
   XCircle,
   Maximize2,
   Minimize2,
+  Type,
 } from "lucide-react";
 import { getDownloadURL, ref, getStorage } from "firebase/storage";
 import { useFirebase } from "@/firebase";
@@ -115,6 +116,14 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
     arabic: false,
   });
   const [isContained, setIsContained] = useState(true);
+  const [fontSize, setFontSize] = useState('sm');
+  const fontSizes = ['sm', 'base', 'lg', 'xl'];
+
+  const cycleFontSize = () => {
+    const currentIndex = fontSizes.indexOf(fontSize);
+    const nextIndex = (currentIndex + 1) % fontSizes.length;
+    setFontSize(fontSizes[nextIndex]);
+  };
 
   const { content: englishContent, isLoading: isLoadingEnglish, error: errorEnglish } = useLyricContent(hymn.lyricsEnglish);
   const { content: copticContent, isLoading: isLoadingCoptic, error: errorCoptic } = useLyricContent(hymn.lyricsCoptic);
@@ -196,16 +205,26 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                       {langConfigs[lang].label}
                   </Button>
               ))}
-              <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsContained(v => !v)}
-                  title={isContained ? 'Expand lyrics' : 'Collapse lyrics'}
-                  className="ml-auto"
-              >
-                  {isContained ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
-                  <span className="sr-only">{isContained ? 'Expand lyrics' : 'Collapse lyrics'}</span>
-              </Button>
+              <div className="ml-auto flex items-center gap-2">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={cycleFontSize}
+                    title="Change text size"
+                >
+                    <Type className="h-4 w-4" />
+                    <span className="sr-only">Change text size</span>
+                </Button>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsContained(v => !v)}
+                    title={isContained ? 'Expand lyrics' : 'Collapse lyrics'}
+                >
+                    {isContained ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+                    <span className="sr-only">{isContained ? 'Expand lyrics' : 'Collapse lyrics'}</span>
+                </Button>
+              </div>
           </div>
       )}
       
@@ -255,7 +274,15 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                         )}
                         dir={config.dir}
                       >
-                        <div lang={config.lang} className="text-sm text-muted-foreground">
+                        <div
+                          lang={config.lang}
+                          className={cn("text-muted-foreground", {
+                            'text-sm': fontSize === 'sm',
+                            'text-base': fontSize === 'base',
+                            'text-lg': fontSize === 'lg',
+                            'text-xl': fontSize === 'xl',
+                          })}
+                        >
                           {renderVerseContent(verse)}
                         </div>
                       </div>
