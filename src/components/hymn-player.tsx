@@ -123,11 +123,11 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
     arabic: hymn.lyricsArabic,
   }), [hymn.lyricsEnglish, hymn.lyricsCoptic, hymn.lyricsArabic]);
 
+  const allAvailableLangs = useMemo(() => (Object.keys(available) as Array<keyof typeof available>)
+    .filter(lang => available[lang]), [available]);
+
   const visibleLangs = useMemo(() => (Object.keys(available) as Array<keyof typeof available>)
     .filter(lang => available[lang] && visible[lang]), [available, visible]);
-
-  const hiddenLangs = useMemo(() => (Object.keys(available) as Array<keyof typeof available>)
-    .filter(lang => available[lang] && !visible[lang]), [available, visible]);
     
   const hasAnyLyrics = useMemo(() => Object.values(available).some(Boolean), [available]);
 
@@ -142,7 +142,12 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
     visibleLangs.forEach(lang => {
       const config = langConfigs[lang];
       if (config.content) {
-        result[lang] = config.content.split(/\n\s*\n/).map(v => v.trim());
+        const trimmedContent = config.content.trim();
+        if (trimmedContent) {
+          result[lang] = trimmedContent.split(/\n\s*\n/).map(v => v.trim());
+        } else {
+           result[lang] = [];
+        }
       } else {
         result[lang] = [];
       }
@@ -172,11 +177,19 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
 
   return (
     <div className="w-full pt-4">
-      {hiddenLangs.length > 0 && (
+      {allAvailableLangs.length > 0 && (
           <div className="mb-2 flex gap-2 items-center">
-              <span className="text-sm text-muted-foreground">Languages:</span>
-              {hiddenLangs.map(lang => (
-                  <Button key={lang} variant="outline" size="sm" onClick={() => setVisible(v => ({ ...v, [lang]: true }))}>
+              {allAvailableLangs.map(lang => (
+                  <Button
+                      key={lang}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setVisible(v => ({ ...v, [lang]: !v[lang] }))}
+                      className={cn(
+                          'transition-colors',
+                          visible[lang] && 'bg-green-600 text-white hover:bg-green-700 hover:text-white border-green-700'
+                      )}
+                  >
                       {langConfigs[lang].label}
                   </Button>
               ))}
@@ -201,11 +214,10 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
                     <div
                       key={lang}
                       className={cn(
-                        "flex-1 p-2 min-w-0 text-center font-bold text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors",
+                        "flex-1 p-2 min-w-0 text-center font-bold text-muted-foreground",
                         index > 0 && "border-l"
                       )}
-                      onClick={() => setVisible(v => ({ ...v, [lang]: false }))}
-                      title={`Hide ${langConfigs[lang].label} lyrics`}
+                      title={`${langConfigs[lang].label} lyrics`}
                     >
                       {langConfigs[lang].label}
                     </div>
@@ -847,5 +859,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </>
   );
 }
-
-    
