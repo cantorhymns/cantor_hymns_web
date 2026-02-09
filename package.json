@@ -31,7 +31,8 @@
     "db:fix-phai-typo": "tsx src/scripts/migrate-phai-etaf-enf-typo.ts",
     "db:update-anok-pe-pi-kouji": "tsx src/scripts/update-anok-pe-pi-kouji-marks.ts",
     "db:update-oukatee": "tsx src/scripts/update-oukatee-marks.ts",
-    "db:update-share-ephnouti": "tsx src/scripts/update-share-ephnouti-marks.ts"
+    "db:update-share-ephnouti": "tsx src/scripts/update-share-ephnouti-marks.ts",
+    "db:update-kyrie-eleison-lent": "tsx src/scripts/update-kyrie-eleison-lent-marks.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
