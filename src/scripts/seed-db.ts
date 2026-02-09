@@ -99,7 +99,7 @@ async function seedDatabase() {
         seedBatch.set(docRef, {
             name: hymn.name,
             genreId: hymn.genreId,
-            subGenreId: hymn.subGenreId || '',
+            subGenreId: hymn.subGenreId || {},
             description: hymn.description || '',
             lyricsEnglish: hymn.lyricsEnglish || '',
             lyricsCoptic: hymn.lyricsCoptic || '',

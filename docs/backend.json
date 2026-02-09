@@ -58,8 +58,11 @@
           "description": "An array of Genre IDs this hymn belongs to. (Relationship: Genre M:N Hymn)"
         },
         "subGenreId": {
-            "type": "string",
-            "description": "The ID of the sub-genre this hymn belongs to, if applicable."
+            "type": "object",
+            "description": "A map where the key is a genre ID and the value is the sub-genre name this hymn belongs to within that genre.",
+            "additionalProperties": {
+                "type": "string"
+            }
         },
         "description": {
           "type": "string",

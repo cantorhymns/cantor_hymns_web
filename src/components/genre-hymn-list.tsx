@@ -73,9 +73,12 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
 
     hymns.forEach(hymn => {
       let targetGroup;
-      // Check if the hymn has a valid subGenreId that exists in the genre's subGenres
-      if (hymn.subGenreId && subGenreSet.has(hymn.subGenreId)) {
-        targetGroup = groups.find(g => g.name === hymn.subGenreId);
+      // Get the sub-genre for the current genre from the hymn's map
+      const hymnSubGenreForCurrentGenre = hymn.subGenreId?.[genreId];
+      
+      // Check if the hymn has a valid sub-genre for this genre
+      if (hymnSubGenreForCurrentGenre && subGenreSet.has(hymnSubGenreForCurrentGenre)) {
+        targetGroup = groups.find(g => g.name === hymnSubGenreForCurrentGenre);
       }
       
       // If no valid subGenreId, or it doesn't match, add to the first sub-genre group
@@ -89,7 +92,7 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
     // Return only the groups that have hymns in them
     return groups.filter(g => g.hymns.length > 0);
 
-  }, [genre, hymns]);
+  }, [genre, hymns, genreId]);
 
 
   return (
@@ -106,7 +109,9 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
            {isGenreLoading || !genre ? (
              <>
                 <Skeleton className="h-16 w-16 rounded-lg" />
-                <Skeleton className="h-10 w-48" />
+                <div>
+                    <Skeleton className="h-10 w-48" />
+                </div>
              </>
            ) : (
             <>
@@ -121,9 +126,11 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
                     />
                   )}
                 </div>
-                <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight">
-                    {genre.name}
-                </h1>
+                <div>
+                    <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight">
+                        {genre.name}
+                    </h1>
+                </div>
             </>
            )}
         </div>
