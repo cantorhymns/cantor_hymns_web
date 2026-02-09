@@ -319,6 +319,13 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
   // Conditionally get marks based on whether the recording is in 'learn' mode
   const displayedMarks = useMemo(() => currentRecording?.mode === 'learn' ? sortedMarks : [], [currentRecording, sortedMarks]);
 
+  const playbackSpeeds = [1.0, 1.25, 1.5, 1.75, 2.0];
+  const handleSpeedChange = () => {
+      const currentIndex = playbackSpeeds.indexOf(playbackRate);
+      const nextIndex = (currentIndex + 1) % playbackSpeeds.length;
+      setPlaybackRate(playbackSpeeds[nextIndex]);
+  };
+
   useEffect(() => {
     // This effect now specifically handles setting the initial recording
     // It will only run when hymn.recordings becomes available or changes.
@@ -833,32 +840,13 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
                               </Button>
                           ) : <div className="w-10" />}
                       </div>
-                      <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="sm" className="h-10 rounded-full px-4 text-muted-foreground hover:text-primary transition-colors" onClick={() => handleSkip(-10)}>
-                              <span className="text-sm font-bold mr-2">10s</span>
-                              <Rewind className="h-5 w-5" />
-                              <span className="sr-only">Rewind 10 seconds</span>
-                          </Button>
-                          <Button variant="ghost" size="sm" className="h-10 rounded-full px-4 text-muted-foreground hover:text-primary transition-colors" onClick={() => handleSkip(10)}>
-                              <FastForward className="h-5 w-5" />
-                              <span className="text-sm font-bold ml-2">10s</span>
-                              <span className="sr-only">Fast Forward 10 seconds</span>
-                          </Button>
-                      </div>
                   </div>
                   
                   <div className="flex items-center gap-2 w-[100px] justify-end">
-                      <Select value={String(playbackRate)} onValueChange={(val) => setPlaybackRate(Number(val))}>
-                          <SelectTrigger className="w-full">
-                              <FastForward className="h-4 w-4 mr-1 text-muted-foreground"/>
-                              <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                              {[0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map((speed) => (
-                                  <SelectItem key={speed} value={String(speed)}>{speed.toFixed(2)}x</SelectItem>
-                              ))}
-                          </SelectContent>
-                      </Select>
+                      <Button variant="outline" onClick={handleSpeedChange} className="w-full">
+                        <FastForward className="h-4 w-4 mr-1" />
+                        <span>{playbackRate.toFixed(2)}x</span>
+                      </Button>
                   </div>
               </div>
           </div>
@@ -887,3 +875,5 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </>
   );
 }
+
+    
