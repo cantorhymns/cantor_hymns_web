@@ -106,10 +106,7 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
            {isGenreLoading || !genre ? (
              <>
                 <Skeleton className="h-16 w-16 rounded-lg" />
-                <div className="w-2/3">
-                    <Skeleton className="h-10 w-48 mb-2" />
-                    <Skeleton className="h-6 w-full max-w-sm" />
-                </div>
+                <Skeleton className="h-10 w-48" />
              </>
            ) : (
             <>
@@ -124,14 +121,9 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
                     />
                   )}
                 </div>
-                <div>
                 <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight">
                     {genre.name}
                 </h1>
-                <p className="mt-2 text-lg text-muted-foreground">
-                    {genre.description}
-                </p>
-                </div>
             </>
            )}
         </div>
