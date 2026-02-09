@@ -44,8 +44,11 @@
           "description": "The title of the hymn (e.g., Tai Shouri, Agios)."
         },
         "genreId": {
-          "type": "string",
-          "description": "Reference to Genre. (Relationship: Genre 1:N Hymn)"
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "An array of Genre IDs this hymn belongs to. (Relationship: Genre M:N Hymn)"
         },
         "description": {
           "type": "string",

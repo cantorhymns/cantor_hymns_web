@@ -6,10 +6,17 @@ import { ChevronLeft } from 'lucide-react';
 import { useHymn } from '@/lib/hooks/useHymn';
 import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useMemo } from 'react';
 
 export function HymnClientPage({ hymnId }: { hymnId: string }) {
   const { data: hymn, isLoading: isHymnLoading } = useHymn(hymnId);
-  const { data: genre, isLoading: isGenreLoading } = useGenre(hymn?.genreId);
+
+  const primaryGenreId = useMemo(() => {
+    if (!hymn?.genreId) return undefined;
+    return Array.isArray(hymn.genreId) ? hymn.genreId[0] : hymn.genreId;
+  }, [hymn?.genreId]);
+
+  const { data: genre, isLoading: isGenreLoading } = useGenre(primaryGenreId);
 
   const isLoading = isHymnLoading || (hymn && !genre && isGenreLoading);
 

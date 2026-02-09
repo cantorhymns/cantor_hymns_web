@@ -11,7 +11,7 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
   const hymnsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     if (genreId) {
-        return query(collection(firestore, 'hymns'), where('genreId', '==', genreId));
+        return query(collection(firestore, 'hymns'), where('genreId', 'array-contains', genreId));
     }
     if (hymnIdsFilter && hymnIdsFilter.length > 0) {
         // Limited to 30 hymnIds
