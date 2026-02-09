@@ -6,7 +6,8 @@ export const genres = [
         "description": "Hymns for the Holy Pascha week.",
         "icon": "https://picsum.photos/seed/icon-holy-week/48/48",
         "backgroundUrl": "backgrounds/holy-week.jpg",
-        "active": true
+        "active": true,
+        "subGenres": ["General", "Vespers", "Matins"]
     },
     {
         "id": "kiahk",
@@ -39,6 +40,7 @@ export const hymns = [
         "id": "tai-shouri",
         "name": "Tai Shouri (Mournful)",
         "genreId": ["holy-week"],
+        "subGenreId": "Vespers",
         "description": "The hymn of the censer, offered during the Vespers and Matins prayers, sung in a mournful tune for Holy Week.",
         "lyricsEnglish": "",
         "lyricsCoptic": "",
@@ -48,6 +50,7 @@ export const hymns = [
         "id": "ti-shouri",
         "name": "Ti-Shouri (Mournful)",
         "genreId": ["holy-week"],
+        "subGenreId": "Vespers",
         "description": "The feminine version of 'Tai Shouri', the hymn of the censer, sung in a mournful tune for Holy Week.",
         "lyricsEnglish": "",
         "lyricsCoptic": "",
@@ -57,6 +60,7 @@ export const hymns = [
         "id": "omonogenees",
         "name": "O Monogenees",
         "genreId": ["holy-week"],
+        "subGenreId": "General",
         "description": "'O Only-Begotten Son', a hymn about the incarnation of Christ, sung during Holy Week.",
         "lyricsEnglish": "",
         "lyricsCoptic": "",
@@ -66,6 +70,7 @@ export const hymns = [
         "id": "tarh",
         "name": "Tarh",
         "genreId": ["holy-week"],
+        "subGenreId": "General",
         "description": "A mournful hymn sung during the Holy Pascha week, reflecting on the Passion of Christ.",
         "lyricsEnglish": "",
         "lyricsCoptic": "",

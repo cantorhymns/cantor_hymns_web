@@ -23,6 +23,7 @@ export interface Hymn {
   id: string;
   name: string;
   genreId: string | string[];
+  subGenreId?: string;
   description?: string;
   lyricsEnglish?: string;
   lyricsCoptic?: string;
@@ -37,4 +38,5 @@ export interface Genre {
   icon: string;
   backgroundUrl?: string;
   active: boolean;
+  subGenres?: string[];
 }

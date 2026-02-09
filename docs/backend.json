@@ -25,6 +25,13 @@
         "active": {
             "type": "boolean",
             "description": "Indicates if the genre is available to be displayed in the app."
+        },
+        "subGenres": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "An optional list of sub-sections within this genre (e.g., 'Vespers', 'Matins')."
         }
       },
       "required": [
@@ -49,6 +56,10 @@
             "type": "string"
           },
           "description": "An array of Genre IDs this hymn belongs to. (Relationship: Genre M:N Hymn)"
+        },
+        "subGenreId": {
+            "type": "string",
+            "description": "The ID of the sub-genre this hymn belongs to, if applicable."
         },
         "description": {
           "type": "string",

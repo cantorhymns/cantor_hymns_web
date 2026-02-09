@@ -12,7 +12,46 @@ import { ChevronLeft, Music } from 'lucide-react';
 import { useHymns } from '@/lib/hooks/useHymns';
 import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
-import type { Genre } from '@/lib/types';
+import type { Genre, Hymn } from '@/lib/types';
+import { useMemo } from 'react';
+
+const HymnCard = ({ hymn }: { hymn: Hymn }) => {
+  const learnCount = hymn.recordings?.filter(r => r.mode === 'learn').length || 0;
+  const listenCount = hymn.recordings?.filter(r => r.mode === 'listen').length || 0;
+  return (
+    <Link href={`/hymn/${hymn.id}`} key={hymn.id} className="group">
+      <Card className="h-full flex flex-col transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 group-hover:border-primary/50">
+        <CardHeader className="flex-grow">
+          <div className="mb-3">
+            <Music className="h-8 w-8 text-primary/50" />
+          </div>
+          <CardTitle className="font-headline text-2xl text-primary">
+            {hymn.name}
+          </CardTitle>
+          <CardDescription className="flex items-center gap-4 text-base">
+            {learnCount > 0 && (
+              <div className="flex items-center gap-1.5 font-medium">
+                <div className="h-2 w-2 rounded-full bg-green-500" />
+                <span>{learnCount} Learn</span>
+              </div>
+            )}
+            {listenCount > 0 && (
+              <div className="flex items-center gap-1.5 font-medium text-muted-foreground/80">
+                <span>{listenCount} Listen</span>
+              </div>
+            )}
+            {(learnCount === 0 && listenCount === 0) && (
+              <div className="flex items-center gap-1.5 font-medium text-muted-foreground/80">
+                <span>No active recordings</span>
+              </div>
+            )}
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    </Link>
+  );
+};
+
 
 export function GenreHymnList({ genreId }: { genreId: string }) {
   const { data: genre, isLoading: isGenreLoading } = useGenre(genreId);
@@ -20,6 +59,38 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
   
   const isLoading = isGenreLoading || areHymnsLoading;
   const isValidIconUrl = genre?.icon && (genre.icon.startsWith('http://') || genre.icon.startsWith('https://'));
+
+  const groupedHymns = useMemo(() => {
+    if (!hymns) return null;
+    if (!genre?.subGenres || genre.subGenres.length === 0) {
+      // No subgenres, return a single group with all hymns
+      return [{ name: null, hymns: hymns }];
+    }
+
+    // Initialize groups based on the genre's subGenres
+    const groups: { name: string, hymns: Hymn[] }[] = genre.subGenres.map(sg => ({ name: sg, hymns: [] }));
+    const subGenreSet = new Set(genre.subGenres);
+
+    hymns.forEach(hymn => {
+      let targetGroup;
+      // Check if the hymn has a valid subGenreId that exists in the genre's subGenres
+      if (hymn.subGenreId && subGenreSet.has(hymn.subGenreId)) {
+        targetGroup = groups.find(g => g.name === hymn.subGenreId);
+      }
+      
+      // If no valid subGenreId, or it doesn't match, add to the first sub-genre group
+      if (!targetGroup) {
+        targetGroup = groups[0];
+      }
+      
+      targetGroup.hymns.push(hymn);
+    });
+
+    // Return only the groups that have hymns in them
+    return groups.filter(g => g.hymns.length > 0);
+
+  }, [genre, hymns]);
+
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
@@ -78,44 +149,24 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
                 </Card>
             ))}
          </div>
-      ) : hymns && hymns.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {hymns.map((hymn) => {
-            const learnCount = hymn.recordings?.filter(r => r.mode === 'learn').length || 0;
-            const listenCount = hymn.recordings?.filter(r => r.mode === 'listen').length || 0;
-            return (
-                <Link href={`/hymn/${hymn.id}`} key={hymn.id} className="group">
-                <Card className="h-full flex flex-col transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 group-hover:border-primary/50">
-                    <CardHeader className="flex-grow">
-                    <div className="mb-3">
-                        <Music className="h-8 w-8 text-primary/50" />
-                    </div>
-                    <CardTitle className="font-headline text-2xl text-primary">
-                        {hymn.name}
-                    </CardTitle>
-                    <CardDescription className="flex items-center gap-4 text-base">
-                        {learnCount > 0 && (
-                            <div className="flex items-center gap-1.5 font-medium">
-                                <div className="h-2 w-2 rounded-full bg-green-500" />
-                                <span>{learnCount} Learn</span>
-                            </div>
-                        )}
-                        {listenCount > 0 && (
-                             <div className="flex items-center gap-1.5 font-medium text-muted-foreground/80">
-                                <span>{listenCount} Listen</span>
-                            </div>
-                        )}
-                        {(learnCount === 0 && listenCount === 0) && (
-                             <div className="flex items-center gap-1.5 font-medium text-muted-foreground/80">
-                                <span>No active recordings</span>
-                            </div>
-                        )}
-                    </CardDescription>
-                    </CardHeader>
-                </Card>
-                </Link>
-            )
-          })}
+      ) : groupedHymns && groupedHymns.length > 0 ? (
+        <div className="space-y-12">
+          {groupedHymns.map((group, index) => (
+            <div key={group.name || index}>
+              {group.name && (
+                <h2 className="text-2xl font-headline font-bold text-primary mb-6 border-b pb-2">{group.name}</h2>
+              )}
+              {group.hymns.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {group.hymns.map((hymn) => (
+                        <HymnCard key={hymn.id} hymn={hymn} />
+                    ))}
+                  </div>
+              ) : (
+                <p className="text-muted-foreground">No hymns in this section.</p>
+              )}
+            </div>
+          ))}
         </div>
       ) : (
         <div className="text-center py-16">

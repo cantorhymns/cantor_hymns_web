@@ -79,7 +79,8 @@ async function seedDatabase() {
         description: genre.description,
         icon: genre.icon,
         backgroundUrl: genre.backgroundUrl || "",
-        active: genre.active
+        active: genre.active,
+        subGenres: genre.subGenres || []
       });
     });
 
@@ -98,6 +99,7 @@ async function seedDatabase() {
         seedBatch.set(docRef, {
             name: hymn.name,
             genreId: hymn.genreId,
+            subGenreId: hymn.subGenreId || '',
             description: hymn.description || '',
             lyricsEnglish: hymn.lyricsEnglish || '',
             lyricsCoptic: hymn.lyricsCoptic || '',
