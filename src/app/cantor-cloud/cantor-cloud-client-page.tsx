@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -37,18 +38,26 @@ export function CantorCloudClientPage() {
   // Create a list of hymns that are eligible for CantorCloud
   const activeHymnsForCloud = useMemo(() => {
     if (!allHymns || !allGenres || !allCantors) return [];
-
+  
     const activeGenreIds = new Set(
-        allGenres.filter(g => g.cantorCloudActive).map(g => g.id)
+      allGenres.filter(g => g.cantorCloudActive).map(g => g.id)
     );
     const activeCantorIds = new Set(
-        allCantors.filter(c => c.cantorCloudActive).map(c => c.id)
+      allCantors.filter(c => c.cantorCloudActive).map(c => c.id)
     );
-
-    return allHymns.filter(hymn => {
-        const hasActiveGenre = hymn.genreId.some(gId => activeGenreIds.has(gId));
-        const hasActiveCantorRecording = (hymn.recordings || []).some(rec => activeCantorIds.has(rec.cantorId));
-        return hasActiveGenre && hasActiveCantorRecording;
+  
+    // Create a new array of hymns where each hymn's recordings are filtered
+    const hymnsWithFilteredRecordings = allHymns.map(hymn => {
+      const filteredRecordings = (hymn.recordings || []).filter(rec => activeCantorIds.has(rec.cantorId));
+      return { ...hymn, recordings: filteredRecordings };
+    });
+  
+    // Then, filter this new array of hymns
+    return hymnsWithFilteredRecordings.filter(hymn => {
+      const hasActiveGenre = hymn.genreId.some(gId => activeGenreIds.has(gId));
+      // A hymn is valid for the cloud if it has an active genre AND has any recordings left after filtering by cantor
+      const hasActiveCantorRecording = hymn.recordings.length > 0;
+      return hasActiveGenre && hasActiveCantorRecording;
     });
   }, [allHymns, allGenres, allCantors]);
 
@@ -56,16 +65,16 @@ export function CantorCloudClientPage() {
   // Main playlist management effect
   useEffect(() => {
     // Guard: wait for all data to be ready
-    if (hymnsLoading || genresLoading || cantorsLoading) return;
+    if (hymnsLoading || genresLoading || cantorsLoading || !allHymns) return;
 
-    if (isInitialLoad && (activeHymnsForCloud.length > 0 || searchParams.get('hymnId'))) {
+    if (isInitialLoad) {
       const startHymnId = searchParams.get('hymnId');
       let newPlaylist: Hymn[] = [];
       let newAutoplay = false;
 
       if (startHymnId) {
         // Coming from a specific hymn page
-        const startHymn = allHymns?.find(h => h.id === startHymnId);
+        const startHymn = allHymns.find(h => h.id === startHymnId);
         if (startHymn) {
           const otherHymns = shuffleArray(activeHymnsForCloud.filter(h => h.id !== startHymnId)).slice(0, 19);
           newPlaylist = [startHymn, ...otherHymns];
@@ -107,7 +116,7 @@ export function CantorCloudClientPage() {
   };
 
   const isLoading = hymnsLoading || genresLoading || cantorsLoading || isInitialLoad;
-  const showPlayer = !isLoading && currentHymn;
+  const showPlayer = !isLoading && currentHymn && (currentHymn.recordings?.length ?? 0) > 0;
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">

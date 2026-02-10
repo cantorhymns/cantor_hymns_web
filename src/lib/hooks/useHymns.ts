@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { collection, query, where } from 'firebase/firestore';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { Hymn, Recording } from '@/lib/types';
+import { Hymn, Recording, Cantor } from '@/lib/types';
 
 export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
   const firestore = useFirestore();
@@ -44,37 +44,73 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
   }, [firestore, hymnIds]);
 
   const { data: recordings, isLoading: areRecordingsLoading, error: recordingsError } = useCollection<Recording>(recordingsQuery);
+  
+  const cantorIds = useMemo(() => {
+    if (!recordings) return [];
+    // Use a Set to ensure IDs are unique, then convert back to an array.
+    return [...new Set(recordings.map(r => r.cantorId).filter(id => !!id))];
+  }, [recordings]);
+
+  const cantorsQuery = useMemoFirebase(() => {
+    if (!firestore || cantorIds.length === 0) return null;
+    // Firestore 'in' queries are limited to 30 items.
+    return query(collection(firestore, 'cantors'), where('__name__', 'in', cantorIds.slice(0, 30)));
+  }, [firestore, cantorIds]);
+  
+  const { data: cantors, isLoading: areCantorsLoading, error: cantorsError } = useCollection<Cantor>(cantorsQuery);
+
+  const cantorsMap = useMemo(() => {
+    if (!cantors) return new Map<string, Cantor>();
+    return new Map(cantors.map(c => [c.id, c]));
+  }, [cantors]);
 
   const hymnsWithRecordings = useMemo(() => {
     if (!sortedHymns) return null;
     
-    // Don't return partial data; wait for recordings to load if we have hymnIds
-    if (hymnIds.length > 0 && areRecordingsLoading) {
+    const isDataLoading = hymnIds.length > 0 && (areRecordingsLoading || areCantorsLoading);
+    if (isDataLoading) {
       return null;
     }
 
     const recordingsByHymnId = new Map<string, Recording[]>();
     if (recordings) {
-        // Group all active recordings by hymnId
+        // Group all active recordings by hymnId, now with cantor info
         recordings.forEach(rec => {
+            const populatedRec = {
+              ...rec,
+              cantor: cantorsMap.get(rec.cantorId)
+            };
             if (!recordingsByHymnId.has(rec.hymnId)) {
                 recordingsByHymnId.set(rec.hymnId, []);
             }
-            recordingsByHymnId.get(rec.hymnId)!.push(rec);
+            recordingsByHymnId.get(rec.hymnId)!.push(populatedRec);
         });
     }
     
-    return sortedHymns.map(hymn => ({
-        ...hymn,
-        recordings: recordingsByHymnId.get(hymn.id) || []
-    })).filter(hymn => hymn.recordings.length > 0);
+    return sortedHymns.map(hymn => {
+        const hymnRecordings = recordingsByHymnId.get(hymn.id) || [];
+        
+        // Sort recordings within the hymn
+        hymnRecordings.sort((a, b) => {
+            if (a.mode === 'learn' && b.mode !== 'learn') return -1;
+            if (a.mode !== 'learn' && b.mode === 'learn') return 1;
+            const rankA = a.cantor?.rank ?? 99;
+            const rankB = b.cantor?.rank ?? 99;
+            return rankA - rankB;
+        });
 
-  }, [sortedHymns, recordings, hymnIds, areRecordingsLoading]);
+        return {
+            ...hymn,
+            recordings: hymnRecordings
+        };
+    });
+
+  }, [sortedHymns, recordings, hymnIds, areRecordingsLoading, cantorsMap, areCantorsLoading]);
 
 
   return { 
     data: hymnsWithRecordings, 
-    isLoading: areHymnsLoading || (hymns != null && hymnsWithRecordings === null),
-    error: hymnsError || recordingsError
+    isLoading: areHymnsLoading || areCantorsLoading || (hymns != null && hymnsWithRecordings === null),
+    error: hymnsError || recordingsError || cantorsError
   };
 }
