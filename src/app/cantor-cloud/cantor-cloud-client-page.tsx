@@ -137,13 +137,13 @@ export function CantorCloudClientPage() {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % playlist.length);
   }, [playlist.length]);
 
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     setAutoplay(true);
     setCurrentIndex(
       (prevIndex) =>
         (prevIndex - 1 + playlist.length) % playlist.length
     );
-  };
+  }, [playlist.length]);
 
   const handleSelectTrack = (index: number) => {
     setAutoplay(true);
