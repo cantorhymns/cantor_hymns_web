@@ -24,30 +24,15 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // Helper function to check if a user is signed in.
-    // This makes the rules more readable.
     function isSignedIn() {
       return request.auth != null;
     }
 
-    // By default, nobody can write to any document.
-    // Read access is granted on a per-collection basis below.
+    // By default, allow anyone to read any data.
+    // Restrict all writes (create, update, delete) to authenticated users.
     match /{document=**} {
+      allow read: if true;
       allow write: if isSignedIn();
-      allow read: if false; // Default deny read
-    }
-
-    // Public collections can be read by anyone.
-    match /genres/{genreId} {
-      allow read: if true;
-    }
-    match /hymns/{hymnId} {
-      allow read: if true;
-    }
-    match /recordings/{recordingId} {
-      allow read: if true;
-    }
-    match /cantors/{cantorId} {
-        allow read: if true;
     }
   }
 }
