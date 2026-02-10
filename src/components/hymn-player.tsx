@@ -349,6 +349,7 @@ export function HymnPlayer({
   const waveformInnerRef = useRef<HTMLDivElement>(null);
   const loopSectionRef = useRef<{ start: number, end: number } | null>(null);
   const wasPlayingBeforeSeek = useRef(false);
+  const dragStartRef = useRef<{ x: number; time: number } | null>(null);
   
   const sortedMarks = useMemo(() => [...(currentRecording?.marks || [])].sort((a, b) => a - b), [currentRecording]);
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
@@ -419,9 +420,9 @@ export function HymnPlayer({
   }, [playbackRate]);
 
   const seek = useCallback((time: number) => {
-    if (!audioRef.current || duration <= 0) return;
+    if (!audioRef.current || !isFinite(duration) || duration <= 0) return;
     const newTime = Math.max(0, Math.min(time, duration));
-    if (audioRef.current) {
+    if (audioRef.current && isFinite(newTime)) {
       audioRef.current.currentTime = newTime;
     }
     setCurrentTime(newTime);
@@ -485,63 +486,46 @@ export function HymnPlayer({
   };
 
   const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-    e.preventDefault();
     const target = e.target as HTMLElement;
-    if (target.closest('[data-marker-toggle]')) {
+    if (target.closest('[data-marker-toggle]') || !isFinite(duration) || duration <= 0) {
       return;
     }
-    
-    if (!audioRef.current || !waveformContainerRef.current || duration <= 0) return;
+    e.preventDefault();
     
     setIsSeeking(true);
-    setIsDragging(false); // Assume click until a move event occurs
+    setIsDragging(false);
     
     wasPlayingBeforeSeek.current = isPlaying;
+    
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    dragStartRef.current = { x: clientX, time: currentTime };
   };
   
   const handleSeekMove = useCallback((e: MouseEvent | TouchEvent) => {
-    if (!isSeeking) return;
+    if (!isSeeking || !dragStartRef.current) return;
     e.preventDefault();
     
     if (!isDragging) {
       setIsDragging(true);
-      // This is the first move, so it's a drag. Pause audio for scrubbing.
-      if (wasPlayingBeforeSeek.current && audioRef.current) {
-          audioRef.current.pause();
-          setIsPlaying(false);
-      }
     }
 
-    // This is a drag, so apply INVERTED ABSOLUTE seek logic
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const containerRect = waveformContainerRef.current!.getBoundingClientRect();
-    
-    const progress = (clientX - containerRect.left) / containerRect.width;
-    const invertedProgress = 1 - progress;
+    const deltaX = clientX - dragStartRef.current.x;
 
-    const transform = window.getComputedStyle(waveformInnerRef.current!).transform;
-    let scrollOffset = 0;
-    if (transform !== 'none') {
-        const matrix = new DOMMatrix(transform);
-        scrollOffset = -matrix.e;
-    }
+    const SENSITIVITY = 0.15; // seconds per pixel
+    const timeChange = -deltaX * SENSITIVITY;
 
-    const totalWidth = waveformInnerRef.current!.scrollWidth;
-    const visibleWidth = containerRect.width;
+    const newTime = dragStartRef.current.time + timeChange;
+    seek(newTime);
 
-    const positionOnTotalWidth = scrollOffset + (invertedProgress * visibleWidth);
-    const time = (positionOnTotalWidth / totalWidth) * duration;
-    
-    seek(time);
-
-  }, [isSeeking, isDragging, duration, seek]);
+  }, [isSeeking, seek]);
 
   const handleSeekEnd = useCallback((e: MouseEvent | TouchEvent) => {
     if (!isSeeking) return;
     e.preventDefault();
     
     if (!isDragging) {
-      // It was a CLICK, not a drag. Apply DIRECT (non-inverted) absolute seek.
+      // It was a CLICK, not a drag. Apply DIRECT absolute seek.
       const clientX = 'changedTouches' in e ? e.changedTouches[0].clientX : e.clientX;
       const containerRect = waveformContainerRef.current!.getBoundingClientRect();
       const clickXInContainer = clientX - containerRect.left;
@@ -558,19 +542,11 @@ export function HymnPlayer({
       
       const time = (clickXInScroller / scrollerWidth) * duration;
       seek(time);
-    } else {
-      // It was a DRAG. Resume playing if it was playing before.
-      if (wasPlayingBeforeSeek.current && audioRef.current) {
-        audioRef.current.play().then(() => {
-          setIsPlaying(true);
-        }).catch(() => {
-          setIsPlaying(false);
-        });
-      }
     }
     
     setIsSeeking(false);
     setIsDragging(false);
+    dragStartRef.current = null;
   }, [isSeeking, isDragging, duration, seek]);
   
   useEffect(() => {
@@ -777,7 +753,7 @@ export function HymnPlayer({
       <Card className="w-full max-w-3xl mx-auto shadow-xl">
         <audio 
             ref={audioRef} 
-            src={audioSrc ?? undefined} 
+            src={audioSrc ?? undefined}
             preload="metadata"
             onLoadedData={handleLoadedData}
             onDurationChange={handleLoadedData}
