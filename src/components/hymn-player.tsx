@@ -336,6 +336,7 @@ export function HymnPlayer({
   const waveformInnerRef = useRef<HTMLDivElement>(null);
   const loopSectionRef = useRef<{ start: number, end: number } | null>(null);
   const wasPlayingBeforeSeek = useRef(false);
+  const seekStartRef = useRef<{ time: number; clientX: number } | null>(null);
   
   const sortedMarks = useMemo(() => [...(currentRecording?.marks || [])].sort((a, b) => a - b), [currentRecording]);
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
@@ -414,11 +415,11 @@ export function HymnPlayer({
 
   const seek = useCallback((time: number) => {
     if (!audioRef.current || duration <= 0) return;
-    const newTime = Math.max(0, Math.min(time, time, duration));
+    const newTime = Math.max(0, Math.min(time, duration));
     if (audioRef.current) {
       audioRef.current.currentTime = newTime;
-      setCurrentTime(newTime);
     }
+    setCurrentTime(newTime);
   }, [duration]);
   
   const handleTimeUpdate = useCallback(() => {
@@ -527,26 +528,6 @@ export function HymnPlayer({
     }
   };
 
-  const updateSeekPosition = useCallback((clientX: number) => {
-    if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
-
-    const containerRect = waveformContainerRef.current.getBoundingClientRect();
-    const clickXInContainer = clientX - containerRect.left;
-
-    const transform = window.getComputedStyle(waveformInnerRef.current).transform;
-    let scrollLeft = 0;
-    if (transform !== 'none') {
-        const matrix = new DOMMatrix(transform);
-        scrollLeft = -matrix.e;
-    }
-
-    const clickXInScroller = clickXInContainer + scrollLeft;
-    const scrollerWidth = waveformInnerRef.current.scrollWidth;
-
-    const newTime = (clickXInScroller / scrollerWidth) * duration;
-    seek(newTime);
-  }, [duration, seek]);
-
   const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     e.preventDefault();
     const target = e.target as HTMLElement;
@@ -554,30 +535,64 @@ export function HymnPlayer({
       return;
     }
     
-    if (!audioRef.current) return;
+    if (!audioRef.current || !waveformContainerRef.current || duration <= 0) return;
     
-    setIsSeeking(true);
     wasPlayingBeforeSeek.current = isPlaying;
     if (isPlaying) {
       audioRef.current.pause();
-      setIsPlaying(false);
     }
+    setIsPlaying(false);
+    setIsSeeking(true);
     
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    updateSeekPosition(clientX);
+    
+    // --- Perform initial seek to the clicked position ---
+    const containerRect = waveformContainerRef.current.getBoundingClientRect();
+    const clickXInContainer = clientX - containerRect.left;
+
+    const transform = window.getComputedStyle(waveformInnerRef.current!).transform;
+    let scrollLeft = 0;
+    if (transform !== 'none') {
+        const matrix = new DOMMatrix(transform);
+        scrollLeft = -matrix.e;
+    }
+
+    const clickXInScroller = clickXInContainer + scrollLeft;
+    const scrollerWidth = waveformInnerRef.current!.scrollWidth;
+
+    const newTime = (clickXInScroller / scrollerWidth) * duration;
+    seek(newTime);
+    // --- End of initial seek ---
+
+    // Store initial state for the drag operation that follows the click
+    seekStartRef.current = {
+        time: newTime,
+        clientX: clientX,
+    };
   };
 
   const handleSeekMove = useCallback((e: MouseEvent | TouchEvent) => {
-    if (!isSeeking) return;
+    if (!isSeeking || !seekStartRef.current || !waveformInnerRef.current || duration <= 0) return;
     e.preventDefault();
+    
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    updateSeekPosition(clientX);
-  }, [isSeeking, updateSeekPosition]);
+    const deltaX = clientX - seekStartRef.current.clientX;
+
+    const timePerPixel = duration / waveformInnerRef.current!.scrollWidth;
+    const timeDelta = deltaX * timePerPixel;
+    
+    // REVERSED direction: move left (negative deltaX) to fast-forward (increase time)
+    const newTime = seekStartRef.current.time - timeDelta;
+    
+    seek(newTime);
+  }, [isSeeking, duration, seek]);
 
   const handleSeekEnd = useCallback((e: MouseEvent | TouchEvent) => {
     if (!isSeeking) return;
     e.preventDefault();
+    
     setIsSeeking(false);
+    seekStartRef.current = null;
 
     if (wasPlayingBeforeSeek.current && audioRef.current) {
         audioRef.current.play().then(() => {
