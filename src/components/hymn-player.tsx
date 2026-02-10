@@ -347,7 +347,6 @@ export function HymnPlayer({
   const waveformInnerRef = useRef<HTMLDivElement>(null);
   const loopSectionRef = useRef<{ start: number, end: number } | null>(null);
   const wasPlayingBeforeSeek = useRef(false);
-  const seekStartRef = useRef<{ time: number; clientX: number } | null>(null);
   
   const sortedMarks = useMemo(() => [...(currentRecording?.marks || [])].sort((a, b) => a - b), [currentRecording]);
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
@@ -498,9 +497,13 @@ export function HymnPlayer({
     }
     setIsPlaying(false);
     setIsSeeking(true);
+  };
+  
+  const handleSeekMove = useCallback((e: MouseEvent | TouchEvent) => {
+    if (!isSeeking || !waveformInnerRef.current || !waveformContainerRef.current || duration <= 0) return;
+    e.preventDefault();
     
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    
     const containerRect = waveformContainerRef.current.getBoundingClientRect();
     const clickXInContainer = clientX - containerRect.left;
 
@@ -513,38 +516,9 @@ export function HymnPlayer({
 
     const clickXInScroller = clickXInContainer + scrollLeft;
     const scrollerWidth = waveformInnerRef.current!.scrollWidth;
-
-    const newTime = (clickXInScroller / scrollerWidth) * duration;
-    seek(newTime);
-
-    seekStartRef.current = {
-        time: newTime,
-        clientX: clientX,
-    };
-  };
-
-  const handleSeekMove = useCallback((e: MouseEvent | TouchEvent) => {
-    if (!isSeeking || !seekStartRef.current || !waveformInnerRef.current || !waveformContainerRef.current || duration <= 0) return;
-    e.preventDefault();
     
-    const currentX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    
-    const containerRect = waveformContainerRef.current.getBoundingClientRect();
-    const clickXInContainer = currentX - containerRect.left;
-
-    const transform = window.getComputedStyle(waveformInnerRef.current!).transform;
-    let scrollLeft = 0;
-    if (transform !== 'none') {
-        const matrix = new DOMMatrix(transform);
-        scrollLeft = -matrix.e;
-    }
-
-    const clickXInScroller = clickXInContainer + scrollLeft;
-    const scrollerWidth = waveformInnerRef.current!.scrollWidth;
-    
-    const newTime = (clickXInScroller / scrollerWidth) * duration;
-
-    seek(newTime);
+    const time = (clickXInScroller / scrollerWidth) * duration;
+    seek(time);
   }, [isSeeking, duration, seek]);
 
   const handleSeekEnd = useCallback((e: MouseEvent | TouchEvent) => {
@@ -552,14 +526,13 @@ export function HymnPlayer({
     e.preventDefault();
     
     setIsSeeking(false);
-    seekStartRef.current = null;
 
     if (wasPlayingBeforeSeek.current && audioRef.current) {
-        audioRef.current.play().then(() => {
-            setIsPlaying(true);
-        }).catch(() => {
-            setIsPlaying(false);
-        });
+      audioRef.current.play().then(() => {
+        setIsPlaying(true);
+      }).catch(() => {
+        setIsPlaying(false);
+      });
     }
   }, [isSeeking]);
   
@@ -767,7 +740,7 @@ export function HymnPlayer({
       <Card className="w-full max-w-3xl mx-auto shadow-xl">
         <audio 
             ref={audioRef} 
-            src={audioSrc || ''} 
+            src={audioSrc ?? undefined} 
             preload="metadata"
             onLoadedData={handleLoadedData}
             onDurationChange={handleLoadedData}
@@ -777,9 +750,11 @@ export function HymnPlayer({
         />
         <CardHeader>
             <div className="flex justify-between items-start gap-4">
-                <CardTitle className="font-headline text-3xl text-primary">
-                    {hymn.name}
-                </CardTitle>
+                <div className="flex-1 min-w-0">
+                    <CardTitle className="font-headline text-3xl text-primary">
+                        {hymn.name}
+                    </CardTitle>
+                </div>
                 <div className="flex-shrink-0">
                     {hymn.recordings && hymn.recordings.length > 1 ? (
                         <Select
@@ -815,11 +790,9 @@ export function HymnPlayer({
                     )}
                 </div>
             </div>
-
-            {hymn.description && (
+             {hymn.description && (
                 <p className="text-muted-foreground mt-2">{hymn.description}</p>
             )}
-           
             {showLyricsToggleButton && hasAnyLyrics && (
                 <div className="pt-4">
                     <Button 
