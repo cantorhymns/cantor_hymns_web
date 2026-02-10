@@ -35,13 +35,15 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
   }, [hymns, genreId]);
 
   const hymnIds = useMemo(() => sortedHymns?.map(h => h.id) || [], [sortedHymns]);
+  
+  const shouldFetchRelatedData = !!genreId || (!!hymnIdsFilter && hymnIdsFilter.length > 0);
 
   const recordingsQuery = useMemoFirebase(() => {
-    if (!firestore || hymnIds.length === 0) return null;
+    if (!firestore || hymnIds.length === 0 || !shouldFetchRelatedData) return null;
     // Firestore 'in' query is limited to 30 items. If you expect more, you'll need to batch queries.
     // Fetch only active recordings for the hymns.
     return query(collection(firestore, 'recordings'), where('hymnId', 'in', hymnIds.slice(0,30)), where('active', '==', true));
-  }, [firestore, hymnIds]);
+  }, [firestore, hymnIds, shouldFetchRelatedData]);
 
   const { data: recordings, isLoading: areRecordingsLoading, error: recordingsError } = useCollection<Recording>(recordingsQuery);
   
@@ -52,10 +54,10 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
   }, [recordings]);
 
   const cantorsQuery = useMemoFirebase(() => {
-    if (!firestore || cantorIds.length === 0) return null;
+    if (!firestore || cantorIds.length === 0 || !shouldFetchRelatedData) return null;
     // Firestore 'in' queries are limited to 30 items.
     return query(collection(firestore, 'cantors'), where('__name__', 'in', cantorIds.slice(0, 30)));
-  }, [firestore, cantorIds]);
+  }, [firestore, cantorIds, shouldFetchRelatedData]);
   
   const { data: cantors, isLoading: areCantorsLoading, error: cantorsError } = useCollection<Cantor>(cantorsQuery);
 
@@ -67,6 +69,10 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
   const hymnsWithRecordings = useMemo(() => {
     if (!sortedHymns) return null;
     
+    if (!shouldFetchRelatedData) {
+      return sortedHymns.map(h => ({ ...h, recordings: [] }));
+    }
+
     const isDataLoading = hymnIds.length > 0 && (areRecordingsLoading || areCantorsLoading);
     if (isDataLoading) {
       return null;
@@ -105,12 +111,13 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
         };
     });
 
-  }, [sortedHymns, recordings, hymnIds, areRecordingsLoading, cantorsMap, areCantorsLoading]);
+  }, [sortedHymns, recordings, hymnIds, areRecordingsLoading, cantorsMap, areCantorsLoading, shouldFetchRelatedData]);
 
+  const isLoading = areHymnsLoading || (shouldFetchRelatedData && (hymns != null && hymnsWithRecordings === null));
 
   return { 
     data: hymnsWithRecordings, 
-    isLoading: areHymnsLoading || areCantorsLoading || (hymns != null && hymnsWithRecordings === null),
+    isLoading,
     error: hymnsError || recordingsError || cantorsError
   };
 }
