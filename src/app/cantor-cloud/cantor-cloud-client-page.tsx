@@ -36,8 +36,8 @@ export function CantorCloudClientPage() {
   const searchParams = useSearchParams();
   
   // State for filters and playback
-  const [genreFilter, setGenreFilter] = useState<string>(searchParams.get('genreId') || '');
-  const [cantorFilter, setCantorFilter] = useState<string>('');
+  const [genreFilter, setGenreFilter] = useState<string>(searchParams.get('genreId') || 'all');
+  const [cantorFilter, setCantorFilter] = useState<string>('all');
   const [isShuffled, setIsShuffled] = useState<boolean>(false);
   const [playlist, setPlaylist] = useState<Hymn[]>([]);
   const [shuffledPlaylist, setShuffledPlaylist] = useState<Hymn[]>([]);
@@ -74,10 +74,10 @@ export function CantorCloudClientPage() {
 
     let filteredHymns = [...hymnsWithPopulatedCantors];
 
-    if (genreFilter) {
+    if (genreFilter && genreFilter !== 'all') {
       filteredHymns = filteredHymns.filter(h => h.genreId.includes(genreFilter));
     }
-    if (cantorFilter) {
+    if (cantorFilter && cantorFilter !== 'all') {
       filteredHymns = filteredHymns.filter(h => 
         (h.recordings || []).some(r => r.cantorId === cantorFilter)
       );
@@ -142,7 +142,7 @@ export function CantorCloudClientPage() {
                         <SelectValue placeholder="All Genres" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All Genres</SelectItem>
+                        <SelectItem value="all">All Genres</SelectItem>
                         {allGenres?.map(g => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}
                     </SelectContent>
                 </Select>
@@ -151,7 +151,7 @@ export function CantorCloudClientPage() {
                         <SelectValue placeholder="All Cantors" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All Cantors</SelectItem>
+                        <SelectItem value="all">All Cantors</SelectItem>
                         {allCantors?.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
                     </SelectContent>
                 </Select>
@@ -185,8 +185,8 @@ export function CantorCloudClientPage() {
                     <p className="mt-2 text-muted-foreground">
                         {isLoading ? "Loading hymns..." : "Try adjusting your filters or there might be no hymns available."}
                     </p>
-                    {(genreFilter || cantorFilter) && (
-                        <Button variant="outline" className="mt-4" onClick={() => { setGenreFilter(''); setCantorFilter(''); }}>
+                    {(genreFilter !== 'all' || cantorFilter !== 'all') && (
+                        <Button variant="outline" className="mt-4" onClick={() => { setGenreFilter('all'); setCantorFilter('all'); }}>
                            <X className="mr-2 h-4 w-4" /> Clear Filters
                         </Button>
                     )}
