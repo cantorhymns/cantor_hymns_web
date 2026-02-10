@@ -42,9 +42,9 @@ export function Header() {
           </span>
         </Link>
         <div className="flex items-center gap-4">
-            <Link href="/cantor-cloud" className="group text-primary hover:text-primary/80 transition-colors">
+            <Link href="/cantor-cloud" className="group text-primary hover:text-primary/80 transition-colors flex items-center gap-2">
                 <ListMusic className="h-7 w-7" />
-                <span className="sr-only">CantorCloud</span>
+                <span className="font-headline text-lg font-bold">CantorCloud</span>
             </Link>
         </div>
       </div>

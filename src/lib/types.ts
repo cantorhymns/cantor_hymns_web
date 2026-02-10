@@ -6,6 +6,7 @@ export interface Cantor {
   id: string;
   name: string;
   rank: number;
+  cantorCloudActive?: boolean;
 }
 
 export interface Recording {

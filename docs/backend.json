@@ -149,6 +149,10 @@
         "rank": {
           "type": "number",
           "description": "The display order for the cantor, smaller numbers are higher."
+        },
+        "cantorCloudActive": {
+            "type": "boolean",
+            "description": "Indicates if the cantor should be displayed in the CantorCloud filter list."
         }
       },
       "required": [

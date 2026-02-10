@@ -88,7 +88,7 @@ async function seedDatabase() {
     console.log(`Seeding ${cantors.length} cantors...`);
     cantors.forEach((cantor) => {
         const docRef = doc(db, 'cantors', cantor.id);
-        seedBatch.set(docRef, { name: cantor.name, rank: cantor.rank });
+        seedBatch.set(docRef, { name: cantor.name, rank: cantor.rank, cantorCloudActive: cantor.cantorCloudActive ?? false });
     });
 
     // Seed Hymns

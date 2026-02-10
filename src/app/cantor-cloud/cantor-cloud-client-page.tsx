@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
-import { Shuffle, SkipBack, SkipForward, ListMusic, X } from 'lucide-react';
+import { Shuffle, SkipBack, SkipForward, ListMusic, X, Rewind, FastForward } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
@@ -43,11 +43,32 @@ export function CantorCloudClientPage() {
   const [shuffledPlaylist, setShuffledPlaylist] = useState<Hymn[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [initialHymnSet, setInitialHymnSet] = useState(false);
+  const [autoplay, setAutoplay] = useState(false);
   
   // Data fetching
   const { data: allHymns, isLoading: hymnsLoading } = useHymns();
   const { data: allGenres, isLoading: genresLoading } = useGenres();
   const { data: allCantors, isLoading: cantorsLoading } = useCantors();
+
+  // Create a set of cantor IDs that have active recordings
+  const activeCantorIdsWithHymns = useMemo(() => {
+    if (!allHymns) return new Set<string>();
+    const cantorIds = new Set<string>();
+    allHymns.forEach(hymn => {
+        (hymn.recordings || []).forEach(rec => {
+            cantorIds.add(rec.cantorId);
+        });
+    });
+    return cantorIds;
+  }, [allHymns]);
+
+  // Filter cantors for the dropdown
+  const filteredCantors = useMemo(() => {
+    if (!allCantors) return [];
+    return allCantors.filter(c => 
+        c.cantorCloudActive && activeCantorIdsWithHymns.has(c.id)
+    );
+  }, [allCantors, activeCantorIdsWithHymns]);
 
   // Populate cantor details into each hymn's recordings
   const hymnsWithPopulatedCantors = useMemo(() => {
@@ -107,6 +128,7 @@ export function CantorCloudClientPage() {
             const startIndex = playlist.findIndex(h => h.id === startHymnId);
             if (startIndex !== -1) {
                 setCurrentIndex(startIndex);
+                setAutoplay(true);
             }
         }
         setInitialHymnSet(true);
@@ -117,14 +139,17 @@ export function CantorCloudClientPage() {
   const currentHymn = currentPlaylist?.[currentIndex];
 
   const handleNext = useCallback(() => {
+    setAutoplay(true);
     setCurrentIndex(prevIndex => (prevIndex + 1) % currentPlaylist.length);
   }, [currentPlaylist.length]);
 
   const handlePrevious = () => {
+    setAutoplay(true);
     setCurrentIndex(prevIndex => (prevIndex - 1 + currentPlaylist.length) % currentPlaylist.length);
   };
 
   const handleSelectTrack = (index: number) => {
+    setAutoplay(true);
     setCurrentIndex(index);
   };
 
@@ -133,7 +158,6 @@ export function CantorCloudClientPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
-        <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight mb-8">CantorCloud</h1>
       
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
             <div className="flex flex-col md:flex-row gap-4 w-full">
@@ -152,7 +176,7 @@ export function CantorCloudClientPage() {
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">All Cantors</SelectItem>
-                        {allCantors?.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                        {filteredCantors?.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
                     </SelectContent>
                 </Select>
             </div>
@@ -164,7 +188,13 @@ export function CantorCloudClientPage() {
 
         {showPlayer ? (
             <div className="w-full max-w-3xl mx-auto">
-                <HymnPlayer hymn={currentHymn} onEnded={handleNext} />
+                <HymnPlayer 
+                  key={currentHymn.id}
+                  hymn={currentHymn} 
+                  onEnded={handleNext} 
+                  autoplay={autoplay}
+                  onAutoplayConsumed={() => setAutoplay(false)}
+                />
                 <div className="flex justify-center items-center gap-4 mt-4">
                     <Button variant="ghost" size="icon" onClick={handlePrevious}>
                         <SkipBack className="h-6 w-6" />

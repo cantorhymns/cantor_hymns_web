@@ -28,6 +28,7 @@ import {
   Maximize2,
   Minimize2,
   Type,
+  Rewind,
 } from "lucide-react";
 import { getDownloadURL, ref, getStorage } from "firebase/storage";
 import { useFirebase } from "@/firebase";
@@ -286,7 +287,7 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
 };
 
 
-export function HymnPlayer({ hymn, onEnded }: { hymn: Hymn; onEnded?: () => void }) {
+export function HymnPlayer({ hymn, onEnded, autoplay = false, onAutoplayConsumed }: { hymn: Hymn; onEnded?: () => void; autoplay?: boolean; onAutoplayConsumed?: () => void; }) {
   const { firebaseApp } = useFirebase();
   const storage = useMemo(() => firebaseApp ? getStorage(firebaseApp) : null, [firebaseApp]);
 
@@ -311,11 +312,12 @@ export function HymnPlayer({ hymn, onEnded }: { hymn: Hymn; onEnded?: () => void
   const waveformInnerRef = useRef<HTMLDivElement>(null);
   const seekStartRef = useRef({ x: 0, time: 0 });
   const loopSectionRef = useRef<{ start: number, end: number } | null>(null);
+  const ffClickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [ffClickLevel, setFfClickLevel] = useState(0);
 
   const sortedMarks = useMemo(() => [...(currentRecording?.marks || [])].sort((a, b) => a - b), [currentRecording]);
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
   
-  // Conditionally get marks based on whether the recording is in 'learn' mode
   const displayedMarks = useMemo(() => currentRecording?.mode === 'learn' ? sortedMarks : [], [currentRecording, sortedMarks]);
 
   const playbackSpeeds = [1.0, 1.25, 1.5, 1.75, 2.0];
@@ -325,14 +327,29 @@ export function HymnPlayer({ hymn, onEnded }: { hymn: Hymn; onEnded?: () => void
       setPlaybackRate(playbackSpeeds[nextIndex]);
   };
 
+  const ffSkips = [5, 10, 15];
+  const handleFastForward = () => {
+      if (ffClickTimeoutRef.current) {
+          clearTimeout(ffClickTimeoutRef.current);
+      }
+      const skipAmount = ffSkips[ffClickLevel];
+      handleSkip(skipAmount);
+      setFfClickLevel(prev => (prev + 1) % ffSkips.length);
+      ffClickTimeoutRef.current = setTimeout(() => {
+          setFfClickLevel(0);
+      }, 1500);
+  };
+  
   useEffect(() => {
-    // This effect now specifically handles setting the initial recording
-    // It will only run when hymn.recordings becomes available or changes.
+    return () => {
+        if (ffClickTimeoutRef.current) clearTimeout(ffClickTimeoutRef.current);
+    }
+  }, []);
+
+  useEffect(() => {
     if (hymn && hymn.recordings && hymn.recordings.length > 0) {
-      // The list from useHymn is already sorted, so we can just take the first one.
       setCurrentRecording(hymn.recordings[0]);
     } else {
-      // If there are no recordings, ensure nothing is selected.
       setCurrentRecording(undefined);
     }
   }, [hymn?.recordings]);
@@ -343,13 +360,13 @@ export function HymnPlayer({ hymn, onEnded }: { hymn: Hymn; onEnded?: () => void
       audio.pause();
     }
     
-    setIsPlaying(false);
+    setFfClickLevel(0);
+    if (ffClickTimeoutRef.current) clearTimeout(ffClickTimeoutRef.current);
     setCurrentTime(0);
     setPlaybackRate(1);
     setAudioSrc(null);
     setAudioError(null);
     setDuration(0);
-    // Set active marks only if the recording is in 'learn' mode
     setActiveMarks(currentRecording?.mode === 'learn' ? (currentRecording.marks || []) : []);
 
     if (currentRecording && storage) {
@@ -369,9 +386,20 @@ export function HymnPlayer({ hymn, onEnded }: { hymn: Hymn; onEnded?: () => void
     } else if (currentRecording && !storage) {
         setAudioError('Storage service is not available.');
     }
-
   }, [currentRecording, storage]);
 
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio && audioSrc && autoplay) {
+        audio.play().then(() => {
+            setIsPlaying(true);
+            onAutoplayConsumed?.();
+        }).catch(() => {
+            setIsPlaying(false);
+            onAutoplayConsumed?.();
+        });
+    }
+  }, [audioSrc, autoplay, onAutoplayConsumed]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -550,7 +578,7 @@ export function HymnPlayer({ hymn, onEnded }: { hymn: Hymn; onEnded?: () => void
   const handleSeekEnd = useCallback((e: MouseEvent | TouchEvent) => {
     if (!isSeeking) return;
     e.preventDefault();
-    setIsSeeking(false);
+    setIsPlaying(false);
     
     if(audioRef.current) {
       seek(audioRef.current.currentTime);
@@ -831,7 +859,12 @@ export function HymnPlayer({ hymn, onEnded }: { hymn: Hymn; onEnded?: () => void
                                   <SkipBack className="h-6 w-6" />
                                   <span className="sr-only">Previous Section</span>
                               </Button>
-                          ) : <div className="w-10" />}
+                          ) : (
+                            <Button variant="ghost" size="icon" onClick={() => handleSkip(-10)}>
+                                <Rewind className="h-6 w-6" />
+                                <span className="sr-only">Rewind 10 seconds</span>
+                            </Button>
+                          )}
                           <Button size="icon" className="h-16 w-16 rounded-full" onClick={handlePlayPause}>
                               {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
                               <span className="sr-only">{isPlaying ? "Pause" : "Play"}</span>
@@ -841,7 +874,12 @@ export function HymnPlayer({ hymn, onEnded }: { hymn: Hymn; onEnded?: () => void
                                   <SkipForward className="h-6 w-6" />
                                   <span className="sr-only">Next Section</span>
                               </Button>
-                          ) : <div className="w-10" />}
+                          ) : (
+                            <Button variant="ghost" size="icon" onClick={handleFastForward}>
+                                <FastForward className="h-6 w-6" />
+                                <span className="sr-only">Fast Forward</span>
+                            </Button>
+                          )}
                       </div>
                   </div>
                   
