@@ -54,15 +54,7 @@ export function CantorCloudClientPage() {
             ...rec,
             cantor: cantorsMap.get(rec.cantorId)
         }));
-
-        // Shuffle recordings for each hymn to add variety
-        if (populatedRecordings.length > 1) {
-            for (let i = populatedRecordings.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [populatedRecordings[i], populatedRecordings[j]] = [populatedRecordings[j], populatedRecordings[i]];
-            }
-        }
-
+        
         return {
             ...hymn,
             recordings: populatedRecordings
@@ -100,9 +92,16 @@ export function CantorCloudClientPage() {
       let newPlaylist: Hymn[] = [];
       let newAutoplay = false;
 
-      const activeHymnsWithShuffledRecordings = activeHymnsForCloud.map(hymn => {
-        if (hymn.recordings && hymn.recordings.length > 1) {
-            return { ...hymn, recordings: shuffleArray(hymn.recordings) };
+      const activeHymnsWithRandomizedRecordings = activeHymnsForCloud.map(hymn => {
+        if (hymn.recordings && hymn.recordings.length > 0) {
+            // For each hymn, pick a random recording to be the first one
+            const randomIndex = Math.floor(Math.random() * hymn.recordings.length);
+            const reorderedRecordings = [
+                hymn.recordings[randomIndex],
+                ...hymn.recordings.slice(0, randomIndex),
+                ...hymn.recordings.slice(randomIndex + 1)
+            ];
+            return { ...hymn, recordings: reorderedRecordings };
         }
         return hymn;
       });
@@ -110,16 +109,16 @@ export function CantorCloudClientPage() {
       if (startHymnId) {
         const startHymn = allHymnsWithRecordings.find(h => h.id === startHymnId);
         if (startHymn) {
-          const otherHymns = activeHymnsWithShuffledRecordings.filter(h => h.id !== startHymnId);
+          const otherHymns = activeHymnsWithRandomizedRecordings.filter(h => h.id !== startHymnId);
           const shuffledOtherHymns = shuffleArray(otherHymns).slice(0, 19);
           
           newPlaylist = [startHymn, ...shuffledOtherHymns];
           newAutoplay = true;
         } else {
-          newPlaylist = shuffleArray(activeHymnsWithShuffledRecordings).slice(0, 20);
+          newPlaylist = shuffleArray(activeHymnsWithRandomizedRecordings).slice(0, 20);
         }
       } else {
-        newPlaylist = shuffleArray(activeHymnsWithShuffledRecordings).slice(0, 20);
+        newPlaylist = shuffleArray(activeHymnsWithRandomizedRecordings).slice(0, 20);
       }
       
       setPlaylist(newPlaylist);
@@ -159,7 +158,6 @@ export function CantorCloudClientPage() {
       {showPlayer ? (
         <div className="w-full max-w-3xl mx-auto">
           <HymnPlayer
-            key={currentHymn.id}
             hymn={currentHymn}
             initialRecordingId={currentIndex === 0 ? startRecordingId ?? undefined : undefined}
             onEnded={handleNext}
