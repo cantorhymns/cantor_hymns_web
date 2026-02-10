@@ -29,6 +29,8 @@ import {
   Minimize2,
   Type,
   Rewind,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { getDownloadURL, ref, getStorage } from "firebase/storage";
 import { useFirebase } from "@/firebase";
@@ -287,11 +289,24 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
 };
 
 
-export function HymnPlayer({ hymn, onEnded, autoplay = false, onAutoplayConsumed }: { 
-    hymn: Hymn; 
-    onEnded?: () => void; 
-    autoplay?: boolean; 
-    onAutoplayConsumed?: () => void;
+export function HymnPlayer({
+  hymn,
+  onEnded,
+  autoplay = false,
+  onAutoplayConsumed,
+  onNext,
+  onPrevious,
+  hasNext,
+  hasPrevious,
+}: {
+  hymn: Hymn;
+  onEnded?: () => void;
+  autoplay?: boolean;
+  onAutoplayConsumed?: () => void;
+  onNext?: () => void;
+  onPrevious?: () => void;
+  hasNext?: boolean;
+  hasPrevious?: boolean;
 }) {
   const { firebaseApp } = useFirebase();
   const storage = useMemo(() => firebaseApp ? getStorage(firebaseApp) : null, [firebaseApp]);
@@ -874,6 +889,16 @@ export function HymnPlayer({ hymn, onEnded, autoplay = false, onAutoplayConsumed
                       </Button>
                   </div>
               </div>
+              {(onNext || onPrevious) && (
+                <div className="flex justify-center items-center gap-4 border-t pt-4 mt-4">
+                    <Button variant="outline" size="lg" onClick={onPrevious} disabled={!hasPrevious}>
+                        <ChevronLeft className="mr-2 h-5 w-5" /> Previous Hymn
+                    </Button>
+                    <Button variant="outline" size="lg" onClick={onNext} disabled={!hasNext}>
+                        Next Hymn <ChevronRight className="ml-2 h-5 w-5" />
+                    </Button>
+                </div>
+              )}
           </div>
           {isLoadingAudio && (
               <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center space-y-4">

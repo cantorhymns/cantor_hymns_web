@@ -7,8 +7,11 @@ import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemo } from 'react';
 import { Button } from '@/components/ui/button';
+import { useHymns } from '@/lib/hooks/useHymns';
+import { useRouter } from 'next/navigation';
 
 export function HymnClientPage({ hymnId }: { hymnId: string }) {
+  const router = useRouter();
   const { data: hymn, isLoading: isHymnLoading } = useHymn(hymnId);
 
   const primaryGenreId = useMemo(() => {
@@ -17,8 +20,36 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
   }, [hymn?.genreId]);
 
   const { data: genre, isLoading: isGenreLoading } = useGenre(primaryGenreId);
+  const { data: playlistHymns, isLoading: isPlaylistLoading } =
+    useHymns(primaryGenreId);
 
-  const isLoading = isHymnLoading || (hymn && !genre && isGenreLoading);
+  const { playlist, currentIndex } = useMemo(() => {
+    if (!playlistHymns) return { playlist: [], currentIndex: -1 };
+    const currentIdx = playlistHymns.findIndex((p) => p.id === hymnId);
+    return { playlist: playlistHymns, currentIndex: currentIdx };
+  }, [playlistHymns, hymnId]);
+
+  const hasPrevious = currentIndex > 0;
+  const hasNext = currentIndex !== -1 && currentIndex < playlist.length - 1;
+
+  const handlePrevious = () => {
+    if (hasPrevious) {
+      const previousHymnId = playlist[currentIndex - 1].id;
+      router.push(`/hymn/${previousHymnId}`);
+    }
+  };
+
+  const handleNext = () => {
+    if (hasNext) {
+      const nextHymnId = playlist[currentIndex + 1].id;
+      router.push(`/hymn/${nextHymnId}`);
+    }
+  };
+
+  const isLoading =
+    isHymnLoading ||
+    (primaryGenreId && isPlaylistLoading) ||
+    (hymn && !genre && isGenreLoading);
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
@@ -74,7 +105,13 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
           </div>
         </div>
       ) : (
-        <HymnPlayer hymn={hymn} />
+        <HymnPlayer
+          hymn={hymn}
+          onPrevious={handlePrevious}
+          onNext={handleNext}
+          hasPrevious={hasPrevious}
+          hasNext={hasNext}
+        />
       )}
     </div>
   );
