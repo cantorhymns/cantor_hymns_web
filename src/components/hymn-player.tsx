@@ -330,8 +330,8 @@ export function HymnPlayer({
   const audioRef = useRef<HTMLAudioElement>(null);
   const waveformContainerRef = useRef<HTMLDivElement>(null);
   const waveformInnerRef = useRef<HTMLDivElement>(null);
-  const seekStartRef = useRef({ x: 0, time: 0 });
   const loopSectionRef = useRef<{ start: number, end: number } | null>(null);
+  const wasPlayingBeforeSeek = useRef(false);
   
   const sortedMarks = useMemo(() => [...(currentRecording?.marks || [])].sort((a, b) => a - b), [currentRecording]);
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
@@ -519,68 +519,66 @@ export function HymnPlayer({
     }
   };
 
-  const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const target = e.target as HTMLElement;
-    if (target.closest('[data-marker-toggle]')) {
-      return;
-    }
-    setIsSeeking(true);
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    
+  const updateSeekPosition = useCallback((clientX: number) => {
     if (!waveformContainerRef.current || !waveformInnerRef.current || !audioRef.current || duration <= 0) return;
 
-    seekStartRef.current = { x: clientX, time: audioRef.current.currentTime };
-    
     const containerRect = waveformContainerRef.current.getBoundingClientRect();
     const clickXInContainer = clientX - containerRect.left;
-    
+
     const transform = window.getComputedStyle(waveformInnerRef.current).transform;
     let scrollLeft = 0;
     if (transform !== 'none') {
         const matrix = new DOMMatrix(transform);
         scrollLeft = -matrix.e;
     }
-    
+
     const clickXInScroller = clickXInContainer + scrollLeft;
     const scrollerWidth = waveformInnerRef.current.scrollWidth;
 
     const newTime = (clickXInScroller / scrollerWidth) * duration;
     seek(newTime);
+  }, [duration, seek]);
+
+  const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-marker-toggle]')) {
+      return;
+    }
+    
+    if (!audioRef.current) return;
+    
+    setIsSeeking(true);
+    wasPlayingBeforeSeek.current = isPlaying;
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
+    
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    updateSeekPosition(clientX);
   };
 
   const handleSeekMove = useCallback((e: MouseEvent | TouchEvent) => {
-    if (!isSeeking || !audioRef.current) return;
+    if (!isSeeking) return;
     e.preventDefault();
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-
-    if (!waveformContainerRef.current || !waveformInnerRef.current || duration <= 0) return;
-    
-    const dragDeltaX = clientX - seekStartRef.current.x;
-    
-    const scrollerWidth = waveformInnerRef.current.scrollWidth;
-    const timePerPixel = duration / scrollerWidth;
-    const timeDelta = dragDeltaX * timePerPixel;
-    
-    // REVERSED: Subtract timeDelta instead of adding it
-    const newTime = seekStartRef.current.time - timeDelta;
-
-    if (audioRef.current) {
-        const newClampedTime = Math.max(0, Math.min(newTime, duration));
-        audioRef.current.currentTime = newClampedTime;
-        setCurrentTime(newClampedTime);
-    }
-  }, [isSeeking, duration]);
+    updateSeekPosition(clientX);
+  }, [isSeeking, updateSeekPosition]);
 
   const handleSeekEnd = useCallback((e: MouseEvent | TouchEvent) => {
     if (!isSeeking) return;
     e.preventDefault();
-    setIsPlaying(false);
-    
-    if(audioRef.current) {
-      seek(audioRef.current.currentTime);
+    setIsSeeking(false);
+
+    if (wasPlayingBeforeSeek.current && audioRef.current) {
+        audioRef.current.play().then(() => {
+            setIsPlaying(true);
+        }).catch(() => {
+            setIsPlaying(false);
+        });
     }
-  }, [isSeeking, seek]);
+  }, [isSeeking]);
   
   useEffect(() => {
     if (isSeeking) {
