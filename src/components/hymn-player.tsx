@@ -573,16 +573,23 @@ export function HymnPlayer({
   };
 
   const handleSeekMove = useCallback((e: MouseEvent | TouchEvent) => {
-    if (!isSeeking || !seekStartRef.current || !waveformInnerRef.current || duration <= 0) return;
+    if (!isSeeking || !seekStartRef.current || !waveformInnerRef.current || !waveformContainerRef.current || duration <= 0) return;
     e.preventDefault();
     
-    const currentClientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const deltaX = seekStartRef.current.clientX - currentClientX;
+    const containerRect = waveformContainerRef.current.getBoundingClientRect();
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     
-    const scrollerWidth = waveformInnerRef.current.scrollWidth;
-    const timePerPixel = duration / scrollerWidth;
-    
-    const newTime = seekStartRef.current.time + deltaX * timePerPixel;
+    const clickXInContainer = clientX - containerRect.left;
+    const transform = window.getComputedStyle(waveformInnerRef.current!).transform;
+    let scrollLeft = 0;
+    if (transform !== 'none') {
+        const matrix = new DOMMatrix(transform);
+        scrollLeft = -matrix.e;
+    }
+
+    const clickXInScroller = clickXInContainer + scrollLeft;
+    const scrollerWidth = waveformInnerRef.current!.scrollWidth;
+    const newTime = (clickXInScroller / scrollerWidth) * duration;
     seek(newTime);
   }, [isSeeking, duration, seek]);
 
@@ -753,14 +760,9 @@ export function HymnPlayer({
         {audioSrc && <audio ref={audioRef} src={audioSrc} preload="metadata" />}
         <CardHeader>
             <div className="flex justify-between items-start gap-4">
-                <div className="min-w-0">
-                    <CardTitle className="font-headline text-3xl text-primary">
-                        {hymn.name}
-                    </CardTitle>
-                    {hymn.description && (
-                    <p className="text-muted-foreground mt-2">{hymn.description}</p>
-                    )}
-                </div>
+                <CardTitle className="font-headline text-3xl text-primary">
+                    {hymn.name}
+                </CardTitle>
                 <div className="flex-shrink-0">
                     {hymn.recordings && hymn.recordings.length > 1 ? (
                         <Select
@@ -792,14 +794,26 @@ export function HymnPlayer({
                     )}
                 </div>
             </div>
-           {showLyricsToggleButton && hasAnyLyrics && (
-            <div className="pt-4">
-                <Button variant="outline" onClick={() => setLyricsVisible(v => !v)}>
-                    <BookText className="mr-2 h-4 w-4" />
-                    <span>Lyrics</span>
-                </Button>
-            </div>
-          )}
+
+            {hymn.description && (
+                <p className="text-muted-foreground mt-2">{hymn.description}</p>
+            )}
+           
+            {showLyricsToggleButton && hasAnyLyrics && (
+                <div className="pt-4">
+                    <Button 
+                        variant="outline" 
+                        onClick={() => setLyricsVisible(v => !v)}
+                        className={cn(
+                            'transition-colors',
+                            lyricsVisible && 'bg-green-600 text-white hover:bg-green-700 hover:text-white border-green-700'
+                        )}
+                    >
+                        <BookText className="mr-2 h-4 w-4" />
+                        <span>Lyrics</span>
+                    </Button>
+                </div>
+            )}
         </CardHeader>
         <CardContent className="px-6 pb-6">
           <div className={`space-y-6 transition-opacity ${isPlayerDisabled ? 'opacity-30 pointer-events-none' : ''}`}>
