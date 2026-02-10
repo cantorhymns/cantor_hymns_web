@@ -300,6 +300,7 @@ export function HymnPlayer({
   hasNext,
   hasPrevious,
   lyricsVisibleByDefault = true,
+  showLyricsToggleButton = false,
 }: {
   hymn: Hymn;
   onEnded?: () => void;
@@ -310,6 +311,7 @@ export function HymnPlayer({
   hasNext?: boolean;
   hasPrevious?: boolean;
   lyricsVisibleByDefault?: boolean;
+  showLyricsToggleButton?: boolean;
 }) {
   const { firebaseApp } = useFirebase();
   const storage = useMemo(() => firebaseApp ? getStorage(firebaseApp) : null, [firebaseApp]);
@@ -572,17 +574,25 @@ export function HymnPlayer({
   };
 
   const handleSeekMove = useCallback((e: MouseEvent | TouchEvent) => {
-    if (!isSeeking || !seekStartRef.current || !waveformInnerRef.current || duration <= 0) return;
+    if (!isSeeking || !seekStartRef.current || !waveformInnerRef.current || !waveformContainerRef.current || duration <= 0) return;
     e.preventDefault();
     
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const deltaX = clientX - seekStartRef.current.clientX;
-
-    const timePerPixel = duration / waveformInnerRef.current!.scrollWidth;
-    const timeDelta = deltaX * timePerPixel;
     
-    // REVERSED direction: move left (negative deltaX) to fast-forward (increase time)
-    const newTime = seekStartRef.current.time - timeDelta;
+    const containerRect = waveformContainerRef.current.getBoundingClientRect();
+    const moveXInContainer = clientX - containerRect.left;
+
+    const transform = window.getComputedStyle(waveformInnerRef.current!).transform;
+    let scrollLeft = 0;
+    if (transform !== 'none') {
+        const matrix = new DOMMatrix(transform);
+        scrollLeft = -matrix.e;
+    }
+
+    const moveXInScroller = moveXInContainer + scrollLeft;
+    const scrollerWidth = waveformInnerRef.current!.scrollWidth;
+
+    const newTime = (moveXInScroller / scrollerWidth) * duration;
     
     seek(newTime);
   }, [isSeeking, duration, seek]);
@@ -763,12 +773,6 @@ export function HymnPlayer({
                   )}
               </div>
               <div className="flex items-center gap-2">
-                {hasAnyLyrics && (
-                    <Button variant="outline" size="icon" onClick={() => setLyricsVisible(v => !v)} title={lyricsVisible ? "Hide Lyrics" : "Show Lyrics"}>
-                        <BookText className={cn(lyricsVisible && "text-primary")} />
-                        <span className="sr-only">{lyricsVisible ? "Hide Lyrics" : "Show Lyrics"}</span>
-                    </Button>
-                )}
                 <Select
                     value={currentRecording.id}
                     onValueChange={(recId) => {
@@ -792,6 +796,14 @@ export function HymnPlayer({
                 </Select>
               </div>
           </div>
+           {showLyricsToggleButton && hasAnyLyrics && (
+            <div className="pt-4">
+                <Button variant="outline" onClick={() => setLyricsVisible(v => !v)}>
+                    <BookText className="mr-2 h-4 w-4" />
+                    <span>Lyrics</span>
+                </Button>
+            </div>
+          )}
         </CardHeader>
         <CardContent className="px-6 pb-6">
           <div className={`space-y-6 transition-opacity ${isPlayerDisabled ? 'opacity-30 pointer-events-none' : ''}`}>
