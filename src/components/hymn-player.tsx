@@ -301,6 +301,8 @@ export function HymnPlayer({
   hasPrevious,
   lyricsVisibleByDefault = true,
   showLyricsToggleButton = false,
+  initialRecordingId,
+  onRecordingChange,
 }: {
   hymn: Hymn;
   onEnded?: () => void;
@@ -312,13 +314,19 @@ export function HymnPlayer({
   hasPrevious?: boolean;
   lyricsVisibleByDefault?: boolean;
   showLyricsToggleButton?: boolean;
+  initialRecordingId?: string;
+  onRecordingChange?: (recording: Recording) => void;
 }) {
   const { firebaseApp } = useFirebase();
   const storage = useMemo(() => firebaseApp ? getStorage(firebaseApp) : null, [firebaseApp]);
 
-  const [currentRecording, setCurrentRecording] = useState<Recording | undefined>(
-    hymn.recordings?.[0]
-  );
+  const [currentRecording, setCurrentRecording] = useState<Recording | undefined>(() => {
+    if (initialRecordingId) {
+      const initialRec = hymn.recordings?.find(r => r.id === initialRecordingId);
+      if (initialRec) return initialRec;
+    }
+    return hymn.recordings?.[0];
+  });
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
   const [audioError, setAudioError] = useState<string | null>(null);
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
@@ -358,11 +366,16 @@ export function HymnPlayer({
 
   useEffect(() => {
     if (hymn && hymn.recordings && hymn.recordings.length > 0) {
-      setCurrentRecording(hymn.recordings[0]);
+      if (initialRecordingId) {
+        const initialRec = hymn.recordings.find(r => r.id === initialRecordingId);
+        setCurrentRecording(initialRec || hymn.recordings[0]);
+      } else {
+        setCurrentRecording(hymn.recordings[0]);
+      }
     } else {
       setCurrentRecording(undefined);
     }
-  }, [hymn?.recordings]);
+  }, [hymn, initialRecordingId]);
   
   useEffect(() => {
     const audio = audioRef.current;
@@ -577,19 +590,15 @@ export function HymnPlayer({
     e.preventDefault();
     
     const containerRect = waveformContainerRef.current.getBoundingClientRect();
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    
-    const clickXInContainer = clientX - containerRect.left;
-    const transform = window.getComputedStyle(waveformInnerRef.current!).transform;
-    let scrollLeft = 0;
-    if (transform !== 'none') {
-        const matrix = new DOMMatrix(transform);
-        scrollLeft = -matrix.e;
-    }
+    const currentX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const initialX = seekStartRef.current.clientX;
 
-    const clickXInScroller = clickXInContainer + scrollLeft;
+    const deltaX = initialX - currentX; // Inverted for reversed seeking
     const scrollerWidth = waveformInnerRef.current!.scrollWidth;
-    const newTime = (clickXInScroller / scrollerWidth) * duration;
+    const timePerPixel = duration / scrollerWidth;
+    
+    const newTime = seekStartRef.current.time + (deltaX * timePerPixel);
+
     seek(newTime);
   }, [isSeeking, duration, seek]);
 
@@ -760,39 +769,44 @@ export function HymnPlayer({
         {audioSrc && <audio ref={audioRef} src={audioSrc} preload="metadata" />}
         <CardHeader>
             <div className="flex justify-between items-start gap-4">
-                <CardTitle className="font-headline text-3xl text-primary">
-                    {hymn.name}
-                </CardTitle>
-                <div className="flex-shrink-0">
-                    {hymn.recordings && hymn.recordings.length > 1 ? (
-                        <Select
-                            value={currentRecording.id}
-                            onValueChange={(recId) => {
-                                const newRec = hymn.recordings!.find((r) => r.id === recId);
-                                if (newRec) setCurrentRecording(newRec);
-                            }}
-                        >
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Select Cantor" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {hymn.recordings.map((rec) => (
-                                    <SelectItem key={rec.id} value={rec.id}>
-                                        <div className="flex items-center gap-2">
-                                            {rec.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
-                                            <span>{rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}</span>
-                                        </div>
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    ) : (
-                        <div className="flex items-center gap-2 h-10 px-3 border rounded-md text-sm text-muted-foreground bg-secondary/50 w-[180px] justify-center">
-                             {currentRecording.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
-                            <span>{currentRecording.cantor?.name || '...'}</span>
-                        </div>
-                    )}
-                </div>
+              <div className="min-w-0 flex-1">
+                  <CardTitle className="font-headline text-3xl text-primary">
+                      {hymn.name}
+                  </CardTitle>
+              </div>
+              <div className="flex-shrink-0">
+                  {hymn.recordings && hymn.recordings.length > 1 ? (
+                      <Select
+                          value={currentRecording.id}
+                          onValueChange={(recId) => {
+                              const newRec = hymn.recordings!.find((r) => r.id === recId);
+                              if (newRec) {
+                                setCurrentRecording(newRec);
+                                onRecordingChange?.(newRec);
+                              }
+                          }}
+                      >
+                          <SelectTrigger className="w-[180px]">
+                              <SelectValue placeholder="Select Cantor" />
+                          </SelectTrigger>
+                          <SelectContent>
+                              {hymn.recordings.map((rec) => (
+                                  <SelectItem key={rec.id} value={rec.id}>
+                                      <div className="flex items-center gap-2">
+                                          {rec.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
+                                          <span>{rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}</span>
+                                      </div>
+                                  </SelectItem>
+                              ))}
+                          </SelectContent>
+                      </Select>
+                  ) : (
+                      <div className="flex items-center justify-center gap-2 h-10 px-3 border rounded-md text-sm text-muted-foreground bg-secondary/50 w-[180px]">
+                            {currentRecording.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
+                          <span>{currentRecording.cantor?.name || '...'}</span>
+                      </div>
+                  )}
+              </div>
             </div>
 
             {hymn.description && (

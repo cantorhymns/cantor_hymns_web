@@ -5,14 +5,25 @@ import { ChevronLeft, ListMusic } from 'lucide-react';
 import { useHymn } from '@/lib/hooks/useHymn';
 import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useHymns } from '@/lib/hooks/useHymns';
 import { useRouter } from 'next/navigation';
+import type { Recording } from '@/lib/types';
+
 
 export function HymnClientPage({ hymnId }: { hymnId: string }) {
   const router = useRouter();
   const { data: hymn, isLoading: isHymnLoading } = useHymn(hymnId);
+  const [currentRecording, setCurrentRecording] = useState<Recording | undefined>();
+
+  useEffect(() => {
+    // Set the initial recording when the hymn data is loaded or changed.
+    if (hymn?.recordings && hymn.recordings.length > 0) {
+      setCurrentRecording(hymn.recordings[0]);
+    }
+  }, [hymn]);
+
 
   const primaryGenreId = useMemo(() => {
     if (!hymn?.genreId) return undefined;
@@ -68,8 +79,8 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
           <div />
         )}
 
-        {hymn && (
-          <Link href={`/cantor-cloud?hymnId=${hymnId}`}>
+        {hymn && currentRecording && (
+          <Link href={`/cantor-cloud?hymnId=${hymnId}&recordingId=${currentRecording.id}`}>
             <Button>
               <ListMusic className="mr-2 h-4 w-4" />
               Play in CantorCloud
@@ -111,6 +122,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
           onNext={handleNext}
           hasPrevious={hasPrevious}
           hasNext={hasNext}
+          onRecordingChange={setCurrentRecording}
         />
       )}
     </div>

@@ -100,17 +100,26 @@ export function CantorCloudClientPage() {
       let newPlaylist: Hymn[] = [];
       let newAutoplay = false;
 
+      const activeHymnsWithShuffledRecordings = activeHymnsForCloud.map(hymn => {
+        if (hymn.recordings && hymn.recordings.length > 1) {
+            return { ...hymn, recordings: shuffleArray(hymn.recordings) };
+        }
+        return hymn;
+      });
+
       if (startHymnId) {
         const startHymn = allHymnsWithRecordings.find(h => h.id === startHymnId);
         if (startHymn) {
-          const otherHymns = shuffleArray(activeHymnsForCloud.filter(h => h.id !== startHymnId)).slice(0, 19);
-          newPlaylist = [startHymn, ...otherHymns];
+          const otherHymns = activeHymnsWithShuffledRecordings.filter(h => h.id !== startHymnId);
+          const shuffledOtherHymns = shuffleArray(otherHymns).slice(0, 19);
+          
+          newPlaylist = [startHymn, ...shuffledOtherHymns];
           newAutoplay = true;
         } else {
-          newPlaylist = shuffleArray(activeHymnsForCloud).slice(0, 20);
+          newPlaylist = shuffleArray(activeHymnsWithShuffledRecordings).slice(0, 20);
         }
       } else {
-        newPlaylist = shuffleArray(activeHymnsForCloud).slice(0, 20);
+        newPlaylist = shuffleArray(activeHymnsWithShuffledRecordings).slice(0, 20);
       }
       
       setPlaylist(newPlaylist);
@@ -121,6 +130,7 @@ export function CantorCloudClientPage() {
   }, [isInitialLoad, activeHymnsForCloud, allHymnsWithRecordings, searchParams, hymnsLoading, genresLoading, cantorsLoading, recordingsLoading]);
 
   const currentHymn = playlist?.[currentIndex];
+  const startRecordingId = searchParams.get('recordingId');
 
   const handleNext = useCallback(() => {
     setAutoplay(true);
@@ -151,6 +161,7 @@ export function CantorCloudClientPage() {
           <HymnPlayer
             key={currentHymn.id}
             hymn={currentHymn}
+            initialRecordingId={currentIndex === 0 ? startRecordingId ?? undefined : undefined}
             onEnded={handleNext}
             autoplay={autoplay}
             onAutoplayConsumed={() => setAutoplay(false)}
