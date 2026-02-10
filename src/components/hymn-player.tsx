@@ -337,6 +337,7 @@ export function HymnPlayer({
   const [currentTime, setCurrentTime] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [isSeeking, setIsSeeking] = useState(false);
+  const [autoplayOnSwitch, setAutoplayOnSwitch] = useState(false);
   
   const [activeMarks, setActiveMarks] = useState<number[]>([]);
   const [lyricsVisible, setLyricsVisible] = useState(lyricsVisibleByDefault);
@@ -383,6 +384,7 @@ export function HymnPlayer({
       audio.pause();
     }
     
+    setIsPlaying(false);
     setCurrentTime(0);
     setPlaybackRate(1);
     setAudioSrc(null);
@@ -411,16 +413,18 @@ export function HymnPlayer({
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (audio && audioSrc && autoplay) {
+    if (audio && audioSrc && (autoplay || autoplayOnSwitch)) {
         audio.play().then(() => {
             setIsPlaying(true);
-            onAutoplayConsumed?.();
+            if (autoplay) onAutoplayConsumed?.();
+            if (autoplayOnSwitch) setAutoplayOnSwitch(false);
         }).catch(() => {
             setIsPlaying(false);
-            onAutoplayConsumed?.();
+            if (autoplay) onAutoplayConsumed?.();
+            if (autoplayOnSwitch) setAutoplayOnSwitch(false);
         });
     }
-  }, [audioSrc, autoplay, onAutoplayConsumed]);
+  }, [audioSrc, autoplay, onAutoplayConsumed, autoplayOnSwitch]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -589,15 +593,22 @@ export function HymnPlayer({
     if (!isSeeking || !seekStartRef.current || !waveformInnerRef.current || !waveformContainerRef.current || duration <= 0) return;
     e.preventDefault();
     
-    const containerRect = waveformContainerRef.current.getBoundingClientRect();
     const currentX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const initialX = seekStartRef.current.clientX;
-
-    const deltaX = initialX - currentX; // Inverted for reversed seeking
-    const scrollerWidth = waveformInnerRef.current!.scrollWidth;
-    const timePerPixel = duration / scrollerWidth;
     
-    const newTime = seekStartRef.current.time + (deltaX * timePerPixel);
+    const containerRect = waveformContainerRef.current.getBoundingClientRect();
+    const clickXInContainer = currentX - containerRect.left;
+
+    const transform = window.getComputedStyle(waveformInnerRef.current!).transform;
+    let scrollLeft = 0;
+    if (transform !== 'none') {
+        const matrix = new DOMMatrix(transform);
+        scrollLeft = -matrix.e;
+    }
+
+    const clickXInScroller = clickXInContainer + scrollLeft;
+    const scrollerWidth = waveformInnerRef.current!.scrollWidth;
+    
+    const newTime = (clickXInScroller / scrollerWidth) * duration;
 
     seek(newTime);
   }, [isSeeking, duration, seek]);
@@ -718,11 +729,13 @@ export function HymnPlayer({
         <>
             <Card className="w-full max-w-3xl mx-auto shadow-xl">
                 <CardHeader>
-                    <CardTitle className="font-headline text-3xl text-primary">
-                        {hymn.name}
-                    </CardTitle>
+                    <div className="flex justify-between items-start gap-4">
+                        <CardTitle className="font-headline text-3xl text-primary">
+                            {hymn.name}
+                        </CardTitle>
+                    </div>
                     {hymn.description && (
-                    <p className="text-muted-foreground mt-2 max-w-full">{hymn.description}</p>
+                        <p className="text-muted-foreground mt-2">{hymn.description}</p>
                     )}
                     <p className="text-muted-foreground pt-4">No active recordings available for this hymn yet.</p>
                 </CardHeader>
@@ -741,11 +754,13 @@ export function HymnPlayer({
         <>
             <Card className="w-full max-w-3xl mx-auto shadow-xl">
                 <CardHeader>
-                    <CardTitle className="font-headline text-3xl text-primary">
-                        {hymn.name}
-                    </CardTitle>
+                    <div className="flex justify-between items-start gap-4">
+                        <CardTitle className="font-headline text-3xl text-primary">
+                            {hymn.name}
+                        </CardTitle>
+                    </div>
                     {hymn.description && (
-                    <p className="text-muted-foreground mt-2 max-w-full">{hymn.description}</p>
+                    <p className="text-muted-foreground mt-2">{hymn.description}</p>
                     )}
                     <p className="text-muted-foreground pt-4">Please select a recording.</p>
                 </CardHeader>
@@ -769,11 +784,9 @@ export function HymnPlayer({
         {audioSrc && <audio ref={audioRef} src={audioSrc} preload="metadata" />}
         <CardHeader>
             <div className="flex justify-between items-start gap-4">
-              <div className="min-w-0 flex-1">
-                  <CardTitle className="font-headline text-3xl text-primary">
-                      {hymn.name}
-                  </CardTitle>
-              </div>
+              <CardTitle className="font-headline text-3xl text-primary">
+                  {hymn.name}
+              </CardTitle>
               <div className="flex-shrink-0">
                   {hymn.recordings && hymn.recordings.length > 1 ? (
                       <Select
@@ -781,6 +794,7 @@ export function HymnPlayer({
                           onValueChange={(recId) => {
                               const newRec = hymn.recordings!.find((r) => r.id === recId);
                               if (newRec) {
+                                setAutoplayOnSwitch(true);
                                 setCurrentRecording(newRec);
                                 onRecordingChange?.(newRec);
                               }
