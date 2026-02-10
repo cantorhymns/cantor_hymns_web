@@ -44,7 +44,6 @@ export function CantorCloudClientPage() {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [playlist, setPlaylist] = useState<Hymn[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [initialHymnSet, setInitialHymnSet] = useState(false);
   const [autoplay, setAutoplay] = useState(false);
 
   // Data fetching
@@ -116,7 +115,7 @@ export function CantorCloudClientPage() {
     });
   }, [hymnsWithPopulatedCantors, allGenres, allCantors]);
 
-  // Initialize filters once data is loaded
+  // Effect to initialize filters from URL or to select all
   useEffect(() => {
     if (filteredGenres.length > 0 && filteredCantors.length > 0 && !filtersInitialized) {
         const genreIdFromParams = searchParams.get('genreId');
@@ -131,82 +130,70 @@ export function CantorCloudClientPage() {
     }
   }, [filteredGenres, filteredCantors, filtersInitialized, searchParams]);
 
-  // Build playlist based on filters
+  // Main playlist management effect
   useEffect(() => {
+    // Guard: wait for all data to be ready
     if (!hymnsWithPopulatedCantors || !filtersInitialized) return;
-    
-    // Once filters are initialized, it's no longer the "initial load" for subsequent changes.
-    if (filtersInitialized && isInitialLoad) {
-      setIsInitialLoad(false);
-    }
 
-    const startHymnId = searchParams.get('hymnId');
+    // --- A: INITIAL PLAYLIST CREATION ---
+    if (isInitialLoad) {
+      const startHymnId = searchParams.get('hymnId');
+      let newPlaylist: Hymn[] = [];
+      let newAutoplay = false;
 
-    // SPECIAL CASE: "Play in CantorCloud" from a hymn page
-    if (startHymnId && !searchParams.get('genreId')) {
-      const startHymn = hymnsWithPopulatedCantors.find((h) => h.id === startHymnId);
-      
-      if (startHymn) {
-        const otherHymns = activeHymnsForCloud.filter((h) => h.id !== startHymnId);
-        const random19 = shuffleArray(otherHymns).slice(0, 19);
-        setPlaylist([startHymn, ...random19]);
+      if (startHymnId) {
+        // A1: Coming from a specific hymn page
+        const startHymn = allHymns?.find(h => h.id === startHymnId);
+        if (startHymn) {
+          const otherHymns = shuffleArray(activeHymnsForCloud.filter(h => h.id !== startHymnId)).slice(0, 19);
+          newPlaylist = [startHymn, ...otherHymns];
+        } else {
+          newPlaylist = shuffleArray(activeHymnsForCloud).slice(0, 20); // Fallback
+        }
+        newAutoplay = true; // Play immediately when coming from a link
       } else {
-        // Fallback if start hymn not found
-        setPlaylist(shuffleArray(activeHymnsForCloud).slice(0, 20));
+        // A2: General load (with potential genre filter from URL)
+        const initialFilteredHymns = activeHymnsForCloud.filter(hymn =>
+          hymn.genreId.some(gId => selectedGenreIds.includes(gId))
+        );
+        
+        if (searchParams.get('genreId')) {
+          newPlaylist = shuffleArray(initialFilteredHymns);
+        } else {
+          newPlaylist = shuffleArray(initialFilteredHymns).slice(0, 20);
+        }
       }
       
+      setPlaylist(newPlaylist);
       setCurrentIndex(0);
-      setInitialHymnSet(false);
+      setAutoplay(newAutoplay);
+      setIsInitialLoad(false); // Mark initial load as done
       return;
     }
 
-    // DEFAULT CASE: Normal CantorCloud usage with filters
-    const finalFilteredHymns = activeHymnsForCloud.filter(hymn => {
-        const genreIdSet = new Set(selectedGenreIds);
-        const cantorIdSet = new Set(selectedCantorIds);
+    // --- B: PLAYLIST UPDATE ON FILTER CHANGE ---
+    // This part runs only after the initial load
+    const currentlyPlaying = playlist[currentIndex];
 
-        // A hymn must belong to one of the selected genres
-        const genreMatch = hymn.genreId.some(gId => genreIdSet.has(gId));
-        // And have a recording by one of the selected cantors
-        const cantorMatch = (hymn.recordings || []).some(r => cantorIdSet.has(r.cantorId));
-        
-        return genreMatch && cantorMatch;
+    const newFilteredHymns = activeHymnsForCloud.filter(hymn => {
+      const genreMatch = selectedGenreIds.some(gId => hymn.genreId.includes(gId));
+      const cantorMatch = (hymn.recordings || []).some(r => selectedCantorIds.includes(r.cantorId));
+      return genreMatch && cantorMatch;
     });
-    
-    // On the very first load of the main CantorCloud page, show a random 20.
-    // Otherwise, show all hymns that match the current filters.
-    if (isInitialLoad && !startHymnId && !searchParams.get('genreId')) {
-      setPlaylist(shuffleArray(finalFilteredHymns).slice(0, 20));
+
+    const isCurrentHymnStillValid = currentlyPlaying && newFilteredHymns.some(h => h.id === currentlyPlaying.id);
+
+    if (isCurrentHymnStillValid) {
+      // B1: Current hymn is still in the list. Update the "up next" queue around it.
+      const newUpNext = shuffleArray(newFilteredHymns.filter(h => h.id !== currentlyPlaying.id));
+      setPlaylist([currentlyPlaying, ...newUpNext]);
+      setCurrentIndex(0); 
     } else {
-      setPlaylist(finalFilteredHymns);
+      // B2: Current hymn was filtered out. Create a new playlist.
+      setPlaylist(shuffleArray(newFilteredHymns));
+      setCurrentIndex(0);
     }
-    
-    setCurrentIndex(0);
-    setInitialHymnSet(false);
-
-  }, [hymnsWithPopulatedCantors, activeHymnsForCloud, selectedGenreIds, selectedCantorIds, filtersInitialized, searchParams, isInitialLoad]);
-
-  // Set initial hymn from URL params once playlist is ready
-  useEffect(() => {
-    if (playlist.length > 0 && !initialHymnSet) {
-      const startHymnId = searchParams.get('hymnId');
-      if (startHymnId) {
-        // The starting hymn is already at index 0 from the previous effect.
-        const startIndex = playlist.findIndex((h) => h.id === startHymnId);
-        if (startIndex !== -1) {
-          setCurrentIndex(startIndex);
-          setAutoplay(true);
-        } else {
-           // If the hymn isn't in the generated list, just shuffle what we have.
-           setPlaylist(shuffleArray(playlist));
-        }
-      } else {
-        // For a general load, shuffle the generated playlist
-        setPlaylist(shuffleArray(playlist));
-      }
-      setInitialHymnSet(true);
-    }
-  }, [playlist, searchParams, initialHymnSet]);
+  }, [selectedGenreIds, selectedCantorIds, isInitialLoad]);
 
   const currentHymn = playlist?.[currentIndex];
 
