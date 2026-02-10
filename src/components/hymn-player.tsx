@@ -31,6 +31,7 @@ import {
   Rewind,
   ChevronLeft,
   ChevronRight,
+  BookText,
 } from "lucide-react";
 import { getDownloadURL, ref, getStorage } from "firebase/storage";
 import { useFirebase } from "@/firebase";
@@ -298,6 +299,7 @@ export function HymnPlayer({
   onPrevious,
   hasNext,
   hasPrevious,
+  lyricsVisibleByDefault = true,
 }: {
   hymn: Hymn;
   onEnded?: () => void;
@@ -307,6 +309,7 @@ export function HymnPlayer({
   onPrevious?: () => void;
   hasNext?: boolean;
   hasPrevious?: boolean;
+  lyricsVisibleByDefault?: boolean;
 }) {
   const { firebaseApp } = useFirebase();
   const storage = useMemo(() => firebaseApp ? getStorage(firebaseApp) : null, [firebaseApp]);
@@ -326,6 +329,7 @@ export function HymnPlayer({
   const [isSeeking, setIsSeeking] = useState(false);
   
   const [activeMarks, setActiveMarks] = useState<number[]>([]);
+  const [lyricsVisible, setLyricsVisible] = useState(lyricsVisibleByDefault);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const waveformContainerRef = useRef<HTMLDivElement>(null);
@@ -344,6 +348,10 @@ export function HymnPlayer({
       const nextIndex = (currentIndex + 1) % playbackSpeeds.length;
       setPlaybackRate(playbackSpeeds[nextIndex]);
   };
+
+  const hasAnyLyrics = useMemo(() => 
+    !!(hymn.lyricsEnglish || hymn.lyricsCoptic || hymn.lyricsArabic)
+  , [hymn]);
 
   useEffect(() => {
     if (hymn && hymn.recordings && hymn.recordings.length > 0) {
@@ -689,9 +697,11 @@ export function HymnPlayer({
                     <p className="text-muted-foreground pt-4">No active recordings available for this hymn yet.</p>
                 </CardHeader>
             </Card>
-            <div className="w-full max-w-3xl mx-auto mt-8">
-                <LyricsDisplay hymn={hymn} />
-            </div>
+            {lyricsVisible && hasAnyLyrics && (
+              <div className="w-full max-w-3xl mx-auto mt-8">
+                  <LyricsDisplay hymn={hymn} />
+              </div>
+            )}
         </>
       )
   }
@@ -710,9 +720,11 @@ export function HymnPlayer({
                     <p className="text-muted-foreground pt-4">Please select a recording.</p>
                 </CardHeader>
             </Card>
-            <div className="w-full max-w-3xl mx-auto mt-8">
-                <LyricsDisplay hymn={hymn} />
-            </div>
+            {lyricsVisible && hasAnyLyrics && (
+              <div className="w-full max-w-3xl mx-auto mt-8">
+                  <LyricsDisplay hymn={hymn} />
+              </div>
+            )}
         </>
       )
   }
@@ -736,6 +748,12 @@ export function HymnPlayer({
                   )}
               </div>
               <div className="flex items-center gap-2">
+                {hasAnyLyrics && (
+                    <Button variant="outline" size="icon" onClick={() => setLyricsVisible(v => !v)} title={lyricsVisible ? "Hide Lyrics" : "Show Lyrics"}>
+                        <BookText className={cn(lyricsVisible && "text-primary")} />
+                        <span className="sr-only">{lyricsVisible ? "Hide Lyrics" : "Show Lyrics"}</span>
+                    </Button>
+                )}
                 <Select
                     value={currentRecording.id}
                     onValueChange={(recId) => {
@@ -917,9 +935,11 @@ export function HymnPlayer({
           )}
         </CardContent>
       </Card>
-      <div className="w-full max-w-3xl mx-auto mt-8">
-        <LyricsDisplay hymn={hymn} />
-      </div>
+      {lyricsVisible && hasAnyLyrics && (
+        <div className="w-full max-w-3xl mx-auto mt-8">
+          <LyricsDisplay hymn={hymn} />
+        </div>
+      )}
     </>
   );
 }
