@@ -15,11 +15,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import type { Genre, Hymn } from '@/lib/types';
 import { useMemo } from 'react';
 
-const HymnCard = ({ hymn }: { hymn: Hymn }) => {
+const HymnCard = ({ hymn, genreId }: { hymn: Hymn; genreId: string }) => {
   const learnCount = hymn.recordings?.filter(r => r.mode === 'learn').length || 0;
   const listenCount = hymn.recordings?.filter(r => r.mode === 'listen').length || 0;
   return (
-    <Link href={`/hymn/${hymn.id}`} key={hymn.id} className="group">
+    <Link href={`/cantor-cloud?genreId=${genreId}&hymnId=${hymn.id}`} key={hymn.id} className="group">
       <Card className="h-full flex flex-col transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 group-hover:border-primary/50">
         <CardHeader className="flex-grow">
           <div className="mb-3">
@@ -158,7 +158,7 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
               {group.hymns.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {group.hymns.map((hymn) => (
-                        <HymnCard key={hymn.id} hymn={hymn} />
+                        <HymnCard key={hymn.id} hymn={hymn} genreId={genreId} />
                     ))}
                   </div>
               ) : (

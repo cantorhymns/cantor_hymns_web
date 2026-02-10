@@ -1,11 +1,11 @@
 
-// This is a Server Component that handles the route.
-import { HymnClientPage } from './hymn-client-page';
+
+import { redirect } from 'next/navigation';
 
 export default function HymnPage({ params }: { params: { hymnId: string } }) {
   const { hymnId } = params;
 
-  // It passes the primitive hymnId to the Client Component
-  // which is responsible for all data fetching and rendering.
-  return <HymnClientPage hymnId={hymnId} />;
+  // Redirect to the CantorCloud player page for this hymn.
+  // We don't know the genre context here, so we just pass the hymnId.
+  redirect(`/cantor-cloud?hymnId=${hymnId}`);
 }

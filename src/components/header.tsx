@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { ListMusic } from 'lucide-react';
 
 const CopticCrossIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
@@ -40,6 +41,12 @@ export function Header() {
             Cantor
           </span>
         </Link>
+        <div className="flex items-center gap-4">
+            <Link href="/cantor-cloud" className="group text-primary hover:text-primary/80 transition-colors">
+                <ListMusic className="h-7 w-7" />
+                <span className="sr-only">CantorCloud</span>
+            </Link>
+        </div>
       </div>
     </header>
   );

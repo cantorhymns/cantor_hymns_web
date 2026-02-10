@@ -24,7 +24,6 @@ import {
   SkipBack,
   SkipForward,
   FastForward,
-  Rewind,
   XCircle,
   Maximize2,
   Minimize2,
@@ -287,7 +286,7 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
 };
 
 
-export function HymnPlayer({ hymn }: { hymn: Hymn }) {
+export function HymnPlayer({ hymn, onEnded }: { hymn: Hymn; onEnded?: () => void }) {
   const { firebaseApp } = useFirebase();
   const storage = useMemo(() => firebaseApp ? getStorage(firebaseApp) : null, [firebaseApp]);
 
@@ -389,10 +388,6 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     }
   }, [duration]);
   
-  const handleEnded = useCallback(() => {
-    setIsPlaying(false);
-  }, []);
-
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
     if (!audio || isSeeking) return;
@@ -407,6 +402,14 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
         }
     }
   }, [isRepeat, isPlaying, isSeeking, seek]);
+
+  const handleEnded = useCallback(() => {
+    setIsPlaying(false);
+    if (onEnded) {
+        onEnded();
+    }
+  }, [onEnded]);
+
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -875,5 +878,3 @@ export function HymnPlayer({ hymn }: { hymn: Hymn }) {
     </>
   );
 }
-
-    
