@@ -157,7 +157,6 @@ export function CantorCloudClientPage() {
         setPlaylist(shuffleArray(activeHymnsForCloud).slice(0, 20));
       }
       
-      setPlaylist(prev => shuffleArray(prev)); // Always shuffle this special playlist
       setCurrentIndex(0);
       setInitialHymnSet(false);
       return;
