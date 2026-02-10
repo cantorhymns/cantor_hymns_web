@@ -412,21 +412,6 @@ export function HymnPlayer({
   }, [currentRecording, storage]);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (audio && audioSrc && (autoplay || autoplayOnSwitch)) {
-        audio.play().then(() => {
-            setIsPlaying(true);
-            if (autoplay) onAutoplayConsumed?.();
-            if (autoplayOnSwitch) setAutoplayOnSwitch(false);
-        }).catch(() => {
-            setIsPlaying(false);
-            if (autoplay) onAutoplayConsumed?.();
-            if (autoplayOnSwitch) setAutoplayOnSwitch(false);
-        });
-    }
-  }, [audioSrc, autoplay, onAutoplayConsumed, autoplayOnSwitch]);
-
-  useEffect(() => {
     if (audioRef.current) {
         audioRef.current.playbackRate = playbackRate;
     }
@@ -440,55 +425,6 @@ export function HymnPlayer({
     }
     setCurrentTime(newTime);
   }, [duration]);
-  
-  const handleTimeUpdate = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio || isSeeking) return;
-
-    const newTime = audio.currentTime;
-    setCurrentTime(newTime);
-    
-    if (isRepeat && isPlaying && loopSectionRef.current) {
-        const { start, end } = loopSectionRef.current;
-        if (newTime >= end) {
-            seek(start);
-        }
-    }
-  }, [isRepeat, isPlaying, isSeeking, seek]);
-
-  const handleEnded = useCallback(() => {
-    setIsPlaying(false);
-    if (onEnded) {
-        onEnded();
-    }
-  }, [onEnded]);
-
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const setAudioData = () => {
-      if (audio.duration && audio.duration !== Infinity) {
-        setDuration(audio.duration);
-      } else {
-        setDuration(0);
-      }
-      setCurrentTime(audio.currentTime);
-    };
-    
-    audio.addEventListener("loadeddata", setAudioData);
-    audio.addEventListener("durationchange", setAudioData);
-    audio.addEventListener("timeupdate", handleTimeUpdate);
-    audio.addEventListener('ended', handleEnded);
-
-    return () => {
-      audio.removeEventListener("loadeddata", setAudioData);
-      audio.removeEventListener("durationchange", setAudioData);
-      audio.removeEventListener("timeupdate", handleTimeUpdate);
-      audio.removeEventListener('ended', handleEnded);
-    };
-  }, [handleEnded, handleTimeUpdate, audioSrc]);
 
   useEffect(() => {
     if (isRepeat && sortedActiveMarks.length > 0) {
@@ -565,7 +501,6 @@ export function HymnPlayer({
     
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     
-    // Perform initial seek to the clicked position
     const containerRect = waveformContainerRef.current.getBoundingClientRect();
     const clickXInContainer = clientX - containerRect.left;
 
@@ -582,7 +517,6 @@ export function HymnPlayer({
     const newTime = (clickXInScroller / scrollerWidth) * duration;
     seek(newTime);
 
-    // Store initial state for the drag operation that follows the click
     seekStartRef.current = {
         time: newTime,
         clientX: clientX,
@@ -724,6 +658,56 @@ export function HymnPlayer({
 
   }, [currentTime, duration]);
 
+  const handleTimeUpdate = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio || isSeeking) return;
+
+    const newTime = audio.currentTime;
+    setCurrentTime(newTime);
+    
+    if (isRepeat && isPlaying && loopSectionRef.current) {
+        const { start, end } = loopSectionRef.current;
+        if (newTime >= end) {
+            seek(start);
+        }
+    }
+  }, [isRepeat, isPlaying, isSeeking, seek]);
+
+  const handleEnded = useCallback(() => {
+    setIsPlaying(false);
+    if (onEnded) {
+        onEnded();
+    }
+  }, [onEnded]);
+
+  const handleLoadedData = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (audio.duration && audio.duration !== Infinity) {
+        setDuration(audio.duration);
+    } else {
+        setDuration(0);
+    }
+    setCurrentTime(audio.currentTime);
+  };
+
+  const handleCanPlay = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (autoplay || autoplayOnSwitch) {
+        audio.play().then(() => {
+            setIsPlaying(true);
+            if (autoplay) onAutoplayConsumed?.();
+            if (autoplayOnSwitch) setAutoplayOnSwitch(false);
+        }).catch((e) => {
+            console.error("Autoplay failed:", e);
+            setIsPlaying(false);
+            if (autoplay) onAutoplayConsumed?.();
+            if (autoplayOnSwitch) setAutoplayOnSwitch(false);
+        });
+    }
+  };
+
   if (!hymn.recordings || hymn.recordings.length === 0) {
       return (
         <>
@@ -781,46 +765,55 @@ export function HymnPlayer({
   return (
     <>
       <Card className="w-full max-w-3xl mx-auto shadow-xl">
-        {audioSrc && <audio ref={audioRef} src={audioSrc} preload="metadata" />}
+        <audio 
+            ref={audioRef} 
+            src={audioSrc || ''} 
+            preload="metadata"
+            onLoadedData={handleLoadedData}
+            onDurationChange={handleLoadedData}
+            onCanPlay={handleCanPlay}
+            onTimeUpdate={handleTimeUpdate}
+            onEnded={handleEnded}
+        />
         <CardHeader>
             <div className="flex justify-between items-start gap-4">
-              <CardTitle className="font-headline text-3xl text-primary">
-                  {hymn.name}
-              </CardTitle>
-              <div className="flex-shrink-0">
-                  {hymn.recordings && hymn.recordings.length > 1 ? (
-                      <Select
-                          value={currentRecording.id}
-                          onValueChange={(recId) => {
-                              const newRec = hymn.recordings!.find((r) => r.id === recId);
-                              if (newRec) {
-                                setAutoplayOnSwitch(true);
-                                setCurrentRecording(newRec);
-                                onRecordingChange?.(newRec);
-                              }
-                          }}
-                      >
-                          <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="Select Cantor" />
-                          </SelectTrigger>
-                          <SelectContent>
-                              {hymn.recordings.map((rec) => (
-                                  <SelectItem key={rec.id} value={rec.id}>
-                                      <div className="flex items-center gap-2">
-                                          {rec.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
-                                          <span>{rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}</span>
-                                      </div>
-                                  </SelectItem>
-                              ))}
-                          </SelectContent>
-                      </Select>
-                  ) : (
-                      <div className="flex items-center justify-center gap-2 h-10 px-3 border rounded-md text-sm text-muted-foreground bg-secondary/50 w-[180px]">
+                <CardTitle className="font-headline text-3xl text-primary">
+                    {hymn.name}
+                </CardTitle>
+                <div className="flex-shrink-0">
+                    {hymn.recordings && hymn.recordings.length > 1 ? (
+                        <Select
+                            value={currentRecording.id}
+                            onValueChange={(recId) => {
+                                const newRec = hymn.recordings!.find((r) => r.id === recId);
+                                if (newRec) {
+                                    setAutoplayOnSwitch(true);
+                                    setCurrentRecording(newRec);
+                                    onRecordingChange?.(newRec);
+                                }
+                            }}
+                        >
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Select Cantor" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {hymn.recordings.map((rec) => (
+                                    <SelectItem key={rec.id} value={rec.id}>
+                                        <div className="flex items-center gap-2">
+                                            {rec.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
+                                            <span>{rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}</span>
+                                        </div>
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    ) : (
+                        <div className="flex items-center justify-center gap-2 h-10 px-3 border rounded-md text-sm text-muted-foreground bg-secondary/50 w-[180px]">
                             {currentRecording.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
-                          <span>{currentRecording.cantor?.name || '...'}</span>
-                      </div>
-                  )}
-              </div>
+                            <span>{currentRecording.cantor?.name || '...'}</span>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {hymn.description && (
