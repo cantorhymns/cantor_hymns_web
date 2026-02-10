@@ -22,7 +22,19 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
 
   const { data: hymns, isLoading: areHymnsLoading, error: hymnsError } = useCollection<Hymn>(hymnsQuery);
 
-  const hymnIds = useMemo(() => hymns?.map(h => h.id) || [], [hymns]);
+  const sortedHymns = useMemo(() => {
+    if (!hymns) return null;
+    // We only sort if a genreId is provided, otherwise we don't know which rank to use.
+    if (!genreId) return hymns;
+    
+    return [...hymns].sort((a, b) => {
+        const rankA = a.genreRank?.[genreId] ?? 999;
+        const rankB = b.genreRank?.[genreId] ?? 999;
+        return rankA - rankB;
+    });
+  }, [hymns, genreId]);
+
+  const hymnIds = useMemo(() => sortedHymns?.map(h => h.id) || [], [sortedHymns]);
 
   const recordingsQuery = useMemoFirebase(() => {
     if (!firestore || hymnIds.length === 0) return null;
@@ -34,7 +46,7 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
   const { data: recordings, isLoading: areRecordingsLoading, error: recordingsError } = useCollection<Recording>(recordingsQuery);
 
   const hymnsWithRecordings = useMemo(() => {
-    if (!hymns) return null;
+    if (!sortedHymns) return null;
     
     // Don't return partial data; wait for recordings to load if we have hymnIds
     if (hymnIds.length > 0 && areRecordingsLoading) {
@@ -52,12 +64,12 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
         });
     }
     
-    return hymns.map(hymn => ({
+    return sortedHymns.map(hymn => ({
         ...hymn,
         recordings: recordingsByHymnId.get(hymn.id) || []
     })).filter(hymn => hymn.recordings.length > 0);
 
-  }, [hymns, recordings, hymnIds, areRecordingsLoading]);
+  }, [sortedHymns, recordings, hymnIds, areRecordingsLoading]);
 
 
   return { 

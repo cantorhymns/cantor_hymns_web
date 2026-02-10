@@ -64,6 +64,13 @@
                 "type": "string"
             }
         },
+        "genreRank": {
+            "type": "object",
+            "description": "A map where the key is a genre ID and the value is the display rank of the hymn within that genre.",
+            "additionalProperties": {
+                "type": "number"
+            }
+        },
         "description": {
           "type": "string",
           "description": "A short description of the hymn."

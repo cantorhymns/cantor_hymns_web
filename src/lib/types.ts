@@ -22,8 +22,9 @@ export interface Recording {
 export interface Hymn {
   id: string;
   name: string;
-  genreId: string | string[];
+  genreId: string[];
   subGenreId?: { [key: string]: string };
+  genreRank?: { [key: string]: number };
   description?: string;
   lyricsEnglish?: string;
   lyricsCoptic?: string;

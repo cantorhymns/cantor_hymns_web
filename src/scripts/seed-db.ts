@@ -100,6 +100,7 @@ async function seedDatabase() {
             name: hymn.name,
             genreId: hymn.genreId,
             subGenreId: hymn.subGenreId || {},
+            genreRank: hymn.genreRank || {},
             description: hymn.description || '',
             lyricsEnglish: hymn.lyricsEnglish || '',
             lyricsCoptic: hymn.lyricsCoptic || '',
