@@ -548,7 +548,7 @@ export function HymnPlayer({
     
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     
-    // --- Perform initial seek to the clicked position ---
+    // Perform initial seek to the clicked position
     const containerRect = waveformContainerRef.current.getBoundingClientRect();
     const clickXInContainer = clientX - containerRect.left;
 
@@ -564,7 +564,6 @@ export function HymnPlayer({
 
     const newTime = (clickXInScroller / scrollerWidth) * duration;
     seek(newTime);
-    // --- End of initial seek ---
 
     // Store initial state for the drag operation that follows the click
     seekStartRef.current = {
@@ -574,26 +573,16 @@ export function HymnPlayer({
   };
 
   const handleSeekMove = useCallback((e: MouseEvent | TouchEvent) => {
-    if (!isSeeking || !seekStartRef.current || !waveformInnerRef.current || !waveformContainerRef.current || duration <= 0) return;
+    if (!isSeeking || !seekStartRef.current || !waveformInnerRef.current || duration <= 0) return;
     e.preventDefault();
     
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const currentClientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const deltaX = seekStartRef.current.clientX - currentClientX;
     
-    const containerRect = waveformContainerRef.current.getBoundingClientRect();
-    const moveXInContainer = clientX - containerRect.left;
-
-    const transform = window.getComputedStyle(waveformInnerRef.current!).transform;
-    let scrollLeft = 0;
-    if (transform !== 'none') {
-        const matrix = new DOMMatrix(transform);
-        scrollLeft = -matrix.e;
-    }
-
-    const moveXInScroller = moveXInContainer + scrollLeft;
-    const scrollerWidth = waveformInnerRef.current!.scrollWidth;
-
-    const newTime = (moveXInScroller / scrollerWidth) * duration;
+    const scrollerWidth = waveformInnerRef.current.scrollWidth;
+    const timePerPixel = duration / scrollerWidth;
     
+    const newTime = seekStartRef.current.time + deltaX * timePerPixel;
     seek(newTime);
   }, [isSeeking, duration, seek]);
 
@@ -763,39 +752,46 @@ export function HymnPlayer({
       <Card className="w-full max-w-3xl mx-auto shadow-xl">
         {audioSrc && <audio ref={audioRef} src={audioSrc} preload="metadata" />}
         <CardHeader>
-          <div className="flex justify-between items-start flex-wrap gap-4">
-              <div>
-                  <CardTitle className="font-headline text-3xl text-primary">
-                  {hymn.name}
-                  </CardTitle>
-                  {hymn.description && (
-                    <p className="text-muted-foreground mt-2 max-w-full">{hymn.description}</p>
-                  )}
-              </div>
-              <div className="flex items-center gap-2">
-                <Select
-                    value={currentRecording.id}
-                    onValueChange={(recId) => {
-                    const newRec = hymn.recordings!.find((r) => r.id === recId);
-                    if (newRec) setCurrentRecording(newRec);
-                    }}
-                >
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select Cantor" />
-                    </SelectTrigger>
-                    <SelectContent>
-                    {hymn.recordings.map((rec) => (
-                        <SelectItem key={rec.id} value={rec.id}>
-                          <div className="flex items-center gap-2">
-                              {rec.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
-                              <span>{rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}</span>
-                          </div>
-                        </SelectItem>
-                    ))}
-                    </SelectContent>
-                </Select>
-              </div>
-          </div>
+            <div className="flex justify-between items-start gap-4">
+                <div className="min-w-0">
+                    <CardTitle className="font-headline text-3xl text-primary">
+                        {hymn.name}
+                    </CardTitle>
+                    {hymn.description && (
+                    <p className="text-muted-foreground mt-2">{hymn.description}</p>
+                    )}
+                </div>
+                <div className="flex-shrink-0">
+                    {hymn.recordings && hymn.recordings.length > 1 ? (
+                        <Select
+                            value={currentRecording.id}
+                            onValueChange={(recId) => {
+                                const newRec = hymn.recordings!.find((r) => r.id === recId);
+                                if (newRec) setCurrentRecording(newRec);
+                            }}
+                        >
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Select Cantor" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {hymn.recordings.map((rec) => (
+                                    <SelectItem key={rec.id} value={rec.id}>
+                                        <div className="flex items-center gap-2">
+                                            {rec.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
+                                            <span>{rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}</span>
+                                        </div>
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    ) : (
+                        <div className="flex items-center gap-2 h-10 px-3 border rounded-md text-sm text-muted-foreground bg-secondary/50 w-[180px] justify-center">
+                             {currentRecording.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
+                            <span>{currentRecording.cantor?.name || '...'}</span>
+                        </div>
+                    )}
+                </div>
+            </div>
            {showLyricsToggleButton && hasAnyLyrics && (
             <div className="pt-4">
                 <Button variant="outline" onClick={() => setLyricsVisible(v => !v)}>
