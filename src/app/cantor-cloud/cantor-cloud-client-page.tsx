@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -15,7 +14,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { SkipBack, SkipForward, ListMusic, X } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -23,20 +22,21 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 
 function shuffleArray<T>(array: T[]): T[] {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
 }
-
 
 export function CantorCloudClientPage() {
   const searchParams = useSearchParams();
-  
+
   // State for filters and playback
-  const [genreFilter, setGenreFilter] = useState<string>(searchParams.get('genreId') || 'all');
+  const [genreFilter, setGenreFilter] = useState<string>(
+    searchParams.get('genreId') || 'all'
+  );
   const [cantorFilter, setCantorFilter] = useState<string>('all');
   const [isShuffled, setIsShuffled] = useState<boolean>(true);
   const [playlist, setPlaylist] = useState<Hymn[]>([]);
@@ -44,7 +44,7 @@ export function CantorCloudClientPage() {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [initialHymnSet, setInitialHymnSet] = useState(false);
   const [autoplay, setAutoplay] = useState(false);
-  
+
   // Data fetching
   const { data: allHymns, isLoading: hymnsLoading } = useHymns();
   const { data: allGenres, isLoading: genresLoading } = useGenres();
@@ -54,10 +54,10 @@ export function CantorCloudClientPage() {
   const activeCantorIdsWithHymns = useMemo(() => {
     if (!allHymns) return new Set<string>();
     const cantorIds = new Set<string>();
-    allHymns.forEach(hymn => {
-        (hymn.recordings || []).forEach(rec => {
-            cantorIds.add(rec.cantorId);
-        });
+    allHymns.forEach((hymn) => {
+      (hymn.recordings || []).forEach((rec) => {
+        cantorIds.add(rec.cantorId);
+      });
     });
     return cantorIds;
   }, [allHymns]);
@@ -65,32 +65,34 @@ export function CantorCloudClientPage() {
   // Filter cantors for the dropdown
   const filteredCantors = useMemo(() => {
     if (!allCantors) return [];
-    return allCantors.filter(c => 
-        c.cantorCloudActive && activeCantorIdsWithHymns.has(c.id)
+    return allCantors.filter(
+      (c) => c.cantorCloudActive && activeCantorIdsWithHymns.has(c.id)
     );
   }, [allCantors, activeCantorIdsWithHymns]);
-  
+
   const filteredGenres = useMemo(() => {
     if (!allGenres) return [];
-    return allGenres.filter(g => g.cantorCloudActive);
+    return allGenres.filter((g) => g.cantorCloudActive);
   }, [allGenres]);
 
   // Populate cantor details into each hymn's recordings
   const hymnsWithPopulatedCantors = useMemo(() => {
     if (!allHymns || !allCantors) return null;
-    const cantorsMap = new Map(allCantors.map(c => [c.id, c]));
-    return allHymns.map(hymn => ({
+    const cantorsMap = new Map(allCantors.map((c) => [c.id, c]));
+    return allHymns.map((hymn) => ({
       ...hymn,
-      recordings: (hymn.recordings || []).map(rec => ({
-        ...rec,
-        cantor: cantorsMap.get(rec.cantorId)
-      })).sort((a, b) => {
+      recordings: (hymn.recordings || [])
+        .map((rec) => ({
+          ...rec,
+          cantor: cantorsMap.get(rec.cantorId),
+        }))
+        .sort((a, b) => {
           if (a.mode === 'learn' && b.mode !== 'learn') return -1;
           if (a.mode !== 'learn' && b.mode === 'learn') return 1;
           const rankA = a.cantor?.rank ?? 99;
           const rankB = b.cantor?.rank ?? 99;
           return rankA - rankB;
-      })
+        }),
     }));
   }, [allHymns, allCantors]);
 
@@ -99,31 +101,54 @@ export function CantorCloudClientPage() {
     if (!hymnsWithPopulatedCantors) return;
 
     let basePlaylist = [...hymnsWithPopulatedCantors];
+    const startHymnId = searchParams.get('hymnId');
+
+    // If a hymnId is passed without a genreId, create a playlist with that hymn + 19 random
+    if (startHymnId && !searchParams.get('genreId')) {
+      const startHymn = basePlaylist.find((h) => h.id === startHymnId);
+      if (startHymn) {
+        const otherHymns = basePlaylist.filter((h) => h.id !== startHymnId);
+        const random19 = shuffleArray(otherHymns).slice(0, 19);
+        setPlaylist([startHymn, ...random19]);
+      } else {
+        // Fallback to 20 random hymns if hymnId is invalid
+        setPlaylist(shuffleArray(basePlaylist).slice(0, 20));
+      }
+      setIsShuffled(false); // We've manually set the order
+      setCurrentIndex(0);
+      setInitialHymnSet(false); // Let the next effect handle setting the correct index and autoplay
+      return;
+    }
 
     // Special case for initial load with no filters: load 20 random hymns
-    if (genreFilter === 'all' && cantorFilter === 'all' && !searchParams.get('hymnId')) {
-        setPlaylist(shuffleArray(basePlaylist).slice(0, 20));
-        setCurrentIndex(0);
-        setInitialHymnSet(false);
-        return;
+    if (
+      genreFilter === 'all' &&
+      cantorFilter === 'all' &&
+      !searchParams.get('hymnId')
+    ) {
+      setPlaylist(shuffleArray(basePlaylist).slice(0, 20));
+      setCurrentIndex(0);
+      setInitialHymnSet(false);
+      return;
     }
 
     let filteredHymns = basePlaylist;
 
     if (genreFilter && genreFilter !== 'all') {
-      filteredHymns = filteredHymns.filter(h => h.genreId.includes(genreFilter));
-    }
-    if (cantorFilter && cantorFilter !== 'all') {
-      filteredHymns = filteredHymns.filter(h => 
-        (h.recordings || []).some(r => r.cantorId === cantorFilter)
+      filteredHymns = filteredHymns.filter((h) =>
+        h.genreId.includes(genreFilter)
       );
     }
-    
+    if (cantorFilter && cantorFilter !== 'all') {
+      filteredHymns = filteredHymns.filter((h) =>
+        (h.recordings || []).some((r) => r.cantorId === cantorFilter)
+      );
+    }
+
     setPlaylist(filteredHymns);
     // When filters change, reset the shuffle and current index
     setCurrentIndex(0);
     setInitialHymnSet(false); // Allow initial hymn to be set again
-
   }, [hymnsWithPopulatedCantors, genreFilter, cantorFilter, searchParams]);
 
   // Handle shuffling
@@ -134,23 +159,23 @@ export function CantorCloudClientPage() {
       setShuffledPlaylist([]);
     }
   }, [playlist, isShuffled]);
-  
+
   // Set initial hymn from URL params once playlist is ready
   useEffect(() => {
     if (playlist.length > 0 && !initialHymnSet) {
-        const startHymnId = searchParams.get('hymnId');
-        if (startHymnId) {
-            const currentList = isShuffled ? shuffleArray(playlist) : playlist;
-            const startIndex = currentList.findIndex(h => h.id === startHymnId);
-            if (startIndex !== -1) {
-                if(isShuffled) {
-                    setShuffledPlaylist(currentList);
-                }
-                setCurrentIndex(startIndex);
-                setAutoplay(true);
-            }
+      const startHymnId = searchParams.get('hymnId');
+      if (startHymnId) {
+        const currentList = isShuffled ? shuffleArray(playlist) : playlist;
+        const startIndex = currentList.findIndex((h) => h.id === startHymnId);
+        if (startIndex !== -1) {
+          if (isShuffled) {
+            setShuffledPlaylist(currentList);
+          }
+          setCurrentIndex(startIndex);
+          setAutoplay(true);
         }
-        setInitialHymnSet(true);
+      }
+      setInitialHymnSet(true);
     }
   }, [playlist, searchParams, initialHymnSet, isShuffled]);
 
@@ -159,12 +184,15 @@ export function CantorCloudClientPage() {
 
   const handleNext = useCallback(() => {
     setAutoplay(true);
-    setCurrentIndex(prevIndex => (prevIndex + 1) % currentPlaylist.length);
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % currentPlaylist.length);
   }, [currentPlaylist.length]);
 
   const handlePrevious = () => {
     setAutoplay(true);
-    setCurrentIndex(prevIndex => (prevIndex - 1 + currentPlaylist.length) % currentPlaylist.length);
+    setCurrentIndex(
+      (prevIndex) =>
+        (prevIndex - 1 + currentPlaylist.length) % currentPlaylist.length
+    );
   };
 
   const handleSelectTrack = (index: number) => {
@@ -177,65 +205,85 @@ export function CantorCloudClientPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
-      
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
-            <div className="flex flex-col md:flex-row gap-4 w-full">
-                <Select onValueChange={setGenreFilter} value={genreFilter}>
-                    <SelectTrigger className="w-full md:w-[180px]">
-                        <SelectValue placeholder="All Genres" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">All Genres</SelectItem>
-                        {filteredGenres?.map(g => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}
-                    </SelectContent>
-                </Select>
-                <Select onValueChange={setCantorFilter} value={cantorFilter}>
-                    <SelectTrigger className="w-full md:w-[180px]">
-                        <SelectValue placeholder="All Cantors" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">All Cantors</SelectItem>
-                        {filteredCantors?.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
-                    </SelectContent>
-                </Select>
-            </div>
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+        <div className="flex flex-col md:flex-row gap-4 w-full">
+          <Select onValueChange={setGenreFilter} value={genreFilter}>
+            <SelectTrigger className="w-full md:w-[180px]">
+              <SelectValue placeholder="All Genres" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Genres</SelectItem>
+              {filteredGenres?.map((g) => (
+                <SelectItem key={g.id} value={g.id}>
+                  {g.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select onValueChange={setCantorFilter} value={cantorFilter}>
+            <SelectTrigger className="w-full md:w-[180px]">
+              <SelectValue placeholder="All Cantors" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Cantors</SelectItem>
+              {filteredCantors?.map((c) => (
+                <SelectItem key={c.id} value={c.id}>
+                  {c.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
+      </div>
 
-        {showPlayer ? (
-            <div className="w-full max-w-3xl mx-auto">
-                <HymnPlayer 
-                  key={currentHymn.id}
-                  hymn={currentHymn} 
-                  onEnded={handleNext} 
-                  autoplay={autoplay}
-                  onAutoplayConsumed={() => setAutoplay(false)}
-                />
-                <div className="mt-8 flex justify-center gap-4">
-                    <Button variant="outline" size="lg" onClick={handlePrevious}>
-                        <SkipBack className="mr-2 h-5 w-5" /> Previous Hymn
-                    </Button>
-                    <Button variant="outline" size="lg" onClick={handleNext}>
-                        Next Hymn <SkipForward className="ml-2 h-5 w-5" />
-                    </Button>
-                </div>
-                 <Playlist playlist={currentPlaylist} currentIndex={currentIndex} onSelectTrack={handleSelectTrack} />
-            </div>
-        ) : (
-            <div className="w-full max-w-3xl mx-auto">
-                <Card className="flex flex-col items-center justify-center text-center p-8 min-h-[400px]">
-                    <ListMusic className="h-16 w-16 text-muted-foreground" />
-                    <h2 className="mt-6 text-2xl font-semibold">No Hymns to Play</h2>
-                    <p className="mt-2 text-muted-foreground">
-                        {isLoading ? "Loading hymns..." : "Try adjusting your filters or there might be no hymns available."}
-                    </p>
-                    {(genreFilter !== 'all' || cantorFilter !== 'all') && (
-                        <Button variant="outline" className="mt-4" onClick={() => { setGenreFilter('all'); setCantorFilter('all'); }}>
-                           <X className="mr-2 h-4 w-4" /> Clear Filters
-                        </Button>
-                    )}
-                </Card>
-            </div>
-        )}
+      {showPlayer ? (
+        <div className="w-full max-w-3xl mx-auto">
+          <HymnPlayer
+            key={currentHymn.id}
+            hymn={currentHymn}
+            onEnded={handleNext}
+            autoplay={autoplay}
+            onAutoplayConsumed={() => setAutoplay(false)}
+          />
+          <div className="mt-8 flex justify-center gap-4">
+            <Button variant="outline" size="lg" onClick={handlePrevious}>
+              <SkipBack className="mr-2 h-5 w-5" /> Previous Hymn
+            </Button>
+            <Button variant="outline" size="lg" onClick={handleNext}>
+              Next Hymn <SkipForward className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+          <Playlist
+            playlist={currentPlaylist}
+            currentIndex={currentIndex}
+            onSelectTrack={handleSelectTrack}
+          />
+        </div>
+      ) : (
+        <div className="w-full max-w-3xl mx-auto">
+          <Card className="flex flex-col items-center justify-center text-center p-8 min-h-[400px]">
+            <ListMusic className="h-16 w-16 text-muted-foreground" />
+            <h2 className="mt-6 text-2xl font-semibold">No Hymns to Play</h2>
+            <p className="mt-2 text-muted-foreground">
+              {isLoading
+                ? 'Loading hymns...'
+                : 'Try adjusting your filters or there might be no hymns available.'}
+            </p>
+            {(genreFilter !== 'all' || cantorFilter !== 'all') && (
+              <Button
+                variant="outline"
+                className="mt-4"
+                onClick={() => {
+                  setGenreFilter('all');
+                  setCantorFilter('all');
+                }}
+              >
+                <X className="mr-2 h-4 w-4" /> Clear Filters
+              </Button>
+            )}
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
