@@ -336,11 +336,13 @@ export function HymnPlayer({
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
-  const [isSeeking, setIsSeeking] = useState(false);
   const [autoplayOnSwitch, setAutoplayOnSwitch] = useState(false);
   
   const [activeMarks, setActiveMarks] = useState<number[]>([]);
   const [lyricsVisible, setLyricsVisible] = useState(lyricsVisibleByDefault);
+  
+  const [isSeeking, setIsSeeking] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const waveformContainerRef = useRef<HTMLDivElement>(null);
@@ -491,50 +493,85 @@ export function HymnPlayer({
     
     if (!audioRef.current || !waveformContainerRef.current || duration <= 0) return;
     
-    wasPlayingBeforeSeek.current = isPlaying;
-    if (isPlaying) {
-      audioRef.current.pause();
-    }
-    setIsPlaying(false);
     setIsSeeking(true);
+    setIsDragging(false); // Assume click until a move event occurs
+    
+    wasPlayingBeforeSeek.current = isPlaying;
   };
   
   const handleSeekMove = useCallback((e: MouseEvent | TouchEvent) => {
-    if (!isSeeking || !waveformInnerRef.current || !waveformContainerRef.current || duration <= 0) return;
+    if (!isSeeking) return;
     e.preventDefault();
     
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const containerRect = waveformContainerRef.current.getBoundingClientRect();
-    const clickXInContainer = clientX - containerRect.left;
-
-    const transform = window.getComputedStyle(waveformInnerRef.current!).transform;
-    let scrollLeft = 0;
-    if (transform !== 'none') {
-        const matrix = new DOMMatrix(transform);
-        scrollLeft = -matrix.e;
+    if (!isDragging) {
+      setIsDragging(true);
+      // This is the first move, so it's a drag. Pause audio for scrubbing.
+      if (wasPlayingBeforeSeek.current && audioRef.current) {
+          audioRef.current.pause();
+          setIsPlaying(false);
+      }
     }
 
-    const clickXInScroller = clickXInContainer + scrollLeft;
-    const scrollerWidth = waveformInnerRef.current!.scrollWidth;
+    // This is a drag, so apply INVERTED ABSOLUTE seek logic
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const containerRect = waveformContainerRef.current!.getBoundingClientRect();
     
-    const time = (clickXInScroller / scrollerWidth) * duration;
+    const progress = (clientX - containerRect.left) / containerRect.width;
+    const invertedProgress = 1 - progress;
+
+    const transform = window.getComputedStyle(waveformInnerRef.current!).transform;
+    let scrollOffset = 0;
+    if (transform !== 'none') {
+        const matrix = new DOMMatrix(transform);
+        scrollOffset = -matrix.e;
+    }
+
+    const totalWidth = waveformInnerRef.current!.scrollWidth;
+    const visibleWidth = containerRect.width;
+
+    const positionOnTotalWidth = scrollOffset + (invertedProgress * visibleWidth);
+    const time = (positionOnTotalWidth / totalWidth) * duration;
+    
     seek(time);
-  }, [isSeeking, duration, seek]);
+
+  }, [isSeeking, isDragging, duration, seek]);
 
   const handleSeekEnd = useCallback((e: MouseEvent | TouchEvent) => {
     if (!isSeeking) return;
     e.preventDefault();
     
-    setIsSeeking(false);
+    if (!isDragging) {
+      // It was a CLICK, not a drag. Apply DIRECT (non-inverted) absolute seek.
+      const clientX = 'changedTouches' in e ? e.changedTouches[0].clientX : e.clientX;
+      const containerRect = waveformContainerRef.current!.getBoundingClientRect();
+      const clickXInContainer = clientX - containerRect.left;
 
-    if (wasPlayingBeforeSeek.current && audioRef.current) {
-      audioRef.current.play().then(() => {
-        setIsPlaying(true);
-      }).catch(() => {
-        setIsPlaying(false);
-      });
+      const transform = window.getComputedStyle(waveformInnerRef.current!).transform;
+      let scrollLeft = 0;
+      if (transform !== 'none') {
+          const matrix = new DOMMatrix(transform);
+          scrollLeft = -matrix.e;
+      }
+
+      const clickXInScroller = clickXInContainer + scrollLeft;
+      const scrollerWidth = waveformInnerRef.current!.scrollWidth;
+      
+      const time = (clickXInScroller / scrollerWidth) * duration;
+      seek(time);
+    } else {
+      // It was a DRAG. Resume playing if it was playing before.
+      if (wasPlayingBeforeSeek.current && audioRef.current) {
+        audioRef.current.play().then(() => {
+          setIsPlaying(true);
+        }).catch(() => {
+          setIsPlaying(false);
+        });
+      }
     }
-  }, [isSeeking]);
+    
+    setIsSeeking(false);
+    setIsDragging(false);
+  }, [isSeeking, isDragging, duration, seek]);
   
   useEffect(() => {
     if (isSeeking) {
@@ -749,65 +786,65 @@ export function HymnPlayer({
             onEnded={handleEnded}
         />
         <CardHeader>
-            <div className="flex justify-between items-start gap-4">
-                <div className="flex-1 min-w-0">
-                    <CardTitle className="font-headline text-3xl text-primary">
-                        {hymn.name}
-                    </CardTitle>
-                </div>
-                <div className="flex-shrink-0">
-                    {hymn.recordings && hymn.recordings.length > 1 ? (
-                        <Select
-                            value={currentRecording.id}
-                            onValueChange={(recId) => {
-                                const newRec = hymn.recordings!.find((r) => r.id === recId);
-                                if (newRec) {
-                                    setAutoplayOnSwitch(true);
-                                    setCurrentRecording(newRec);
-                                    onRecordingChange?.(newRec);
-                                }
-                            }}
-                        >
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Select Cantor" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {hymn.recordings.map((rec) => (
-                                    <SelectItem key={rec.id} value={rec.id}>
-                                        <div className="flex items-center gap-2">
-                                            {rec.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
-                                            <span>{rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}</span>
-                                        </div>
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    ) : (
-                        <div className="flex items-center justify-center gap-2 h-10 px-3 border rounded-md text-sm text-muted-foreground bg-secondary/50 w-[180px]">
-                            {currentRecording.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
-                            <span>{currentRecording.cantor?.name || '...'}</span>
-                        </div>
-                    )}
-                </div>
+          <div className="flex justify-between items-start gap-4">
+            <div className="flex-1 min-w-0">
+                <CardTitle className="font-headline text-3xl text-primary">
+                    {hymn.name}
+                </CardTitle>
             </div>
-             {hymn.description && (
-                <p className="text-muted-foreground mt-2">{hymn.description}</p>
-            )}
-            {showLyricsToggleButton && hasAnyLyrics && (
-                <div className="pt-4">
-                    <Button 
-                        variant="outline" 
-                        onClick={() => setLyricsVisible(v => !v)}
-                        className={cn(
-                            'transition-colors',
-                            lyricsVisible && 'bg-green-600 text-white hover:bg-green-700 hover:text-white border-green-700'
-                        )}
+            <div className="flex-shrink-0">
+                {hymn.recordings && hymn.recordings.length > 1 ? (
+                    <Select
+                        value={currentRecording.id}
+                        onValueChange={(recId) => {
+                            const newRec = hymn.recordings!.find((r) => r.id === recId);
+                            if (newRec) {
+                                setAutoplayOnSwitch(true);
+                                setCurrentRecording(newRec);
+                                onRecordingChange?.(newRec);
+                            }
+                        }}
                     >
-                        <BookText className="mr-2 h-4 w-4" />
-                        <span>Lyrics</span>
-                    </Button>
-                </div>
-            )}
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select Cantor" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {hymn.recordings.map((rec) => (
+                                <SelectItem key={rec.id} value={rec.id}>
+                                    <div className="flex items-center gap-2">
+                                        {rec.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
+                                        <span>{rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}</span>
+                                    </div>
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                ) : (
+                    <div className="flex items-center justify-center gap-2 h-10 px-3 border rounded-md text-sm text-muted-foreground bg-secondary/50 w-[180px]">
+                        {currentRecording.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
+                        <span>{currentRecording.cantor?.name || '...'}</span>
+                    </div>
+                )}
+            </div>
+          </div>
+          {hymn.description && (
+              <p className="text-muted-foreground mt-2">{hymn.description}</p>
+          )}
+          {showLyricsToggleButton && hasAnyLyrics && (
+              <div className="pt-4">
+                  <Button 
+                      variant="outline" 
+                      onClick={() => setLyricsVisible(v => !v)}
+                      className={cn(
+                          'transition-colors',
+                          lyricsVisible && 'bg-green-600 text-white hover:bg-green-700 hover:text-white border-green-700'
+                      )}
+                  >
+                      <BookText className="mr-2 h-4 w-4" />
+                      <span>Lyrics</span>
+                  </Button>
+              </div>
+          )}
         </CardHeader>
         <CardContent className="px-6 pb-6">
           <div className={`space-y-6 transition-opacity ${isPlayerDisabled ? 'opacity-30 pointer-events-none' : ''}`}>
