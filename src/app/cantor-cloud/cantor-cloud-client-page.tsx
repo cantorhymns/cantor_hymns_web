@@ -38,7 +38,7 @@ export function CantorCloudClientPage() {
   // State for filters and playback
   const [genreFilter, setGenreFilter] = useState<string>(searchParams.get('genreId') || 'all');
   const [cantorFilter, setCantorFilter] = useState<string>('all');
-  const [isShuffled, setIsShuffled] = useState<boolean>(false);
+  const [isShuffled, setIsShuffled] = useState<boolean>(true);
   const [playlist, setPlaylist] = useState<Hymn[]>([]);
   const [shuffledPlaylist, setShuffledPlaylist] = useState<Hymn[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -180,10 +180,6 @@ export function CantorCloudClientPage() {
                     </SelectContent>
                 </Select>
             </div>
-            <Button variant="outline" onClick={() => setIsShuffled(!isShuffled)} className={cn("w-full md:w-auto", isShuffled && "bg-primary/20")}>
-                <Shuffle className="mr-2 h-4 w-4" />
-                Shuffle
-            </Button>
         </div>
 
         {showPlayer ? (
@@ -194,17 +190,9 @@ export function CantorCloudClientPage() {
                   onEnded={handleNext} 
                   autoplay={autoplay}
                   onAutoplayConsumed={() => setAutoplay(false)}
+                  onNextHymn={handleNext}
+                  onPreviousHymn={handlePrevious}
                 />
-                <div className="flex justify-center items-center gap-4 mt-4">
-                    <Button variant="ghost" size="icon" onClick={handlePrevious}>
-                        <SkipBack className="h-6 w-6" />
-                        <span className="sr-only">Previous Hymn</span>
-                    </Button>
-                     <Button size="lg" className="px-8" onClick={handleNext}>
-                        Next Hymn
-                        <SkipForward className="h-5 w-5 ml-2" />
-                    </Button>
-                </div>
                  <Playlist playlist={currentPlaylist} currentIndex={currentIndex} onSelectTrack={handleSelectTrack} />
             </div>
         ) : (
