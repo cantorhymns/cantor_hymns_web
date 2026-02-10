@@ -5,21 +5,27 @@ import { useSearchParams } from 'next/navigation';
 import { useHymns } from '@/lib/hooks/useHymns';
 import { useGenres } from '@/lib/hooks/useGenres';
 import { useCantors } from '@/lib/hooks/useCantors';
-import { Hymn, Cantor, Genre, Recording } from '@/lib/types';
+import { Hymn } from '@/lib/types';
 import { HymnPlayer } from '@/components/hymn-player';
 import { Playlist } from '@/components/playlist';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuCheckboxItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { SkipBack, SkipForward, ListMusic, X } from 'lucide-react';
+import {
+  SkipBack,
+  SkipForward,
+  ListMusic,
+  X,
+  ChevronDown,
+} from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
 
 function shuffleArray<T>(array: T[]): T[] {
   const newArray = [...array];
@@ -34,10 +40,9 @@ export function CantorCloudClientPage() {
   const searchParams = useSearchParams();
 
   // State for filters and playback
-  const [genreFilter, setGenreFilter] = useState<string>(
-    searchParams.get('genreId') || 'all'
-  );
-  const [cantorFilter, setCantorFilter] = useState<string>('all');
+  const [selectedGenreIds, setSelectedGenreIds] = useState<string[]>([]);
+  const [selectedCantorIds, setSelectedCantorIds] = useState<string[]>([]);
+  const [filtersInitialized, setFiltersInitialized] = useState(false);
   const [isShuffled, setIsShuffled] = useState<boolean>(true);
   const [playlist, setPlaylist] = useState<Hymn[]>([]);
   const [shuffledPlaylist, setShuffledPlaylist] = useState<Hymn[]>([]);
@@ -62,7 +67,7 @@ export function CantorCloudClientPage() {
     return cantorIds;
   }, [allHymns]);
 
-  // Filter cantors for the dropdown
+  // Filter cantors and genres for the dropdowns
   const filteredCantors = useMemo(() => {
     if (!allCantors) return [];
     return allCantors.filter(
@@ -95,15 +100,30 @@ export function CantorCloudClientPage() {
         }),
     }));
   }, [allHymns, allCantors]);
+  
+  // Initialize filters once data is loaded
+  useEffect(() => {
+    if (filteredGenres.length > 0 && filteredCantors.length > 0 && !filtersInitialized) {
+        const genreIdFromParams = searchParams.get('genreId');
+        if (genreIdFromParams) {
+             setSelectedGenreIds([genreIdFromParams]);
+             setSelectedCantorIds(filteredCantors.map(c => c.id));
+        } else {
+            setSelectedGenreIds(filteredGenres.map((g) => g.id));
+            setSelectedCantorIds(filteredCantors.map((c) => c.id));
+        }
+        setFiltersInitialized(true);
+    }
+  }, [filteredGenres, filteredCantors, filtersInitialized, searchParams]);
 
   // Build playlist based on filters
   useEffect(() => {
-    if (!hymnsWithPopulatedCantors) return;
+    if (!hymnsWithPopulatedCantors || !filtersInitialized) return;
 
     let basePlaylist = [...hymnsWithPopulatedCantors];
     const startHymnId = searchParams.get('hymnId');
 
-    // If a hymnId is passed without a genreId, create a playlist with that hymn + 19 random
+    // If a hymnId is passed, it creates a special playlist of that hymn + 19 random, ignoring filters.
     if (startHymnId && !searchParams.get('genreId')) {
       const startHymn = basePlaylist.find((h) => h.id === startHymnId);
       if (startHymn) {
@@ -111,22 +131,9 @@ export function CantorCloudClientPage() {
         const random19 = shuffleArray(otherHymns).slice(0, 19);
         setPlaylist([startHymn, ...random19]);
       } else {
-        // Fallback to 20 random hymns if hymnId is invalid
         setPlaylist(shuffleArray(basePlaylist).slice(0, 20));
       }
-      setIsShuffled(false); // We've manually set the order
-      setCurrentIndex(0);
-      setInitialHymnSet(false); // Let the next effect handle setting the correct index and autoplay
-      return;
-    }
-
-    // Special case for initial load with no filters: load 20 random hymns
-    if (
-      genreFilter === 'all' &&
-      cantorFilter === 'all' &&
-      !searchParams.get('hymnId')
-    ) {
-      setPlaylist(shuffleArray(basePlaylist).slice(0, 20));
+      setIsShuffled(false);
       setCurrentIndex(0);
       setInitialHymnSet(false);
       return;
@@ -134,22 +141,30 @@ export function CantorCloudClientPage() {
 
     let filteredHymns = basePlaylist;
 
-    if (genreFilter && genreFilter !== 'all') {
-      filteredHymns = filteredHymns.filter((h) =>
-        h.genreId.includes(genreFilter)
+    // Apply genre filter
+    if (selectedGenreIds.length > 0) {
+      const genreIdSet = new Set(selectedGenreIds);
+      filteredHymns = filteredHymns.filter((h) => 
+        h.genreId.some(gId => genreIdSet.has(gId))
       );
-    }
-    if (cantorFilter && cantorFilter !== 'all') {
-      filteredHymns = filteredHymns.filter((h) =>
-        (h.recordings || []).some((r) => r.cantorId === cantorFilter)
-      );
+    } else {
+      filteredHymns = []; // If no genres selected, show no hymns
     }
 
+    // Apply cantor filter
+    if (selectedCantorIds.length > 0) {
+      const cantorIdSet = new Set(selectedCantorIds);
+      filteredHymns = filteredHymns.filter((h) =>
+        (h.recordings || []).some((r) => cantorIdSet.has(r.cantorId))
+      );
+    } else {
+        filteredHymns = []; // If no cantors selected, show no hymns
+    }
+    
     setPlaylist(filteredHymns);
-    // When filters change, reset the shuffle and current index
     setCurrentIndex(0);
-    setInitialHymnSet(false); // Allow initial hymn to be set again
-  }, [hymnsWithPopulatedCantors, genreFilter, cantorFilter, searchParams]);
+    setInitialHymnSet(false);
+  }, [hymnsWithPopulatedCantors, selectedGenreIds, selectedCantorIds, filtersInitialized, searchParams]);
 
   // Handle shuffling
   useEffect(() => {
@@ -200,39 +215,64 @@ export function CantorCloudClientPage() {
     setCurrentIndex(index);
   };
 
-  const isLoading = hymnsLoading || genresLoading || cantorsLoading;
+  const isLoading = hymnsLoading || genresLoading || cantorsLoading || !filtersInitialized;
   const showPlayer = !isLoading && currentHymn;
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
         <div className="flex flex-col md:flex-row gap-4 w-full">
-          <Select onValueChange={setGenreFilter} value={genreFilter}>
-            <SelectTrigger className="w-full md:w-[180px]">
-              <SelectValue placeholder="All Genres" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Genres</SelectItem>
-              {filteredGenres?.map((g) => (
-                <SelectItem key={g.id} value={g.id}>
-                  {g.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select onValueChange={setCantorFilter} value={cantorFilter}>
-            <SelectTrigger className="w-full md:w-[180px]">
-              <SelectValue placeholder="All Cantors" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Cantors</SelectItem>
-              {filteredCantors?.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
-                  {c.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="w-full md:w-[180px]">
+                        Genres ({selectedGenreIds.length})
+                        <ChevronDown className="ml-2 h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                    <DropdownMenuLabel>Filter by Genre</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {filteredGenres?.map((g) => (
+                        <DropdownMenuCheckboxItem
+                            key={g.id}
+                            checked={selectedGenreIds.includes(g.id)}
+                            onCheckedChange={(checked) => {
+                                return checked
+                                    ? setSelectedGenreIds((prev) => [...prev, g.id])
+                                    : setSelectedGenreIds((prev) => prev.filter((id) => id !== g.id));
+                            }}
+                        >
+                            {g.name}
+                        </DropdownMenuCheckboxItem>
+                    ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="w-full md:w-[180px]">
+                        Cantors ({selectedCantorIds.length})
+                        <ChevronDown className="ml-2 h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                    <DropdownMenuLabel>Filter by Cantor</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {filteredCantors?.map((c) => (
+                        <DropdownMenuCheckboxItem
+                            key={c.id}
+                            checked={selectedCantorIds.includes(c.id)}
+                            onCheckedChange={(checked) => {
+                                return checked
+                                    ? setSelectedCantorIds((prev) => [...prev, c.id])
+                                    : setSelectedCantorIds((prev) => prev.filter((id) => id !== c.id));
+                            }}
+                        >
+                            {c.name}
+                        </DropdownMenuCheckboxItem>
+                    ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
         </div>
       </div>
 
@@ -269,16 +309,16 @@ export function CantorCloudClientPage() {
                 ? 'Loading hymns...'
                 : 'Try adjusting your filters or there might be no hymns available.'}
             </p>
-            {(genreFilter !== 'all' || cantorFilter !== 'all') && (
+            {(!isLoading && (selectedGenreIds.length < filteredGenres.length || selectedCantorIds.length < filteredCantors.length)) && (
               <Button
                 variant="outline"
                 className="mt-4"
                 onClick={() => {
-                  setGenreFilter('all');
-                  setCantorFilter('all');
+                  setSelectedGenreIds(filteredGenres.map(g => g.id));
+                  setSelectedCantorIds(filteredCantors.map(c => c.id));
                 }}
               >
-                <X className="mr-2 h-4 w-4" /> Clear Filters
+                <X className="mr-2 h-4 w-4" /> Reset Filters
               </Button>
             )}
           </Card>
