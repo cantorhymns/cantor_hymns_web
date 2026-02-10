@@ -18,14 +18,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import {
-  SkipBack,
-  SkipForward,
   ListMusic,
   X,
   ChevronDown,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
 
 function shuffleArray<T>(array: T[]): T[] {
   const newArray = [...array];
@@ -45,7 +42,6 @@ export function CantorCloudClientPage() {
   const [filtersInitialized, setFiltersInitialized] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [playlist, setPlaylist] = useState<Hymn[]>([]);
-  const [shuffledPlaylist, setShuffledPlaylist] = useState<Hymn[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [initialHymnSet, setInitialHymnSet] = useState(false);
   const [autoplay, setAutoplay] = useState(false);
@@ -154,6 +150,7 @@ export function CantorCloudClientPage() {
         const random19 = shuffleArray(otherHymns).slice(0, 19);
         setPlaylist([startHymn, ...random19]);
       } else {
+        // Fallback if start hymn not found
         setPlaylist(shuffleArray(activeHymnsForCloud).slice(0, 20));
       }
       
@@ -201,11 +198,14 @@ export function CantorCloudClientPage() {
     if (playlist.length > 0 && !initialHymnSet) {
       const startHymnId = searchParams.get('hymnId');
       if (startHymnId) {
-        const currentList = playlist; // Playlist is already pre-shuffled or ordered
+        const currentList = playlist; // The starting hymn is already at index 0.
         const startIndex = currentList.findIndex((h) => h.id === startHymnId);
         if (startIndex !== -1) {
           setCurrentIndex(startIndex);
           setAutoplay(true);
+        } else {
+           // If the hymn isn't in the generated list, just shuffle what we have.
+           setPlaylist(shuffleArray(playlist));
         }
       } else {
         // For a general load, shuffle the generated playlist
@@ -304,15 +304,11 @@ export function CantorCloudClientPage() {
             onEnded={handleNext}
             autoplay={autoplay}
             onAutoplayConsumed={() => setAutoplay(false)}
+            onNext={handleNext}
+            onPrevious={handlePrevious}
+            hasNext={playlist.length > 1}
+            hasPrevious={playlist.length > 1}
           />
-          <div className="mt-8 flex justify-center gap-4">
-            <Button variant="outline" size="lg" onClick={handlePrevious}>
-              <SkipBack className="mr-2 h-5 w-5" /> Previous Hymn
-            </Button>
-            <Button variant="outline" size="lg" onClick={handleNext}>
-              Next Hymn <SkipForward className="ml-2 h-5 w-5" />
-            </Button>
-          </div>
           <Playlist
             playlist={playlist}
             currentIndex={currentIndex}
