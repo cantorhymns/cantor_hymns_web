@@ -317,9 +317,7 @@ export function HymnPlayer({ hymn, onEnded, autoplay = false, onAutoplayConsumed
   const waveformInnerRef = useRef<HTMLDivElement>(null);
   const seekStartRef = useRef({ x: 0, time: 0 });
   const loopSectionRef = useRef<{ start: number, end: number } | null>(null);
-  const ffClickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [ffClickLevel, setFfClickLevel] = useState(0);
-
+  
   const sortedMarks = useMemo(() => [...(currentRecording?.marks || [])].sort((a, b) => a - b), [currentRecording]);
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
   
@@ -331,25 +329,6 @@ export function HymnPlayer({ hymn, onEnded, autoplay = false, onAutoplayConsumed
       const nextIndex = (currentIndex + 1) % playbackSpeeds.length;
       setPlaybackRate(playbackSpeeds[nextIndex]);
   };
-
-  const ffSkips = [5, 10, 15];
-  const handleFastForward = () => {
-      if (ffClickTimeoutRef.current) {
-          clearTimeout(ffClickTimeoutRef.current);
-      }
-      const skipAmount = ffSkips[ffClickLevel];
-      handleSkip(skipAmount);
-      setFfClickLevel(prev => (prev + 1) % ffSkips.length);
-      ffClickTimeoutRef.current = setTimeout(() => {
-          setFfClickLevel(0);
-      }, 1500);
-  };
-  
-  useEffect(() => {
-    return () => {
-        if (ffClickTimeoutRef.current) clearTimeout(ffClickTimeoutRef.current);
-    }
-  }, []);
 
   useEffect(() => {
     if (hymn && hymn.recordings && hymn.recordings.length > 0) {
@@ -365,8 +344,6 @@ export function HymnPlayer({ hymn, onEnded, autoplay = false, onAutoplayConsumed
       audio.pause();
     }
     
-    setFfClickLevel(0);
-    if (ffClickTimeoutRef.current) clearTimeout(ffClickTimeoutRef.current);
     setCurrentTime(0);
     setPlaybackRate(1);
     setAudioSrc(null);
@@ -868,12 +845,9 @@ export function HymnPlayer({ hymn, onEnded, autoplay = false, onAutoplayConsumed
                                     <span className="sr-only">Next Section</span>
                                 </Button>
                             ) : (
-                                <Button variant="ghost" size="icon" onClick={handleFastForward}>
-                                     <div className="relative">
-                                        <FastForward className="h-6 w-6" />
-                                        {ffClickLevel > 0 && <span className="absolute -top-1 -right-1 text-xs font-bold">{ffClickLevel + 1}</span>}
-                                    </div>
-                                    <span className="sr-only">Fast Forward</span>
+                                <Button variant="ghost" size="icon" onClick={() => handleSkip(10)}>
+                                     <FastForward className="h-6 w-6" />
+                                    <span className="sr-only">Fast Forward 10 seconds</span>
                                 </Button>
                             )}
                       </div>

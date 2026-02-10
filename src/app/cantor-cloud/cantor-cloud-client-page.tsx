@@ -69,6 +69,11 @@ export function CantorCloudClientPage() {
         c.cantorCloudActive && activeCantorIdsWithHymns.has(c.id)
     );
   }, [allCantors, activeCantorIdsWithHymns]);
+  
+  const filteredGenres = useMemo(() => {
+    if (!allGenres) return [];
+    return allGenres.filter(g => g.cantorCloudActive);
+  }, [allGenres]);
 
   // Populate cantor details into each hymn's recordings
   const hymnsWithPopulatedCantors = useMemo(() => {
@@ -93,7 +98,17 @@ export function CantorCloudClientPage() {
   useEffect(() => {
     if (!hymnsWithPopulatedCantors) return;
 
-    let filteredHymns = [...hymnsWithPopulatedCantors];
+    let basePlaylist = [...hymnsWithPopulatedCantors];
+
+    // Special case for initial load with no filters: load 20 random hymns
+    if (genreFilter === 'all' && cantorFilter === 'all' && !searchParams.get('hymnId')) {
+        setPlaylist(shuffleArray(basePlaylist).slice(0, 20));
+        setCurrentIndex(0);
+        setInitialHymnSet(false);
+        return;
+    }
+
+    let filteredHymns = basePlaylist;
 
     if (genreFilter && genreFilter !== 'all') {
       filteredHymns = filteredHymns.filter(h => h.genreId.includes(genreFilter));
@@ -109,7 +124,7 @@ export function CantorCloudClientPage() {
     setCurrentIndex(0);
     setInitialHymnSet(false); // Allow initial hymn to be set again
 
-  }, [hymnsWithPopulatedCantors, genreFilter, cantorFilter]);
+  }, [hymnsWithPopulatedCantors, genreFilter, cantorFilter, searchParams]);
 
   // Handle shuffling
   useEffect(() => {
@@ -171,7 +186,7 @@ export function CantorCloudClientPage() {
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">All Genres</SelectItem>
-                        {allGenres?.map(g => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}
+                        {filteredGenres?.map(g => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}
                     </SelectContent>
                 </Select>
                 <Select onValueChange={setCantorFilter} value={cantorFilter}>

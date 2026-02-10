@@ -26,6 +26,10 @@
             "type": "boolean",
             "description": "Indicates if the genre is available to be displayed in the app."
         },
+        "cantorCloudActive": {
+            "type": "boolean",
+            "description": "Indicates if the genre should be displayed in the CantorCloud filter list."
+        },
         "subGenres": {
             "type": "array",
             "items": {

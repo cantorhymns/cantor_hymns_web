@@ -7,7 +7,8 @@ export const genres = [
         "icon": "https://picsum.photos/seed/icon-holy-week/48/48",
         "backgroundUrl": "backgrounds/holy-week.jpg",
         "active": true,
-        "subGenres": ["General", "Vespers", "Matins"]
+        "subGenres": ["General", "Vespers", "Matins"],
+        "cantorCloudActive": true
     },
     {
         "id": "kiahk",
@@ -15,7 +16,8 @@ export const genres = [
         "description": "Praises for the month of Kiahk.",
         "icon": "https://picsum.photos/seed/icon-kiahk/48/48",
         "backgroundUrl": "backgrounds/kiahk.jpg",
-        "active": true
+        "active": true,
+        "cantorCloudActive": true
     },
     {
         "id": "resurrection",
@@ -23,7 +25,8 @@ export const genres = [
         "description": "Hymns for the Resurrection feast.",
         "icon": "https://picsum.photos/seed/icon-resurrection/48/48",
         "backgroundUrl": "backgrounds/resurrection.jpg",
-        "active": true
+        "active": true,
+        "cantorCloudActive": true
     }
 ];
 

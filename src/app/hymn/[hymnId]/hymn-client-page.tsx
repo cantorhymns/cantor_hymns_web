@@ -3,11 +3,12 @@
 'use client';
 import { HymnPlayer } from '@/components/hymn-player';
 import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, ListMusic } from 'lucide-react';
 import { useHymn } from '@/lib/hooks/useHymn';
 import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemo } from 'react';
+import { Button } from '@/components/ui/button';
 
 export function HymnClientPage({ hymnId }: { hymnId: string }) {
   const { data: hymn, isLoading: isHymnLoading } = useHymn(hymnId);
@@ -23,21 +24,28 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
-      {isLoading ? (
-        <div className="mb-8">
-            <Skeleton className="h-6 w-40" />
+        <div className="mb-8 flex justify-between items-center">
+            {isLoading ? (
+                <Skeleton className="h-6 w-40" />
+            ) : genre ? (
+                <Link
+                href={`/hymns/${genre.id}`}
+                className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary"
+                >
+                <ChevronLeft className="mr-2 h-4 w-4" />
+                Back to {genre.name}
+                </Link>
+            ) : <div />}
+            
+            {hymn && genre && (
+                <Link href={`/cantor-cloud?genreId=${genre.id}&hymnId=${hymnId}`}>
+                    <Button>
+                        <ListMusic className="mr-2 h-4 w-4" />
+                        Play in CantorCloud
+                    </Button>
+                </Link>
+            )}
         </div>
-      ) : genre ? (
-         <div className="mb-8">
-            <Link
-            href={`/hymns/${genre.id}`}
-            className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary"
-            >
-            <ChevronLeft className="mr-2 h-4 w-4" />
-            Back to {genre.name}
-            </Link>
-         </div>
-      ) : null}
       
       {isLoading || !hymn ? (
         <div className="w-full max-w-3xl mx-auto space-y-6">

@@ -41,4 +41,5 @@ export interface Genre {
   backgroundUrl?: string;
   active: boolean;
   subGenres?: string[];
+  cantorCloudActive?: boolean;
 }

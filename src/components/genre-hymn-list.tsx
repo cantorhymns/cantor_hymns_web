@@ -19,7 +19,7 @@ const HymnCard = ({ hymn, genreId }: { hymn: Hymn; genreId: string }) => {
   const learnCount = hymn.recordings?.filter(r => r.mode === 'learn').length || 0;
   const listenCount = hymn.recordings?.filter(r => r.mode === 'listen').length || 0;
   return (
-    <Link href={`/cantor-cloud?genreId=${genreId}&hymnId=${hymn.id}`} key={hymn.id} className="group">
+    <Link href={`/hymn/${hymn.id}`} key={hymn.id} className="group">
       <Card className="h-full flex flex-col transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 group-hover:border-primary/50">
         <CardHeader className="flex-grow">
           <div className="mb-3">
@@ -153,7 +153,7 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
           {groupedHymns.map((group, index) => (
             <div key={group.name || index}>
               {group.name && (
-                <h2 className="text-2xl font-headline font-bold text-primary/90 mb-6 border-b-2 border-primary/10 pb-3">{group.name}</h2>
+                <h2 className="text-2xl font-headline font-bold text-primary/90 mb-6 border-b-2 border-primary/20 pb-3">{group.name}</h2>
               )}
               {group.hymns.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
