@@ -153,7 +153,7 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
           {groupedHymns.map((group, index) => (
             <div key={group.name || index}>
               {group.name && (
-                <h2 className="text-2xl font-headline font-bold text-primary mb-6 border-b pb-2">{group.name}</h2>
+                <h2 className="text-2xl font-headline font-bold text-primary/90 mb-6 border-b-2 border-primary/10 pb-3">{group.name}</h2>
               )}
               {group.hymns.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
