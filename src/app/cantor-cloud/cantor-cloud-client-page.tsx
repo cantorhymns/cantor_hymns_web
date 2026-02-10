@@ -55,19 +55,19 @@ export function CantorCloudClientPage() {
             cantor: cantorsMap.get(rec.cantorId)
         }));
 
-        populatedRecordings.sort((a, b) => {
-            if (a.mode === 'learn' && b.mode !== 'learn') return -1;
-            if (a.mode !== 'learn' && b.mode === 'learn') return 1;
-            const rankA = a.cantor?.rank ?? 99;
-            const rankB = b.cantor?.rank ?? 99;
-            return rankA - rankB;
-        });
+        // Shuffle recordings for each hymn to add variety
+        if (populatedRecordings.length > 1) {
+            for (let i = populatedRecordings.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [populatedRecordings[i], populatedRecordings[j]] = [populatedRecordings[j], populatedRecordings[i]];
+            }
+        }
 
         return {
             ...hymn,
             recordings: populatedRecordings
         };
-    });
+    }).filter(hymn => hymn.recordings.length > 0);
   }, [allHymns, allRecordings, allCantors]);
 
   const activeHymnsForCloud = useMemo(() => {

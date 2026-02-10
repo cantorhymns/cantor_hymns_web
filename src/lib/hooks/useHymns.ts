@@ -109,7 +109,7 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
             ...hymn,
             recordings: hymnRecordings
         };
-    });
+    }).filter(hymn => hymn.recordings.length > 0);
 
   }, [sortedHymns, recordings, hymnIds, areRecordingsLoading, cantorsMap, areCantorsLoading, shouldFetchRelatedData]);
 
