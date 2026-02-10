@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from '@/components/ui/button';
-import { Shuffle, SkipBack, SkipForward, ListMusic, X, Rewind, FastForward } from 'lucide-react';
+import { SkipBack, SkipForward, ListMusic, X } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
@@ -125,15 +125,19 @@ export function CantorCloudClientPage() {
     if (playlist.length > 0 && !initialHymnSet) {
         const startHymnId = searchParams.get('hymnId');
         if (startHymnId) {
-            const startIndex = playlist.findIndex(h => h.id === startHymnId);
+            const currentList = isShuffled ? shuffleArray(playlist) : playlist;
+            const startIndex = currentList.findIndex(h => h.id === startHymnId);
             if (startIndex !== -1) {
+                if(isShuffled) {
+                    setShuffledPlaylist(currentList);
+                }
                 setCurrentIndex(startIndex);
                 setAutoplay(true);
             }
         }
         setInitialHymnSet(true);
     }
-  }, [playlist, searchParams, initialHymnSet]);
+  }, [playlist, searchParams, initialHymnSet, isShuffled]);
 
   const currentPlaylist = isShuffled ? shuffledPlaylist : playlist;
   const currentHymn = currentPlaylist?.[currentIndex];
@@ -190,9 +194,15 @@ export function CantorCloudClientPage() {
                   onEnded={handleNext} 
                   autoplay={autoplay}
                   onAutoplayConsumed={() => setAutoplay(false)}
-                  onNextHymn={handleNext}
-                  onPreviousHymn={handlePrevious}
                 />
+                <div className="mt-8 flex justify-center gap-4">
+                    <Button variant="outline" size="lg" onClick={handlePrevious}>
+                        <SkipBack className="mr-2 h-5 w-5" /> Previous Hymn
+                    </Button>
+                    <Button variant="outline" size="lg" onClick={handleNext}>
+                        Next Hymn <SkipForward className="ml-2 h-5 w-5" />
+                    </Button>
+                </div>
                  <Playlist playlist={currentPlaylist} currentIndex={currentIndex} onSelectTrack={handleSelectTrack} />
             </div>
         ) : (

@@ -287,13 +287,11 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
 };
 
 
-export function HymnPlayer({ hymn, onEnded, autoplay = false, onAutoplayConsumed, onNextHymn, onPreviousHymn }: { 
+export function HymnPlayer({ hymn, onEnded, autoplay = false, onAutoplayConsumed }: { 
     hymn: Hymn; 
     onEnded?: () => void; 
     autoplay?: boolean; 
     onAutoplayConsumed?: () => void;
-    onNextHymn?: () => void;
-    onPreviousHymn?: () => void;
 }) {
   const { firebaseApp } = useFirebase();
   const storage = useMemo(() => firebaseApp ? getStorage(firebaseApp) : null, [firebaseApp]);
@@ -847,19 +845,15 @@ export function HymnPlayer({ hymn, onEnded, autoplay = false, onAutoplayConsumed
 
                   <div className="flex flex-col items-center gap-4">
                       <div className="flex items-center gap-4">
-                            {onPreviousHymn ? (
-                                <Button variant="ghost" size="icon" onClick={onPreviousHymn}>
-                                    <SkipBack className="h-6 w-6" />
-                                    <span className="sr-only">Previous Hymn</span>
-                                </Button>
-                            ) : showControls ? (
+                            {showControls ? (
                                 <Button variant="ghost" size="icon" onClick={handlePrevSection} disabled={sortedActiveMarks.length === 0}>
                                     <SkipBack className="h-6 w-6" />
                                     <span className="sr-only">Previous Section</span>
                                 </Button>
                             ) : (
-                                <Button variant="ghost" size="icon" disabled>
-                                    <SkipBack className="h-6 w-6" />
+                                <Button variant="ghost" size="icon" onClick={() => handleSkip(-10)}>
+                                    <Rewind className="h-6 w-6" />
+                                    <span className="sr-only">Rewind 10 seconds</span>
                                 </Button>
                             )}
 
@@ -868,19 +862,18 @@ export function HymnPlayer({ hymn, onEnded, autoplay = false, onAutoplayConsumed
                                 <span className="sr-only">{isPlaying ? "Pause" : "Play"}</span>
                             </Button>
 
-                            {onNextHymn ? (
-                                <Button variant="ghost" size="icon" onClick={onNextHymn}>
-                                    <SkipForward className="h-6 w-6" />
-                                    <span className="sr-only">Next Hymn</span>
-                                </Button>
-                            ) : showControls ? (
+                            {showControls ? (
                                 <Button variant="ghost" size="icon" onClick={handleNextSection} disabled={sortedActiveMarks.length === 0}>
                                     <SkipForward className="h-6 w-6" />
                                     <span className="sr-only">Next Section</span>
                                 </Button>
                             ) : (
-                                <Button variant="ghost" size="icon" disabled>
-                                    <SkipForward className="h-6 w-6" />
+                                <Button variant="ghost" size="icon" onClick={handleFastForward}>
+                                     <div className="relative">
+                                        <FastForward className="h-6 w-6" />
+                                        {ffClickLevel > 0 && <span className="absolute -top-1 -right-1 text-xs font-bold">{ffClickLevel + 1}</span>}
+                                    </div>
+                                    <span className="sr-only">Fast Forward</span>
                                 </Button>
                             )}
                       </div>
