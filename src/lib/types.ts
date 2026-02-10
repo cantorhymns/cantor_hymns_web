@@ -36,6 +36,7 @@ export interface Hymn {
 export interface Genre {
   id:string;
   name: string;
+  rank: number;
   description: string;
   icon: string;
   backgroundUrl?: string;

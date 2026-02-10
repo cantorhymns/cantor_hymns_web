@@ -76,11 +76,13 @@ async function seedDatabase() {
       const docRef = doc(db, 'genres', genre.id);
       seedBatch.set(docRef, {
         name: genre.name,
+        rank: genre.rank,
         description: genre.description,
         icon: genre.icon,
         backgroundUrl: genre.backgroundUrl || "",
         active: genre.active,
-        subGenres: genre.subGenres || []
+        subGenres: genre.subGenres || [],
+        cantorCloudActive: genre.cantorCloudActive ?? false
       });
     });
 
