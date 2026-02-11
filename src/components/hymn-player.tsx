@@ -423,7 +423,7 @@ export function HymnPlayer({
     if (audioRef.current) {
         audioRef.current.playbackRate = playbackRate;
     }
-  }, [playbackRate]);
+  }, [playbackRate, audioSrc]);
 
   const seek = useCallback((time: number) => {
     if (!audioRef.current || !isFinite(duration) || duration <= 0) return;
