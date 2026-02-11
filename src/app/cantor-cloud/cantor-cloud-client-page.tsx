@@ -209,7 +209,7 @@ export function CantorCloudClientPage() {
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
       <div className="text-center mb-12">
         <CopticCrossIcon className="h-10 w-10 text-primary inline-block" />
-        <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight mt-4">
+        <h1 className="text-2xl md:text-3xl font-headline font-bold text-primary tracking-tight mt-4">
           CantorCloud
         </h1>
       </div>
