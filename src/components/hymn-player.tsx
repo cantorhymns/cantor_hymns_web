@@ -398,11 +398,8 @@ export function HymnPlayer({
   }, [hymn, initialRecordingId, autoplay]);
   
   useEffect(() => {
-    const audio = audioRef.current;
-    if (audio) {
-      audio.pause();
-    }
-    
+    // When the recording changes, reset the player state.
+    // Changing the `src` attribute on the <audio> element will implicitly stop playback.
     setIsPlaying(false);
     setCurrentTime(0);
     setPlaybackRate(1);
