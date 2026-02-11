@@ -1,7 +1,7 @@
 
 'use client';
 import { useMemo } from 'react';
-import { collection, query, DocumentData, doc, where } from 'firebase/firestore';
+import { collection, query, DocumentData, doc, where, orderBy } from 'firebase/firestore';
 import { useCollection, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { Genre } from '@/lib/types';
 
@@ -10,7 +10,7 @@ export function useGenres() {
 
   const genresQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    return query(collection(firestore, 'genres'), where('active', '==', true));
+    return query(collection(firestore, 'genres'), where('active', '==', true), orderBy('rank', 'asc'));
   }, [firestore]);
 
   const { data: genres, ...rest } = useCollection<Genre>(genresQuery);

@@ -10,6 +10,10 @@
           "type": "string",
           "description": "The name of the genre (e.g., Holy Week, Kiahk, Resurrection)."
         },
+        "rank": {
+            "type": "number",
+            "description": "The display order for the genre, smaller numbers are higher."
+        },
         "description": {
             "type": "string",
             "description": "A short description of the genre."
@@ -40,6 +44,7 @@
       },
       "required": [
         "name",
+        "rank",
         "description",
         "icon",
         "active"
