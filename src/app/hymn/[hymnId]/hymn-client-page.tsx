@@ -9,12 +9,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { useHymns } from '@/lib/hooks/useHymns';
-import { useRouter } from 'next/navigation';
 import type { Hymn, Recording } from '@/lib/types';
 
 
 export function HymnClientPage({ hymnId }: { hymnId: string }) {
-  const router = useRouter();
   
   // Use a state for the hymn being displayed.
   const [hymn, setHymn] = useState<Hymn | null>(null);
@@ -44,6 +42,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
     return Array.isArray(initialHymnData.genreId) ? initialHymnData.genreId[0] : initialHymnData.genreId;
   }, [initialHymnData?.genreId]);
 
+  const { data: genre } = useGenre(primaryGenreId);
   const { data: playlistHymns, isLoading: isPlaylistLoading } = useHymns(primaryGenreId);
 
   const { playlist, currentIndex } = useMemo(() => {
