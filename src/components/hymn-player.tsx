@@ -368,12 +368,10 @@ export function HymnPlayer({
   , [hymn]);
 
   const handleNextHymn = useCallback(() => {
-    audioRef.current?.play().catch(() => {});
     onNext?.();
   }, [onNext]);
 
   const handlePreviousHymn = useCallback(() => {
-    audioRef.current?.play().catch(() => {});
     onPrevious?.();
   }, [onPrevious]);
 
@@ -397,7 +395,6 @@ export function HymnPlayer({
     // When the recording changes, reset the player state.
     setIsPlaying(false);
     setCurrentTime(0);
-    setPlaybackRate(1);
     setAudioSrc(null);
     setAudioError(null);
     setDuration(0);
