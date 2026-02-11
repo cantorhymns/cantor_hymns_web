@@ -27,6 +27,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
     }
   }, [initialHymnData]);
   
+  const { data: genre } = useGenre(hymn?.genreId?.[0]);
   const [currentRecording, setCurrentRecording] = useState<Recording | undefined>();
 
   useEffect(() => {
@@ -42,7 +43,6 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
     return Array.isArray(initialHymnData.genreId) ? initialHymnData.genreId[0] : initialHymnData.genreId;
   }, [initialHymnData?.genreId]);
 
-  const { data: genre } = useGenre(primaryGenreId);
   const { data: playlistHymns, isLoading: isPlaylistLoading } = useHymns(primaryGenreId);
 
   const { playlist, currentIndex } = useMemo(() => {
@@ -135,6 +135,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
           hasPrevious={hasPrevious}
           hasNext={hasNext}
           onRecordingChange={setCurrentRecording}
+          showLyricsToggleButton={true}
         />
       )}
     </div>

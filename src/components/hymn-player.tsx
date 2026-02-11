@@ -364,22 +364,15 @@ export function HymnPlayer({
     !!(hymn.lyricsEnglish || hymn.lyricsCoptic || hymn.lyricsArabic)
   , [hymn]);
 
-  const handleNextHymn = () => {
-    // On mobile, audio playback must be initiated by a user gesture.
-    // By calling play() inside this click handler, we tell the browser
-    // that the user wants to play audio. Even if the audio source
-    // isn't ready, the browser remembers this intent. When we update
-    // the `src` attribute later, it should then autoplay successfully.
-    // We wrap it in a catch block because it will throw an error if
-    // there's no valid source yet, which is expected.
+  const handleNextHymn = useCallback(() => {
     audioRef.current?.play().catch(() => {});
     onNext?.();
-  };
+  }, [onNext]);
 
-  const handlePreviousHymn = () => {
+  const handlePreviousHymn = useCallback(() => {
     audioRef.current?.play().catch(() => {});
     onPrevious?.();
-  };
+  }, [onPrevious]);
 
   useEffect(() => {
     // This effect ensures that whenever the hymn prop changes,
@@ -511,13 +504,13 @@ export function HymnPlayer({
       navigator.mediaSession.setActionHandler('pause', handlePlayPause);
 
       if (onPrevious && hasPrevious) {
-        navigator.mediaSession.setActionHandler('previoustrack', onPrevious);
+        navigator.mediaSession.setActionHandler('previoustrack', handlePreviousHymn);
       } else {
         navigator.mediaSession.setActionHandler('previoustrack', null);
       }
 
       if (onNext && hasNext) {
-        navigator.mediaSession.setActionHandler('nexttrack', onNext);
+        navigator.mediaSession.setActionHandler('nexttrack', handleNextHymn);
       } else {
         navigator.mediaSession.setActionHandler('nexttrack', null);
       }
@@ -547,7 +540,7 @@ export function HymnPlayer({
         navigator.mediaSession.setActionHandler('nexttrack', null);
       }
     };
-  }, [currentRecording, hymn, hasNext, hasPrevious, onNext, onPrevious, handlePlayPause]);
+  }, [currentRecording, hymn, hasNext, hasPrevious, onNext, onPrevious, handlePlayPause, handleNextHymn, handlePreviousHymn]);
 
 
   const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
@@ -819,65 +812,64 @@ export function HymnPlayer({
             onPause={() => setIsPlaying(false)}
         />
         <CardHeader>
-          <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-            <div className="flex-1 min-w-0">
-                <CardTitle className="font-headline text-3xl text-primary">
-                    {hymn.name}
-                </CardTitle>
-            </div>
-            <div className="flex-shrink-0 w-full sm:w-auto">
-                {hymn.recordings && hymn.recordings.length > 1 ? (
-                    <Select
-                        value={currentRecording.id}
-                        onValueChange={(recId) => {
-                            const newRec = hymn.recordings!.find((r) => r.id === recId);
-                            if (newRec) {
-                                setAutoplayOnSwitch(true);
-                                setCurrentRecording(newRec);
-                                onRecordingChange?.(newRec);
-                            }
-                        }}
-                    >
-                        <SelectTrigger className="w-full sm:w-[180px]">
-                            <SelectValue placeholder="Select Cantor" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {hymn.recordings.map((rec) => (
-                                <SelectItem key={rec.id} value={rec.id}>
-                                    <div className="flex items-center gap-2">
-                                        {rec.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
-                                        <span>{rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}</span>
-                                    </div>
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                ) : (
-                    <div className="flex items-center justify-center gap-2 h-10 px-3 border rounded-md text-sm text-muted-foreground bg-secondary/50 w-full sm:w-[180px]">
-                        {currentRecording.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
-                        <span>{currentRecording.cantor?.name || '...'}</span>
-                    </div>
-                )}
-            </div>
-          </div>
+          <CardTitle className="font-headline text-3xl text-primary">
+              {hymn.name}
+          </CardTitle>
           {hymn.description && (
               <p className="text-muted-foreground mt-2">{hymn.description}</p>
           )}
-          {showLyricsToggleButton && hasAnyLyrics && (
-              <div className="pt-4">
-                  <Button 
-                      variant="outline" 
-                      onClick={() => setLyricsVisible(v => !v)}
-                      className={cn(
-                          'transition-colors',
-                          lyricsVisible && 'bg-green-600 text-white hover:bg-green-700 hover:text-white border-green-700'
-                      )}
-                  >
-                      <BookText className="mr-2 h-4 w-4" />
-                      <span>Lyrics</span>
-                  </Button>
+          <div className="pt-4 flex justify-between items-center gap-4">
+              <div>
+                  {showLyricsToggleButton && hasAnyLyrics && (
+                      <Button 
+                          variant="outline" 
+                          onClick={() => setLyricsVisible(v => !v)}
+                          className={cn(
+                              'transition-colors',
+                              lyricsVisible && 'bg-green-600 text-white hover:bg-green-700 hover:text-white border-green-700'
+                          )}
+                      >
+                          <BookText className="mr-2 h-4 w-4" />
+                          <span>Lyrics</span>
+                      </Button>
+                  )}
               </div>
-          )}
+              
+              <div className="w-full sm:w-auto max-w-[180px]">
+                  {hymn.recordings && hymn.recordings.length > 1 ? (
+                      <Select
+                          value={currentRecording.id}
+                          onValueChange={(recId) => {
+                              const newRec = hymn.recordings!.find((r) => r.id === recId);
+                              if (newRec) {
+                                  setAutoplayOnSwitch(true);
+                                  setCurrentRecording(newRec);
+                                  onRecordingChange?.(newRec);
+                              }
+                          }}
+                      >
+                          <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select Cantor" />
+                          </SelectTrigger>
+                          <SelectContent>
+                              {hymn.recordings.map((rec) => (
+                                  <SelectItem key={rec.id} value={rec.id}>
+                                      <div className="flex items-center gap-2">
+                                          {rec.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
+                                          <span>{rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}</span>
+                                      </div>
+                                  </SelectItem>
+                              ))}
+                          </SelectContent>
+                      </Select>
+                  ) : (
+                      <div className="flex items-center justify-center gap-2 h-10 px-3 border rounded-md text-sm text-muted-foreground bg-secondary/50 w-full">
+                          {currentRecording.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
+                          <span className="truncate">{currentRecording.cantor?.name || '...'}</span>
+                      </div>
+                  )}
+              </div>
+          </div>
         </CardHeader>
         <CardContent className="px-6 pb-6">
           <div className={`space-y-6 transition-opacity ${isPlayerDisabled ? 'opacity-30 pointer-events-none' : ''}`}>
