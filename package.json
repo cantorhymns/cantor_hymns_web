@@ -35,7 +35,8 @@
     "db:update-kyrie-eleison-lent": "tsx src/scripts/update-kyrie-eleison-lent-marks.ts",
     "db:update-somatos": "tsx src/scripts/update-somatos-marks.ts",
     "db:update-ethvetee-good-friday": "tsx src/scripts/update-ethvetee-good-friday-marks.ts",
-    "db:update-avechnon": "tsx src/scripts/update-avechnon-marks.ts"
+    "db:update-avechnon": "tsx src/scripts/update-avechnon-marks.ts",
+    "db:update-yodas": "tsx src/scripts/update-yodas-marks.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
