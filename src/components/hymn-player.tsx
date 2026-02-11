@@ -334,7 +334,7 @@ export function HymnPlayer({
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
-  const [autoplayOnSwitch, setAutoplayOnSwitch] = useState(false);
+  const [autoplayOnSwitch, setAutoplayOnSwitch] = useState(autoplay);
   
   const [activeMarks, setActiveMarks] = useState<number[]>([]);
   const [lyricsVisible, setLyricsVisible] = useState(lyricsVisibleByDefault);
@@ -346,7 +346,6 @@ export function HymnPlayer({
   const waveformContainerRef = useRef<HTMLDivElement>(null);
   const waveformInnerRef = useRef<HTMLDivElement>(null);
   const loopSectionRef = useRef<{ start: number, end: number } | null>(null);
-  const wasPlayingBeforeSeek = useRef(false);
   const dragStartRef = useRef<{ x: number; time: number } | null>(null);
   
   const sortedMarks = useMemo(() => [...(currentRecording?.marks || [])].sort((a, b) => a - b), [currentRecording]);
@@ -365,7 +364,27 @@ export function HymnPlayer({
     !!(hymn.lyricsEnglish || hymn.lyricsCoptic || hymn.lyricsArabic)
   , [hymn]);
 
+  const handleNextHymn = () => {
+    // On mobile, audio playback must be initiated by a user gesture.
+    // By calling play() inside this click handler, we tell the browser
+    // that the user wants to play audio. Even if the audio source
+    // isn't ready, the browser remembers this intent. When we update
+    // the `src` attribute later, it should then autoplay successfully.
+    // We wrap it in a catch block because it will throw an error if
+    // there's no valid source yet, which is expected.
+    audioRef.current?.play().catch(() => {});
+    onNext?.();
+  };
+
+  const handlePreviousHymn = () => {
+    audioRef.current?.play().catch(() => {});
+    onPrevious?.();
+  };
+
   useEffect(() => {
+    // This effect ensures that whenever the hymn prop changes,
+    // we reset the state and select the correct initial recording.
+    setAutoplayOnSwitch(autoplay); // Respect the autoplay prop for incoming hymns.
     if (hymn && hymn.recordings && hymn.recordings.length > 0) {
       if (initialRecordingId) {
         const initialRec = hymn.recordings.find(r => r.id === initialRecordingId);
@@ -376,7 +395,7 @@ export function HymnPlayer({
     } else {
       setCurrentRecording(undefined);
     }
-  }, [hymn, initialRecordingId]);
+  }, [hymn, initialRecordingId, autoplay]);
   
   useEffect(() => {
     const audio = audioRef.current;
@@ -543,8 +562,6 @@ export function HymnPlayer({
     
     setIsSeeking(true);
     setIsDragging(false);
-    
-    wasPlayingBeforeSeek.current = isPlaying;
     
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     dragStartRef.current = { x: clientX, time: currentTime };
@@ -727,13 +744,13 @@ export function HymnPlayer({
   const handleCanPlay = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    if (autoplay || autoplayOnSwitch) {
+    if (autoplayOnSwitch) {
         audio.play().catch((e) => {
             console.error("Autoplay failed:", e);
         });
-        if (autoplayOnSwitch) setAutoplayOnSwitch(false);
+        setAutoplayOnSwitch(false);
     }
-  }, [autoplay, autoplayOnSwitch]);
+  }, [autoplayOnSwitch]);
 
   if (!hymn.recordings || hymn.recordings.length === 0) {
       return (
@@ -994,10 +1011,10 @@ export function HymnPlayer({
               </div>
               {(onNext || onPrevious) && (
                 <div className="flex justify-center items-center gap-4 border-t pt-4 mt-4">
-                    <Button variant="outline" size="lg" onClick={onPrevious} disabled={!hasPrevious}>
+                    <Button variant="outline" size="lg" onClick={handlePreviousHymn} disabled={!hasPrevious}>
                         <ChevronLeft className="mr-2 h-5 w-5" /> Previous Hymn
                     </Button>
-                    <Button variant="outline" size="lg" onClick={onNext} disabled={!hasNext}>
+                    <Button variant="outline" size="lg" onClick={handleNextHymn} disabled={!hasNext}>
                         Next Hymn <ChevronRight className="ml-2 h-5 w-5" />
                     </Button>
                 </div>
