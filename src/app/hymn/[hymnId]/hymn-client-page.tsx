@@ -6,7 +6,7 @@ import { ChevronLeft, ListMusic } from 'lucide-react';
 import { useHymn } from '@/lib/hooks/useHymn';
 import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { useHymns } from '@/lib/hooks/useHymns';
 import { useRouter } from 'next/navigation';
@@ -57,22 +57,22 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
   const hasNext = currentIndex !== -1 && currentIndex < playlist.length - 1;
 
   // Handle previous without a full page reload.
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     if (hasPrevious && playlist) {
       const previousHymn = playlist[currentIndex - 1];
       setHymn(previousHymn); // Update the state
       router.push(`/hymn/${previousHymn.id}`, { scroll: false }); // Update URL without reload
     }
-  };
+  }, [hasPrevious, playlist, currentIndex, router]);
 
   // Handle next without a full page reload.
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (hasNext && playlist) {
       const nextHymn = playlist[currentIndex + 1];
       setHymn(nextHymn); // Update the state
       router.push(`/hymn/${nextHymn.id}`, { scroll: false }); // Update URL without reload
     }
-  };
+  }, [hasNext, playlist, currentIndex, router]);
 
   // Loading is true until the first hymn is loaded and set in state.
   const isLoading = isInitialHymnLoading || (initialHymnData && !hymn);
