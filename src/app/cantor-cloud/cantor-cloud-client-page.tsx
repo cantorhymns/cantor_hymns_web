@@ -13,6 +13,31 @@ import { Playlist } from '@/components/playlist';
 import { ListMusic } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 
+const CopticCrossIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 100 100"
+    fill="currentColor"
+    {...props}
+  >
+    <circle cx="50" cy="50" r="6" />
+    <path d="M47 10h6v80h-6z" />
+    <path d="M10 47h80v6H10z" />
+    <circle cx="50" cy="15" r="4" />
+    <circle cx="42" cy="15" r="4" />
+    <circle cx="58" cy="15" r="4" />
+    <circle cx="50" cy="85" r="4" />
+    <circle cx="42" cy="85" r="4" />
+    <circle cx="58" cy="85" r="4" />
+    <circle cx="15" cy="50" r="4" />
+    <circle cx="15" cy="42" r="4" />
+    <circle cx="15" cy="58" r="4" />
+    <circle cx="85" cy="50" r="4" />
+    <circle cx="85" cy="42" r="4" />
+    <circle cx="85" cy="58" r="4" />
+  </svg>
+);
+
 function shuffleArray<T>(array: T[]): T[] {
   const newArray = [...array];
   for (let i = newArray.length - 1; i > 0; i--) {
@@ -148,10 +173,18 @@ export function CantorCloudClientPage() {
   }, [playlist]);
   
   const handleNext = useCallback(() => {
+    const audio = document.querySelector('audio');
+    if (audio) {
+      audio.play().catch(() => {});
+    }
     handleHymnChange((currentIndex + 1) % playlist.length);
   }, [currentIndex, playlist.length, handleHymnChange]);
 
   const handlePrevious = useCallback(() => {
+    const audio = document.querySelector('audio');
+    if (audio) {
+      audio.play().catch(() => {});
+    }
     handleHymnChange((currentIndex - 1 + playlist.length) % playlist.length);
   }, [currentIndex, playlist.length, handleHymnChange]);
 
@@ -174,7 +207,15 @@ export function CantorCloudClientPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
-      <div className="mb-8" />
+      <div className="text-center mb-12">
+        <CopticCrossIcon className="h-20 w-20 text-primary inline-block" />
+        <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight mt-4">
+          CantorCloud
+        </h1>
+        <p className="text-muted-foreground mt-2 text-lg">
+          Your endless stream of Coptic hymns.
+        </p>
+      </div>
       {showPlayer ? (
         <div className="w-full max-w-3xl mx-auto">
           <HymnPlayer
