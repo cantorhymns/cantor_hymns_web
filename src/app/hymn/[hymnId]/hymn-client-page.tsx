@@ -44,7 +44,6 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
     return Array.isArray(initialHymnData.genreId) ? initialHymnData.genreId[0] : initialHymnData.genreId;
   }, [initialHymnData?.genreId]);
 
-  const { data: genre, isLoading: isGenreLoading } = useGenre(primaryGenreId);
   const { data: playlistHymns, isLoading: isPlaylistLoading } = useHymns(primaryGenreId);
 
   const { playlist, currentIndex } = useMemo(() => {
@@ -56,23 +55,21 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
   const hasPrevious = currentIndex > 0;
   const hasNext = currentIndex !== -1 && currentIndex < playlist.length - 1;
 
-  // Handle previous without a full page reload.
+  // Handle previous without a full page reload or URL change to preserve autoplay.
   const handlePrevious = useCallback(() => {
     if (hasPrevious && playlist) {
       const previousHymn = playlist[currentIndex - 1];
       setHymn(previousHymn); // Update the state
-      router.push(`/hymn/${previousHymn.id}`, { scroll: false }); // Update URL without reload
     }
-  }, [hasPrevious, playlist, currentIndex, router]);
+  }, [hasPrevious, playlist, currentIndex]);
 
-  // Handle next without a full page reload.
+  // Handle next without a full page reload or URL change to preserve autoplay.
   const handleNext = useCallback(() => {
     if (hasNext && playlist) {
       const nextHymn = playlist[currentIndex + 1];
       setHymn(nextHymn); // Update the state
-      router.push(`/hymn/${nextHymn.id}`, { scroll: false }); // Update URL without reload
     }
-  }, [hasNext, playlist, currentIndex, router]);
+  }, [hasNext, playlist, currentIndex]);
 
   // Loading is true until the first hymn is loaded and set in state.
   const isLoading = isInitialHymnLoading || (initialHymnData && !hymn);
