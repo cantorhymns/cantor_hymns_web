@@ -1,3 +1,4 @@
+
 'use client';
 import { HymnPlayer } from '@/components/hymn-player';
 import Link from 'next/link';
@@ -118,6 +119,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
       ) : (
         <HymnPlayer
           hymn={hymn}
+          autoplay={true}
           onPrevious={handlePrevious}
           onNext={handleNext}
           hasPrevious={hasPrevious}

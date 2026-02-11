@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useHymns } from '@/lib/hooks/useHymns';
 import { useGenres } from '@/lib/hooks/useGenres';
 import { useCantors } from '@/lib/hooks/useCantors';
@@ -24,11 +24,12 @@ function shuffleArray<T>(array: T[]): T[] {
 
 export function CantorCloudClientPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [playlist, setPlaylist] = useState<Hymn[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [autoplay, setAutoplay] = useState(false);
+  const [currentHymn, setCurrentHymn] = useState<Hymn | null>(null);
 
   const { data: allHymns, isLoading: hymnsLoading } = useHymns();
   const { data: allGenres, isLoading: genresLoading } = useGenres();
@@ -48,7 +49,7 @@ export function CantorCloudClientPage() {
 
     const cantorsMap = new Map(allCantors.map(c => [c.id, c]));
 
-    return allHymns.map(hymn => {
+    const populatedHymns = allHymns.map(hymn => {
         const hymnRecordings = recordingsByHymnId.get(hymn.id) || [];
         const populatedRecordings = hymnRecordings.map(rec => ({
             ...rec,
@@ -59,7 +60,10 @@ export function CantorCloudClientPage() {
             ...hymn,
             recordings: populatedRecordings
         };
-    }).filter(hymn => hymn.recordings.length > 0);
+    });
+
+    // Ensure only hymns with active recordings are considered.
+    return populatedHymns.filter(hymn => hymn.recordings.length > 0);
   }, [allHymns, allRecordings, allCantors]);
 
   const activeHymnsForCloud = useMemo(() => {
@@ -73,14 +77,23 @@ export function CantorCloudClientPage() {
     );
   
     const hymnsWithFilteredRecordings = allHymnsWithRecordings.map(hymn => {
-      const filteredRecordings = (hymn.recordings || []).filter(rec => activeCantorIds.has(rec.cantorId));
-      return { ...hymn, recordings: filteredRecordings };
+      // Pick a random cantor for each hymn.
+      if (hymn.recordings && hymn.recordings.length > 0) {
+        const activeCantorRecordings = hymn.recordings.filter(rec => activeCantorIds.has(rec.cantorId));
+        if (activeCantorRecordings.length > 0) {
+            const randomIndex = Math.floor(Math.random() * activeCantorRecordings.length);
+            const randomRecording = activeCantorRecordings[randomIndex];
+            // Put the random recording first.
+            return { ...hymn, recordings: [randomRecording, ...activeCantorRecordings.filter(r => r.id !== randomRecording.id)] };
+        }
+      }
+      // If no active cantor recordings, filter out the hymn's recordings.
+      return { ...hymn, recordings: [] };
     });
   
     return hymnsWithFilteredRecordings.filter(hymn => {
       const hasActiveGenre = hymn.genreId.some(gId => activeGenreIds.has(gId));
-      const hasActiveCantorRecording = hymn.recordings.length > 0;
-      return hasActiveGenre && hasActiveCantorRecording;
+      return hasActiveGenre && hymn.recordings.length > 0;
     });
   }, [allHymnsWithRecordings, allGenres, allCantors]);
 
@@ -89,68 +102,75 @@ export function CantorCloudClientPage() {
 
     if (isInitialLoad) {
       const startHymnId = searchParams.get('hymnId');
+      const startRecordingId = searchParams.get('recordingId');
       let newPlaylist: Hymn[] = [];
-      let newAutoplay = false;
-
-      const activeHymnsWithRandomizedRecordings = activeHymnsForCloud.map(hymn => {
-        if (hymn.recordings && hymn.recordings.length > 0) {
-            // For each hymn, pick a random recording to be the first one
-            const randomIndex = Math.floor(Math.random() * hymn.recordings.length);
-            const reorderedRecordings = [
-                hymn.recordings[randomIndex],
-                ...hymn.recordings.slice(0, randomIndex),
-                ...hymn.recordings.slice(randomIndex + 1)
-            ];
-            return { ...hymn, recordings: reorderedRecordings };
-        }
-        return hymn;
-      });
 
       if (startHymnId) {
         const startHymn = allHymnsWithRecordings.find(h => h.id === startHymnId);
         if (startHymn) {
-          const otherHymns = activeHymnsWithRandomizedRecordings.filter(h => h.id !== startHymnId);
-          const shuffledOtherHymns = shuffleArray(otherHymns).slice(0, 19);
+          // If a specific recording is requested, make it the first one for that hymn.
+          if (startRecordingId && startHymn.recordings) {
+            const targetRecording = startHymn.recordings.find(r => r.id === startRecordingId);
+            if (targetRecording) {
+              startHymn.recordings = [
+                targetRecording,
+                ...startHymn.recordings.filter(r => r.id !== startRecordingId)
+              ];
+            }
+          }
+          const otherHymns = activeHymnsForCloud.filter(h => h.id !== startHymnId);
+          const shuffledOtherHymns = shuffleArray(otherHymns);
           
           newPlaylist = [startHymn, ...shuffledOtherHymns];
-          newAutoplay = true;
         } else {
-          newPlaylist = shuffleArray(activeHymnsWithRandomizedRecordings).slice(0, 20);
+          newPlaylist = shuffleArray(activeHymnsForCloud);
         }
       } else {
-        newPlaylist = shuffleArray(activeHymnsWithRandomizedRecordings).slice(0, 20);
+        newPlaylist = shuffleArray(activeHymnsForCloud);
       }
       
-      setPlaylist(newPlaylist);
-      setCurrentIndex(0);
-      setAutoplay(newAutoplay);
+      if (newPlaylist.length > 0) {
+        setPlaylist(newPlaylist);
+        setCurrentHymn(newPlaylist[0]);
+        setCurrentIndex(0);
+      }
       setIsInitialLoad(false);
     }
   }, [isInitialLoad, activeHymnsForCloud, allHymnsWithRecordings, searchParams, hymnsLoading, genresLoading, cantorsLoading, recordingsLoading]);
 
-  const currentHymn = playlist?.[currentIndex];
-  const startRecordingId = searchParams.get('recordingId');
-
+  
+  const handleHymnChange = useCallback((newIndex: number) => {
+    const newHymn = playlist[newIndex];
+    if (newHymn) {
+        setCurrentHymn(newHymn);
+        setCurrentIndex(newIndex);
+    }
+  }, [playlist]);
+  
   const handleNext = useCallback(() => {
-    setAutoplay(true);
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % playlist.length);
-  }, [playlist.length]);
+    handleHymnChange((currentIndex + 1) % playlist.length);
+  }, [currentIndex, playlist.length, handleHymnChange]);
 
   const handlePrevious = useCallback(() => {
-    setAutoplay(true);
-    setCurrentIndex(
-      (prevIndex) =>
-        (prevIndex - 1 + playlist.length) % playlist.length
-    );
-  }, [playlist.length]);
+    handleHymnChange((currentIndex - 1 + playlist.length) % playlist.length);
+  }, [currentIndex, playlist.length, handleHymnChange]);
 
   const handleSelectTrack = (index: number) => {
-    setAutoplay(true);
-    setCurrentIndex(index);
+    handleHymnChange(index);
   };
 
   const isLoading = hymnsLoading || genresLoading || cantorsLoading || recordingsLoading || isInitialLoad;
   const showPlayer = !isLoading && currentHymn && (currentHymn.recordings?.length ?? 0) > 0;
+  
+  // Get the recordingId for the URL if coming from the hymn page initially
+  const initialRecordingId = useMemo(() => {
+    if (isInitialLoad) {
+      return searchParams.get('recordingId');
+    }
+    // For subsequent tracks, use the first (randomized) recording in the list
+    return currentHymn?.recordings?.[0]?.id;
+  }, [isInitialLoad, searchParams, currentHymn]);
+
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
@@ -159,10 +179,9 @@ export function CantorCloudClientPage() {
         <div className="w-full max-w-3xl mx-auto">
           <HymnPlayer
             hymn={currentHymn}
-            initialRecordingId={currentIndex === 0 ? startRecordingId ?? undefined : undefined}
+            initialRecordingId={initialRecordingId ?? undefined}
             onEnded={handleNext}
-            autoplay={autoplay}
-            onAutoplayConsumed={() => setAutoplay(false)}
+            autoplay={true}
             onNext={handleNext}
             onPrevious={handlePrevious}
             hasNext={playlist.length > 1}

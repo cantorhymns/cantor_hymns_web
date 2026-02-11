@@ -294,7 +294,6 @@ export function HymnPlayer({
   hymn,
   onEnded,
   autoplay = false,
-  onAutoplayConsumed,
   onNext,
   onPrevious,
   hasNext,
@@ -307,7 +306,6 @@ export function HymnPlayer({
   hymn: Hymn;
   onEnded?: () => void;
   autoplay?: boolean;
-  onAutoplayConsumed?: () => void;
   onNext?: () => void;
   onPrevious?: () => void;
   hasNext?: boolean;
@@ -677,22 +675,20 @@ export function HymnPlayer({
     setCurrentTime(audio.currentTime);
   };
 
-  const handleCanPlay = () => {
+  const handleCanPlay = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
     if (autoplay || autoplayOnSwitch) {
         audio.play().then(() => {
             setIsPlaying(true);
-            if (autoplay) onAutoplayConsumed?.();
             if (autoplayOnSwitch) setAutoplayOnSwitch(false);
         }).catch((e) => {
             console.error("Autoplay failed:", e);
             setIsPlaying(false);
-            if (autoplay) onAutoplayConsumed?.();
             if (autoplayOnSwitch) setAutoplayOnSwitch(false);
         });
     }
-  };
+  }, [autoplay, autoplayOnSwitch]);
 
   if (!hymn.recordings || hymn.recordings.length === 0) {
       return (
@@ -762,13 +758,13 @@ export function HymnPlayer({
             onEnded={handleEnded}
         />
         <CardHeader>
-          <div className="flex justify-between items-start gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
             <div className="flex-1 min-w-0">
                 <CardTitle className="font-headline text-3xl text-primary">
                     {hymn.name}
                 </CardTitle>
             </div>
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 w-full sm:w-auto">
                 {hymn.recordings && hymn.recordings.length > 1 ? (
                     <Select
                         value={currentRecording.id}
@@ -781,7 +777,7 @@ export function HymnPlayer({
                             }
                         }}
                     >
-                        <SelectTrigger className="w-[180px]">
+                        <SelectTrigger className="w-full sm:w-[180px]">
                             <SelectValue placeholder="Select Cantor" />
                         </SelectTrigger>
                         <SelectContent>
@@ -796,7 +792,7 @@ export function HymnPlayer({
                         </SelectContent>
                     </Select>
                 ) : (
-                    <div className="flex items-center justify-center gap-2 h-10 px-3 border rounded-md text-sm text-muted-foreground bg-secondary/50 w-[180px]">
+                    <div className="flex items-center justify-center gap-2 h-10 px-3 border rounded-md text-sm text-muted-foreground bg-secondary/50 w-full sm:w-[180px]">
                         {currentRecording.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
                         <span>{currentRecording.cantor?.name || '...'}</span>
                     </div>
