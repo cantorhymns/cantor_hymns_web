@@ -212,9 +212,6 @@ export function CantorCloudClientPage() {
         <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight mt-4">
           CantorCloud
         </h1>
-        <p className="text-muted-foreground mt-2 text-lg">
-          Your endless stream of Coptic hymns.
-        </p>
       </div>
       {showPlayer ? (
         <div className="w-full max-w-3xl mx-auto">
