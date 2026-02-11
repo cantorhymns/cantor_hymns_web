@@ -10,58 +10,72 @@ import { useMemo, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useHymns } from '@/lib/hooks/useHymns';
 import { useRouter } from 'next/navigation';
-import type { Recording } from '@/lib/types';
+import type { Hymn, Recording } from '@/lib/types';
 
 
 export function HymnClientPage({ hymnId }: { hymnId: string }) {
   const router = useRouter();
-  const { data: hymn, isLoading: isHymnLoading } = useHymn(hymnId);
+  
+  // Use a state for the hymn being displayed.
+  const [hymn, setHymn] = useState<Hymn | null>(null);
+
+  // Fetch the initial hymn based on the URL parameter.
+  const { data: initialHymnData, isLoading: isInitialHymnLoading } = useHymn(hymnId);
+
+  // Once the initial hymn is loaded, set it as the current hymn.
+  useEffect(() => {
+    if (initialHymnData) {
+      setHymn(initialHymnData);
+    }
+  }, [initialHymnData]);
+  
   const [currentRecording, setCurrentRecording] = useState<Recording | undefined>();
 
   useEffect(() => {
-    // Set the initial recording when the hymn data is loaded or changed.
+    // When the current hymn changes, update the recording.
     if (hymn?.recordings && hymn.recordings.length > 0) {
       setCurrentRecording(hymn.recordings[0]);
     }
   }, [hymn]);
 
-
+  // Use the initial hymn's genre to fetch the correct playlist, so it doesn't change during navigation.
   const primaryGenreId = useMemo(() => {
-    if (!hymn?.genreId) return undefined;
-    return Array.isArray(hymn.genreId) ? hymn.genreId[0] : hymn.genreId;
-  }, [hymn?.genreId]);
+    if (!initialHymnData?.genreId) return undefined;
+    return Array.isArray(initialHymnData.genreId) ? initialHymnData.genreId[0] : initialHymnData.genreId;
+  }, [initialHymnData?.genreId]);
 
   const { data: genre, isLoading: isGenreLoading } = useGenre(primaryGenreId);
-  const { data: playlistHymns, isLoading: isPlaylistLoading } =
-    useHymns(primaryGenreId);
+  const { data: playlistHymns, isLoading: isPlaylistLoading } = useHymns(primaryGenreId);
 
   const { playlist, currentIndex } = useMemo(() => {
-    if (!playlistHymns) return { playlist: [], currentIndex: -1 };
-    const currentIdx = playlistHymns.findIndex((p) => p.id === hymnId);
+    if (!playlistHymns || !hymn) return { playlist: [], currentIndex: -1 };
+    const currentIdx = playlistHymns.findIndex((p) => p.id === hymn.id);
     return { playlist: playlistHymns, currentIndex: currentIdx };
-  }, [playlistHymns, hymnId]);
+  }, [playlistHymns, hymn]);
 
   const hasPrevious = currentIndex > 0;
   const hasNext = currentIndex !== -1 && currentIndex < playlist.length - 1;
 
+  // Handle previous without a full page reload.
   const handlePrevious = () => {
-    if (hasPrevious) {
-      const previousHymnId = playlist[currentIndex - 1].id;
-      router.push(`/hymn/${previousHymnId}`);
+    if (hasPrevious && playlist) {
+      const previousHymn = playlist[currentIndex - 1];
+      setHymn(previousHymn); // Update the state
+      router.push(`/hymn/${previousHymn.id}`, { scroll: false }); // Update URL without reload
     }
   };
 
+  // Handle next without a full page reload.
   const handleNext = () => {
-    if (hasNext) {
-      const nextHymnId = playlist[currentIndex + 1].id;
-      router.push(`/hymn/${nextHymnId}`);
+    if (hasNext && playlist) {
+      const nextHymn = playlist[currentIndex + 1];
+      setHymn(nextHymn); // Update the state
+      router.push(`/hymn/${nextHymn.id}`, { scroll: false }); // Update URL without reload
     }
   };
 
-  const isLoading =
-    isHymnLoading ||
-    (primaryGenreId && isPlaylistLoading) ||
-    (hymn && !genre && isGenreLoading);
+  // Loading is true until the first hymn is loaded and set in state.
+  const isLoading = isInitialHymnLoading || (initialHymnData && !hymn);
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
@@ -81,7 +95,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
         )}
 
         {hymn && currentRecording && (
-          <Link href={`/cantor-cloud?hymnId=${hymnId}&recordingId=${currentRecording.id}`}>
+          <Link href={`/cantor-cloud?hymnId=${hymn.id}&recordingId=${currentRecording.id}`}>
             <Button>
               <ListMusic className="mr-2 h-4 w-4" />
               Play in CantorCloud
