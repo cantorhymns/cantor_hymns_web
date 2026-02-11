@@ -466,22 +466,73 @@ export function HymnPlayer({
     }
   }, [currentTime, duration]);
 
-  const handlePlayPause = async () => {
+  const handlePlayPause = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    if (isPlaying) {
-      audio.pause();
-      setIsPlaying(false);
+    if (audio.paused) {
+      audio.play().catch(error => {
+        console.error("Playback failed. This can happen if the user hasn't interacted with the page yet.", error);
+      });
     } else {
-      try {
-        await audio.play();
-        setIsPlaying(true);
-      } catch (error) {
-        setIsPlaying(false);
+      audio.pause();
+    }
+  }, []);
+
+  useEffect(() => {
+    if ('mediaSession' in navigator && currentRecording && hymn) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: hymn.name,
+        artist: currentRecording.cantor?.name || 'Unknown Cantor',
+        album: 'Cantor',
+        artwork: [
+          { src: '/icon', type: 'image/png', sizes: '32x32' },
+          { src: '/apple-icon', type: 'image/png', sizes: '180x180' },
+        ],
+      });
+
+      navigator.mediaSession.setActionHandler('play', handlePlayPause);
+      navigator.mediaSession.setActionHandler('pause', handlePlayPause);
+
+      if (onPrevious && hasPrevious) {
+        navigator.mediaSession.setActionHandler('previoustrack', onPrevious);
+      } else {
+        navigator.mediaSession.setActionHandler('previoustrack', null);
+      }
+
+      if (onNext && hasNext) {
+        navigator.mediaSession.setActionHandler('nexttrack', onNext);
+      } else {
+        navigator.mediaSession.setActionHandler('nexttrack', null);
       }
     }
-  };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+        return;
+      }
+      
+      if (event.code === 'Space' && !event.repeat) {
+        event.preventDefault();
+        handlePlayPause();
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = null;
+        navigator.mediaSession.setActionHandler('play', null);
+        navigator.mediaSession.setActionHandler('pause', null);
+        navigator.mediaSession.setActionHandler('previoustrack', null);
+        navigator.mediaSession.setActionHandler('nexttrack', null);
+      }
+    };
+  }, [currentRecording, hymn, hasNext, hasPrevious, onNext, onPrevious, handlePlayPause]);
+
 
   const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
@@ -523,7 +574,6 @@ export function HymnPlayer({
     e.preventDefault();
     
     if (!isDragging) {
-      // It was a CLICK, not a drag. Apply DIRECT absolute seek.
       const clientX = 'changedTouches' in e ? e.changedTouches[0].clientX : e.clientX;
       const containerRect = waveformContainerRef.current!.getBoundingClientRect();
       const clickXInContainer = clientX - containerRect.left;
@@ -658,7 +708,6 @@ export function HymnPlayer({
   }, [isRepeat, isPlaying, isSeeking, seek]);
 
   const handleEnded = useCallback(() => {
-    setIsPlaying(false);
     if (onEnded) {
         onEnded();
     }
@@ -679,14 +728,10 @@ export function HymnPlayer({
     const audio = audioRef.current;
     if (!audio) return;
     if (autoplay || autoplayOnSwitch) {
-        audio.play().then(() => {
-            setIsPlaying(true);
-            if (autoplayOnSwitch) setAutoplayOnSwitch(false);
-        }).catch((e) => {
+        audio.play().catch((e) => {
             console.error("Autoplay failed:", e);
-            setIsPlaying(false);
-            if (autoplayOnSwitch) setAutoplayOnSwitch(false);
         });
+        if (autoplayOnSwitch) setAutoplayOnSwitch(false);
     }
   }, [autoplay, autoplayOnSwitch]);
 
@@ -756,6 +801,8 @@ export function HymnPlayer({
             onCanPlay={handleCanPlay}
             onTimeUpdate={handleTimeUpdate}
             onEnded={handleEnded}
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
         />
         <CardHeader>
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
