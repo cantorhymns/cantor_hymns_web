@@ -2,7 +2,7 @@
 'use client';
 import { HymnPlayer } from '@/components/hymn-player';
 import Link from 'next/link';
-import { ChevronLeft, ListMusic } from 'lucide-react';
+import { ChevronLeft, ListMusic, Share2 } from 'lucide-react';
 import { useHymn } from '@/lib/hooks/useHymn';
 import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -11,6 +11,16 @@ import { Button } from '@/components/ui/button';
 import { useHymns } from '@/lib/hooks/useHymns';
 import type { Hymn, Recording } from '@/lib/types';
 import { useSearchParams } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
+import { BookText } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 
 export function HymnClientPage({ hymnId }: { hymnId: string }) {
@@ -24,6 +34,8 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
   // Fetch the initial hymn based on the URL parameter.
   const { data: initialHymnData, isLoading: isInitialHymnLoading } = useHymn(hymnId);
 
+  const [playbackRate, setPlaybackRate] = useState(1);
+
   // Once the initial hymn is loaded, set it as the current hymn.
   useEffect(() => {
     if (initialHymnData) {
@@ -31,32 +43,58 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
     }
   }, [initialHymnData]);
   
-  const { data: genre } = useGenre(hymn?.genreId?.[0]);
   const [currentRecording, setCurrentRecording] = useState<Recording | undefined>();
 
   useEffect(() => {
-    // When the current hymn changes, update the recording. The HymnPlayer will handle
-    // the initial selection based on the initialRecordingId prop. This effect is
-    // mostly for ensuring the parent component's state is aware of the current recording.
     if (hymn?.recordings && hymn.recordings.length > 0) {
        const recFromUrl = initialRecordingIdFromUrl ? hymn.recordings.find(r => r.id === initialRecordingIdFromUrl) : undefined;
        setCurrentRecording(recFromUrl || hymn.recordings[0]);
     }
   }, [hymn, initialRecordingIdFromUrl]);
 
-  // Use the initial hymn's genre to fetch the correct playlist, so it doesn't change during navigation.
   const primaryGenreId = useMemo(() => {
     if (!initialHymnData?.genreId) return undefined;
     return Array.isArray(initialHymnData.genreId) ? initialHymnData.genreId[0] : initialHymnData.genreId;
   }, [initialHymnData?.genreId]);
 
+  const { data: genre, isLoading: isGenreLoading } = useGenre(primaryGenreId);
   const { data: playlistHymns, isLoading: isPlaylistLoading } = useHymns(primaryGenreId);
 
   const { playlist, currentIndex } = useMemo(() => {
-    if (!playlistHymns || !hymn) return { playlist: [], currentIndex: -1 };
-    const currentIdx = playlistHymns.findIndex((p) => p.id === hymn.id);
-    return { playlist: playlistHymns, currentIndex: currentIdx };
-  }, [playlistHymns, hymn]);
+    if (!playlistHymns || !genre || !hymn) {
+        return { playlist: [], currentIndex: -1 };
+    }
+
+    const finalPlaylist: Hymn[] = [];
+    const subGenreOrder = genre.subGenres || [];
+    const primaryGenreId = genre.id;
+    
+    const hymnsBySubGenre = new Map<string, Hymn[]>();
+    const hymnsWithoutListedSubGenre: Hymn[] = [];
+    
+    playlistHymns.forEach(h => {
+        const sub = h.subGenreId?.[primaryGenreId];
+        if (sub && subGenreOrder.includes(sub)) {
+            if (!hymnsBySubGenre.has(sub)) {
+                hymnsBySubGenre.set(sub, []);
+            }
+            hymnsBySubGenre.get(sub)!.push(h);
+        } else {
+            hymnsWithoutListedSubGenre.push(h);
+        }
+    });
+    
+    subGenreOrder.forEach(sgName => {
+        const hymnsInGroup = hymnsBySubGenre.get(sgName) || [];
+        finalPlaylist.push(...hymnsInGroup);
+    });
+
+    finalPlaylist.push(...hymnsWithoutListedSubGenre);
+    
+    const currentIdx = finalPlaylist.findIndex((p) => p.id === hymn.id);
+
+    return { playlist: finalPlaylist, currentIndex: currentIdx };
+  }, [playlistHymns, genre, hymn]);
 
   const hasPrevious = currentIndex > 0;
   const hasNext = currentIndex !== -1 && currentIndex < playlist.length - 1;
@@ -75,7 +113,6 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
     }
   }, [hasNext, playlist, currentIndex]);
 
-  // Loading is true until the first hymn is loaded and set in state.
   const isLoading = isInitialHymnLoading || (initialHymnData && !hymn);
 
   return (
@@ -142,6 +179,8 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
           onRecordingChange={setCurrentRecording}
           showLyricsToggleButton={true}
           initialRecordingId={initialRecordingIdFromUrl ?? undefined}
+          playbackRate={playbackRate}
+          onPlaybackRateChange={setPlaybackRate}
         />
       )}
     </div>
