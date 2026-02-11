@@ -32,6 +32,7 @@ import {
   ChevronLeft,
   ChevronRight,
   BookText,
+  Share2,
 } from "lucide-react";
 import { getDownloadURL, ref, getStorage } from "firebase/storage";
 import { useFirebase } from "@/firebase";
@@ -41,6 +42,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import { ScrollArea } from "./ui/scroll-area";
+import { useToast } from "@/hooks/use-toast";
 
 
 function formatTime(seconds: number) {
@@ -317,6 +319,7 @@ export function HymnPlayer({
 }) {
   const { firebaseApp } = useFirebase();
   const storage = useMemo(() => firebaseApp ? getStorage(firebaseApp) : null, [firebaseApp]);
+  const { toast } = useToast();
 
   const [currentRecording, setCurrentRecording] = useState<Recording | undefined>(() => {
     if (initialRecordingId) {
@@ -392,7 +395,6 @@ export function HymnPlayer({
   
   useEffect(() => {
     // When the recording changes, reset the player state.
-    // Changing the `src` attribute on the <audio> element will implicitly stop playback.
     setIsPlaying(false);
     setCurrentTime(0);
     setPlaybackRate(1);
@@ -735,12 +737,34 @@ export function HymnPlayer({
     const audio = audioRef.current;
     if (!audio) return;
     if (autoplayOnSwitch) {
-        audio.play().catch((e) => {
-            console.error("Autoplay failed:", e);
-        });
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.catch((e) => {
+                console.error("Autoplay failed:", e);
+            });
+        }
         setAutoplayOnSwitch(false);
     }
   }, [autoplayOnSwitch]);
+  
+  const handleShare = () => {
+    if (!hymn || !currentRecording) return;
+    // Construct a URL that points to the individual hymn page with the specific recording selected.
+    const url = `${window.location.origin}/hymn/${hymn.id}?recordingId=${currentRecording.id}`;
+    navigator.clipboard.writeText(url).then(() => {
+      toast({
+        title: "URL Copied!",
+        description: "The link to this hymn has been copied to your clipboard.",
+      });
+    }).catch(err => {
+        console.error("Failed to copy URL: ", err);
+        toast({
+            variant: "destructive",
+            title: "Failed to Copy",
+            description: "Could not copy the URL to your clipboard.",
+        });
+    });
+  };
 
   if (!hymn.recordings || hymn.recordings.length === 0) {
       return (
@@ -819,18 +843,24 @@ export function HymnPlayer({
               <p className="text-muted-foreground mt-2">{hymn.description}</p>
           )}
           <div className="pt-4 flex justify-between items-center gap-4">
-              <div>
+              <div className="flex items-center gap-2">
+                  <Button variant="outline" size="icon" onClick={handleShare} disabled={isPlayerDisabled} title="Share">
+                      <Share2 className="h-4 w-4" />
+                      <span className="sr-only">Share</span>
+                  </Button>
                   {showLyricsToggleButton && hasAnyLyrics && (
                       <Button 
                           variant="outline" 
+                          size="icon"
                           onClick={() => setLyricsVisible(v => !v)}
                           className={cn(
                               'transition-colors',
                               lyricsVisible && 'bg-green-600 text-white hover:bg-green-700 hover:text-white border-green-700'
                           )}
+                          title="Toggle Lyrics"
                       >
-                          <BookText className="mr-2 h-4 w-4" />
-                          <span>Lyrics</span>
+                          <BookText className="h-4 w-4" />
+                          <span className="sr-only">Toggle Lyrics</span>
                       </Button>
                   )}
               </div>

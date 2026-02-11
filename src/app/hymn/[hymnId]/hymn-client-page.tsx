@@ -10,10 +10,14 @@ import { useMemo, useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { useHymns } from '@/lib/hooks/useHymns';
 import type { Hymn, Recording } from '@/lib/types';
+import { useSearchParams } from 'next/navigation';
 
 
 export function HymnClientPage({ hymnId }: { hymnId: string }) {
   
+  const searchParams = useSearchParams();
+  const initialRecordingIdFromUrl = searchParams.get('recordingId');
+
   // Use a state for the hymn being displayed.
   const [hymn, setHymn] = useState<Hymn | null>(null);
 
@@ -31,11 +35,14 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
   const [currentRecording, setCurrentRecording] = useState<Recording | undefined>();
 
   useEffect(() => {
-    // When the current hymn changes, update the recording.
+    // When the current hymn changes, update the recording. The HymnPlayer will handle
+    // the initial selection based on the initialRecordingId prop. This effect is
+    // mostly for ensuring the parent component's state is aware of the current recording.
     if (hymn?.recordings && hymn.recordings.length > 0) {
-      setCurrentRecording(hymn.recordings[0]);
+       const recFromUrl = initialRecordingIdFromUrl ? hymn.recordings.find(r => r.id === initialRecordingIdFromUrl) : undefined;
+       setCurrentRecording(recFromUrl || hymn.recordings[0]);
     }
-  }, [hymn]);
+  }, [hymn, initialRecordingIdFromUrl]);
 
   // Use the initial hymn's genre to fetch the correct playlist, so it doesn't change during navigation.
   const primaryGenreId = useMemo(() => {
@@ -54,19 +61,17 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
   const hasPrevious = currentIndex > 0;
   const hasNext = currentIndex !== -1 && currentIndex < playlist.length - 1;
 
-  // Handle previous without a full page reload or URL change to preserve autoplay.
   const handlePrevious = useCallback(() => {
     if (hasPrevious && playlist) {
-      const previousHymn = playlist[currentIndex - 1];
-      setHymn(previousHymn); // Update the state
+        const previousHymn = playlist[currentIndex - 1];
+        setHymn(previousHymn);
     }
   }, [hasPrevious, playlist, currentIndex]);
 
-  // Handle next without a full page reload or URL change to preserve autoplay.
   const handleNext = useCallback(() => {
     if (hasNext && playlist) {
-      const nextHymn = playlist[currentIndex + 1];
-      setHymn(nextHymn); // Update the state
+        const nextHymn = playlist[currentIndex + 1];
+        setHymn(nextHymn);
     }
   }, [hasNext, playlist, currentIndex]);
 
@@ -136,6 +141,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
           hasNext={hasNext}
           onRecordingChange={setCurrentRecording}
           showLyricsToggleButton={true}
+          initialRecordingId={initialRecordingIdFromUrl ?? undefined}
         />
       )}
     </div>
