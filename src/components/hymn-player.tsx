@@ -739,6 +739,7 @@ export function HymnPlayer({
   const handleCanPlay = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
+    audio.playbackRate = currentPlaybackRate;
     if (autoplayOnSwitch) {
         const playPromise = audio.play();
         if (playPromise !== undefined) {
@@ -748,7 +749,7 @@ export function HymnPlayer({
         }
         setAutoplayOnSwitch(false);
     }
-  }, [autoplayOnSwitch]);
+  }, [autoplayOnSwitch, currentPlaybackRate]);
   
   const handleShare = () => {
     if (!hymn || !currentRecording) return;
@@ -759,8 +760,8 @@ export function HymnPlayer({
     }
     navigator.clipboard.writeText(url).then(() => {
       toast({
-        title: "URL Copied!",
-        description: "The link to this hymn has been copied to your clipboard.",
+        title: "URL Copied.",
+        duration: 2000,
       });
     }).catch(err => {
         console.error("Failed to copy URL: ", err);
