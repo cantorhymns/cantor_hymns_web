@@ -6,6 +6,7 @@ import { useSearchData } from '@/lib/hooks/use-search-data';
 import { useGenres } from '@/lib/hooks/useGenres';
 import { useSearch } from '@/components/search-provider';
 import { Music, Library, Loader2 } from 'lucide-react';
+import { DialogTitle } from '@radix-ui/react-dialog';
 
 export function HymnSearchDialog() {
     const router = useRouter();
@@ -44,6 +45,7 @@ export function HymnSearchDialog() {
 
     return (
         <CommandDialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTitle className="sr-only">Search</DialogTitle>
             <CommandInput 
                 placeholder="Search hymns, genres, cantors..." 
                 onValueChange={handleSearchChange} // Call handler on input change
@@ -62,18 +64,18 @@ export function HymnSearchDialog() {
                         <CommandEmpty>No results found.</CommandEmpty>
                         {hymnSearchData && (
                             <CommandGroup heading="Hymns">
-                                {hymnSearchData.map((hymn) => (
+                                {hymnSearchData.map((item) => (
                                     <CommandItem
-                                        key={`hymn-${hymn.id}`}
-                                        value={`${hymn.name} ${hymn.description || ''} ${hymn.genreNames.join(' ')} ${hymn.cantorNames.join(' ')}`}
-                                        onSelect={() => onSelect(`/hymn/${hymn.id}`)}
+                                        key={`hymn-${item.recordingId}`}
+                                        value={`${item.hymnName} ${item.cantorName} ${item.genreNames.join(' ')} ${item.hymnDescription || ''}`}
+                                        onSelect={() => onSelect(`/hymn/${item.hymnId}?recordingId=${item.recordingId}`)}
                                         className="cursor-pointer"
                                     >
                                         <Music className="mr-2 h-4 w-4" />
                                         <div className="flex-1 truncate">
-                                            <p className="font-medium truncate">{hymn.name}</p>
+                                            <p className="font-medium truncate">{item.hymnName}</p>
                                             <p className="text-xs text-muted-foreground truncate">
-                                                {hymn.cantorNames.join(', ')}
+                                                {item.cantorName}
                                             </p>
                                         </div>
                                     </CommandItem>

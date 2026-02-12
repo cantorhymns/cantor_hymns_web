@@ -6,9 +6,14 @@ import { useCantors } from './useCantors';
 import { useRecordings } from './useRecordings';
 import { Hymn, Genre, Cantor, Recording } from '../types';
 
-export interface SearchableHymn extends Hymn {
+export interface HymnSearchResult {
+    hymnId: string;
+    hymnName: string;
+    recordingId: string;
+    cantorId: string;
+    cantorName: string;
     genreNames: string[];
-    cantorNames: string[];
+    hymnDescription?: string;
 }
 
 export function useSearchData() {
@@ -19,37 +24,39 @@ export function useSearchData() {
 
     const isLoading = hymnsLoading || genresLoading || cantorsLoading || recordingsLoading;
 
-    const searchableHymns = useMemo((): SearchableHymn[] | null => {
+    const hymnSearchResults = useMemo((): HymnSearchResult[] | null => {
         if (isLoading || !allHymns || !allGenres || !allCantors || !allRecordings) {
             return null;
         }
 
+        const hymnsMap = new Map<string, Hymn>(allHymns.map(h => [h.id, h]));
         const genresMap = new Map<string, Genre>(allGenres.map(g => [g.id, g]));
         const cantorsMap = new Map<string, Cantor>(allCantors.map(c => [c.id, c]));
 
-        const recordingsByHymnId = new Map<string, Recording[]>();
-        allRecordings.forEach(rec => {
-            if (!recordingsByHymnId.has(rec.hymnId)) {
-                recordingsByHymnId.set(rec.hymnId, []);
+        const results: HymnSearchResult[] = [];
+
+        allRecordings.forEach(recording => {
+            const hymn = hymnsMap.get(recording.hymnId);
+            const cantor = cantorsMap.get(recording.cantorId);
+
+            if (hymn && cantor) {
+                const genreNames = hymn.genreId.map(id => genresMap.get(id)?.name).filter(Boolean) as string[];
+
+                results.push({
+                    hymnId: hymn.id,
+                    hymnName: hymn.name,
+                    recordingId: recording.id,
+                    cantorId: cantor.id,
+                    cantorName: cantor.name,
+                    genreNames: genreNames,
+                    hymnDescription: hymn.description
+                });
             }
-            recordingsByHymnId.get(rec.hymnId)!.push(rec);
         });
-
-        return allHymns.map(hymn => {
-            const genreNames = hymn.genreId.map(id => genresMap.get(id)?.name).filter(Boolean) as string[];
-            
-            const hymnRecordings = recordingsByHymnId.get(hymn.id) || [];
-            const cantorIds = [...new Set(hymnRecordings.map(r => r.cantorId))];
-            const cantorNames = cantorIds.map(id => cantorsMap.get(id)?.name).filter(Boolean) as string[];
-
-            return {
-                ...hymn,
-                genreNames,
-                cantorNames,
-            };
-        });
+        
+        return results;
 
     }, [isLoading, allHymns, allGenres, allCantors, allRecordings]);
     
-    return { data: searchableHymns, isLoading };
+    return { data: hymnSearchResults, isLoading };
 }
