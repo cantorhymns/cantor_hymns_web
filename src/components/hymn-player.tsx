@@ -304,6 +304,9 @@ export function HymnPlayer({
   showLyricsToggleButton = false,
   initialRecordingId,
   onRecordingChange,
+  playbackRate,
+  onPlaybackRateChange,
+  genreId,
 }: {
   hymn: Hymn;
   onEnded?: () => void;
@@ -316,6 +319,9 @@ export function HymnPlayer({
   showLyricsToggleButton?: boolean;
   initialRecordingId?: string;
   onRecordingChange?: (recording: Recording) => void;
+  playbackRate?: number;
+  onPlaybackRateChange?: (rate: number) => void;
+  genreId?: string;
 }) {
   const { firebaseApp } = useFirebase();
   const storage = useMemo(() => firebaseApp ? getStorage(firebaseApp) : null, [firebaseApp]);
@@ -336,7 +342,7 @@ export function HymnPlayer({
   const [isRepeat, setIsRepeat] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const [playbackRate, setPlaybackRate] = useState(1);
+  const currentPlaybackRate = playbackRate ?? 1;
   const [autoplayOnSwitch, setAutoplayOnSwitch] = useState(autoplay);
   
   const [activeMarks, setActiveMarks] = useState<number[]>([]);
@@ -358,9 +364,9 @@ export function HymnPlayer({
 
   const playbackSpeeds = [1.0, 1.25, 1.5, 1.75, 2.0];
   const handleSpeedChange = () => {
-      const currentIndex = playbackSpeeds.indexOf(playbackRate);
+      const currentIndex = playbackSpeeds.indexOf(currentPlaybackRate);
       const nextIndex = (currentIndex + 1) % playbackSpeeds.length;
-      setPlaybackRate(playbackSpeeds[nextIndex]);
+      onPlaybackRateChange?.(playbackSpeeds[nextIndex]);
   };
 
   const hasAnyLyrics = useMemo(() => 
@@ -421,9 +427,9 @@ export function HymnPlayer({
 
   useEffect(() => {
     if (audioRef.current) {
-        audioRef.current.playbackRate = playbackRate;
+        audioRef.current.playbackRate = currentPlaybackRate;
     }
-  }, [playbackRate, audioSrc]);
+  }, [currentPlaybackRate, audioSrc]);
 
   const seek = useCallback((time: number) => {
     if (!audioRef.current || !isFinite(duration) || duration <= 0) return;
@@ -747,7 +753,10 @@ export function HymnPlayer({
   const handleShare = () => {
     if (!hymn || !currentRecording) return;
     // Construct a URL that points to the individual hymn page with the specific recording selected.
-    const url = `${window.location.origin}/hymn/${hymn.id}?recordingId=${currentRecording.id}`;
+    let url = `${window.location.origin}/hymn/${hymn.id}?recordingId=${currentRecording.id}`;
+    if (genreId) {
+      url += `&genre=${genreId}`;
+    }
     navigator.clipboard.writeText(url).then(() => {
       toast({
         title: "URL Copied!",
@@ -1021,7 +1030,7 @@ export function HymnPlayer({
                   <div className="flex items-center gap-2 w-[100px] justify-end">
                       <Button variant="outline" onClick={handleSpeedChange} className="w-full">
                         <FastForward className="h-4 w-4 mr-1" />
-                        <span>{playbackRate.toFixed(2)}x</span>
+                        <span>{currentPlaybackRate.toFixed(2)}x</span>
                       </Button>
                   </div>
               </div>
