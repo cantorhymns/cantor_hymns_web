@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { useSearchData } from '@/lib/hooks/use-search-data';
@@ -12,6 +12,9 @@ export function HymnSearchDialog() {
     const { isOpen, setIsOpen } = useSearch();
     const { data: hymnSearchData, isLoading: hymnsLoading } = useSearchData();
     const { data: genres, isLoading: genresLoading } = useGenres();
+
+    // Create a ref for the CommandList element
+    const listRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const down = (e: KeyboardEvent) => {
@@ -31,10 +34,21 @@ export function HymnSearchDialog() {
     
     const isLoading = hymnsLoading || genresLoading;
 
+    // This function will be called whenever the user types in the search input.
+    const handleSearchChange = () => {
+        // We reset the scroll position of the list to the top.
+        if (listRef.current) {
+            listRef.current.scrollTop = 0;
+        }
+    };
+
     return (
         <CommandDialog open={isOpen} onOpenChange={setIsOpen}>
-            <CommandInput placeholder="Search hymns, genres, cantors..." />
-            <CommandList>
+            <CommandInput 
+                placeholder="Search hymns, genres, cantors..." 
+                onValueChange={handleSearchChange} // Call handler on input change
+            />
+            <CommandList ref={listRef}> {/* Attach the ref here */}
                 {isLoading && (
                     <div className="p-4 flex items-center justify-center text-sm text-muted-foreground">
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
