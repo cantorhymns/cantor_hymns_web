@@ -493,6 +493,44 @@ export function HymnPlayer({
     }
   }, []);
 
+  const handleNextSection = useCallback(() => {
+    if (!audioRef.current) return;
+    const nextMark = sortedActiveMarks.find(mark => mark > currentTime + 0.5); 
+    if (nextMark !== undefined) {
+      seek(nextMark);
+    } else {
+      seek(duration);
+    }
+  }, [sortedActiveMarks, currentTime, seek, duration]);
+
+  const handlePrevSection = useCallback(() => {
+    const REWIND_THRESHOLD = 2; // in seconds
+    if (!audioRef.current) return;
+  
+    const reversedMarks = [...sortedActiveMarks].reverse();
+    
+    const currentSectionStartMarker = reversedMarks.find(mark => mark < currentTime);
+  
+    if (currentSectionStartMarker === undefined) {
+      seek(0);
+      return;
+    }
+  
+    if (currentTime > currentSectionStartMarker + REWIND_THRESHOLD) {
+      seek(currentSectionStartMarker);
+    } else {
+      const currentMarkerIndex = reversedMarks.indexOf(currentSectionStartMarker);
+      const previousSectionStartMarker = reversedMarks[currentMarkerIndex + 1];
+  
+      seek(previousSectionStartMarker !== undefined ? previousSectionStartMarker : 0);
+    }
+  }, [sortedActiveMarks, currentTime, seek]);
+  
+  const handleSkip = useCallback((amount: number) => {
+    if (!audioRef.current) return;
+    seek(currentTime + amount);
+  }, [currentTime, seek]);
+
   useEffect(() => {
     if ('mediaSession' in navigator && currentRecording && hymn) {
       navigator.mediaSession.metadata = new MediaMetadata({
@@ -527,9 +565,35 @@ export function HymnPlayer({
         return;
       }
       
-      if (event.code === 'Space' && !event.repeat) {
-        event.preventDefault();
-        handlePlayPause();
+      const isLearnMode = currentRecording?.mode === 'learn';
+
+      switch (event.code) {
+        case 'Space':
+            if (!event.repeat) {
+                event.preventDefault();
+                handlePlayPause();
+            }
+            break;
+        case 'ArrowRight':
+            if (!event.repeat) {
+                event.preventDefault();
+                if (isLearnMode) {
+                    handleNextSection();
+                } else {
+                    handleSkip(10);
+                }
+            }
+            break;
+        case 'ArrowLeft':
+            if (!event.repeat) {
+                event.preventDefault();
+                if (isLearnMode) {
+                    handlePrevSection();
+                } else {
+                    handleSkip(-10);
+                }
+            }
+            break;
       }
     };
     
@@ -545,7 +609,7 @@ export function HymnPlayer({
         navigator.mediaSession.setActionHandler('nexttrack', null);
       }
     };
-  }, [currentRecording, hymn, hasNext, hasPrevious, onNext, onPrevious, handlePlayPause, handleNextHymn, handlePreviousHymn]);
+  }, [currentRecording, hymn, hasNext, hasPrevious, onNext, onPrevious, handlePlayPause, handleNextHymn, handlePreviousHymn, handleNextSection, handlePrevSection, handleSkip]);
 
 
   const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
@@ -630,43 +694,6 @@ export function HymnPlayer({
     }
   }, [isSeeking, handleSeekMove, handleSeekEnd]);
 
-  const handleNextSection = () => {
-    if (!audioRef.current) return;
-    const nextMark = sortedActiveMarks.find(mark => mark > currentTime + 0.5); 
-    if (nextMark !== undefined) {
-      seek(nextMark);
-    } else {
-      seek(duration);
-    }
-  };
-
-  const handlePrevSection = () => {
-    const REWIND_THRESHOLD = 2; // in seconds
-    if (!audioRef.current) return;
-  
-    const reversedMarks = [...sortedActiveMarks].reverse();
-    
-    const currentSectionStartMarker = reversedMarks.find(mark => mark < currentTime);
-  
-    if (currentSectionStartMarker === undefined) {
-      seek(0);
-      return;
-    }
-  
-    if (currentTime > currentSectionStartMarker + REWIND_THRESHOLD) {
-      seek(currentSectionStartMarker);
-    } else {
-      const currentMarkerIndex = reversedMarks.indexOf(currentSectionStartMarker);
-      const previousSectionStartMarker = reversedMarks[currentMarkerIndex + 1];
-  
-      seek(previousSectionStartMarker !== undefined ? previousSectionStartMarker : 0);
-    }
-  };
-  
-  const handleSkip = (amount: number) => {
-    if (!audioRef.current) return;
-    seek(currentTime + amount);
-  };
   
   const toggleMark = (mark: number) => {
     setActiveMarks(prev => 
@@ -851,7 +878,7 @@ export function HymnPlayer({
           )}
           <div className="pt-4 flex justify-between items-center gap-4">
               <div className="flex items-center gap-2">
-                  <Button variant="outline" size="icon" onClick={handleShare} disabled={isPlayerDisabled} title="Share">
+                  <Button variant="outline" size="icon" onClick={handleShare} disabled={isPlayerDisabled} title="Share" className="active:bg-accent active:text-accent-foreground">
                       <Share2 className="h-4 w-4" />
                       <span className="sr-only">Share</span>
                   </Button>
