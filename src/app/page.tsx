@@ -11,10 +11,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { useFirebase } from '@/firebase';
+import { useSearch } from '@/components/search-provider';
+import { Button } from '@/components/ui/button';
+import { Search as SearchIcon } from 'lucide-react';
 
 
 export default function Home() {
   const { data: genres, isLoading: areGenresLoading } = useGenres();
+  const { setIsOpen } = useSearch();
 
   const { firebaseApp } = useFirebase();
   const storage = useMemo(() => (firebaseApp ? getStorage(firebaseApp) : null), [
@@ -52,10 +56,20 @@ export default function Home() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
-      <div className="text-center mb-12">
+      <div className="text-center mb-8">
         <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight">
           Hymn Genres
         </h1>
+      </div>
+
+      <div className="w-full max-w-xl mx-auto mb-12">
+        <Button variant="outline" className="w-full justify-start text-muted-foreground" onClick={() => setIsOpen(true)}>
+            <SearchIcon className="mr-2 h-4 w-4" />
+            Search hymns, genres, cantors...
+            <kbd className="pointer-events-none ml-auto hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+                <span className="text-xs">⌘</span>K
+            </kbd>
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

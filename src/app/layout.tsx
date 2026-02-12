@@ -6,6 +6,8 @@ import { Header } from '@/components/header';
 import { Toaster } from '@/components/ui/toaster';
 import { FirebaseClientProvider } from '@/firebase';
 import { AuthGate } from '@/components/auth-gate';
+import { SearchProvider } from '@/components/search-provider';
+import { HymnSearchDialog } from '@/components/hymn-search-dialog';
 
 export const metadata: Metadata = {
   title: {
@@ -49,10 +51,13 @@ export default function RootLayout({
       <body className="font-body antialiased">
         <FirebaseClientProvider>
           <AuthGate>
-            <div className="relative flex min-h-screen flex-col">
-              <Header />
-              <main className="flex-1">{children}</main>
-            </div>
+            <SearchProvider>
+              <div className="relative flex min-h-screen flex-col">
+                <Header />
+                <main className="flex-1">{children}</main>
+              </div>
+              <HymnSearchDialog />
+            </SearchProvider>
             <Toaster />
           </AuthGate>
         </FirebaseClientProvider>
