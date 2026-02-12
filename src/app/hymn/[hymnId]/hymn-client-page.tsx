@@ -2,7 +2,7 @@
 'use client';
 import { HymnPlayer } from '@/components/hymn-player';
 import Link from 'next/link';
-import { ChevronLeft, ListMusic, Share2 } from 'lucide-react';
+import { ChevronLeft, ListMusic, Share2, Search as SearchIcon } from 'lucide-react';
 import { useHymn } from '@/lib/hooks/useHymn';
 import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSearch } from '@/components/search-provider';
 
 
 export function HymnClientPage({ hymnId }: { hymnId: string }) {
@@ -28,6 +29,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
   const searchParams = useSearchParams();
   const initialRecordingIdFromUrl = searchParams.get('recordingId');
   const genreIdFromUrl = searchParams.get('genre');
+  const { setIsOpen } = useSearch();
 
   // Use a state for the hymn being displayed.
   const [hymn, setHymn] = useState<Hymn | null>(null);
@@ -144,6 +146,16 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
             </Button>
           </Link>
         )}
+      </div>
+
+      <div className="w-full max-w-xl mx-auto mb-8">
+        <Button variant="outline" className="w-full justify-start text-muted-foreground" onClick={() => setIsOpen(true)}>
+            <SearchIcon className="mr-2 h-4 w-4" />
+            Search hymns, genres, cantors...
+            <kbd className="pointer-events-none ml-auto hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+                <span className="text-xs">⌘</span>K
+            </kbd>
+        </Button>
       </div>
 
       {isLoading || !hymn ? (

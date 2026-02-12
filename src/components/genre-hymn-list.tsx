@@ -1,4 +1,3 @@
-
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -8,12 +7,14 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card';
-import { ChevronLeft, Music } from 'lucide-react';
+import { ChevronLeft, Music, Search as SearchIcon } from 'lucide-react';
 import { useHymns } from '@/lib/hooks/useHymns';
 import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Genre, Hymn } from '@/lib/types';
 import { useMemo } from 'react';
+import { Button } from '@/components/ui/button';
+import { useSearch } from '@/components/search-provider';
 
 const HymnCard = ({ hymn, genreId }: { hymn: Hymn; genreId: string }) => {
   const learnCount = hymn.recordings?.filter(r => r.mode === 'learn').length || 0;
@@ -56,6 +57,7 @@ const HymnCard = ({ hymn, genreId }: { hymn: Hymn; genreId: string }) => {
 export function GenreHymnList({ genreId }: { genreId: string }) {
   const { data: genre, isLoading: isGenreLoading } = useGenre(genreId);
   const { data: hymns, isLoading: areHymnsLoading } = useHymns(genreId);
+  const { setIsOpen } = useSearch();
   
   const isLoading = isGenreLoading || areHymnsLoading;
   const isValidIconUrl = genre?.icon && (genre.icon.startsWith('http://') || genre.icon.startsWith('https://'));
@@ -134,6 +136,16 @@ export function GenreHymnList({ genreId }: { genreId: string }) {
             </>
            )}
         </div>
+      </div>
+
+      <div className="w-full max-w-xl mx-auto mb-12">
+        <Button variant="outline" className="w-full justify-start text-muted-foreground" onClick={() => setIsOpen(true)}>
+            <SearchIcon className="mr-2 h-4 w-4" />
+            Search hymns, genres, cantors...
+            <kbd className="pointer-events-none ml-auto hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+                <span className="text-xs">⌘</span>K
+            </kbd>
+        </Button>
       </div>
 
       {isLoading ? (
