@@ -38,6 +38,7 @@
     "db:update-avechnon": "tsx src/scripts/update-avechnon-marks.ts",
     "db:update-yodas": "tsx src/scripts/update-yodas-marks.ts",
     "db:update-ere-pi-esmou": "tsx src/scripts/update-ere-pi-esmou-marks.ts",
+    "db:add-stones": "tsx src/scripts/add-stones-hymn.ts",
     "db:add-tribes": "tsx src/scripts/add-tribes-hymn.ts",
     "db:update-tribes": "tsx src/scripts/update-tribes-marks.ts"
   },
