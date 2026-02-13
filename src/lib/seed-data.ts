@@ -8,7 +8,7 @@ export const genres = [
         "icon": "https://picsum.photos/seed/icon-holy-week/48/48",
         "backgroundUrl": "backgrounds/holy-week.jpg",
         "active": true,
-        "subGenres": ["General", "Vespers", "Matins"],
+        "subGenres": ["General", "Vespers", "Matins", "Bright Saturday"],
         "cantorCloudActive": true
     },
     {
@@ -125,6 +125,17 @@ export const hymns = [
         "lyricsEnglish": "",
         "lyricsCoptic": "",
         "lyricsArabic": ""
+    },
+    {
+        "id": "tribes",
+        "name": "Tribes of Israel",
+        "genreId": ["holy-week"],
+        "subGenreId": { "holy-week": "Bright Saturday" },
+        "genreRank": { "holy-week": 60 },
+        "description": "The names of the 12 tribes of Israel sealed, chanted in the 7th chapter of the Book of Revelation.",
+        "lyricsEnglish": "Lyrics/English/tribes_english.md",
+        "lyricsCoptic": "Lyrics/Coptic/tribes_coptic.md",
+        "lyricsArabic": "Lyrics/Arabic/tribes_arabic.md"
     }
 ];
 
@@ -372,6 +383,29 @@ export const recordings = [
             1165.423740,
             1199.401064,
             1250.181109
+        ],
+        "active": true,
+        "mode": "learn"
+    },
+    {
+        "hymnId": "tribes",
+        "cantorId": "cantor-ibrahim",
+        "audioUrl": "CantorIbrahim/cantor_ibrahim-tribes.mp3",
+        "marks": [
+            17.910778,
+            33.915423,
+            40.446036,
+            52.561047,
+            65.966594,
+            78.878557,
+            95.431845,
+            113.445450,
+            123.966992,
+            149.409169,
+            165.822632,
+            183.740235,
+            204.193749,
+            235.279091
         ],
         "active": true,
         "mode": "learn"
