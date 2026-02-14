@@ -115,13 +115,15 @@ async function seedDatabase() {
     recordings.forEach((recording) => {
       const docId = `${recording.cantorId}_${recording.hymnId}`;
       const docRef = doc(db, 'recordings', docId);
+      const markersUrl = `markers/${recording.cantorId}/${docId}_markers.txt`;
       seedBatch.set(docRef, {
         hymnId: recording.hymnId,
         cantorId: recording.cantorId,
         audioUrl: recording.audioUrl,
         marks: recording.marks,
         active: recording.active,
-        mode: recording.mode
+        mode: recording.mode,
+        markersUrl: markersUrl
       });
     });
 

@@ -15,6 +15,7 @@ export interface Recording {
   cantorId: string;
   cantor?: Cantor; // Optional, to be populated after fetching
   audioUrl: string;
+  markersUrl: string;
   marks: number[];
   active: boolean;
   mode: 'learn' | 'listen';

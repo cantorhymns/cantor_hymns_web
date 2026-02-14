@@ -1,3 +1,4 @@
+
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 import { getAuth, signInAnonymously } from 'firebase/auth';
@@ -21,6 +22,7 @@ const recordingData = {
     hymnId: "tribes",
     cantorId: "cantor-ibrahim",
     audioUrl: "tracks/cantor-ibrahim/cantor-ibrahim_tribes.mp3",
+    markersUrl: "markers/cantor-ibrahim/cantor-ibrahim_tribes_markers.txt",
     marks: [
         17.910778, 33.915423, 40.446036, 52.561047, 65.966594,
         78.878557, 95.431845, 113.445450, 123.966992, 149.409169,

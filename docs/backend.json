@@ -120,6 +120,10 @@
           "description": "URL to the audio file stored in Firebase Storage.",
           "format": "uri"
         },
+        "markersUrl": {
+          "type": "string",
+          "description": "Path to the markers file in Firebase Storage."
+        },
         "marks": {
             "type": "array",
             "items": {
@@ -141,6 +145,7 @@
         "hymnId",
         "cantorId",
         "audioUrl",
+        "markersUrl",
         "marks",
         "active",
         "mode"
