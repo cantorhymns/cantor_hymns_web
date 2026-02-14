@@ -627,6 +627,22 @@ export function HymnPlayer({
       } else {
         navigator.mediaSession.setActionHandler('nexttrack', null);
       }
+
+      const isLearnMode = currentRecording?.mode === 'learn';
+      navigator.mediaSession.setActionHandler('seekforward', () => {
+        if (isLearnMode) {
+          handleNextSection();
+        } else {
+          handleSkip(10);
+        }
+      });
+      navigator.mediaSession.setActionHandler('seekbackward', () => {
+        if (isLearnMode) {
+          handlePrevSection();
+        } else {
+          handleSkip(-10);
+        }
+      });
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -677,6 +693,8 @@ export function HymnPlayer({
         navigator.mediaSession.setActionHandler('pause', null);
         navigator.mediaSession.setActionHandler('previoustrack', null);
         navigator.mediaSession.setActionHandler('nexttrack', null);
+        navigator.mediaSession.setActionHandler('seekforward', null);
+        navigator.mediaSession.setActionHandler('seekbackward', null);
       }
     };
   }, [currentRecording, hymn, hasNext, hasPrevious, onNext, onPrevious, handlePlayPause, handleNextHymn, handlePreviousHymn, handleNextSection, handlePrevSection, handleSkip]);
