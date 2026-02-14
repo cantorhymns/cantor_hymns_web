@@ -32,7 +32,7 @@ const tutorialSteps = [
     description:
       'Recordings marked with a green dot are in "Learn Mode", with interactive sections. Others are for listening.',
     visual: () => (
-      <div className="inline-flex flex-col items-start gap-2 rounded-lg border bg-background p-3 text-sm">
+      <div className="flex w-48 flex-col items-start gap-2 rounded-lg border bg-background p-3 text-sm">
         <div className="flex items-center gap-3">
           <div className="h-2 w-2 flex-shrink-0 rounded-full bg-green-500" />
           <span className="font-medium">Learn Mode Cantor</span>
