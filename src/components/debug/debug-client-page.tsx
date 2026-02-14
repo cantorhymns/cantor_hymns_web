@@ -10,7 +10,7 @@ import { RecordingDetails } from './recording-details';
 import { useCantors } from '@/lib/hooks/useCantors';
 import { useGenres } from '@/lib/hooks/useGenres';
 import { useBulkFileValidation } from './use-bulk-file-validation';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 export function DebugClientPage() {
     const { data: allHymns, isLoading: hymnsLoading } = useHymns();
@@ -95,6 +95,12 @@ export function DebugClientPage() {
                                     {hymnIssues} issue(s)
                                 </span>
                             )}
+                             {!isBulkLoading && hymnIssues === 0 && (
+                                <span className="flex items-center gap-1.5 text-sm font-medium text-green-600 bg-green-100 px-2 py-1 rounded-md">
+                                    <CheckCircle2 className="h-4 w-4" />
+                                    No issues
+                                </span>
+                            )}
                         </div>
                     </AccordionTrigger>
                     <AccordionContent>
@@ -113,6 +119,12 @@ export function DebugClientPage() {
                                 <span className="flex items-center gap-1.5 text-sm font-medium text-amber-600 bg-amber-100 px-2 py-1 rounded-md">
                                     <AlertTriangle className="h-4 w-4" />
                                     {recordingIssues} issue(s)
+                                </span>
+                            )}
+                            {!isBulkLoading && recordingIssues === 0 && (
+                                <span className="flex items-center gap-1.5 text-sm font-medium text-green-600 bg-green-100 px-2 py-1 rounded-md">
+                                    <CheckCircle2 className="h-4 w-4" />
+                                    No issues
                                 </span>
                             )}
                         </div>
