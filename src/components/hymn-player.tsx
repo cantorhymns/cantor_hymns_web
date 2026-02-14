@@ -34,6 +34,7 @@ import {
   BookText,
   Share2,
   Loader2,
+  HelpCircle,
 } from "lucide-react";
 import { getDownloadURL, ref, getStorage } from "firebase/storage";
 import { useFirebase } from "@/firebase";
@@ -44,6 +45,7 @@ import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import { ScrollArea } from "./ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
+import { HymnPlayerTutorial } from "./hymn-player-tutorial";
 
 
 function formatTime(seconds: number) {
@@ -413,6 +415,7 @@ export function HymnPlayer({
   
   const [isSeeking, setIsSeeking] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const waveformContainerRef = useRef<HTMLDivElement>(null);
@@ -859,7 +862,8 @@ export function HymnPlayer({
         const playPromise = audio.play();
         if (playPromise !== undefined) {
             playPromise.catch((e) => {
-                console.error("Autoplay failed:", e);
+                // This error is expected in some cases, so we just log it.
+                console.log("Autoplay was prevented by the browser.");
             });
         }
         setAutoplayOnSwitch(false);
@@ -985,6 +989,10 @@ export function HymnPlayer({
                           <span className="sr-only">Toggle Lyrics</span>
                       </Button>
                   )}
+                  <Button variant="outline" size="icon" onClick={() => setIsTutorialOpen(true)} title="How to use the player">
+                      <HelpCircle className="h-4 w-4" />
+                      <span className="sr-only">Help</span>
+                  </Button>
               </div>
               
               <div className="w-full sm:w-auto max-w-[180px]">
@@ -1133,11 +1141,13 @@ export function HymnPlayer({
                               size="sm"
                               onClick={() => setIsRepeat(!isRepeat)}
                               className={cn(
-                                  "transition-colors px-4",
-                                  isRepeat ? "bg-accent text-accent-foreground hover:bg-accent" : "text-muted-foreground"
+                                "transition-colors px-4",
+                                isRepeat
+                                  ? "bg-accent text-accent-foreground hover:bg-accent hover:text-accent-foreground"
+                                  : "text-muted-foreground"
                               )}
                           >
-                              <Repeat className="h-5 w-5" />
+                              <Repeat className="h-5 w-5 mr-2" />
                               <span>Repeat Section</span>
                           </Button>
                       )}
@@ -1188,6 +1198,7 @@ export function HymnPlayer({
           <LyricsDisplay hymn={hymn} />
         </div>
       )}
+      <HymnPlayerTutorial open={isTutorialOpen} onOpenChange={setIsTutorialOpen} />
     </>
   );
 }
