@@ -1,15 +1,22 @@
 'use client';
 import { Recording } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
-import { FileCheck, FileX, AlertTriangle, CheckCircle2 } from 'lucide-react';
-import { useFileValidation } from './use-file-validation';
+import { FileCheck, FileX, AlertTriangle, CheckCircle2, Loader2, Copy } from 'lucide-react';
 import { useFileContent } from './use-file-content';
+import { ValidationMap } from './use-bulk-file-validation';
+import { Button } from '../ui/button';
+import { useToast } from '@/hooks/use-toast';
 
-const ValidationChip = ({ path }: { path?: string }) => {
-    const { isValid, isLoading } = useFileValidation(path);
-
+const ValidationChip = ({ path, validationMap, isLoading }: { path?: string; validationMap: ValidationMap; isLoading: boolean }) => {
     if (!path) return null;
-    if (isLoading) return <span className="text-xs text-muted-foreground">Checking...</span>;
+
+    const status = validationMap.get(path);
+
+    if (isLoading || status === 'loading') {
+        return <span className="flex items-center gap-1 text-xs text-muted-foreground"><Loader2 className="h-3 w-3 animate-spin"/>Checking...</span>;
+    }
+
+    const isValid = status === 'valid';
 
     return (
         <div className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${isValid ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
@@ -21,6 +28,16 @@ const ValidationChip = ({ path }: { path?: string }) => {
 
 const MarkersComparison = ({ recording }: { recording: Recording }) => {
     const { content: markersFileContent, isLoading, error } = useFileContent(recording.markersUrl);
+    const { toast } = useToast();
+
+    const handleCopy = (text: string, label: string) => {
+        navigator.clipboard.writeText(text).then(() => {
+            toast({ title: `${label} copied to clipboard.`});
+        }).catch(err => {
+            toast({ title: `Failed to copy ${label}`, variant: 'destructive'});
+            console.error('Failed to copy text: ', err);
+        });
+    };
 
     if (isLoading) {
         return <p className="text-xs text-muted-foreground">Loading markers file...</p>;
@@ -36,6 +53,9 @@ const MarkersComparison = ({ recording }: { recording: Recording }) => {
     const sortedFile = [...marksFromFile].sort((a, b) => a - b);
     const areEqual = sortedDb.length === sortedFile.length && sortedDb.every((val, index) => val === sortedFile[index]);
 
+    const dbContent = sortedDb.join('\n');
+    const fileContent = sortedFile.join('\n');
+
     return (
         <div>
             <div className="flex items-center gap-2 mb-2">
@@ -48,19 +68,29 @@ const MarkersComparison = ({ recording }: { recording: Recording }) => {
             </div>
             <div className="grid grid-cols-2 gap-4 text-xs font-mono p-2 border rounded-md bg-secondary/30">
                 <div>
-                    <h5 className="font-semibold mb-1">DB `marks` ({sortedDb.length})</h5>
-                    <pre className="max-h-48 overflow-auto">{sortedDb.join('\n')}</pre>
+                    <div className="flex justify-between items-center mb-1">
+                        <h5 className="font-semibold">DB `marks` ({sortedDb.length})</h5>
+                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleCopy(dbContent, 'DB marks')}>
+                            <Copy className="h-3 w-3" />
+                        </Button>
+                    </div>
+                    <pre className="max-h-48 overflow-auto">{dbContent}</pre>
                 </div>
                 <div>
-                    <h5 className="font-semibold mb-1">File Content ({sortedFile.length})</h5>
-                    <pre className="max-h-48 overflow-auto">{sortedFile.join('\n')}</pre>
+                     <div className="flex justify-between items-center mb-1">
+                        <h5 className="font-semibold">File Content ({sortedFile.length})</h5>
+                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleCopy(fileContent, 'File marks')}>
+                            <Copy className="h-3 w-3" />
+                        </Button>
+                    </div>
+                    <pre className="max-h-48 overflow-auto">{fileContent}</pre>
                 </div>
             </div>
         </div>
     );
 }
 
-export const RecordingDetails = ({ recording }: { recording: Recording }) => {
+export const RecordingDetails = ({ recording, validationMap, isLoading }: { recording: Recording, validationMap: ValidationMap, isLoading: boolean }) => {
     return (
         <Card>
             <CardHeader>
@@ -76,11 +106,11 @@ export const RecordingDetails = ({ recording }: { recording: Recording }) => {
                     </div>
                     <div className="space-y-1">
                         <p><strong>Audio File:</strong></p>
-                        <ValidationChip path={recording.audioUrl} />
+                        <ValidationChip path={recording.audioUrl} validationMap={validationMap} isLoading={isLoading} />
                         {recording.mode === 'learn' && (
                             <>
                                 <p className="pt-2"><strong>Markers File:</strong></p>
-                                <ValidationChip path={recording.markersUrl} />
+                                <ValidationChip path={recording.markersUrl} validationMap={validationMap} isLoading={isLoading} />
                             </>
                         )}
                     </div>

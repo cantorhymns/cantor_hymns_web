@@ -1,19 +1,20 @@
-
 'use client';
 
 import { Hymn, Genre } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
-import { FileCheck, FileX } from 'lucide-react';
-import { useFileValidation } from './use-file-validation';
+import { FileCheck, FileX, Loader2 } from 'lucide-react';
+import { ValidationMap } from './use-bulk-file-validation';
 
-const ValidationChip = ({ path }: { path?: string }) => {
-    const { isValid, isLoading } = useFileValidation(path);
-
+const ValidationChip = ({ path, validationMap, isLoading }: { path?: string; validationMap: ValidationMap, isLoading: boolean }) => {
     if (!path) return null;
 
-    if (isLoading) {
-        return <span className="text-xs text-muted-foreground">Checking...</span>;
+    const status = validationMap.get(path);
+
+    if (isLoading || status === 'loading') {
+        return <span className="flex items-center gap-1 text-xs text-muted-foreground"><Loader2 className="h-3 w-3 animate-spin"/>Checking...</span>;
     }
+    
+    const isValid = status === 'valid';
 
     return (
         <div className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${isValid ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
@@ -24,7 +25,7 @@ const ValidationChip = ({ path }: { path?: string }) => {
 }
 
 
-export const HymnDetails = ({ hymn, genresMap }: { hymn: Hymn, genresMap: Map<string, Genre> }) => {
+export const HymnDetails = ({ hymn, genresMap, validationMap, isLoading }: { hymn: Hymn, genresMap: Map<string, Genre>, validationMap: ValidationMap, isLoading: boolean }) => {
     return (
         <Card>
             <CardHeader>
@@ -55,9 +56,9 @@ export const HymnDetails = ({ hymn, genresMap }: { hymn: Hymn, genresMap: Map<st
                 <div>
                     <strong>Lyrics:</strong>
                     <div className="space-y-1 mt-1">
-                        <ValidationChip path={hymn.lyricsEnglish} />
-                        <ValidationChip path={hymn.lyricsCoptic} />
-                        <ValidationChip path={hymn.lyricsArabic} />
+                        <ValidationChip path={hymn.lyricsEnglish} validationMap={validationMap} isLoading={isLoading} />
+                        <ValidationChip path={hymn.lyricsCoptic} validationMap={validationMap} isLoading={isLoading} />
+                        <ValidationChip path={hymn.lyricsArabic} validationMap={validationMap} isLoading={isLoading} />
                     </div>
                 </div>
             </CardContent>
