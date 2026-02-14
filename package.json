@@ -42,7 +42,8 @@
     "db:add-tribes": "tsx src/scripts/add-tribes-hymn.ts",
     "db:update-tribes": "tsx src/scripts/update-tribes-marks.ts",
     "db:lowercase-lyrics": "tsx src/scripts/lowercase-lyric-paths.ts",
-    "db:copy-recordings": "tsx src/scripts/copy-recordings.ts"
+    "db:copy-recordings": "tsx src/scripts/copy-recordings.ts",
+    "db:update-audio-urls": "tsx src/scripts/update-audio-urls.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",

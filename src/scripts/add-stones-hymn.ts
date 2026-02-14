@@ -20,7 +20,7 @@ const hymnData = {
 const recordingData = {
     hymnId: "stones",
     cantorId: "cantor-ibrahim",
-    audioUrl: "CantorIbrahim/cantor-ibrahim_stones.mp3",
+    audioUrl: "tracks/cantor-ibrahim/cantor-ibrahim_stones.mp3",
     marks: [
         55.927356,
         82.114639,
