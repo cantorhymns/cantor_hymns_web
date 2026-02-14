@@ -2,8 +2,8 @@
 import { Recording } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
 import { FileCheck, FileX, AlertTriangle, CheckCircle2, Loader2, Copy } from 'lucide-react';
-import { useFileContent } from './use-file-content';
 import { ValidationMap } from './use-bulk-file-validation';
+import { ContentMap } from './use-bulk-file-content';
 import { Button } from '../ui/button';
 import { useToast } from '@/hooks/use-toast';
 
@@ -26,9 +26,13 @@ const ValidationChip = ({ path, validationMap, isLoading }: { path?: string; val
     );
 };
 
-const MarkersComparison = ({ recording }: { recording: Recording }) => {
-    const { content: markersFileContent, isLoading, error } = useFileContent(recording.markersUrl);
+const MarkersComparison = ({ recording, contentMap, isContentLoading }: { recording: Recording, contentMap: ContentMap, isContentLoading: boolean }) => {
     const { toast } = useToast();
+    const markerContentData = recording.markersUrl ? contentMap.get(recording.markersUrl) : undefined;
+    
+    const isLoading = isContentLoading || markerContentData?.status === 'loading';
+    const error = markerContentData?.status === 'error' ? 'Error loading markers file' : null;
+    const markersFileContent = markerContentData?.content;
 
     const handleCopy = (text: string, label: string) => {
         navigator.clipboard.writeText(text).then(() => {
@@ -43,11 +47,14 @@ const MarkersComparison = ({ recording }: { recording: Recording }) => {
         return <p className="text-xs text-muted-foreground">Loading markers file...</p>;
     }
     if (error) {
-        return <p className="text-xs text-red-600">Error loading markers file: {error}</p>;
+        return <p className="text-xs text-red-600">{error}</p>;
+    }
+    if (markerContentData?.status === 'not_found' || !markersFileContent) {
+        return <p className="text-xs text-amber-600">Markers file content not available.</p>;
     }
 
     const marksFromDb = recording.marks || [];
-    const marksFromFile = markersFileContent ? markersFileContent.split(/[\s,]+/).map(Number).filter(n => !isNaN(n)) : [];
+    const marksFromFile = markersFileContent.split(/[\s,]+/).map(Number).filter(n => !isNaN(n));
 
     const sortedDb = [...marksFromDb].sort((a, b) => a - b);
     const sortedFile = [...marksFromFile].sort((a, b) => a - b);
@@ -90,7 +97,7 @@ const MarkersComparison = ({ recording }: { recording: Recording }) => {
     );
 }
 
-export const RecordingDetails = ({ recording, validationMap, isLoading }: { recording: Recording, validationMap: ValidationMap, isLoading: boolean }) => {
+export const RecordingDetails = ({ recording, validationMap, isLoading, contentMap, isContentLoading }: { recording: Recording, validationMap: ValidationMap, isLoading: boolean, contentMap: ContentMap, isContentLoading: boolean }) => {
     return (
         <Card>
             <CardHeader>
@@ -115,7 +122,7 @@ export const RecordingDetails = ({ recording, validationMap, isLoading }: { reco
                         )}
                     </div>
                 </div>
-                {recording.mode === 'learn' && recording.markersUrl && <MarkersComparison recording={recording} />}
+                {recording.mode === 'learn' && recording.markersUrl && <MarkersComparison recording={recording} contentMap={contentMap} isContentLoading={isContentLoading} />}
             </CardContent>
         </Card>
     );
