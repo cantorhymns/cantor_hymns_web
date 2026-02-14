@@ -23,25 +23,6 @@ const recordingData = {
     cantorId: "cantor-ibrahim",
     audioUrl: "tracks/cantor-ibrahim/cantor-ibrahim_stones.mp3",
     markersUrl: "markers/cantor-ibrahim/cantor-ibrahim_stones_markers.txt",
-    marks: [
-        55.927356,
-        82.114639,
-        93.337469,
-        103.946186,
-        140.313342,
-        162.106755,
-        186.980222,
-        197.651161,
-        206.577812,
-        238.430057,
-        263.348830,
-        274.650867,
-        284.993297,
-        321.040756,
-        347.416640,
-        357.545824,
-        366.822024
-    ],
     active: true,
     mode: "learn"
 };

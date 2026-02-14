@@ -33,6 +33,7 @@ import {
   ChevronRight,
   BookText,
   Share2,
+  Loader2,
 } from "lucide-react";
 import { getDownloadURL, ref, getStorage } from "firebase/storage";
 import { useFirebase } from "@/firebase";
@@ -112,6 +113,64 @@ function useLyricContent(path?: string) {
 
   return { content, isLoading, error };
 }
+
+function useMarkersFile(path?: string) {
+    const [marks, setMarks] = useState<number[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+  
+    const { firebaseApp } = useFirebase();
+    const storage = useMemo(() => (firebaseApp ? getStorage(firebaseApp) : null), [firebaseApp]);
+  
+    useEffect(() => {
+      if (!path || !storage) {
+        setMarks([]);
+        setIsLoading(false);
+        setError(null);
+        return;
+      }
+  
+      let isCancelled = false;
+      const fetchContent = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+          const storageRef = ref(storage, path);
+          const url = await getDownloadURL(storageRef);
+          const response = await fetch(url);
+          if (!response.ok) {
+              throw new Error(`Markers file request failed with status ${response.status}`);
+          }
+          const textContent = (await response.text()).trim();
+          if (!isCancelled) {
+            if (textContent) {
+              const parsedMarks = textContent.split(/[\s,]+/).map(Number).filter(n => !isNaN(n));
+              setMarks(parsedMarks);
+            } else {
+              setMarks([]);
+            }
+          }
+        } catch (e: any) {
+          if (!isCancelled) {
+            setError(e.message || 'Failed to fetch markers');
+            setMarks([]);
+          }
+        } finally {
+          if (!isCancelled) {
+            setIsLoading(false);
+          }
+        }
+      };
+  
+      fetchContent();
+  
+      return () => {
+        isCancelled = true;
+      };
+    }, [path, storage]);
+  
+    return { marks, isLoading, error };
+  }
 
 
 const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
@@ -338,6 +397,10 @@ export function HymnPlayer({
   const [audioError, setAudioError] = useState<string | null>(null);
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
 
+  const { marks: loadedMarks, isLoading: isLoadingMarks, error: marksError } = useMarkersFile(
+    currentRecording?.mode === 'learn' ? currentRecording.markersUrl : undefined
+  );
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -357,9 +420,17 @@ export function HymnPlayer({
   const loopSectionRef = useRef<{ start: number, end: number } | null>(null);
   const dragStartRef = useRef<{ x: number; time: number } | null>(null);
   
-  const sortedMarks = useMemo(() => [...(currentRecording?.marks || [])].sort((a, b) => a - b), [currentRecording]);
-  const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
+  const sortedMarks = useMemo(() => [...(loadedMarks || [])].sort((a, b) => a - b), [loadedMarks]);
   
+  useEffect(() => {
+    if (currentRecording?.mode === 'learn') {
+        setActiveMarks(sortedMarks);
+    } else {
+        setActiveMarks([]);
+    }
+  }, [sortedMarks, currentRecording?.mode]);
+  
+  const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
   const displayedMarks = useMemo(() => currentRecording?.mode === 'learn' ? sortedMarks : [], [currentRecording, sortedMarks]);
 
   const playbackSpeeds = [1.0, 1.25, 1.5, 1.75, 2.0];
@@ -404,7 +475,6 @@ export function HymnPlayer({
     setAudioSrc(null);
     setAudioError(null);
     setDuration(0);
-    setActiveMarks(currentRecording?.mode === 'learn' ? (currentRecording.marks || []) : []);
 
     if (currentRecording && storage) {
       setIsLoadingAudio(true);
@@ -852,7 +922,7 @@ export function HymnPlayer({
   
   const isPlayerDisabled = !audioSrc || !!audioError;
   const showControls = currentRecording?.mode === 'learn';
-
+  const showLoadingSpinner = isLoadingAudio || (showControls && isLoadingMarks);
 
   return (
     <>
@@ -1073,14 +1143,10 @@ export function HymnPlayer({
                 </div>
               )}
           </div>
-          {isLoadingAudio && (
+          {showLoadingSpinner && (
               <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center space-y-4">
-                  <Skeleton className="h-20 w-full" />
-                  <div className="w-full flex justify-between">
-                      <Skeleton className="h-5 w-12" />
-                      <Skeleton className="h-5 w-12" />
-                  </div>
-                  <Skeleton className="h-10 w-40" />
+                  <Loader2 className="h-10 w-10 text-primary animate-spin"/>
+                  <p className="text-muted-foreground">Loading resources...</p>
               </div>
           )}
           {audioError && !isLoadingAudio && (
@@ -1089,6 +1155,13 @@ export function HymnPlayer({
                   <p className="text-lg font-semibold text-destructive">Audio Failed to Load</p>
                   <p className="text-sm text-muted-foreground max-w-xs">{audioError}</p>
               </div>
+          )}
+          {marksError && !isLoadingMarks && (
+               <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center text-center p-4">
+                    <XCircle className="h-10 w-10 text-destructive mb-4" />
+                    <p className="text-lg font-semibold text-destructive">Markers Failed to Load</p>
+                    <p className="text-sm text-muted-foreground max-w-xs">{marksError}</p>
+                </div>
           )}
         </CardContent>
       </Card>

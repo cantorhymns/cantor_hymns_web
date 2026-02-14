@@ -15,8 +15,8 @@ export interface Recording {
   cantorId: string;
   cantor?: Cantor; // Optional, to be populated after fetching
   audioUrl: string;
+  /** Path to the markers text file in Storage. This is the source of truth for "learn" mode. */
   markersUrl: string;
-  marks: number[];
   active: boolean;
   mode: 'learn' | 'listen';
 }

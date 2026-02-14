@@ -1,3 +1,4 @@
+
 'use client';
 import { useMemo } from 'react';
 import { useHymns } from '@/lib/hooks/useHymns';
@@ -10,7 +11,6 @@ import { RecordingDetails } from './recording-details';
 import { useCantors } from '@/lib/hooks/useCantors';
 import { useGenres } from '@/lib/hooks/useGenres';
 import { useBulkFileValidation } from './use-bulk-file-validation';
-import { useBulkFileContent } from './use-bulk-file-content';
 import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 export function DebugClientPage() {
@@ -33,17 +33,10 @@ export function DebugClientPage() {
 
     const { validationMap, isBulkLoading } = useBulkFileValidation(allFilePaths);
     
-    const markerContentPaths = useMemo(() => {
-        if (!allRecordings) return [];
-        return allRecordings.filter(r => r.mode === 'learn' && r.markersUrl).map(r => r.markersUrl);
-    }, [allRecordings]);
-
-    const { contentMap, isContentLoading } = useBulkFileContent(markerContentPaths);
-
     const isLoading = hymnsLoading || recordingsLoading || cantorsLoading || genresLoading;
 
     const { hymnIssues, recordingIssues } = useMemo(() => {
-        if (isBulkLoading || isContentLoading || !allHymns || !allRecordings) {
+        if (isBulkLoading || !allHymns || !allRecordings) {
             return { hymnIssues: 0, recordingIssues: 0 };
         }
 
@@ -61,24 +54,8 @@ export function DebugClientPage() {
             let markerIssue = false;
 
             if (r.mode === 'learn') {
-                const markersFileInvalid = r.markersUrl && validationMap.get(r.markersUrl) === 'invalid';
-                let markersMismatch = false;
-
-                const markerContentData = r.markersUrl ? contentMap.get(r.markersUrl) : undefined;
-
-                if (markerContentData?.status === 'loaded' && markerContentData.content !== null) {
-                    const marksFromDb = r.marks || [];
-                    const marksFromFile = markerContentData.content.split(/[\s,]+/).map(Number).filter(n => !isNaN(n));
-                    const sortedDb = [...marksFromDb].sort((a, b) => a - b);
-                    const sortedFile = [...marksFromFile].sort((a, b) => a - b);
-
-                    if (sortedDb.length !== sortedFile.length || !sortedDb.every((val, index) => val === sortedFile[index])) {
-                        markersMismatch = true;
-                    }
-                }
-                
-                // An issue exists if the marker file is invalid, the content mismatches, or the URL is missing for learn mode.
-                markerIssue = markersFileInvalid || markersMismatch || !r.markersUrl;
+                const markersFileInvalid = !r.markersUrl || validationMap.get(r.markersUrl) === 'invalid';
+                markerIssue = markersFileInvalid;
             }
 
             if (audioInvalid || markerIssue) {
@@ -87,7 +64,7 @@ export function DebugClientPage() {
         });
 
         return { hymnIssues: hymnIssuesCount, recordingIssues: recordingIssuesCount };
-    }, [isBulkLoading, isContentLoading, validationMap, contentMap, allHymns, allRecordings]);
+    }, [isBulkLoading, validationMap, allHymns, allRecordings]);
 
     if (isLoading) {
         return (
@@ -145,13 +122,13 @@ export function DebugClientPage() {
                     <AccordionTrigger className="text-2xl font-headline text-primary">
                          <div className="flex items-center gap-4">
                             <span>Recordings ({recordingsWithCantor.length})</span>
-                             {!(isBulkLoading || isContentLoading) && recordingIssues > 0 && (
+                             {!isBulkLoading && recordingIssues > 0 && (
                                 <span className="flex items-center gap-1.5 text-sm font-medium text-amber-600 bg-amber-100 px-2 py-1 rounded-md">
                                     <AlertTriangle className="h-4 w-4" />
                                     {recordingIssues} issue(s)
                                 </span>
                             )}
-                            {!(isBulkLoading || isContentLoading) && recordingIssues === 0 && (
+                            {!isBulkLoading && recordingIssues === 0 && (
                                 <span className="flex items-center gap-1.5 text-sm font-medium text-green-600 bg-green-100 px-2 py-1 rounded-md">
                                     <CheckCircle2 className="h-4 w-4" />
                                     No issues
@@ -162,7 +139,7 @@ export function DebugClientPage() {
                     <AccordionContent>
                         <div className="space-y-2 pt-4">
                             {recordingsWithCantor.map((recording: Recording) => (
-                                <RecordingDetails key={recording.id} recording={recording} validationMap={validationMap} isLoading={isBulkLoading} contentMap={contentMap} isContentLoading={isContentLoading} />
+                                <RecordingDetails key={recording.id} recording={recording} validationMap={validationMap} isLoading={isBulkLoading} />
                             ))}
                         </div>
                     </AccordionContent>

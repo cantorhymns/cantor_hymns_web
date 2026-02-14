@@ -120,7 +120,6 @@ async function seedDatabase() {
         hymnId: recording.hymnId,
         cantorId: recording.cantorId,
         audioUrl: recording.audioUrl,
-        marks: recording.marks,
         active: recording.active,
         mode: recording.mode,
         markersUrl: markersUrl

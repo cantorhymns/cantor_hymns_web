@@ -122,14 +122,7 @@
         },
         "markersUrl": {
           "type": "string",
-          "description": "Path to the markers file in Firebase Storage."
-        },
-        "marks": {
-            "type": "array",
-            "items": {
-                "type": "number"
-            },
-            "description": "An array of timestamps (in seconds) for section marks."
+          "description": "Path to the markers file in Firebase Storage. This file is the source of truth for learn mode markers."
         },
         "active": {
           "type": "boolean",
@@ -146,7 +139,6 @@
         "cantorId",
         "audioUrl",
         "markersUrl",
-        "marks",
         "active",
         "mode"
       ]
