@@ -8,7 +8,7 @@ export const genres = [
         "icon": "https://picsum.photos/seed/icon-holy-week/48/48",
         "backgroundUrl": "backgrounds/holy-week.jpg",
         "active": true,
-        "subGenres": ["General", "Vespers", "Matins", "Bright Saturday"],
+        "subGenres": ["General", "Vespers", "Matins", "Good Friday", "Bright Saturday"],
         "cantorCloudActive": true
     },
     {
