@@ -124,7 +124,7 @@ export function HymnPlayerTutorial({ open, onOpenChange }: HymnPlayerTutorialPro
             A quick guide to the hymn player features.
           </DialogDescription>
         </DialogHeader>
-        <Carousel className="w-full px-12">
+        <Carousel className="w-full">
             <CarouselContent>
               {tutorialSteps.map((step, index) => (
                 <CarouselItem key={index}>
@@ -148,8 +148,8 @@ export function HymnPlayerTutorial({ open, onOpenChange }: HymnPlayerTutorialPro
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious className="left-2" />
+            <CarouselNext className="right-2" />
           </Carousel>
       </DialogContent>
     </Dialog>
