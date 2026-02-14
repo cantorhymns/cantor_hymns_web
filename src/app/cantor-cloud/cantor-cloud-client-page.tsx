@@ -173,18 +173,10 @@ export function CantorCloudClientPage() {
   }, [playlist]);
   
   const handleNext = useCallback(() => {
-    const audio = document.querySelector('audio');
-    if (audio) {
-      audio.play().catch(() => {});
-    }
     handleHymnChange((currentIndex + 1) % playlist.length);
   }, [currentIndex, playlist.length, handleHymnChange]);
 
   const handlePrevious = useCallback(() => {
-    const audio = document.querySelector('audio');
-    if (audio) {
-      audio.play().catch(() => {});
-    }
     handleHymnChange((currentIndex - 1 + playlist.length) % playlist.length);
   }, [currentIndex, playlist.length, handleHymnChange]);
 
