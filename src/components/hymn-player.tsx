@@ -989,10 +989,6 @@ export function HymnPlayer({
                           <span className="sr-only">Toggle Lyrics</span>
                       </Button>
                   )}
-                  <Button variant="outline" size="icon" onClick={() => setIsTutorialOpen(true)} title="How to use the player">
-                      <HelpCircle className="h-4 w-4" />
-                      <span className="sr-only">Help</span>
-                  </Button>
               </div>
               
               <div className="w-full sm:w-auto max-w-[180px]">
@@ -1161,13 +1157,21 @@ export function HymnPlayer({
                   </div>
               </div>
               {(onNext || onPrevious) && (
-                <div className="flex justify-center items-center gap-4 border-t pt-4 mt-4">
-                    <Button variant="outline" size="lg" onClick={handlePreviousHymn} disabled={!hasPrevious}>
-                        <ChevronLeft className="mr-2 h-5 w-5" /> Previous Hymn
-                    </Button>
-                    <Button variant="outline" size="lg" onClick={handleNextHymn} disabled={!hasNext}>
-                        Next Hymn <ChevronRight className="ml-2 h-5 w-5" />
-                    </Button>
+                <div className="grid grid-cols-3 items-center border-t pt-4 mt-4">
+                    <div className="justify-self-start">
+                        <Button variant="outline" size="icon" onClick={() => setIsTutorialOpen(true)} title="How to use the player">
+                            <HelpCircle className="h-4 w-4" />
+                            <span className="sr-only">Help</span>
+                        </Button>
+                    </div>
+                    <div className="flex justify-center items-center gap-4 col-start-2">
+                        <Button variant="outline" size="lg" onClick={handlePreviousHymn} disabled={!hasPrevious}>
+                            <ChevronLeft className="mr-2 h-5 w-5" /> Previous
+                        </Button>
+                        <Button variant="outline" size="lg" onClick={handleNextHymn} disabled={!hasNext}>
+                            Next <ChevronRight className="ml-2 h-5 w-5" />
+                        </Button>
+                    </div>
                 </div>
               )}
           </div>

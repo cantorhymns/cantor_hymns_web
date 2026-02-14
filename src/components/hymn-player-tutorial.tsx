@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -115,7 +116,7 @@ interface HymnPlayerTutorialProps {
 export function HymnPlayerTutorial({ open, onOpenChange }: HymnPlayerTutorialProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Player Guide</DialogTitle>
           <DialogDescription>
@@ -129,7 +130,7 @@ export function HymnPlayerTutorial({ open, onOpenChange }: HymnPlayerTutorialPro
                 <CarouselItem key={index}>
                   <div className="p-1">
                     <Card>
-                      <CardContent className="flex flex-col aspect-square items-center justify-center p-6 gap-4">
+                      <CardContent className="flex flex-col h-[400px] items-center justify-center p-6 gap-4">
                         <div className="w-full max-w-[200px]">
                             {step.visual()}
                         </div>
