@@ -92,9 +92,9 @@ export const hymns = [
         "genreId": ["resurrection"],
         "genreRank": { "resurrection": 2 },
         "description": "'Like the choirs of angels', a joyful hymn of praise sung after the Resurrection.",
-        "lyricsEnglish": "Lyrics/English/kata-ni-khoros_english.md",
-        "lyricsCoptic": "Lyrics/Coptic/kata-ni-khoros_coptic.md",
-        "lyricsArabic": "Lyrics/Arabic/kata-ni-khoros_arabic.md"
+        "lyricsEnglish": "lyrics/english/kata-ni-khoros_english.md",
+        "lyricsCoptic": "lyrics/coptic/kata-ni-khoros_coptic.md",
+        "lyricsArabic": "lyrics/arabic/kata-ni-khoros_arabic.md"
     },
     {
         "id": "psalm-150",
@@ -133,9 +133,9 @@ export const hymns = [
         "subGenreId": { "holy-week": "Bright Saturday" },
         "genreRank": { "holy-week": 60 },
         "description": "The names of the 12 tribes of Israel sealed, chanted in the 7th chapter of the Book of Revelation.",
-        "lyricsEnglish": "Lyrics/English/tribes_english.md",
-        "lyricsCoptic": "Lyrics/Coptic/tribes_coptic.md",
-        "lyricsArabic": "Lyrics/Arabic/tribes_arabic.md"
+        "lyricsEnglish": "lyrics/english/tribes_english.md",
+        "lyricsCoptic": "lyrics/coptic/tribes_coptic.md",
+        "lyricsArabic": "lyrics/arabic/tribes_arabic.md"
     }
 ];
 

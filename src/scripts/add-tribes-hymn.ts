@@ -12,9 +12,9 @@ const hymnData = {
     genreId: ["holy-week"],
     genreRank: { "holy-week": 60 },
     subGenreId: { "holy-week": "Bright Saturday" },
-    lyricsArabic: "Lyrics/Arabic/tribes_arabic.md",
-    lyricsCoptic: "Lyrics/Coptic/tribes_coptic.md",
-    lyricsEnglish: "Lyrics/English/tribes_english.md"
+    lyricsArabic: "lyrics/arabic/tribes_arabic.md",
+    lyricsCoptic: "lyrics/coptic/tribes_coptic.md",
+    lyricsEnglish: "lyrics/english/tribes_english.md"
 };
 
 const recordingData = {
