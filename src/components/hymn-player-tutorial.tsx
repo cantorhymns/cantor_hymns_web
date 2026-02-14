@@ -31,7 +31,7 @@ const tutorialSteps = [
     description:
       'Recordings marked with a green dot are in "Learn Mode", with interactive sections. Others are for listening.',
     visual: () => (
-      <div className="flex flex-col gap-2 rounded-lg border bg-background p-4">
+      <div className="flex flex-col items-center gap-2 rounded-lg border bg-background p-4">
         <div className="flex items-center gap-3 rounded-md bg-secondary p-2">
           <div className="h-2 w-2 flex-shrink-0 rounded-full bg-green-500" />
           <span className="font-medium">Learn Mode Cantor</span>
@@ -130,11 +130,11 @@ export function HymnPlayerTutorial({ open, onOpenChange }: HymnPlayerTutorialPro
                 <CarouselItem key={index}>
                   <div className="p-1">
                     <Card>
-                      <CardContent className="flex flex-col h-[400px] items-center justify-center p-6 gap-4">
-                        <div className="w-full max-w-[200px]">
+                      <CardContent className="flex flex-col h-[400px] items-center justify-center p-6 gap-4 text-center">
+                        <div className="w-full max-w-[200px] inline-block">
                             {step.visual()}
                         </div>
-                        <div className="text-center">
+                        <div>
                             <h3 className="font-semibold text-lg">{step.title}</h3>
                             <p className="text-sm text-muted-foreground">
                                 {step.description}
