@@ -1,4 +1,3 @@
-
 'use client';
 import { Recording } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
@@ -32,8 +31,10 @@ const MarkersComparison = ({ recording }: { recording: Recording }) => {
 
     const marksFromDb = recording.marks || [];
     const marksFromFile = markersFileContent ? markersFileContent.split(/[\s,]+/).map(Number).filter(n => !isNaN(n)) : [];
-    const allMarks = Array.from(new Set([...marksFromDb, ...marksFromFile])).sort((a, b) => a - b);
-    const areEqual = marksFromDb.length === marksFromFile.length && marksFromDb.every((val, index) => val === marksFromFile[index]);
+
+    const sortedDb = [...marksFromDb].sort((a, b) => a - b);
+    const sortedFile = [...marksFromFile].sort((a, b) => a - b);
+    const areEqual = sortedDb.length === sortedFile.length && sortedDb.every((val, index) => val === sortedFile[index]);
 
     return (
         <div>
@@ -47,12 +48,12 @@ const MarkersComparison = ({ recording }: { recording: Recording }) => {
             </div>
             <div className="grid grid-cols-2 gap-4 text-xs font-mono p-2 border rounded-md bg-secondary/30">
                 <div>
-                    <h5 className="font-semibold mb-1">DB `marks` ({marksFromDb.length})</h5>
-                    <pre className="max-h-48 overflow-auto">{marksFromDb.join('\n')}</pre>
+                    <h5 className="font-semibold mb-1">DB `marks` ({sortedDb.length})</h5>
+                    <pre className="max-h-48 overflow-auto">{sortedDb.join('\n')}</pre>
                 </div>
                 <div>
-                    <h5 className="font-semibold mb-1">File Content ({marksFromFile.length})</h5>
-                    <pre className="max-h-48 overflow-auto">{marksFromFile.join('\n')}</pre>
+                    <h5 className="font-semibold mb-1">File Content ({sortedFile.length})</h5>
+                    <pre className="max-h-48 overflow-auto">{sortedFile.join('\n')}</pre>
                 </div>
             </div>
         </div>
@@ -76,8 +77,12 @@ export const RecordingDetails = ({ recording }: { recording: Recording }) => {
                     <div className="space-y-1">
                         <p><strong>Audio File:</strong></p>
                         <ValidationChip path={recording.audioUrl} />
-                        <p className="pt-2"><strong>Markers File:</strong></p>
-                        <ValidationChip path={recording.markersUrl} />
+                        {recording.mode === 'learn' && (
+                            <>
+                                <p className="pt-2"><strong>Markers File:</strong></p>
+                                <ValidationChip path={recording.markersUrl} />
+                            </>
+                        )}
                     </div>
                 </div>
                 {recording.mode === 'learn' && <MarkersComparison recording={recording} />}
