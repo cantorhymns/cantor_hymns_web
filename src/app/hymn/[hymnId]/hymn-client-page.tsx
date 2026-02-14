@@ -38,6 +38,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
   const { data: initialHymnData, isLoading: isInitialHymnLoading } = useHymn(hymnId);
 
   const [playbackRate, setPlaybackRate] = useState(1);
+  const [userInitiatedPlay, setUserInitiatedPlay] = useState(false);
 
   // Once the initial hymn is loaded, set it as the current hymn.
   useEffect(() => {
@@ -187,7 +188,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
       ) : (
         <HymnPlayer
           hymn={hymn}
-          autoplay={true}
+          autoplay={userInitiatedPlay}
           onPrevious={handlePrevious}
           onNext={handleNext}
           hasPrevious={hasPrevious}
@@ -198,6 +199,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
           playbackRate={playbackRate}
           onPlaybackRateChange={setPlaybackRate}
           genreId={primaryGenreId}
+          onManualPlay={() => setUserInitiatedPlay(true)}
         />
       )}
     </div>

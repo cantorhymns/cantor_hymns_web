@@ -55,6 +55,7 @@ export function CantorCloudClientPage() {
   const [playlist, setPlaylist] = useState<Hymn[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [currentHymn, setCurrentHymn] = useState<Hymn | null>(null);
+  const [userInitiatedPlay, setUserInitiatedPlay] = useState(false);
 
   const { data: allHymns, isLoading: hymnsLoading } = useHymns();
   const { data: allGenres, isLoading: genresLoading } = useGenres();
@@ -211,13 +212,14 @@ export function CantorCloudClientPage() {
             hymn={currentHymn}
             initialRecordingId={initialRecordingId ?? undefined}
             onEnded={handleNext}
-            autoplay={true}
+            autoplay={userInitiatedPlay}
             onNext={handleNext}
             onPrevious={handlePrevious}
             hasNext={playlist.length > 1}
             hasPrevious={playlist.length > 1}
             lyricsVisibleByDefault={false}
             showLyricsToggleButton={true}
+            onManualPlay={() => setUserInitiatedPlay(true)}
           />
           <Playlist
             playlist={playlist}

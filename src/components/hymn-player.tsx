@@ -359,8 +359,6 @@ export function HymnPlayer({
   autoplay = false,
   onNext,
   onPrevious,
-  hasNext,
-  hasPrevious,
   lyricsVisibleByDefault = true,
   showLyricsToggleButton = false,
   initialRecordingId,
@@ -368,14 +366,13 @@ export function HymnPlayer({
   playbackRate,
   onPlaybackRateChange,
   genreId,
+  onManualPlay,
 }: {
   hymn: Hymn;
   onEnded?: () => void;
   autoplay?: boolean;
   onNext?: () => void;
   onPrevious?: () => void;
-  hasNext?: boolean;
-  hasPrevious?: boolean;
   lyricsVisibleByDefault?: boolean;
   showLyricsToggleButton?: boolean;
   initialRecordingId?: string;
@@ -383,6 +380,7 @@ export function HymnPlayer({
   playbackRate?: number;
   onPlaybackRateChange?: (rate: number) => void;
   genreId?: string;
+  onManualPlay?: () => void;
 }) {
   const { firebaseApp } = useFirebase();
   const storage = useMemo(() => firebaseApp ? getStorage(firebaseApp) : null, [firebaseApp]);
@@ -561,10 +559,11 @@ export function HymnPlayer({
       audio.play().catch(error => {
         console.error("Playback failed. This can happen if the user hasn't interacted with the page yet.", error);
       });
+      onManualPlay?.();
     } else {
       audio.pause();
     }
-  }, []);
+  }, [onManualPlay]);
 
   const handleNextSection = useCallback(() => {
     if (!audioRef.current) return;
