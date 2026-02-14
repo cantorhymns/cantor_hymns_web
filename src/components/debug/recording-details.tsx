@@ -43,7 +43,7 @@ const MarkersComparison = ({ recording }: { recording: Recording }) => {
                 {areEqual ? (
                     <span className="flex items-center gap-1 text-xs text-green-600"><CheckCircle2 className="h-3 w-3" /> Match</span>
                 ) : (
-                    <span className="flex items-center gap-1 text-xs text-amber-600"><AlertTriangle className="h-3 w-3" /> Mismatch</span>
+                    <span className="flex items-center gap-1.5 text-base font-bold text-amber-600"><AlertTriangle className="h-4 w-4" /> Mismatch</span>
                 )}
             </div>
             <div className="grid grid-cols-2 gap-4 text-xs font-mono p-2 border rounded-md bg-secondary/30">
@@ -64,8 +64,8 @@ export const RecordingDetails = ({ recording }: { recording: Recording }) => {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Hymn ID: {recording.hymnId}</CardTitle>
-                <CardDescription>Recording ID: {recording.id}</CardDescription>
+                <CardTitle>Recording ID: {recording.id}</CardTitle>
+                <CardDescription>Hymn ID: {recording.hymnId}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -85,7 +85,7 @@ export const RecordingDetails = ({ recording }: { recording: Recording }) => {
                         )}
                     </div>
                 </div>
-                {recording.mode === 'learn' && <MarkersComparison recording={recording} />}
+                {recording.mode === 'learn' && recording.markersUrl && <MarkersComparison recording={recording} />}
             </CardContent>
         </Card>
     );
