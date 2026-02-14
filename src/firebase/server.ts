@@ -2,6 +2,7 @@
 import { initializeApp, getApp, getApps, type FirebaseOptions } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
+import { getStorage } from 'firebase-admin/storage';
 import * as admin from 'firebase-admin';
 
 // This is the service account JSON. In a real production app, you'd want
@@ -36,6 +37,7 @@ function getFirebaseAdminApp() {
       // The databaseURL is required for the Realtime Database, but it's good practice
       // to include it for Firestore as well, referencing your project ID.
       databaseURL: `https://${credentials.project_id}.firebaseio.com`,
+      storageBucket: `${credentials.project_id}.appspot.com`
     });
     return firebaseAdminApp;
   } catch (e: any) {
@@ -59,4 +61,13 @@ export function getFirestoreAdmin() {
 export function getAuthAdmin() {
     const app = getFirebaseAdminApp();
     return getAuth(app);
+}
+
+/**
+ * Returns an initialized Storage Admin instance (default bucket).
+ * Safe to call from server-side code.
+ */
+export function getStorageAdmin() {
+    const app = getFirebaseAdminApp();
+    return getStorage(app);
 }
