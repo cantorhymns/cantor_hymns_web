@@ -149,8 +149,8 @@ export function HymnPlayerTutorial({ open, onOpenChange }: HymnPlayerTutorialPro
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious className="left-2" />
+            <CarouselNext className="right-2" />
           </Carousel>
         </div>
       </DialogContent>
