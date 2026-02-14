@@ -17,6 +17,7 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
         // Limited to 30 hymnIds
         return query(collection(firestore, 'hymns'), where('__name__', 'in', hymnIdsFilter.slice(0, 30)));
     }
+    // If no genreId or filter, fetch all hymns.
     return collection(firestore, 'hymns');
   }, [firestore, genreId, hymnIdsFilter]);
 
@@ -69,6 +70,11 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
   const hymnsWithRecordings = useMemo(() => {
     if (!sortedHymns) return null;
     
+    // For the debug page (no genreId), just return the hymns as is without recordings.
+    if (!genreId && !hymnIdsFilter) {
+      return sortedHymns;
+    }
+
     if (!shouldFetchRelatedData) {
       return sortedHymns.map(h => ({ ...h, recordings: [] }));
     }
@@ -111,7 +117,7 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
         };
     }).filter(hymn => hymn.recordings.length > 0);
 
-  }, [sortedHymns, recordings, hymnIds, areRecordingsLoading, cantorsMap, areCantorsLoading, shouldFetchRelatedData]);
+  }, [sortedHymns, recordings, hymnIds, areRecordingsLoading, cantorsMap, areCantorsLoading, shouldFetchRelatedData, genreId, hymnIdsFilter]);
 
   const isLoading = areHymnsLoading || (shouldFetchRelatedData && (hymns != null && hymnsWithRecordings === null));
 
