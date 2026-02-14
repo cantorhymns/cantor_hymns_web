@@ -1134,7 +1134,7 @@ export function HymnPlayer({
                               onClick={() => setIsRepeat(!isRepeat)}
                               className={cn(
                                   "transition-colors px-4",
-                                  isRepeat ? "bg-green-600 text-white hover:bg-green-700" : "text-muted-foreground"
+                                  isRepeat ? "bg-green-600 text-white hover:bg-green-600" : "text-muted-foreground"
                               )}
                           >
                               <Repeat className="h-5 w-5" />
