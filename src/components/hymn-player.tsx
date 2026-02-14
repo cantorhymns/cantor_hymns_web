@@ -703,7 +703,7 @@ export function HymnPlayer({
         navigator.mediaSession.setActionHandler('seekbackward', null);
       }
     };
-  }, [currentRecording, hymn, hasNext, hasPrevious, onNext, onPrevious, handlePlayPause, handleNextHymn, handlePreviousHymn, handleNextSection, handlePrevSection, handleSkip]);
+  }, [currentRecording, hymn, hasPrevious, hasNext, onPrevious, onNext, handlePlayPause, handlePreviousHymn, handleNextHymn, handleNextSection, handlePrevSection, handleSkip]);
 
 
   const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
@@ -1101,7 +1101,14 @@ export function HymnPlayer({
               </div>
 
               <div className="flex justify-between items-center">
-                  <div className="w-[100px] justify-start" />
+                  <div className="w-[100px] flex justify-start">
+                    {(onNext || onPrevious) && (
+                        <Button variant="outline" size="icon" onClick={() => setIsTutorialOpen(true)} title="How to use the player">
+                            <HelpCircle className="h-4 w-4" />
+                            <span className="sr-only">Help</span>
+                        </Button>
+                    )}
+                  </div>
 
                   <div className="flex flex-col items-center gap-4">
                       <div className="flex items-center gap-4">
@@ -1160,21 +1167,13 @@ export function HymnPlayer({
                   </div>
               </div>
               {(onNext || onPrevious) && (
-                <div className="grid grid-cols-3 items-center border-t pt-4 mt-4">
-                    <div className="justify-self-start">
-                        <Button variant="outline" size="icon" onClick={() => setIsTutorialOpen(true)} title="How to use the player">
-                            <HelpCircle className="h-4 w-4" />
-                            <span className="sr-only">Help</span>
-                        </Button>
-                    </div>
-                    <div className="flex justify-center items-center gap-4 col-start-2">
-                        <Button variant="outline" size="lg" onClick={handlePreviousHymn} disabled={!hasPrevious}>
-                            <ChevronLeft className="mr-2 h-5 w-5" /> Previous
-                        </Button>
-                        <Button variant="outline" size="lg" onClick={handleNextHymn} disabled={!hasNext}>
-                            Next <ChevronRight className="ml-2 h-5 w-5" />
-                        </Button>
-                    </div>
+                <div className="flex justify-center items-center gap-4 border-t pt-4 mt-4">
+                    <Button variant="outline" size="lg" onClick={handlePreviousHymn} disabled={!hasPrevious}>
+                        <ChevronLeft className="mr-2 h-5 w-5" /> Previous
+                    </Button>
+                    <Button variant="outline" size="lg" onClick={handleNextHymn} disabled={!hasNext}>
+                        Next <ChevronRight className="ml-2 h-5 w-5" />
+                    </Button>
                 </div>
               )}
           </div>
