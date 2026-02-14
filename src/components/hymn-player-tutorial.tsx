@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -84,10 +83,10 @@ const tutorialSteps = [
                 <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">1</div>
                 <div className="relative flex h-5 w-5 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground opacity-50">
                     2
+                    <MousePointer2 className="absolute -right-1 -top-1 h-5 w-5 text-primary" />
                 </div>
                 <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">3</div>
             </div>
-            <MousePointer2 className="absolute right-10 top-2 h-5 w-5 text-primary" />
         </div>
     ),
   },
@@ -97,7 +96,7 @@ const tutorialSteps = [
       'Use the text size and expand buttons to customize your lyrics display for easier reading.',
     visual: () => (
         <div className="inline-flex flex-col items-center gap-3 rounded-lg border bg-background p-4">
-            <div className="h-12 w-32 rounded-md bg-secondary/50 p-2 text-[10px] text-muted-foreground">Holy God, Holy Might, Holy Immortal...</div>
+            <div className="h-12 w-32 rounded-md bg-secondary/50 p-2 text-[10px] text-muted-foreground">Holy God, Holy Mighty, Holy Immortal...</div>
             <div className="flex items-center gap-2">
                 <Button variant="outline" size="icon" className="h-7 w-7"><Type className="h-4 w-4" /></Button>
                 <Button variant="outline" size="icon" className="h-7 w-7"><Maximize2 className="h-4 w-4" /></Button>
@@ -123,7 +122,7 @@ export function HymnPlayerTutorial({ open, onOpenChange }: HymnPlayerTutorialPro
             A quick guide to the hymn player features.
           </DialogDescription>
         </DialogHeader>
-        <Carousel opts={{ duration: 0 }} className="w-full max-w-xs mx-auto px-6">
+        <Carousel opts={{ loop: true, duration: 0 }} className="w-full max-w-xs mx-auto px-6">
             <CarouselContent>
               {tutorialSteps.map((step, index) => (
                 <CarouselItem key={index}>
