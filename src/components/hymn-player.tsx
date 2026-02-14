@@ -359,6 +359,8 @@ export function HymnPlayer({
   autoplay = false,
   onNext,
   onPrevious,
+  hasNext,
+  hasPrevious,
   lyricsVisibleByDefault = true,
   showLyricsToggleButton = false,
   initialRecordingId,
@@ -373,6 +375,8 @@ export function HymnPlayer({
   autoplay?: boolean;
   onNext?: () => void;
   onPrevious?: () => void;
+  hasNext?: boolean;
+  hasPrevious?: boolean;
   lyricsVisibleByDefault?: boolean;
   showLyricsToggleButton?: boolean;
   initialRecordingId?: string;
@@ -557,7 +561,7 @@ export function HymnPlayer({
 
     if (audio.paused) {
       audio.play().catch(error => {
-        console.error("Playback failed. This can happen if the user hasn't interacted with the page yet.", error);
+        console.log("Playback failed. This can happen if the user hasn't interacted with the page yet.", error);
       });
       onManualPlay?.();
     } else {
@@ -1138,7 +1142,7 @@ export function HymnPlayer({
                               className={cn(
                                 "transition-colors px-4",
                                 isRepeat
-                                  ? "bg-accent text-accent-foreground hover:bg-accent hover:text-accent-foreground"
+                                  ? "bg-accent text-accent-foreground hover:bg-accent/90 hover:text-accent-foreground"
                                   : "text-muted-foreground"
                               )}
                           >
