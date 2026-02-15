@@ -1049,15 +1049,15 @@ export function HymnPlayer({
                         // This is a pseudo-random number generator that is deterministic based on seed.
                         // It avoids using Math.random() which would cause hydration mismatches.
                         const pseudoRandom = (seed: number) => {
-                            let x = Math.sin(seed) * 10000;
+                            let x = Math.sin(seed * 0.4) * 10000 + Math.cos(seed * 0.9) * 5000;
                             return x - Math.floor(x);
                         }
                         const seed = i + (currentRecording?.audioUrl.length || 0);
-                        const barHeight = pseudoRandom(seed) * 40 + 5; // 5% to 45% of half-height
+                        const barHeight = pseudoRandom(seed) * 35 + 5; // 5% to 40% of half-height
                         return (
                             <div
                               key={i}
-                              className="absolute w-[2px] rounded-full bg-muted-foreground/40"
+                              className="absolute w-[3px] bg-muted-foreground/40"
                               style={{
                                   left: `${(i / (Math.ceil(duration) * 2)) * 100}%`,
                                   top: `${50 - barHeight}%`, // Position from top

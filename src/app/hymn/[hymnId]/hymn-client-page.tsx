@@ -162,6 +162,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
           autoplay={userInitiatedPlay}
           onPrevious={handlePrevious}
           onNext={handleNext}
+          onEnded={handleNext}
           hasPrevious={hasPrevious}
           hasNext={hasNext}
           onRecordingChange={setCurrentRecording}
