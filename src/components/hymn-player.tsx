@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { Hymn, Recording } from "@/lib/types";
@@ -35,7 +34,6 @@ import {
   Share2,
   Loader2,
   HelpCircle,
-  Copy,
 } from "lucide-react";
 import { getDownloadURL, ref, getStorage } from "firebase/storage";
 import { useFirebase } from "@/firebase";
@@ -420,7 +418,6 @@ export function HymnPlayer({
   const [isSeeking, setIsSeeking] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
-  const [debugInfo, setDebugInfo] = useState<object | null>(null);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const waveformContainerRef = useRef<HTMLDivElement>(null);
@@ -883,85 +880,6 @@ export function HymnPlayer({
     });
   };
 
-  const handleCopyDebugInfo = () => {
-    if (!debugInfo) return;
-    const debugString = JSON.stringify(debugInfo, null, 2);
-    navigator.clipboard.writeText(debugString).then(() => {
-        toast({
-            title: "Debug info copied!",
-            duration: 2000,
-        });
-    }).catch(err => {
-        console.error("Failed to copy debug info: ", err);
-        toast({
-            variant: "destructive",
-            title: "Failed to Copy",
-            description: "Could not copy the debug info to your clipboard.",
-        });
-    });
-  };
-
-
-  useEffect(() => {
-    // This effect runs on the client to capture browser-specific info
-    // and updates the debug state whenever relevant values change.
-    if (typeof window !== 'undefined') {
-      setDebugInfo({
-        userAgent: navigator.userAgent,
-        windowDimensions: {
-          width: window.innerWidth,
-          height: window.innerHeight,
-          pixelRatio: window.devicePixelRatio,
-        },
-        duration,
-        currentTime,
-        isRepeat,
-        currentPlaybackRate,
-        isPlayerDisabled,
-        isLoadingAudio,
-        audioSrc,
-        audioError,
-        isSeeking,
-        isDragging,
-        loopSection: loopSectionRef.current,
-        hymnId: hymn.id,
-        recordingId: currentRecording?.id,
-        dbAudioLength: currentRecording?.audioLength,
-        marks: {
-          loadedMarks,
-          isLoadingMarks,
-          marksError,
-          sortedMarks,
-          activeMarks,
-          sortedActiveMarks,
-        },
-        styles: {
-          waveformWidthStyle,
-        },
-      });
-    }
-  }, [
-      duration,
-      currentTime,
-      isRepeat,
-      currentPlaybackRate,
-      isPlayerDisabled,
-      isLoadingAudio,
-      audioSrc,
-      audioError,
-      isSeeking,
-      isDragging,
-      hymn.id,
-      currentRecording, // Includes id, audioLength etc.
-      loadedMarks,
-      isLoadingMarks,
-      marksError,
-      sortedMarks,
-      activeMarks,
-      sortedActiveMarks,
-      waveformWidthStyle,
-  ]);
-
   if (!hymn.recordings || hymn.recordings.length === 0) {
       return (
         <>
@@ -1097,7 +1015,7 @@ export function HymnPlayer({
           </div>
         </CardHeader>
         <CardContent className="px-6 pb-6">
-          <div className={`space-y-6 transition-opacity ${isPlayerDisabled ? 'opacity-30 pointer-events-none' : ''}`}>
+          <div className={`relative space-y-6 transition-opacity ${isPlayerDisabled ? 'opacity-30 pointer-events-none' : ''}`}>
             <div 
                   ref={waveformContainerRef} 
                   className="relative w-full h-20 bg-secondary/50 rounded-lg group touch-none overflow-hidden"
@@ -1154,7 +1072,7 @@ export function HymnPlayer({
 
                         <div 
                             className="absolute top-0 h-full w-0.5 bg-red-500 z-30 pointer-events-none -translate-x-1/2"
-                            style={{ left: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%' }}
+                            style={{ left: `${(currentTime / duration) * 100}%` }}
                         >
                             <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-3 h-3 bg-red-500 rounded-full"></div>
                         </div>
@@ -1268,23 +1186,6 @@ export function HymnPlayer({
       {lyricsVisible && hasAnyLyrics && (
         <div className="w-full max-w-3xl mx-auto mt-8">
           <LyricsDisplay hymn={hymn} />
-        </div>
-      )}
-
-      {debugInfo && (
-        <div className="w-full max-w-3xl mx-auto mt-8">
-          <div className="flex items-center justify-between mb-2">
-              <h3 className="font-bold text-lg">Debug Info</h3>
-              <Button variant="outline" size="sm" onClick={handleCopyDebugInfo}>
-                  <Copy className="h-4 w-4 mr-2" />
-                  Copy Info
-              </Button>
-          </div>
-          <textarea
-            readOnly
-            className="w-full h-96 p-2 font-mono text-xs border rounded bg-secondary/50"
-            value={JSON.stringify(debugInfo, null, 2)}
-          />
         </div>
       )}
       
