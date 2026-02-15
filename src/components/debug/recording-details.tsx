@@ -6,10 +6,12 @@ import { ValidationChip } from './validation-chip';
 import { useFileContent } from '@/lib/hooks/useFileContent';
 import { ScrollArea } from '../ui/scroll-area';
 import { Skeleton } from '../ui/skeleton';
+import { useAudioMetadata } from './use-audio-metadata';
 
 
 export const RecordingDetails = ({ recording, validationMap, isLoading: isValidationLoading }: { recording: Recording, validationMap: ValidationMap, isLoading: boolean }) => {
     const { content: markersContent, isLoading: isMarkersContentLoading, error: markersError } = useFileContent(recording.mode === 'learn' ? recording.markersUrl : undefined);
+    const { duration: browserDuration, isLoading: isBrowserDurationLoading, error: browserDurationError } = useAudioMetadata(recording.audioUrl);
     
     return (
         <Card>
@@ -23,7 +25,16 @@ export const RecordingDetails = ({ recording, validationMap, isLoading: isValida
                         <p><strong>Cantor:</strong> {recording.cantor?.name || 'N/A'}</p>
                         <p><strong>Mode:</strong> {recording.mode}</p>
                         <p><strong>Active:</strong> {String(recording.active)}</p>
-                        <p><strong>DB Audio Length:</strong> {recording.audioLength ? `${recording.audioLength}s` : <span className="text-amber-600">Not Set</span>}</p>
+                        <p><strong>DB Audio Length:</strong> {recording.audioLength ? `${recording.audioLength.toFixed(4)}s` : <span className="text-amber-600">Not Set</span>}</p>
+                        <p>
+                            <strong>Browser Audio Length:</strong>
+                            {isBrowserDurationLoading ? <span className="text-muted-foreground"> Loading...</span> :
+                            browserDurationError ? <span className="text-destructive"> Error</span> :
+                            browserDuration !== null ? ` ${browserDuration.toFixed(4)}s` : ' N/A'}
+                            {browserDuration && recording.audioLength && Math.abs(browserDuration - recording.audioLength) > 0.1 &&
+                                <span className="text-amber-600 ml-2 font-bold">(Mismatch!)</span>
+                            }
+                        </p>
                     </div>
                     <div className="space-y-1">
                         <p><strong>Audio File:</strong></p>
