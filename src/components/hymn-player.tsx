@@ -1046,15 +1046,22 @@ export function HymnPlayer({
                       }}
                   >
                       {duration > 0 && Array.from({ length: Math.ceil(duration) * 2 }).map((_, i) => {
+                        // This is a pseudo-random number generator that is deterministic based on seed.
+                        // It avoids using Math.random() which would cause hydration mismatches.
+                        const pseudoRandom = (seed: number) => {
+                            let x = Math.sin(seed) * 10000;
+                            return x - Math.floor(x);
+                        }
                         const seed = i + (currentRecording?.audioUrl.length || 0);
-                        const barHeight = ((Math.sin(seed) + 1) / 2) * 60 + 20;
+                        const barHeight = pseudoRandom(seed) * 40 + 5; // 5% to 45% of half-height
                         return (
                             <div
                               key={i}
-                              className="absolute bottom-0 w-px bg-muted-foreground/50"
+                              className="absolute w-[2px] rounded-full bg-muted-foreground/40"
                               style={{
                                   left: `${(i / (Math.ceil(duration) * 2)) * 100}%`,
-                                  height: `${barHeight}%`,
+                                  top: `${50 - barHeight}%`, // Position from top
+                                  height: `${barHeight * 2}%`,   // Set total height
                               }}
                             />
                         )
