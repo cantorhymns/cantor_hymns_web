@@ -860,6 +860,14 @@ export function HymnPlayer({
   const handleCanPlay = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
+
+    // This is a crucial failsafe for mobile browsers. They often only report the
+    // correct duration when the audio is ready to play. We check it here and
+    // update the state if it's different from what we got on `onloadeddata`.
+    if (audio.duration && audio.duration !== Infinity && audio.duration > 0 && audio.duration !== duration) {
+        setDuration(audio.duration);
+    }
+
     audio.playbackRate = currentPlaybackRate;
     if (autoplayOnSwitch) {
         const playPromise = audio.play();
@@ -871,7 +879,7 @@ export function HymnPlayer({
         }
         setAutoplayOnSwitch(false);
     }
-  }, [autoplayOnSwitch, currentPlaybackRate]);
+  }, [autoplayOnSwitch, currentPlaybackRate, duration]);
   
   const handleShare = () => {
     if (!hymn || !currentRecording) return;
