@@ -55,7 +55,7 @@ export function CantorCloudClientPage() {
   const [playlist, setPlaylist] = useState<Hymn[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [currentHymn, setCurrentHymn] = useState<Hymn | null>(null);
-  const [userInitiatedPlay, setUserInitiatedPlay] = useState(false);
+  const [userInitiatedPlay, setUserInitiatedPlay] = useState(true);
 
   const { data: allHymns, isLoading: hymnsLoading } = useHymns();
   const { data: allGenres, isLoading: genresLoading } = useGenres();
@@ -174,6 +174,7 @@ export function CantorCloudClientPage() {
   }, [playlist]);
   
   const handleNext = useCallback(() => {
+    setUserInitiatedPlay(true);
     handleHymnChange((currentIndex + 1) % playlist.length);
   }, [currentIndex, playlist.length, handleHymnChange]);
 
