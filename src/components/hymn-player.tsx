@@ -418,6 +418,7 @@ export function HymnPlayer({
   const [isSeeking, setIsSeeking] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+  const [debugInfo, setDebugInfo] = useState<object | null>(null);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const waveformContainerRef = useRef<HTMLDivElement>(null);
@@ -901,6 +902,68 @@ export function HymnPlayer({
     });
   };
 
+  useEffect(() => {
+    // This effect runs on the client to capture browser-specific info
+    // and updates the debug state whenever relevant values change.
+    if (typeof window !== 'undefined') {
+      setDebugInfo({
+        userAgent: navigator.userAgent,
+        windowDimensions: {
+          width: window.innerWidth,
+          height: window.innerHeight,
+          pixelRatio: window.devicePixelRatio,
+        },
+        duration,
+        currentTime,
+        isRepeat,
+        currentPlaybackRate,
+        isPlayerDisabled,
+        isLoadingAudio,
+        audioSrc,
+        audioError,
+        isSeeking,
+        isDragging,
+        loopSection: loopSectionRef.current,
+        hymnId: hymn.id,
+        recordingId: currentRecording?.id,
+        dbAudioLength: currentRecording?.audioLength,
+        marks: {
+          loadedMarks,
+          isLoadingMarks,
+          marksError,
+          sortedMarks,
+          activeMarks,
+          sortedActiveMarks,
+        },
+        styles: {
+          waveformWidthStyle,
+          playheadPositionStyle,
+        },
+      });
+    }
+  }, [
+      duration,
+      currentTime,
+      isRepeat,
+      currentPlaybackRate,
+      isPlayerDisabled,
+      isLoadingAudio,
+      audioSrc,
+      audioError,
+      isSeeking,
+      isDragging,
+      hymn.id,
+      currentRecording, // Includes id, audioLength etc.
+      loadedMarks,
+      isLoadingMarks,
+      marksError,
+      sortedMarks,
+      activeMarks,
+      sortedActiveMarks,
+      waveformWidthStyle,
+      playheadPositionStyle,
+  ]);
+
   if (!hymn.recordings || hymn.recordings.length === 0) {
       return (
         <>
@@ -1210,6 +1273,18 @@ export function HymnPlayer({
           <LyricsDisplay hymn={hymn} />
         </div>
       )}
+
+      {debugInfo && (
+        <div className="w-full max-w-3xl mx-auto mt-8">
+          <h3 className="font-bold text-lg">Debug Info</h3>
+          <textarea
+            readOnly
+            className="w-full h-96 mt-2 p-2 font-mono text-xs border rounded bg-secondary/50"
+            value={JSON.stringify(debugInfo, null, 2)}
+          />
+        </div>
+      )}
+      
       <HymnPlayerTutorial open={isTutorialOpen} onOpenChange={setIsTutorialOpen} />
     </>
   );
