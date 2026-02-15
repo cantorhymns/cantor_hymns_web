@@ -32,7 +32,9 @@ export const RecordingDetails = ({ recording, validationMap, isLoading: isValida
                             browserDurationError ? <span className="text-destructive"> Error</span> :
                             browserDuration !== null ? ` ${browserDuration.toFixed(4)}s` : ' N/A'}
                             {browserDuration && recording.audioLength && Math.abs(browserDuration - recording.audioLength) > 0.1 &&
-                                <span className="text-amber-600 ml-2 font-bold">(Mismatch!)</span>
+                                <span className="text-amber-600 ml-2 font-bold">
+                                    (Mismatch! Delta: {Math.abs(browserDuration - recording.audioLength).toFixed(4)}s)
+                                </span>
                             }
                         </p>
                     </div>
