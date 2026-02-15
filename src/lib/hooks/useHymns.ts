@@ -71,7 +71,7 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
     if (!sortedHymns) return null;
     
     // For the debug page (no genreId), just return the hymns as is without recordings.
-    if (!genreId && !hymnIdsFilter) {
+    if (!genreId && (!hymnIdsFilter || hymnIdsFilter.length === 0)) {
       return sortedHymns;
     }
 

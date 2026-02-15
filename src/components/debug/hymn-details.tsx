@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Hymn, Genre } from '@/lib/types';
