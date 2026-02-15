@@ -32,7 +32,8 @@
     "db:add-pi-mairomi": "tsx -r dotenv/config src/scripts/add-pi-mairomi.ts",
     "db:add-pi-mairomi-hics": "tsx -r dotenv/config src/scripts/add-pi-mairomi-hics.ts",
     "db:add-lazaros-amou": "tsx -r dotenv/config src/scripts/add-lazaros-amou.ts",
-    "db:add-verses-of-cymbals": "tsx -r dotenv/config src/scripts/add-verses-of-cymbals.ts"
+    "db:add-verses-of-cymbals": "tsx -r dotenv/config src/scripts/add-verses-of-cymbals.ts",
+    "db:add-doxology-lazarus-saturday": "tsx -r dotenv/config src/scripts/add-doxology-lazarus-saturday.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
