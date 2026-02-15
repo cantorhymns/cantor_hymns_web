@@ -26,7 +26,8 @@
     "db:update-audio-lengths": "tsx -r dotenv/config src/scripts/update-audio-lengths.ts",
     "db:add-sherat-lent": "tsx -r dotenv/config src/scripts/add-sherat-lent.ts",
     "db:add-panouti": "tsx -r dotenv/config src/scripts/add-panouti.ts",
-    "db:add-gholghotha": "tsx -r dotenv/config src/scripts/add-gholghotha.ts"
+    "db:add-gholghotha": "tsx -r dotenv/config src/scripts/add-gholghotha.ts",
+    "db:add-je-efesmaroout": "tsx -r dotenv/config src/scripts/add-je-efesmaroout.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
