@@ -1,4 +1,3 @@
-
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -8,7 +7,7 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card';
-import { ChevronLeft, Music, Search as SearchIcon } from 'lucide-react';
+import { ChevronLeft, Search as SearchIcon } from 'lucide-react';
 import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Hymn } from '@/lib/types';
@@ -23,9 +22,6 @@ const HymnCard = ({ hymn, genreId }: { hymn: Hymn; genreId: string }) => {
     <Link href={`/hymn/${hymn.id}?genre=${genreId}`} key={hymn.id} className="group">
       <Card className="h-full flex flex-col transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 group-hover:border-primary/50">
         <CardHeader className="flex-grow">
-          <div className="mb-3">
-            <Music className="h-8 w-8 text-primary/50" />
-          </div>
           <CardTitle className="font-headline text-2xl text-primary">
             {hymn.name}
           </CardTitle>
