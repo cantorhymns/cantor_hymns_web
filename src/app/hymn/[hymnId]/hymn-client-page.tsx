@@ -31,20 +31,16 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
   const genreIdFromUrl = searchParams.get('genre');
   const { setIsOpen } = useSearch();
 
-  // Use a state for the hymn being displayed.
   const [hymn, setHymn] = useState<Hymn | null>(null);
 
-  // Fetch the initial hymn based on the URL parameter.
   const { data: initialHymnData, isLoading: isInitialHymnLoading } = useHymn(hymnId);
 
   const [playbackRate, setPlaybackRate] = useState(1);
   const [userInitiatedPlay, setUserInitiatedPlay] = useState(false);
 
-  // Once the initial hymn is loaded, set it as the current hymn.
   useEffect(() => {
     if (initialHymnData) {
       setHymn(initialHymnData);
-      setUserInitiatedPlay(false); // Reset autoplay trigger on initial load.
     }
   }, [initialHymnData]);
   
@@ -54,7 +50,6 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
     if (hymn?.recordings && hymn.recordings.length > 0) {
        const recFromUrl = initialRecordingIdFromUrl ? hymn.recordings.find(r => r.id === initialRecordingIdFromUrl) : undefined;
        const selectedRec = recFromUrl || hymn.recordings[0];
-       // Only update if the recording is actually different to avoid extra re-renders
        if (selectedRec?.id !== currentRecording?.id) {
           setCurrentRecording(selectedRec);
        }
@@ -173,7 +168,10 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
           onEnded={handleNext}
           hasPrevious={hasPrevious}
           hasNext={hasNext}
-          onRecordingChange={setCurrentRecording}
+          onRecordingChange={(rec) => {
+            setCurrentRecording(rec);
+            setUserInitiatedPlay(true);
+          }}
           showLyricsToggleButton={true}
           initialRecordingId={initialRecordingIdFromUrl ?? undefined}
           playbackRate={playbackRate}

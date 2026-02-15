@@ -391,16 +391,11 @@ export function HymnPlayer({
   const storage = useMemo(() => firebaseApp ? getStorage(firebaseApp) : null, [firebaseApp]);
   const { toast } = useToast();
 
-  const [currentRecording, setCurrentRecording] = useState<Recording | undefined>(() => {
-    if (initialRecordingId) {
-      const initialRec = hymn.recordings?.find(r => r.id === initialRecordingId);
-      if (initialRec) return initialRec;
-    }
-    return hymn.recordings?.[0];
-  });
+  const [currentRecording, setCurrentRecording] = useState<Recording | undefined>();
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
   const [audioError, setAudioError] = useState<string | null>(null);
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
+  const [internalAutoplay, setInternalAutoplay] = useState(false);
 
   const { marks: loadedMarks, isLoading: isLoadingMarks, error: marksError } = useMarkersFile(
     currentRecording?.mode === 'learn' ? currentRecording.markersUrl : undefined
@@ -412,7 +407,6 @@ export function HymnPlayer({
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const currentPlaybackRate = playbackRate ?? 1;
-  const [autoplayOnSwitch, setAutoplayOnSwitch] = useState(autoplay);
   
   const [activeMarks, setActiveMarks] = useState<number[]>([]);
   const [lyricsVisible, setLyricsVisible] = useState(lyricsVisibleByDefault);
@@ -430,6 +424,19 @@ export function HymnPlayer({
   
   const sortedMarks = useMemo(() => [...(loadedMarks || [])].sort((a, b) => a - b), [loadedMarks]);
   
+  useEffect(() => {
+    if (hymn && hymn.recordings && hymn.recordings.length > 0) {
+      if (initialRecordingId) {
+        const initialRec = hymn.recordings.find(r => r.id === initialRecordingId);
+        setCurrentRecording(initialRec || hymn.recordings[0]);
+      } else {
+        setCurrentRecording(hymn.recordings[0]);
+      }
+    } else {
+      setCurrentRecording(undefined);
+    }
+  }, [hymn, initialRecordingId]);
+
   useEffect(() => {
     if (currentRecording?.mode === 'learn') {
         setActiveMarks(sortedMarks);
@@ -461,34 +468,13 @@ export function HymnPlayer({
   }, [onPrevious]);
 
   useEffect(() => {
-    // This effect ensures that whenever the hymn prop changes,
-    // we reset the state and select the correct initial recording.
-    setAutoplayOnSwitch(autoplay); // Respect the autoplay prop for incoming hymns.
-    if (hymn && hymn.recordings && hymn.recordings.length > 0) {
-      if (initialRecordingId) {
-        const initialRec = hymn.recordings.find(r => r.id === initialRecordingId);
-        setCurrentRecording(initialRec || hymn.recordings[0]);
-      } else {
-        setCurrentRecording(hymn.recordings[0]);
-      }
-    } else {
-      setCurrentRecording(undefined);
-    }
-  }, [hymn, initialRecordingId, autoplay]);
-  
-  useEffect(() => {
-    // When the recording changes, reset the player state.
     if (audioRef.current) {
-        // Explicitly reset the audio element's time to 0.
-        // This is a crucial reset for mobile browsers, which might otherwise
-        // try to "helpfully" restore the previous playback position of the audio file.
         audioRef.current.currentTime = 0;
     }
     setIsPlaying(false);
     setCurrentTime(0);
     setAudioSrc(null);
     setAudioError(null);
-    // Prioritize audioLength from data, otherwise reset to 0 and wait for <audio> element
     setDuration(currentRecording?.audioLength ?? 0);
 
     if (currentRecording && storage) {
@@ -551,22 +537,18 @@ export function HymnPlayer({
         const endThreshold = fullWidth - containerWidth / 2;
 
         if (playheadPixelPosition < scrollThreshold) {
-            // --- Mode 1: Start of track. Waveform is static, playhead moves. ---
             waveformInnerRef.current.style.transform = 'translateX(0px)';
             playheadRef.current.style.left = `${playheadPixelPosition}px`;
         } else if (playheadPixelPosition >= endThreshold) {
-            // --- Mode 3: End of track. Waveform is scrolled to the end, playhead moves. ---
             const maxScroll = Math.max(0, fullWidth - containerWidth);
             waveformInnerRef.current.style.transform = `translateX(-${maxScroll}px)`;
             playheadRef.current.style.left = `${playheadPixelPosition - maxScroll}px`;
         } else {
-            // --- Mode 2: Middle of track. Playhead is fixed, waveform scrolls. ---
             const scrollTarget = playheadPixelPosition - scrollThreshold;
             waveformInnerRef.current.style.transform = `translateX(-${scrollTarget}px)`;
             playheadRef.current.style.left = `${scrollThreshold}px`;
         }
     } else {
-        // Reset positions when no duration or refs
         if (waveformInnerRef.current) {
             waveformInnerRef.current.style.transform = 'translateX(0px)';
         }
@@ -846,7 +828,6 @@ export function HymnPlayer({
   const handleLoadedData = () => {
     const audio = audioRef.current;
     if (!audio) return;
-    // Only update duration from the audio element if it wasn't provided in the data.
     if ((!currentRecording?.audioLength || currentRecording.audioLength <= 0) && isFinite(audio.duration)) {
         setDuration(audio.duration);
     }
@@ -857,30 +838,30 @@ export function HymnPlayer({
     const audio = audioRef.current;
     if (!audio) return;
 
-    // This is a crucial failsafe for mobile browsers, but only if we don't have the authoritative length.
     if ((!currentRecording?.audioLength || currentRecording.audioLength <= 0) && isFinite(audio.duration) && audio.duration > 0 && audio.duration !== duration) {
         setDuration(audio.duration);
     }
 
     audio.playbackRate = currentPlaybackRate;
-    if (autoplayOnSwitch) {
+    
+    if (autoplay || internalAutoplay) {
         const playPromise = audio.play();
         if (playPromise !== undefined) {
             playPromise.catch((e) => {
-                // This error is expected in some cases, so we just log it.
                 console.log("Autoplay was prevented by the browser.");
             });
         }
-        setAutoplayOnSwitch(false);
         if (onAutoplayConsumed) {
             onAutoplayConsumed();
         }
+        if (internalAutoplay) {
+            setInternalAutoplay(false);
+        }
     }
-  }, [autoplayOnSwitch, currentPlaybackRate, duration, currentRecording?.audioLength, onAutoplayConsumed]);
+  }, [autoplay, internalAutoplay, currentPlaybackRate, duration, currentRecording?.audioLength, onAutoplayConsumed]);
   
   const handleShare = () => {
     if (!hymn || !currentRecording) return;
-    // Construct a URL that points to the individual hymn page with the specific recording selected.
     let url = `${window.location.origin}/hymn/${hymn.id}?recordingId=${currentRecording.id}`;
     if (genreId) {
       url += `&genre=${genreId}`;
@@ -1005,9 +986,9 @@ export function HymnPlayer({
                           onValueChange={(recId) => {
                               const newRec = hymn.recordings!.find((r) => r.id === recId);
                               if (newRec) {
-                                  setAutoplayOnSwitch(true);
                                   setCurrentRecording(newRec);
                                   onRecordingChange?.(newRec);
+                                  setInternalAutoplay(true);
                               }
                           }}
                       >
@@ -1061,7 +1042,7 @@ export function HymnPlayer({
                           return (
                               <div
                                 key={i}
-                                className="absolute w-[2px] rounded-full bg-primary/20"
+                                className="absolute w-[2px] rounded-full bg-primary/30"
                                 style={{
                                     left: `${(i / (Math.ceil(duration) * 3)) * 100}%`,
                                     top: `${50 - barHeight}%`,
