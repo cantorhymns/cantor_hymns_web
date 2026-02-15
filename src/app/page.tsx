@@ -58,7 +58,7 @@ export default function Home() {
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
       <div className="text-center mb-8">
         <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight">
-          Hymn Genres
+          CantorCloud
         </h1>
       </div>
 
