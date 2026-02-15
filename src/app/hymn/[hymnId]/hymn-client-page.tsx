@@ -69,6 +69,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
     return Array.isArray(initialHymnData.genreId) ? initialHymnData.genreId[0] : initialHymnData.genreId;
   }, [initialHymnData?.genreId, genreIdFromUrl]);
 
+  const { data: genre, isLoading: isGenreLoading } = useGenre(primaryGenreId);
   const { flatPlaylist: playlist, isLoading: isPlaylistLoading } = useOrderedHymns(primaryGenreId);
 
   const currentIndex = useMemo(() => {
@@ -97,7 +98,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
     }
   }, [hasNext, playlist, currentIndex]);
 
-  const isLoading = isInitialHymnLoading || isPlaylistLoading || (initialHymnData && !hymn);
+  const isLoading = isInitialHymnLoading || isPlaylistLoading || isGenreLoading || (initialHymnData && !hymn);
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
