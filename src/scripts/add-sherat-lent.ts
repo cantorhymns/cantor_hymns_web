@@ -8,8 +8,8 @@ import { firebaseConfig } from '../firebase/config';
 
 const hymnId = 'sherat-lent';
 const hymnData = {
-    name: "Entho Te Ti-Shouri",
-    description: "Hymn of the censer chanted in the weekdays of Holy Lent.",
+    name: "Lenten Sherat",
+    description: "The Lenten Sherat (translating to \"The Hails\") - the Lobsh of Saturday Theotokia, chanted in Vespers Praises on Saturdays of Holy Lent.",
     genreId: ["lent"],
     lyricsArabic: "lyrics/arabic/theotokia-lobsh-saturday_arabic.md",
     lyricsCoptic: "lyrics/coptic/theotokia-lobsh-saturday_coptic.md",
