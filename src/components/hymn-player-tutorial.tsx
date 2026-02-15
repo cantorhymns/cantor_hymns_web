@@ -21,6 +21,8 @@ import {
   Type,
   Maximize2,
   MousePointer2,
+  FastForward,
+  Share2,
 } from 'lucide-react';
 import { Button } from './ui/button';
 
@@ -102,6 +104,35 @@ const tutorialSteps = [
                 <Button variant="outline" size="icon" className="h-7 w-7"><Maximize2 className="h-4 w-4" /></Button>
             </div>
         </div>
+    ),
+  },
+  {
+    title: 'Adjust Playback Speed',
+    description:
+      'Use the speed button to cycle through different playback rates, from 1x up to 2x.',
+    visual: () => (
+      <div className="inline-flex flex-col items-center gap-3 rounded-lg border bg-background p-4">
+        <div className="h-12 w-32 rounded-md bg-secondary/50 flex items-center justify-center">
+            <p className="text-muted-foreground">Audio playing...</p>
+        </div>
+        <Button variant="outline">
+          <FastForward className="h-4 w-4 mr-1" />
+          <span>1.25x</span>
+        </Button>
+      </div>
+    ),
+  },
+  {
+    title: 'Share a Specific Track',
+    description:
+      'Use the share button to copy a direct link to the current hymn and cantor to your clipboard.',
+    visual: () => (
+      <div className="inline-flex items-center gap-3 rounded-lg border bg-background p-4">
+        <Button variant="outline" size="icon">
+          <Share2 className="h-4 w-4" />
+        </Button>
+         <p className="text-sm text-muted-foreground">URL copied!</p>
+      </div>
     ),
   },
 ];
