@@ -1045,26 +1045,25 @@ export function HymnPlayer({
                           willChange: 'transform',
                       }}
                   >
-                      {duration > 0 && Array.from({ length: Math.ceil(duration) * 2 }).map((_, i) => {
-                        // This is a pseudo-random number generator that is deterministic based on seed.
-                        // It avoids using Math.random() which would cause hydration mismatches.
-                        const pseudoRandom = (seed: number) => {
-                            let x = Math.sin(seed * 0.4) * 10000 + Math.cos(seed * 0.9) * 5000;
-                            return x - Math.floor(x);
-                        }
-                        const seed = i + (currentRecording?.audioUrl.length || 0);
-                        const barHeight = pseudoRandom(seed) * 35 + 5; // 5% to 40% of half-height
-                        return (
-                            <div
-                              key={i}
-                              className="absolute w-[3px] bg-muted-foreground/40"
-                              style={{
-                                  left: `${(i / (Math.ceil(duration) * 2)) * 100}%`,
-                                  top: `${50 - barHeight}%`, // Position from top
-                                  height: `${barHeight * 2}%`,   // Set total height
-                              }}
-                            />
-                        )
+                      {duration > 0 && Array.from({ length: Math.ceil(duration) * 3 }).map((_, i) => {
+                          const pseudoRandom = (seed: number) => {
+                              let x = Math.sin(seed) * 10000;
+                              return x - Math.floor(x);
+                          }
+                          const seed = i + (currentRecording?.audioUrl?.length || 0);
+                          const barHeight = pseudoRandom(seed) * 48 + 2;
+
+                          return (
+                              <div
+                                key={i}
+                                className="absolute w-[2px] rounded-md bg-primary/30"
+                                style={{
+                                    left: `${(i / (Math.ceil(duration) * 3)) * 100}%`,
+                                    top: `${50 - barHeight}%`,
+                                    height: `${barHeight * 2}%`,
+                                }}
+                              />
+                          )
                       })}
                       {duration > 0 && displayedMarks.map((mark, index) => {
                           const isActive = activeMarks.includes(mark);
