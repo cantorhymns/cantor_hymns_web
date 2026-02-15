@@ -28,7 +28,8 @@
     "db:add-panouti": "tsx -r dotenv/config src/scripts/add-panouti.ts",
     "db:add-gholghotha": "tsx -r dotenv/config src/scripts/add-gholghotha.ts",
     "db:add-je-efesmaroout": "tsx -r dotenv/config src/scripts/add-je-efesmaroout.ts",
-    "db:add-pi-mairomi": "tsx -r dotenv/config src/scripts/add-pi-mairomi.ts"
+    "db:add-pi-mairomi": "tsx -r dotenv/config src/scripts/add-pi-mairomi.ts",
+    "db:add-pi-mairomi-hics": "tsx -r dotenv/config src/scripts/add-pi-mairomi-hics.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
