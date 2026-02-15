@@ -115,6 +115,10 @@
           "type": "string",
           "enum": ["learn", "listen"],
           "description": "Determines the player mode. 'learn' shows all controls, 'listen' is for simple playback."
+        },
+        "audioLength": {
+          "type": "number",
+          "description": "The authoritative length of the audio file in seconds."
         }
       },
       "required": [

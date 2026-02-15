@@ -479,7 +479,8 @@ export function HymnPlayer({
     setCurrentTime(0);
     setAudioSrc(null);
     setAudioError(null);
-    setDuration(0);
+    // Prioritize audioLength from data, otherwise reset to 0 and wait for <audio> element
+    setDuration(currentRecording?.audioLength ?? 0);
 
     if (currentRecording && storage) {
       setIsLoadingAudio(true);
@@ -849,10 +850,9 @@ export function HymnPlayer({
   const handleLoadedData = () => {
     const audio = audioRef.current;
     if (!audio) return;
-    if (audio.duration && audio.duration !== Infinity) {
+    // Only update duration from the audio element if it wasn't provided in the data.
+    if ((!currentRecording?.audioLength || currentRecording.audioLength <= 0) && isFinite(audio.duration)) {
         setDuration(audio.duration);
-    } else {
-        setDuration(0);
     }
     setCurrentTime(audio.currentTime);
   };
@@ -861,10 +861,8 @@ export function HymnPlayer({
     const audio = audioRef.current;
     if (!audio) return;
 
-    // This is a crucial failsafe for mobile browsers. They often only report the
-    // correct duration when the audio is ready to play. We check it here and
-    // update the state if it's different from what we got on `onloadeddata`.
-    if (audio.duration && audio.duration !== Infinity && audio.duration > 0 && audio.duration !== duration) {
+    // This is a crucial failsafe for mobile browsers, but only if we don't have the authoritative length.
+    if ((!currentRecording?.audioLength || currentRecording.audioLength <= 0) && isFinite(audio.duration) && audio.duration > 0 && audio.duration !== duration) {
         setDuration(audio.duration);
     }
 
@@ -879,7 +877,7 @@ export function HymnPlayer({
         }
         setAutoplayOnSwitch(false);
     }
-  }, [autoplayOnSwitch, currentPlaybackRate, duration]);
+  }, [autoplayOnSwitch, currentPlaybackRate, duration, currentRecording?.audioLength]);
   
   const handleShare = () => {
     if (!hymn || !currentRecording) return;
@@ -1110,7 +1108,7 @@ export function HymnPlayer({
 
               <div className="flex justify-between items-center">
                   <div className="w-[100px] flex justify-start">
-                    {(onNext || onPrevious) && (
+                    {showControls && (
                         <Button variant="outline" size="icon" onClick={() => setIsTutorialOpen(true)} title="How to use the player">
                             <HelpCircle className="h-4 w-4" />
                             <span className="sr-only">Help</span>

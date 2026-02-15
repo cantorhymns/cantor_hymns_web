@@ -19,6 +19,7 @@ export interface Recording {
   markersUrl: string;
   active: boolean;
   mode: 'learn' | 'listen';
+  audioLength?: number;
 }
 
 export interface Hymn {

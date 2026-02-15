@@ -22,7 +22,8 @@
     "db:validate-audio": "tsx -r dotenv/config src/scripts/validate-audio-urls.ts",
     "db:add-markers-url": "tsx -r dotenv/config src/scripts/add-markers-url.ts",
     "db:add-ti-epistolee": "tsx -r dotenv/config src/scripts/add-ti-epistolee.ts",
-    "db:add-entho-te-ti-shouri": "tsx -r dotenv/config src/scripts/add-entho-te-ti-shouri.ts"
+    "db:add-entho-te-ti-shouri": "tsx -r dotenv/config src/scripts/add-entho-te-ti-shouri.ts",
+    "db:update-audio-lengths": "tsx -r dotenv/config src/scripts/update-audio-lengths.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
