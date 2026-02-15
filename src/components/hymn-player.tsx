@@ -422,6 +422,7 @@ export function HymnPlayer({
   const audioRef = useRef<HTMLAudioElement>(null);
   const waveformContainerRef = useRef<HTMLDivElement>(null);
   const waveformInnerRef = useRef<HTMLDivElement>(null);
+  const playheadRef = useRef<HTMLDivElement>(null);
   const loopSectionRef = useRef<{ start: number, end: number } | null>(null);
   const dragStartRef = useRef<{ x: number; time: number } | null>(null);
   
@@ -539,23 +540,35 @@ export function HymnPlayer({
   }, [isRepeat, sortedActiveMarks, currentTime]);
 
   useEffect(() => {
-    if (waveformContainerRef.current && waveformInnerRef.current && duration > 0) {
+    if (playheadRef.current && waveformContainerRef.current && waveformInnerRef.current && duration > 0) {
         const fullWidth = waveformInnerRef.current.scrollWidth;
         const containerWidth = waveformContainerRef.current.offsetWidth;
-        
-        // Calculate the playhead's current position in pixels within the full waveform
         const playheadPixelPosition = (currentTime / duration) * fullWidth;
 
-        // Calculate the scroll position to center the playhead
-        let scrollTarget = playheadPixelPosition - (containerWidth / 2);
+        // The point where we switch from moving playhead to scrolling waveform
+        const scrollThreshold = containerWidth / 2;
 
-        // Clamp the scroll position to prevent scrolling past the beginning or end
-        scrollTarget = Math.max(0, scrollTarget);
-        scrollTarget = Math.min(fullWidth - containerWidth, scrollTarget);
-        
-        waveformInnerRef.current.style.transform = `translateX(-${scrollTarget}px)`;
-    } else if (waveformInnerRef.current) {
-        waveformInnerRef.current.style.transform = `translateX(0px)`;
+        if (playheadPixelPosition < scrollThreshold) {
+            // --- Mode 1: Waveform is static, playhead moves ---
+            waveformInnerRef.current.style.transform = 'translateX(0px)';
+            playheadRef.current.style.left = `${playheadPixelPosition}px`;
+        } else {
+            // --- Mode 2: Playhead is fixed in middle, waveform scrolls ---
+            let scrollTarget = playheadPixelPosition - scrollThreshold;
+            // Clamp scroll at the end of the waveform
+            scrollTarget = Math.min(scrollTarget, fullWidth - containerWidth);
+            
+            waveformInnerRef.current.style.transform = `translateX(-${scrollTarget}px)`;
+            playheadRef.current.style.left = `${scrollThreshold}px`;
+        }
+    } else {
+        // Reset positions when no duration or refs
+        if (waveformInnerRef.current) {
+            waveformInnerRef.current.style.transform = 'translateX(0px)';
+        }
+        if (playheadRef.current) {
+            playheadRef.current.style.left = '0px';
+        }
     }
   }, [currentTime, duration]);
 
@@ -1071,7 +1084,8 @@ export function HymnPlayer({
                       )})}
                   </div>
                   <div 
-                      className="absolute top-0 left-1/2 h-full w-0.5 bg-red-500 z-30 pointer-events-none -translate-x-1/2"
+                      ref={playheadRef}
+                      className="absolute top-0 h-full w-0.5 bg-red-500 z-30 pointer-events-none -translate-x-1/2"
                   >
                       <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-3 h-3 bg-red-500 rounded-full"></div>
                   </div>
