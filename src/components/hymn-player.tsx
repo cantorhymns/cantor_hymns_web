@@ -546,7 +546,6 @@ export function HymnPlayer({
   }, [currentTime, duration]);
 
   const handlePlayPause = useCallback(() => {
-    console.log('[DEBUG] handlePlayPause called.');
     const audio = audioRef.current;
     if (!audio) {
       console.log('[DEBUG] audioRef is null, aborting play.');
@@ -558,7 +557,10 @@ export function HymnPlayer({
       const playPromise = audio.play();
       if (playPromise !== undefined) {
           playPromise.catch(error => {
-            console.error('[DEBUG] PLAYBACK FAILED:', error.name, error.message);
+            console.error('[DEBUG] PLAYBACK FAILED in handlePlayPause:', error.name, error.message);
+            if (error.name === 'NotAllowedError') {
+                console.error('[DEBUG] Autoplay was likely blocked by the browser.');
+            }
           });
       }
     } else {
@@ -830,7 +832,6 @@ export function HymnPlayer({
   };
 
   const handleCanPlay = useCallback(() => {
-    console.log(`[DEBUG] handleCanPlay triggered. Autoplay prop is: ${autoplay}`);
     const audio = audioRef.current;
     if (!audio) {
       console.log('[DEBUG] handleCanPlay: audioRef is null.');
@@ -849,6 +850,9 @@ export function HymnPlayer({
         if (playPromise !== undefined) {
             playPromise.catch((e) => {
                 console.error('[DEBUG] AUTOPLAY FAILED in handleCanPlay:', e.name, e.message);
+                if (e.name === 'NotAllowedError') {
+                    console.error('[DEBUG] Autoplay was likely blocked by the browser.');
+                }
             });
         }
     } else {
@@ -1032,12 +1036,12 @@ export function HymnPlayer({
                               return x - Math.floor(x);
                           }
                           const seed = i + (currentRecording?.audioUrl?.length || 0);
-                          const barHeight = pseudoRandom(seed) * 60 + 5;
+                          const barHeight = pseudoRandom(seed) * 70 + 5;
 
                           return (
                               <div
                                 key={i}
-                                className="absolute w-px rounded-full bg-primary/20"
+                                className="absolute w-px rounded-full bg-primary/30"
                                 style={{
                                     left: `${(i / (Math.ceil(duration) * 5)) * 100}%`,
                                     top: `${50 - barHeight / 2}%`,
