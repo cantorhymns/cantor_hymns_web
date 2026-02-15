@@ -365,8 +365,6 @@ export function HymnPlayer({
   showLyricsToggleButton = false,
   initialRecordingId,
   onRecordingChange,
-  playbackRate,
-  onPlaybackRateChange,
   genreId,
 }) {
   const { firebaseApp } = useFirebase();
@@ -387,7 +385,7 @@ export function HymnPlayer({
   const [isRepeat, setIsRepeat] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const currentPlaybackRate = playbackRate ?? 1;
+  const [playbackRate, setPlaybackRate] = useState(1);
   
   const [activeMarks, setActiveMarks] = useState<number[]>([]);
   const [lyricsVisible, setLyricsVisible] = useState(lyricsVisibleByDefault);
@@ -431,9 +429,9 @@ export function HymnPlayer({
 
   const playbackSpeeds = [1.0, 1.25, 1.5, 1.75, 2.0];
   const handleSpeedChange = () => {
-      const currentIndex = playbackSpeeds.indexOf(currentPlaybackRate);
+      const currentIndex = playbackSpeeds.indexOf(playbackRate);
       const nextIndex = (currentIndex + 1) % playbackSpeeds.length;
-      onPlaybackRateChange?.(playbackSpeeds[nextIndex]);
+      setPlaybackRate(playbackSpeeds[nextIndex]);
   };
 
   const hasAnyLyrics = useMemo(() => 
@@ -459,11 +457,13 @@ export function HymnPlayer({
     setDuration(currentRecording?.audioLength ?? 0);
 
     if (currentRecording && storage) {
+      console.log(`[DEBUG] currentRecording changed to: ${currentRecording.id}. Fetching audio src.`);
       setIsLoadingAudio(true);
       setAudioError(null);
       const audioFileRef = ref(storage, currentRecording.audioUrl);
       getDownloadURL(audioFileRef)
         .then(url => {
+          console.log(`[DEBUG] Audio src fetched successfully for ${currentRecording.id}.`);
           setAudioSrc(url);
         })
         .catch(error => {
@@ -473,15 +473,16 @@ export function HymnPlayer({
             setIsLoadingAudio(false);
         });
     } else if (currentRecording && !storage) {
+        console.log(`[DEBUG] currentRecording changed, but storage not available.`);
         setAudioError('Storage service is not available.');
     }
   }, [currentRecording, storage]);
 
   useEffect(() => {
     if (audioRef.current) {
-        audioRef.current.playbackRate = currentPlaybackRate;
+        audioRef.current.playbackRate = playbackRate;
     }
-  }, [currentPlaybackRate, audioSrc]);
+  }, [playbackRate, audioSrc]);
 
   const seek = useCallback((time: number) => {
     if (!audioRef.current || !isFinite(duration) || duration <= 0) return;
@@ -515,16 +516,21 @@ export function HymnPlayer({
         const playheadPixelPosition = (currentTime / duration) * fullWidth;
 
         const scrollThreshold = containerWidth / 2;
+        
+        // This is the pixel position where the waveform will stop scrolling and the playhead will start moving again.
         const endThreshold = fullWidth - containerWidth / 2;
-
+        
         if (playheadPixelPosition < scrollThreshold) {
+            // Case 1: Beginning of track. Keep waveform static and move playhead.
             waveformInnerRef.current.style.transform = 'translateX(0px)';
             playheadRef.current.style.left = `${playheadPixelPosition}px`;
         } else if (playheadPixelPosition >= endThreshold) {
+            // Case 3: End of track. Keep waveform static at the end and move playhead.
             const maxScroll = Math.max(0, fullWidth - containerWidth);
             waveformInnerRef.current.style.transform = `translateX(-${maxScroll}px)`;
             playheadRef.current.style.left = `${playheadPixelPosition - maxScroll}px`;
         } else {
+            // Case 2: Middle of track. Keep playhead centered and scroll waveform.
             const scrollTarget = playheadPixelPosition - scrollThreshold;
             waveformInnerRef.current.style.transform = `translateX(-${scrollTarget}px)`;
             playheadRef.current.style.left = `${scrollThreshold}px`;
@@ -540,14 +546,23 @@ export function HymnPlayer({
   }, [currentTime, duration]);
 
   const handlePlayPause = useCallback(() => {
+    console.log('[DEBUG] handlePlayPause called.');
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio) {
+      console.log('[DEBUG] audioRef is null, aborting play.');
+      return;
+    }
 
     if (audio.paused) {
-      audio.play().catch(error => {
-        console.log("Playback failed. This can happen if the user hasn't interacted with the page yet.", error);
-      });
+      console.log('[DEBUG] Audio is paused. Calling audio.play().');
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.error('[DEBUG] PLAYBACK FAILED:', error.name, error.message);
+          });
+      }
     } else {
+      console.log('[DEBUG] Audio is playing. Calling audio.pause().');
       audio.pause();
     }
   }, []);
@@ -815,24 +830,31 @@ export function HymnPlayer({
   };
 
   const handleCanPlay = useCallback(() => {
+    console.log(`[DEBUG] handleCanPlay triggered. Autoplay prop is: ${autoplay}`);
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio) {
+      console.log('[DEBUG] handleCanPlay: audioRef is null.');
+      return;
+    }
 
     if ((!currentRecording?.audioLength || currentRecording.audioLength <= 0) && isFinite(audio.duration) && audio.duration > 0 && audio.duration !== duration) {
         setDuration(audio.duration);
     }
 
-    audio.playbackRate = currentPlaybackRate;
+    audio.playbackRate = playbackRate;
     
     if (autoplay) {
+        console.log('[DEBUG] Autoplay is true. Calling audio.play() from handleCanPlay.');
         const playPromise = audio.play();
         if (playPromise !== undefined) {
             playPromise.catch((e) => {
-                console.log("Autoplay was prevented by the browser.");
+                console.error('[DEBUG] AUTOPLAY FAILED in handleCanPlay:', e.name, e.message);
             });
         }
+    } else {
+        console.log('[DEBUG] Autoplay is false. Not calling audio.play().');
     }
-  }, [autoplay, currentPlaybackRate, duration, currentRecording?.audioLength]);
+  }, [autoplay, playbackRate, duration, currentRecording?.audioLength]);
   
   const handleShare = () => {
     if (!hymn || !currentRecording) return;
@@ -1015,7 +1037,7 @@ export function HymnPlayer({
                           return (
                               <div
                                 key={i}
-                                className="absolute w-[2px] rounded-full bg-primary/30"
+                                className="absolute w-px rounded-full bg-primary/20"
                                 style={{
                                     left: `${(i / (Math.ceil(duration) * 5)) * 100}%`,
                                     top: `${50 - barHeight / 2}%`,
@@ -1125,7 +1147,7 @@ export function HymnPlayer({
                   <div className="flex items-center gap-2 w-[100px] justify-end">
                       <Button variant="outline" onClick={handleSpeedChange} className="w-full">
                         <FastForward className="h-4 w-4 mr-1" />
-                        <span>{currentPlaybackRate.toFixed(2)}x</span>
+                        <span>{playbackRate.toFixed(2)}x</span>
                       </Button>
                   </div>
               </div>
