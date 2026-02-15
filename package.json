@@ -24,7 +24,8 @@
     "db:add-ti-epistolee": "tsx -r dotenv/config src/scripts/add-ti-epistolee.ts",
     "db:add-entho-te-ti-shouri": "tsx -r dotenv/config src/scripts/add-entho-te-ti-shouri.ts",
     "db:update-audio-lengths": "tsx -r dotenv/config src/scripts/update-audio-lengths.ts",
-    "db:add-sherat-lent": "tsx -r dotenv/config src/scripts/add-sherat-lent.ts"
+    "db:add-sherat-lent": "tsx -r dotenv/config src/scripts/add-sherat-lent.ts",
+    "db:add-panouti": "tsx -r dotenv/config src/scripts/add-panouti.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
