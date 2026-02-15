@@ -457,13 +457,11 @@ export function HymnPlayer({
     setDuration(currentRecording?.audioLength ?? 0);
 
     if (currentRecording && storage) {
-      console.log(`[DEBUG] currentRecording changed to: ${currentRecording.id}. Fetching audio src.`);
       setIsLoadingAudio(true);
       setAudioError(null);
       const audioFileRef = ref(storage, currentRecording.audioUrl);
       getDownloadURL(audioFileRef)
         .then(url => {
-          console.log(`[DEBUG] Audio src fetched successfully for ${currentRecording.id}.`);
           setAudioSrc(url);
         })
         .catch(error => {
@@ -473,7 +471,6 @@ export function HymnPlayer({
             setIsLoadingAudio(false);
         });
     } else if (currentRecording && !storage) {
-        console.log(`[DEBUG] currentRecording changed, but storage not available.`);
         setAudioError('Storage service is not available.');
     }
   }, [currentRecording, storage]);
@@ -548,23 +545,17 @@ export function HymnPlayer({
   const handlePlayPause = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) {
-      console.log('[DEBUG] audioRef is null, aborting play.');
       return;
     }
 
     if (audio.paused) {
-      console.log('[DEBUG] Audio is paused. Calling audio.play().');
       const playPromise = audio.play();
       if (playPromise !== undefined) {
           playPromise.catch(error => {
-            console.error('[DEBUG] PLAYBACK FAILED in handlePlayPause:', error.name, error.message);
-            if (error.name === 'NotAllowedError') {
-                console.error('[DEBUG] Autoplay was likely blocked by the browser.');
-            }
+            console.error('PLAYBACK FAILED in handlePlayPause:', error.name, error.message);
           });
       }
     } else {
-      console.log('[DEBUG] Audio is playing. Calling audio.pause().');
       audio.pause();
     }
   }, []);
@@ -834,7 +825,6 @@ export function HymnPlayer({
   const handleCanPlay = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) {
-      console.log('[DEBUG] handleCanPlay: audioRef is null.');
       return;
     }
 
@@ -845,18 +835,12 @@ export function HymnPlayer({
     audio.playbackRate = playbackRate;
     
     if (autoplay) {
-        console.log('[DEBUG] Autoplay is true. Calling audio.play() from handleCanPlay.');
         const playPromise = audio.play();
         if (playPromise !== undefined) {
             playPromise.catch((e) => {
-                console.error('[DEBUG] AUTOPLAY FAILED in handleCanPlay:', e.name, e.message);
-                if (e.name === 'NotAllowedError') {
-                    console.error('[DEBUG] Autoplay was likely blocked by the browser.');
-                }
+                console.error('AUTOPLAY FAILED in handleCanPlay:', e.name, e.message);
             });
         }
-    } else {
-        console.log('[DEBUG] Autoplay is false. Not calling audio.play().');
     }
   }, [autoplay, playbackRate, duration, currentRecording?.audioLength]);
   
@@ -1041,7 +1025,7 @@ export function HymnPlayer({
                           return (
                               <div
                                 key={i}
-                                className="absolute w-px rounded-full bg-primary/30"
+                                className="absolute w-px rounded-full bg-primary/20"
                                 style={{
                                     left: `${(i / (Math.ceil(duration) * 5)) * 100}%`,
                                     top: `${50 - barHeight / 2}%`,
@@ -1157,10 +1141,10 @@ export function HymnPlayer({
               </div>
               {(onNext || onPrevious) && (
                 <div className="flex justify-center items-center gap-4 border-t pt-4 mt-4">
-                    <Button variant="outline" size="lg" onClick={handlePreviousHymn} disabled={!hasPrevious}>
+                    <Button variant="outline" size="lg" onClick={onPrevious} disabled={!hasPrevious}>
                         <ChevronLeft className="mr-2 h-5 w-5" /> Previous
                     </Button>
-                    <Button variant="outline" size="lg" onClick={handleNextHymn} disabled={!hasNext}>
+                    <Button variant="outline" size="lg" onClick={onNext} disabled={!hasNext}>
                         Next <ChevronRight className="ml-2 h-5 w-5" />
                     </Button>
                 </div>

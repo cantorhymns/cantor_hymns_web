@@ -208,7 +208,6 @@ export function CantorCloudClientPage() {
       {showPlayer ? (
         <div className="w-full max-w-3xl mx-auto">
           <HymnPlayer
-            key={currentHymn?.id}
             hymn={currentHymn}
             initialRecordingId={initialRecordingId ?? undefined}
             onEnded={handleNext}
