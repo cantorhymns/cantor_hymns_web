@@ -160,7 +160,6 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
         </div>
       ) : (
         <HymnPlayer
-          key={hymn.id}
           hymn={hymn}
           autoplay={userInitiatedPlay}
           onPrevious={handlePrevious}
