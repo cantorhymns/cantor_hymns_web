@@ -23,19 +23,7 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
 
   const { data: hymns, isLoading: areHymnsLoading, error: hymnsError } = useCollection<Hymn>(hymnsQuery);
 
-  const sortedHymns = useMemo(() => {
-    if (!hymns) return null;
-    // We only sort if a genreId is provided, otherwise we don't know which rank to use.
-    if (!genreId) return hymns;
-    
-    return [...hymns].sort((a, b) => {
-        const rankA = a.genreRank?.[genreId] ?? 999;
-        const rankB = b.genreRank?.[genreId] ?? 999;
-        return rankA - rankB;
-    });
-  }, [hymns, genreId]);
-
-  const hymnIds = useMemo(() => sortedHymns?.map(h => h.id) || [], [sortedHymns]);
+  const hymnIds = useMemo(() => hymns?.map(h => h.id) || [], [hymns]);
   
   const shouldFetchRelatedData = !!genreId || (!!hymnIdsFilter && hymnIdsFilter.length > 0);
 
@@ -68,15 +56,15 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
   }, [cantors]);
 
   const hymnsWithRecordings = useMemo(() => {
-    if (!sortedHymns) return null;
+    if (!hymns) return null;
     
     // For the debug page (no genreId), just return the hymns as is without recordings.
     if (!genreId && (!hymnIdsFilter || hymnIdsFilter.length === 0)) {
-      return sortedHymns;
+      return hymns;
     }
 
     if (!shouldFetchRelatedData) {
-      return sortedHymns.map(h => ({ ...h, recordings: [] }));
+      return hymns.map(h => ({ ...h, recordings: [] }));
     }
 
     const isDataLoading = hymnIds.length > 0 && (areRecordingsLoading || areCantorsLoading);
@@ -99,7 +87,7 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
         });
     }
     
-    return sortedHymns.map(hymn => {
+    return hymns.map(hymn => {
         const hymnRecordings = recordingsByHymnId.get(hymn.id) || [];
         
         // Sort recordings within the hymn
@@ -117,7 +105,7 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
         };
     }).filter(hymn => hymn.recordings.length > 0);
 
-  }, [sortedHymns, recordings, hymnIds, areRecordingsLoading, cantorsMap, areCantorsLoading, shouldFetchRelatedData, genreId, hymnIdsFilter]);
+  }, [hymns, recordings, hymnIds, areRecordingsLoading, cantorsMap, areCantorsLoading, shouldFetchRelatedData, genreId, hymnIdsFilter]);
 
   const isLoading = areHymnsLoading || (shouldFetchRelatedData && (hymns != null && hymnsWithRecordings === null));
 

@@ -25,8 +25,6 @@ export interface Hymn {
   id: string;
   name: string;
   genreId: string[];
-  subGenreId?: { [key: string]: string };
-  genreRank?: { [key: string]: number };
   description?: string;
   lyricsEnglish?: string;
   lyricsCoptic?: string;
@@ -41,7 +39,7 @@ export interface Genre {
   description: string;
   icon: string;
   backgroundUrl?: string;
+  contentUrl?: string;
   active: boolean;
-  subGenres?: string[];
   cantorCloudActive?: boolean;
 }

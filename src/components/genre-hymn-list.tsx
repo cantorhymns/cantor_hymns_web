@@ -1,3 +1,4 @@
+
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -8,13 +9,12 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { ChevronLeft, Music, Search as SearchIcon } from 'lucide-react';
-import { useHymns } from '@/lib/hooks/useHymns';
 import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
-import type { Genre, Hymn } from '@/lib/types';
-import { useMemo } from 'react';
+import type { Hymn } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { useSearch } from '@/components/search-provider';
+import { useOrderedHymns } from '@/lib/hooks/useOrderedHymns';
 
 const HymnCard = ({ hymn, genreId }: { hymn: Hymn; genreId: string }) => {
   const learnCount = hymn.recordings?.filter(r => r.mode === 'learn').length || 0;
@@ -56,46 +56,11 @@ const HymnCard = ({ hymn, genreId }: { hymn: Hymn; genreId: string }) => {
 
 export function GenreHymnList({ genreId }: { genreId: string }) {
   const { data: genre, isLoading: isGenreLoading } = useGenre(genreId);
-  const { data: hymns, isLoading: areHymnsLoading } = useHymns(genreId);
+  const { groupedHymns, isLoading: areHymnsLoading } = useOrderedHymns(genreId);
   const { setIsOpen } = useSearch();
   
   const isLoading = isGenreLoading || areHymnsLoading;
   const isValidIconUrl = genre?.icon && (genre.icon.startsWith('http://') || genre.icon.startsWith('https://'));
-
-  const groupedHymns = useMemo(() => {
-    if (!hymns) return null;
-    if (!genre?.subGenres || genre.subGenres.length === 0) {
-      // No subgenres, return a single group with all hymns
-      return [{ name: null, hymns: hymns }];
-    }
-
-    // Initialize groups based on the genre's subGenres
-    const groups: { name: string, hymns: Hymn[] }[] = genre.subGenres.map(sg => ({ name: sg, hymns: [] }));
-    const subGenreSet = new Set(genre.subGenres);
-
-    hymns.forEach(hymn => {
-      let targetGroup;
-      // Get the sub-genre for the current genre from the hymn's map
-      const hymnSubGenreForCurrentGenre = hymn.subGenreId?.[genreId];
-      
-      // Check if the hymn has a valid sub-genre for this genre
-      if (hymnSubGenreForCurrentGenre && subGenreSet.has(hymnSubGenreForCurrentGenre)) {
-        targetGroup = groups.find(g => g.name === hymnSubGenreForCurrentGenre);
-      }
-      
-      // If no valid subGenreId, or it doesn't match, add to the first sub-genre group
-      if (!targetGroup) {
-        targetGroup = groups[0];
-      }
-      
-      targetGroup.hymns.push(hymn);
-    });
-
-    // Return only the groups that have hymns in them
-    return groups.filter(g => g.hymns.length > 0);
-
-  }, [genre, hymns, genreId]);
-
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">

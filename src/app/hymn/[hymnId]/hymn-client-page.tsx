@@ -8,7 +8,7 @@ import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { useHymns } from '@/lib/hooks/useHymns';
+import { useOrderedHymns } from '@/lib/hooks/useOrderedHymns';
 import type { Hymn, Recording } from '@/lib/types';
 import { useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -65,46 +65,17 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
   }, [initialHymnData?.genreId, genreIdFromUrl]);
 
   const { data: genre, isLoading: isGenreLoading } = useGenre(primaryGenreId);
-  const { data: playlistHymns, isLoading: isPlaylistLoading } = useHymns(primaryGenreId);
+  const { flatPlaylist: playlist, isLoading: isPlaylistLoading } = useOrderedHymns(primaryGenreId);
 
-  const { playlist, currentIndex } = useMemo(() => {
-    if (!playlistHymns || !genre || !hymn) {
-        return { playlist: [], currentIndex: -1 };
+  const currentIndex = useMemo(() => {
+    if (!playlist || !hymn) {
+        return -1;
     }
-
-    const subGenreOrder = genre.subGenres || [];
-    const primaryGenreId = genre.id;
-
-    // Create a new sorted playlist based on sub-genre order, then rank.
-    const sortedPlaylist = [...playlistHymns].sort((a, b) => {
-        const subGenreA = a.subGenreId?.[primaryGenreId];
-        const subGenreB = b.subGenreId?.[primaryGenreId];
-
-        const indexA = subGenreA ? subGenreOrder.indexOf(subGenreA) : -1;
-        const indexB = subGenreB ? subGenreOrder.indexOf(subGenreB) : -1;
-
-        // If one hymn has a defined sub-genre and the other doesn't, the one with sub-genre comes first.
-        if (indexA !== -1 && indexB === -1) return -1;
-        if (indexA === -1 && indexB !== -1) return 1;
-
-        // If both are in defined sub-genres, sort by the order of sub-genres.
-        if (indexA !== indexB) {
-            return indexA - indexB;
-        }
-
-        // If they are in the same sub-genre or both have unlisted/no sub-genre, sort by rank.
-        const rankA = a.genreRank?.[primaryGenreId] ?? 999;
-        const rankB = b.genreRank?.[primaryGenreId] ?? 999;
-        return rankA - rankB;
-    });
-    
-    const currentIdx = sortedPlaylist.findIndex((p) => p.id === hymn.id);
-
-    return { playlist: sortedPlaylist, currentIndex: currentIdx };
-  }, [playlistHymns, genre, hymn]);
+    return playlist.findIndex((p) => p.id === hymn.id);
+  }, [playlist, hymn]);
 
   const hasPrevious = currentIndex > 0;
-  const hasNext = currentIndex !== -1 && currentIndex < playlist.length - 1;
+  const hasNext = currentIndex !== -1 && currentIndex < (playlist?.length ?? 0) - 1;
 
   const handlePrevious = useCallback(() => {
     if (hasPrevious && playlist) {
@@ -120,7 +91,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
     }
   }, [hasNext, playlist, currentIndex]);
 
-  const isLoading = isInitialHymnLoading || (initialHymnData && !hymn);
+  const isLoading = isInitialHymnLoading || isPlaylistLoading || (initialHymnData && !hymn);
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">

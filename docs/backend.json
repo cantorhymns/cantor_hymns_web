@@ -26,6 +26,10 @@
             "type": "string",
             "description": "Path to the background image file in Firebase Storage."
         },
+        "contentUrl": {
+          "type": "string",
+          "description": "Path to a text file in Storage that defines sub-genre and hymn order."
+        },
         "active": {
             "type": "boolean",
             "description": "Indicates if the genre is available to be displayed in the app."
@@ -33,13 +37,6 @@
         "cantorCloudActive": {
             "type": "boolean",
             "description": "Indicates if the genre should be displayed in the CantorCloud filter list."
-        },
-        "subGenres": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            },
-            "description": "An optional list of sub-sections within this genre (e.g., 'Vespers', 'Matins')."
         }
       },
       "required": [
@@ -65,20 +62,6 @@
             "type": "string"
           },
           "description": "An array of Genre IDs this hymn belongs to. (Relationship: Genre M:N Hymn)"
-        },
-        "subGenreId": {
-            "type": "object",
-            "description": "A map where the key is a genre ID and the value is the sub-genre name this hymn belongs to within that genre.",
-            "additionalProperties": {
-                "type": "string"
-            }
-        },
-        "genreRank": {
-            "type": "object",
-            "description": "A map where the key is a genre ID and the value is the display rank of the hymn within that genre.",
-            "additionalProperties": {
-                "type": "number"
-            }
         },
         "description": {
           "type": "string",
