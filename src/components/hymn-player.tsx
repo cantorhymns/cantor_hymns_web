@@ -545,19 +545,21 @@ export function HymnPlayer({
         const containerWidth = waveformContainerRef.current.offsetWidth;
         const playheadPixelPosition = (currentTime / duration) * fullWidth;
 
-        // The point where we switch from moving playhead to scrolling waveform
         const scrollThreshold = containerWidth / 2;
+        const endThreshold = fullWidth - containerWidth / 2;
 
         if (playheadPixelPosition < scrollThreshold) {
-            // --- Mode 1: Waveform is static, playhead moves ---
+            // --- Mode 1: Start of track. Waveform is static, playhead moves. ---
             waveformInnerRef.current.style.transform = 'translateX(0px)';
             playheadRef.current.style.left = `${playheadPixelPosition}px`;
+        } else if (playheadPixelPosition >= endThreshold) {
+            // --- Mode 3: End of track. Waveform is scrolled to the end, playhead moves. ---
+            const maxScroll = Math.max(0, fullWidth - containerWidth);
+            waveformInnerRef.current.style.transform = `translateX(-${maxScroll}px)`;
+            playheadRef.current.style.left = `${playheadPixelPosition - maxScroll}px`;
         } else {
-            // --- Mode 2: Playhead is fixed in middle, waveform scrolls ---
-            let scrollTarget = playheadPixelPosition - scrollThreshold;
-            // Clamp scroll at the end of the waveform
-            scrollTarget = Math.min(scrollTarget, fullWidth - containerWidth);
-            
+            // --- Mode 2: Middle of track. Playhead is fixed, waveform scrolls. ---
+            const scrollTarget = playheadPixelPosition - scrollThreshold;
             waveformInnerRef.current.style.transform = `translateX(-${scrollTarget}px)`;
             playheadRef.current.style.left = `${scrollThreshold}px`;
         }
@@ -1049,7 +1051,7 @@ export function HymnPlayer({
                         return (
                             <div
                               key={i}
-                              className="absolute bottom-0 w-px bg-muted-foreground/30"
+                              className="absolute bottom-0 w-px bg-muted-foreground/50"
                               style={{
                                   left: `${(i / (Math.ceil(duration) * 2)) * 100}%`,
                                   height: `${barHeight}%`,
