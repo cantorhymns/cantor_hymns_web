@@ -1056,7 +1056,7 @@ export function HymnPlayer({
                           return (
                               <div
                                 key={i}
-                                className="absolute w-[2px] rounded-md bg-primary/30"
+                                className="absolute w-[2px] rounded-full bg-primary/20"
                                 style={{
                                     left: `${(i / (Math.ceil(duration) * 3)) * 100}%`,
                                     top: `${50 - barHeight}%`,
