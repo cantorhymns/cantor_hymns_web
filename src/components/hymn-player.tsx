@@ -406,6 +406,7 @@ export function HymnPlayer({
     currentRecording?.mode === 'learn' ? currentRecording.markersUrl : undefined
   );
 
+  const isPlayerDisabled = !audioSrc || !!audioError;
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -427,7 +428,6 @@ export function HymnPlayer({
   const loopSectionRef = useRef<{ start: number, end: number } | null>(null);
   const dragStartRef = useRef<{ x: number; time: number } | null>(null);
   
-  const isPlayerDisabled = !audioSrc || !!audioError;
   const sortedMarks = useMemo(() => [...(loadedMarks || [])].sort((a, b) => a - b), [loadedMarks]);
   
   useEffect(() => {
@@ -542,22 +542,19 @@ export function HymnPlayer({
   }, [isRepeat, sortedActiveMarks, currentTime]);
 
   useEffect(() => {
-    if (waveformContainerRef.current && waveformInnerRef.current && duration > VISIBLE_DURATION_S) {
+    if (waveformContainerRef.current && waveformInnerRef.current && duration > 0) {
         const fullWidth = waveformInnerRef.current.scrollWidth;
         const containerWidth = waveformContainerRef.current.offsetWidth;
         
-        const scrollStartTime = VISIBLE_DURATION_S / 2;
-        const scrollEndTime = duration - VISIBLE_DURATION_S / 2;
+        // Calculate the playhead's current position in pixels within the full waveform
+        const playheadPixelPosition = (currentTime / duration) * fullWidth;
 
-        let scrollTarget;
-        if (currentTime < scrollStartTime) {
-            scrollTarget = 0;
-        } else if (currentTime > scrollEndTime) {
-            scrollTarget = fullWidth - containerWidth;
-        } else {
-            const scrollProgress = (currentTime - scrollStartTime) / (scrollEndTime - scrollStartTime);
-            scrollTarget = scrollProgress * (fullWidth - containerWidth);
-        }
+        // Calculate the scroll position to center the playhead
+        let scrollTarget = playheadPixelPosition - (containerWidth / 2);
+
+        // Clamp the scroll position to prevent scrolling past the beginning or end
+        scrollTarget = Math.max(0, scrollTarget);
+        scrollTarget = Math.min(fullWidth - containerWidth, scrollTarget);
         
         waveformInnerRef.current.style.transform = `translateX(-${scrollTarget}px)`;
     } else if (waveformInnerRef.current) {
@@ -811,30 +808,6 @@ export function HymnPlayer({
     return { width: `${multiplier * 100}%` };
   }, [duration]);
 
-  const playheadPositionStyle = useMemo(() => {
-    if (duration <= 0) return { left: '0%' };
-    
-    if (duration <= VISIBLE_DURATION_S) {
-      return { left: `${(currentTime / duration) * 100}%` };
-    }
-
-    const scrollStartTime = VISIBLE_DURATION_S / 2;
-    const scrollEndTime = duration - VISIBLE_DURATION_S / 2;
-    
-    if (currentTime < scrollStartTime) {
-      const progress = currentTime / VISIBLE_DURATION_S;
-      return { left: `${progress * 100}%` };
-    }
-    
-    if (currentTime > scrollEndTime) {
-       const progress = (currentTime - (duration - VISIBLE_DURATION_S)) / VISIBLE_DURATION_S;
-       return { left: `${progress * 100}%` };
-    }
-
-    return { left: '50%' };
-
-  }, [currentTime, duration]);
-
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
     if (!audio || isSeeking) return;
@@ -964,7 +937,6 @@ export function HymnPlayer({
         },
         styles: {
           waveformWidthStyle,
-          playheadPositionStyle,
         },
       });
     }
@@ -988,7 +960,6 @@ export function HymnPlayer({
       activeMarks,
       sortedActiveMarks,
       waveformWidthStyle,
-      playheadPositionStyle,
   ]);
 
   if (!hymn.recordings || hymn.recordings.length === 0) {
@@ -1180,13 +1151,13 @@ export function HymnPlayer({
                               </button>
                           </div>
                       )})}
-                  </div>
 
-                  <div 
-                      className="absolute top-0 h-full w-0.5 bg-red-500 z-30 pointer-events-none -translate-x-1/2"
-                      style={playheadPositionStyle}
-                  >
-                      <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                        <div 
+                            className="absolute top-0 h-full w-0.5 bg-red-500 z-30 pointer-events-none -translate-x-1/2"
+                            style={{ left: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%' }}
+                        >
+                            <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                        </div>
                   </div>
               </div>
 
