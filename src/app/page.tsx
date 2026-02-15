@@ -56,12 +56,6 @@ export default function Home() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
-      <div className="text-center mb-8">
-        <h1 className="text-4xl md:text-5xl font-headline font-bold text-primary tracking-tight">
-          CantorCloud
-        </h1>
-      </div>
-
       <div className="w-full max-w-xl mx-auto mb-12">
         <Button variant="outline" className="w-full justify-start text-muted-foreground" onClick={() => setIsOpen(true)}>
             <SearchIcon className="mr-2 h-4 w-4" />
