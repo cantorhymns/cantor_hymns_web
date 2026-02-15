@@ -30,7 +30,8 @@
     "db:add-je-efesmaroout": "tsx -r dotenv/config src/scripts/add-je-efesmaroout.ts",
     "db:add-je-efesmaroout-hics": "tsx -r dotenv/config src/scripts/add-je-efesmaroout-hics.ts",
     "db:add-pi-mairomi": "tsx -r dotenv/config src/scripts/add-pi-mairomi.ts",
-    "db:add-pi-mairomi-hics": "tsx -r dotenv/config src/scripts/add-pi-mairomi-hics.ts"
+    "db:add-pi-mairomi-hics": "tsx -r dotenv/config src/scripts/add-pi-mairomi-hics.ts",
+    "db:add-lazaros-amou": "tsx -r dotenv/config src/scripts/add-lazaros-amou.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
