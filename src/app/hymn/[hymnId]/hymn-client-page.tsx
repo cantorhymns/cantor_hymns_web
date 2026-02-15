@@ -79,6 +79,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
 
   const handlePrevious = useCallback(() => {
     if (hasPrevious && playlist) {
+        setUserInitiatedPlay(true);
         const previousHymn = playlist[currentIndex - 1];
         setHymn(previousHymn);
     }
@@ -86,6 +87,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
 
   const handleNext = useCallback(() => {
     if (hasNext && playlist) {
+        setUserInitiatedPlay(true);
         const nextHymn = playlist[currentIndex + 1];
         setHymn(nextHymn);
     }
@@ -158,6 +160,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
         </div>
       ) : (
         <HymnPlayer
+          key={hymn.id}
           hymn={hymn}
           autoplay={userInitiatedPlay}
           onPrevious={handlePrevious}
