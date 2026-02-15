@@ -478,6 +478,12 @@ export function HymnPlayer({
   
   useEffect(() => {
     // When the recording changes, reset the player state.
+    if (audioRef.current) {
+        // Explicitly reset the audio element's time to 0.
+        // This is a crucial reset for mobile browsers, which might otherwise
+        // try to "helpfully" restore the previous playback position of the audio file.
+        audioRef.current.currentTime = 0;
+    }
     setIsPlaying(false);
     setCurrentTime(0);
     setAudioSrc(null);
