@@ -2,39 +2,27 @@
 'use client';
 import { HymnPlayer } from '@/components/hymn-player';
 import Link from 'next/link';
-import { ChevronLeft, ListMusic, Share2, Search as SearchIcon } from 'lucide-react';
+import { ChevronLeft, ListMusic, Search as SearchIcon } from 'lucide-react';
 import { useHymn } from '@/lib/hooks/useHymn';
 import { useGenre } from '@/lib/hooks/useGenres';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { useOrderedHymns } from '@/lib/hooks/useOrderedHymns';
-import type { Hymn, Recording } from '@/lib/types';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
-import { BookText } from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import type { Recording } from '@/lib/types';
+import { useSearchParams } from 'next/navigation';
 import { useSearch } from '@/components/search-provider';
 
 
-export function HymnClientPage({ hymnId }: { hymnId: string }) {
+export function HymnClientPage({ hymnId: initialHymnId }: { hymnId: string }) {
   
   const searchParams = useSearchParams();
-  const router = useRouter();
   const initialRecordingIdFromUrl = searchParams.get('recordingId');
   const genreIdFromUrl = searchParams.get('genre');
   const { setIsOpen } = useSearch();
 
-  const { data: hymn, isLoading: isHymnLoading } = useHymn(hymnId);
-
-  const [playbackRate, setPlaybackRate] = useState(1);
+  const [currentHymnId, setCurrentHymnId] = useState(initialHymnId);
+  const { data: hymn, isLoading: isHymnLoading } = useHymn(currentHymnId);
 
   const [currentRecording, setCurrentRecording] = useState<Recording | undefined>();
 
@@ -68,18 +56,39 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
 
   const hasPrevious = currentIndex > 0;
   const hasNext = currentIndex !== -1 && currentIndex < (playlist?.length ?? 0) - 1;
+  
+  const navigateToHymn = useCallback((hymnId: string) => {
+    setCurrentHymnId(hymnId);
+    const newUrl = `/hymn/${hymnId}?genre=${primaryGenreId}`;
+    // Update URL without full page reload to preserve user gesture context for autoplay
+    window.history.pushState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
+  }, [primaryGenreId]);
 
   const handlePrevious = useCallback(() => {
     if (hasPrevious && playlist) {
-        router.push(`/hymn/${playlist[currentIndex - 1].id}?genre=${primaryGenreId}`);
+        navigateToHymn(playlist[currentIndex - 1].id);
     }
-  }, [hasPrevious, playlist, currentIndex, router, primaryGenreId]);
+  }, [hasPrevious, playlist, currentIndex, navigateToHymn]);
 
   const handleNext = useCallback(() => {
     if (hasNext && playlist) {
-        router.push(`/hymn/${playlist[currentIndex + 1].id}?genre=${primaryGenreId}`);
+        navigateToHymn(playlist[currentIndex + 1].id);
     }
-  }, [hasNext, playlist, currentIndex, router, primaryGenreId]);
+  }, [hasNext, playlist, currentIndex, navigateToHymn]);
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const newHymnId = window.location.pathname.split('/').pop();
+      if (newHymnId && newHymnId !== currentHymnId) {
+        setCurrentHymnId(newHymnId);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [currentHymnId]);
 
   const isLoading = isHymnLoading || isPlaylistLoading || isGenreLoading;
 
@@ -159,8 +168,6 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
           onRecordingChange={setCurrentRecording}
           showLyricsToggleButton={true}
           initialRecordingId={initialRecordingIdFromUrl ?? undefined}
-          playbackRate={playbackRate}
-          onPlaybackRateChange={setPlaybackRate}
           genreId={primaryGenreId}
         />
       )}
