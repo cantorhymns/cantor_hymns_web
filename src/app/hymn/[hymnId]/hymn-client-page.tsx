@@ -44,6 +44,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
   useEffect(() => {
     if (initialHymnData) {
       setHymn(initialHymnData);
+      setUserInitiatedPlay(false); // Reset autoplay trigger on initial load.
     }
   }, [initialHymnData]);
   
@@ -52,9 +53,13 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
   useEffect(() => {
     if (hymn?.recordings && hymn.recordings.length > 0) {
        const recFromUrl = initialRecordingIdFromUrl ? hymn.recordings.find(r => r.id === initialRecordingIdFromUrl) : undefined;
-       setCurrentRecording(recFromUrl || hymn.recordings[0]);
+       const selectedRec = recFromUrl || hymn.recordings[0];
+       // Only update if the recording is actually different to avoid extra re-renders
+       if (selectedRec?.id !== currentRecording?.id) {
+          setCurrentRecording(selectedRec);
+       }
     }
-  }, [hymn, initialRecordingIdFromUrl]);
+  }, [hymn, initialRecordingIdFromUrl, currentRecording]);
 
   const primaryGenreId = useMemo(() => {
     if (genreIdFromUrl) {
@@ -64,7 +69,6 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
     return Array.isArray(initialHymnData.genreId) ? initialHymnData.genreId[0] : initialHymnData.genreId;
   }, [initialHymnData?.genreId, genreIdFromUrl]);
 
-  const { data: genre, isLoading: isGenreLoading } = useGenre(primaryGenreId);
   const { flatPlaylist: playlist, isLoading: isPlaylistLoading } = useOrderedHymns(primaryGenreId);
 
   const currentIndex = useMemo(() => {
@@ -162,6 +166,7 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
         <HymnPlayer
           hymn={hymn}
           autoplay={userInitiatedPlay}
+          onAutoplayConsumed={() => setUserInitiatedPlay(false)}
           onPrevious={handlePrevious}
           onNext={handleNext}
           onEnded={handleNext}

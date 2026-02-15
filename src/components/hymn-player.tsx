@@ -356,6 +356,7 @@ export function HymnPlayer({
   hymn,
   onEnded,
   autoplay = false,
+  onAutoplayConsumed,
   onNext,
   onPrevious,
   hasNext,
@@ -372,6 +373,7 @@ export function HymnPlayer({
   hymn: Hymn;
   onEnded?: () => void;
   autoplay?: boolean;
+  onAutoplayConsumed?: () => void;
   onNext?: () => void;
   onPrevious?: () => void;
   hasNext?: boolean;
@@ -870,8 +872,11 @@ export function HymnPlayer({
             });
         }
         setAutoplayOnSwitch(false);
+        if (onAutoplayConsumed) {
+            onAutoplayConsumed();
+        }
     }
-  }, [autoplayOnSwitch, currentPlaybackRate, duration, currentRecording?.audioLength]);
+  }, [autoplayOnSwitch, currentPlaybackRate, duration, currentRecording?.audioLength, onAutoplayConsumed]);
   
   const handleShare = () => {
     if (!hymn || !currentRecording) return;
