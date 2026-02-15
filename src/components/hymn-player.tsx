@@ -902,6 +902,8 @@ export function HymnPlayer({
     });
   };
 
+  const isPlayerDisabled = !audioSrc || !!audioError;
+
   useEffect(() => {
     // This effect runs on the client to capture browser-specific info
     // and updates the debug state whenever relevant values change.
@@ -1014,7 +1016,6 @@ export function HymnPlayer({
       )
   }
   
-  const isPlayerDisabled = !audioSrc || !!audioError;
   const showControls = currentRecording?.mode === 'learn';
   const showLoadingSpinner = isLoadingAudio || (showControls && isLoadingMarks);
 
