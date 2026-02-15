@@ -35,6 +35,7 @@ import {
   Share2,
   Loader2,
   HelpCircle,
+  Copy,
 } from "lucide-react";
 import { getDownloadURL, ref, getStorage } from "firebase/storage";
 import { useFirebase } from "@/firebase";
@@ -426,6 +427,7 @@ export function HymnPlayer({
   const loopSectionRef = useRef<{ start: number, end: number } | null>(null);
   const dragStartRef = useRef<{ x: number; time: number } | null>(null);
   
+  const isPlayerDisabled = !audioSrc || !!audioError;
   const sortedMarks = useMemo(() => [...(loadedMarks || [])].sort((a, b) => a - b), [loadedMarks]);
   
   useEffect(() => {
@@ -902,7 +904,24 @@ export function HymnPlayer({
     });
   };
 
-  const isPlayerDisabled = !audioSrc || !!audioError;
+  const handleCopyDebugInfo = () => {
+    if (!debugInfo) return;
+    const debugString = JSON.stringify(debugInfo, null, 2);
+    navigator.clipboard.writeText(debugString).then(() => {
+        toast({
+            title: "Debug info copied!",
+            duration: 2000,
+        });
+    }).catch(err => {
+        console.error("Failed to copy debug info: ", err);
+        toast({
+            variant: "destructive",
+            title: "Failed to Copy",
+            description: "Could not copy the debug info to your clipboard.",
+        });
+    });
+  };
+
 
   useEffect(() => {
     // This effect runs on the client to capture browser-specific info
@@ -1277,10 +1296,16 @@ export function HymnPlayer({
 
       {debugInfo && (
         <div className="w-full max-w-3xl mx-auto mt-8">
-          <h3 className="font-bold text-lg">Debug Info</h3>
+          <div className="flex items-center justify-between mb-2">
+              <h3 className="font-bold text-lg">Debug Info</h3>
+              <Button variant="outline" size="sm" onClick={handleCopyDebugInfo}>
+                  <Copy className="h-4 w-4 mr-2" />
+                  Copy Info
+              </Button>
+          </div>
           <textarea
             readOnly
-            className="w-full h-96 mt-2 p-2 font-mono text-xs border rounded bg-secondary/50"
+            className="w-full h-96 p-2 font-mono text-xs border rounded bg-secondary/50"
             value={JSON.stringify(debugInfo, null, 2)}
           />
         </div>
