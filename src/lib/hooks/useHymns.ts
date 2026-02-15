@@ -4,9 +4,14 @@ import { useMemo } from 'react';
 import { collection, query, where } from 'firebase/firestore';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { Hymn, Recording, Cantor } from '@/lib/types';
+import { useFileContent } from './useFileContent';
+
+const CANTORS_ORDER_FILE_PATH = 'tracks/cantors_order.txt';
 
 export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
   const firestore = useFirestore();
+
+  const { content: cantorsOrderFile, isLoading: isCantorsOrderLoading, error: cantorsOrderError } = useFileContent(CANTORS_ORDER_FILE_PATH);
 
   const hymnsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -55,6 +60,11 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
     return new Map(cantors.map(c => [c.id, c]));
   }, [cantors]);
 
+  const cantorsOrder = useMemo(() => {
+    if (!cantorsOrderFile) return [];
+    return cantorsOrderFile.split('\n').map(id => id.trim()).filter(Boolean);
+  }, [cantorsOrderFile]);
+
   const hymnsWithRecordings = useMemo(() => {
     if (!hymns) return null;
     
@@ -67,7 +77,7 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
       return hymns.map(h => ({ ...h, recordings: [] }));
     }
 
-    const isDataLoading = hymnIds.length > 0 && (areRecordingsLoading || areCantorsLoading);
+    const isDataLoading = hymnIds.length > 0 && (areRecordingsLoading || areCantorsLoading || isCantorsOrderLoading);
     if (isDataLoading) {
       return null;
     }
@@ -94,9 +104,19 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
         hymnRecordings.sort((a, b) => {
             if (a.mode === 'learn' && b.mode !== 'learn') return -1;
             if (a.mode !== 'learn' && b.mode === 'learn') return 1;
-            const rankA = a.cantor?.rank ?? 99;
-            const rankB = b.cantor?.rank ?? 99;
-            return rankA - rankB;
+            
+            const aId = a.cantorId;
+            const bId = b.cantorId;
+            const indexA = cantorsOrder.indexOf(aId);
+            const indexB = cantorsOrder.indexOf(bId);
+
+            if (indexA !== -1 && indexB !== -1) {
+                return indexA - indexB;
+            }
+            if (indexA !== -1) return -1;
+            if (indexB !== -1) return 1;
+
+            return (a.cantor?.name || '').localeCompare(b.cantor?.name || '');
         });
 
         return {
@@ -105,13 +125,13 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
         };
     }).filter(hymn => hymn.recordings.length > 0);
 
-  }, [hymns, recordings, hymnIds, areRecordingsLoading, cantorsMap, areCantorsLoading, shouldFetchRelatedData, genreId, hymnIdsFilter]);
+  }, [hymns, recordings, hymnIds, areRecordingsLoading, cantorsMap, areCantorsLoading, shouldFetchRelatedData, genreId, hymnIdsFilter, cantorsOrder, isCantorsOrderLoading]);
 
-  const isLoading = areHymnsLoading || (shouldFetchRelatedData && (hymns != null && hymnsWithRecordings === null));
+  const isLoading = areHymnsLoading || isCantorsOrderLoading || (shouldFetchRelatedData && (hymns != null && hymnsWithRecordings === null));
 
   return { 
     data: hymnsWithRecordings, 
     isLoading,
-    error: hymnsError || recordingsError || cantorsError
+    error: hymnsError || recordingsError || cantorsError || cantorsOrderError
   };
 }
