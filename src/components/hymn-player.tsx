@@ -1069,13 +1069,11 @@ export function HymnPlayer({
                               </button>
                           </div>
                       )})}
-
-                        <div 
-                            className="absolute top-0 h-full w-0.5 bg-red-500 z-30 pointer-events-none -translate-x-1/2"
-                            style={{ left: `${(currentTime / duration) * 100}%` }}
-                        >
-                            <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-3 h-3 bg-red-500 rounded-full"></div>
-                        </div>
+                  </div>
+                  <div 
+                      className="absolute top-0 left-1/2 h-full w-0.5 bg-red-500 z-30 pointer-events-none -translate-x-1/2"
+                  >
+                      <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-3 h-3 bg-red-500 rounded-full"></div>
                   </div>
               </div>
 
