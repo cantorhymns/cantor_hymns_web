@@ -10,7 +10,7 @@ import { useMemo, useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { useOrderedHymns } from '@/lib/hooks/useOrderedHymns';
 import type { Hymn, Recording } from '@/lib/types';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { BookText } from 'lucide-react';
@@ -27,23 +27,15 @@ import { useSearch } from '@/components/search-provider';
 export function HymnClientPage({ hymnId }: { hymnId: string }) {
   
   const searchParams = useSearchParams();
+  const router = useRouter();
   const initialRecordingIdFromUrl = searchParams.get('recordingId');
   const genreIdFromUrl = searchParams.get('genre');
   const { setIsOpen } = useSearch();
 
-  const [hymn, setHymn] = useState<Hymn | null>(null);
-
-  const { data: initialHymnData, isLoading: isInitialHymnLoading } = useHymn(hymnId);
+  const { data: hymn, isLoading: isHymnLoading } = useHymn(hymnId);
 
   const [playbackRate, setPlaybackRate] = useState(1);
-  const [userInitiatedPlay, setUserInitiatedPlay] = useState(false);
 
-  useEffect(() => {
-    if (initialHymnData) {
-      setHymn(initialHymnData);
-    }
-  }, [initialHymnData]);
-  
   const [currentRecording, setCurrentRecording] = useState<Recording | undefined>();
 
   useEffect(() => {
@@ -60,9 +52,9 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
     if (genreIdFromUrl) {
       return genreIdFromUrl;
     }
-    if (!initialHymnData?.genreId) return undefined;
-    return Array.isArray(initialHymnData.genreId) ? initialHymnData.genreId[0] : initialHymnData.genreId;
-  }, [initialHymnData?.genreId, genreIdFromUrl]);
+    if (!hymn?.genreId) return undefined;
+    return Array.isArray(hymn.genreId) ? hymn.genreId[0] : hymn.genreId;
+  }, [hymn?.genreId, genreIdFromUrl]);
 
   const { data: genre, isLoading: isGenreLoading } = useGenre(primaryGenreId);
   const { flatPlaylist: playlist, isLoading: isPlaylistLoading } = useOrderedHymns(primaryGenreId);
@@ -79,21 +71,17 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
 
   const handlePrevious = useCallback(() => {
     if (hasPrevious && playlist) {
-        setUserInitiatedPlay(true);
-        const previousHymn = playlist[currentIndex - 1];
-        setHymn(previousHymn);
+        router.push(`/hymn/${playlist[currentIndex - 1].id}?genre=${primaryGenreId}`);
     }
-  }, [hasPrevious, playlist, currentIndex]);
+  }, [hasPrevious, playlist, currentIndex, router, primaryGenreId]);
 
   const handleNext = useCallback(() => {
     if (hasNext && playlist) {
-        setUserInitiatedPlay(true);
-        const nextHymn = playlist[currentIndex + 1];
-        setHymn(nextHymn);
+        router.push(`/hymn/${playlist[currentIndex + 1].id}?genre=${primaryGenreId}`);
     }
-  }, [hasNext, playlist, currentIndex]);
+  }, [hasNext, playlist, currentIndex, router, primaryGenreId]);
 
-  const isLoading = isInitialHymnLoading || isPlaylistLoading || isGenreLoading || (initialHymnData && !hymn);
+  const isLoading = isHymnLoading || isPlaylistLoading || isGenreLoading;
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
@@ -160,24 +148,20 @@ export function HymnClientPage({ hymnId }: { hymnId: string }) {
         </div>
       ) : (
         <HymnPlayer
+          key={hymn.id}
           hymn={hymn}
-          autoplay={userInitiatedPlay}
-          onAutoplayConsumed={() => setUserInitiatedPlay(false)}
+          autoplay={true}
           onPrevious={handlePrevious}
           onNext={handleNext}
           onEnded={handleNext}
           hasPrevious={hasPrevious}
           hasNext={hasNext}
-          onRecordingChange={(rec) => {
-            setCurrentRecording(rec);
-            setUserInitiatedPlay(true);
-          }}
+          onRecordingChange={setCurrentRecording}
           showLyricsToggleButton={true}
           initialRecordingId={initialRecordingIdFromUrl ?? undefined}
           playbackRate={playbackRate}
           onPlaybackRateChange={setPlaybackRate}
           genreId={primaryGenreId}
-          onManualPlay={() => setUserInitiatedPlay(true)}
         />
       )}
     </div>

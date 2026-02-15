@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Hymn, Recording } from "@/lib/types";
@@ -356,7 +357,6 @@ export function HymnPlayer({
   hymn,
   onEnded,
   autoplay = false,
-  onAutoplayConsumed,
   onNext,
   onPrevious,
   hasNext,
@@ -368,24 +368,6 @@ export function HymnPlayer({
   playbackRate,
   onPlaybackRateChange,
   genreId,
-  onManualPlay,
-}: {
-  hymn: Hymn;
-  onEnded?: () => void;
-  autoplay?: boolean;
-  onAutoplayConsumed?: () => void;
-  onNext?: () => void;
-  onPrevious?: () => void;
-  hasNext?: boolean;
-  hasPrevious?: boolean;
-  lyricsVisibleByDefault?: boolean;
-  showLyricsToggleButton?: boolean;
-  initialRecordingId?: string;
-  onRecordingChange?: (recording: Recording) => void;
-  playbackRate?: number;
-  onPlaybackRateChange?: (rate: number) => void;
-  genreId?: string;
-  onManualPlay?: () => void;
 }) {
   const { firebaseApp } = useFirebase();
   const storage = useMemo(() => firebaseApp ? getStorage(firebaseApp) : null, [firebaseApp]);
@@ -395,7 +377,6 @@ export function HymnPlayer({
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
   const [audioError, setAudioError] = useState<string | null>(null);
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
-  const [internalAutoplay, setInternalAutoplay] = useState(false);
 
   const { marks: loadedMarks, isLoading: isLoadingMarks, error: marksError } = useMarkersFile(
     currentRecording?.mode === 'learn' ? currentRecording.markersUrl : undefined
@@ -566,11 +547,10 @@ export function HymnPlayer({
       audio.play().catch(error => {
         console.log("Playback failed. This can happen if the user hasn't interacted with the page yet.", error);
       });
-      onManualPlay?.();
     } else {
       audio.pause();
     }
-  }, [onManualPlay]);
+  }, []);
 
   const handleNextSection = useCallback(() => {
     if (!audioRef.current) return;
@@ -844,21 +824,15 @@ export function HymnPlayer({
 
     audio.playbackRate = currentPlaybackRate;
     
-    if (autoplay || internalAutoplay) {
+    if (autoplay) {
         const playPromise = audio.play();
         if (playPromise !== undefined) {
             playPromise.catch((e) => {
                 console.log("Autoplay was prevented by the browser.");
             });
         }
-        if (onAutoplayConsumed) {
-            onAutoplayConsumed();
-        }
-        if (internalAutoplay) {
-            setInternalAutoplay(false);
-        }
     }
-  }, [autoplay, internalAutoplay, currentPlaybackRate, duration, currentRecording?.audioLength, onAutoplayConsumed]);
+  }, [autoplay, currentPlaybackRate, duration, currentRecording?.audioLength]);
   
   const handleShare = () => {
     if (!hymn || !currentRecording) return;
@@ -988,7 +962,6 @@ export function HymnPlayer({
                               if (newRec) {
                                   setCurrentRecording(newRec);
                                   onRecordingChange?.(newRec);
-                                  setInternalAutoplay(true);
                               }
                           }}
                       >
@@ -1031,22 +1004,22 @@ export function HymnPlayer({
                           willChange: 'transform',
                       }}
                   >
-                      {duration > 0 && Array.from({ length: Math.ceil(duration) * 3 }).map((_, i) => {
+                      {duration > 0 && Array.from({ length: Math.ceil(duration) * 5 }).map((_, i) => {
                           const pseudoRandom = (seed: number) => {
                               let x = Math.sin(seed) * 10000;
                               return x - Math.floor(x);
                           }
                           const seed = i + (currentRecording?.audioUrl?.length || 0);
-                          const barHeight = pseudoRandom(seed) * 48 + 2;
+                          const barHeight = pseudoRandom(seed) * 60 + 5;
 
                           return (
                               <div
                                 key={i}
                                 className="absolute w-[2px] rounded-full bg-primary/30"
                                 style={{
-                                    left: `${(i / (Math.ceil(duration) * 3)) * 100}%`,
-                                    top: `${50 - barHeight}%`,
-                                    height: `${barHeight * 2}%`,
+                                    left: `${(i / (Math.ceil(duration) * 5)) * 100}%`,
+                                    top: `${50 - barHeight / 2}%`,
+                                    height: `${barHeight}%`,
                                 }}
                               />
                           )
