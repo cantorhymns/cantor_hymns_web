@@ -1,0 +1,78 @@
+
+import { initializeApp } from 'firebase/app';
+import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
+import { getAuth, signInAnonymously } from 'firebase/auth';
+import { firebaseConfig } from '../firebase/config';
+
+// --- Data for the new Hymn and Recording ---
+
+const hymnId = 'aretenthonti-kiahk';
+const hymnData = {
+    name: "Aretenthonti",
+    description: "The first verse of the 9th part of the Saturday Theotokia chanted in a melismatic tune in the month of Kiahk and Holy Lent.",
+    genreId: ["kiahk"],
+    lyricsArabic: "lyrics/arabic/aretenthonti_arabic.md",
+    lyricsCoptic: "lyrics/coptic/aretenthonti_coptic.md",
+    lyricsEnglish: "lyrics/english/aretenthonti_english.md"
+};
+
+const recordingId = 'cantor-ibrahim_aretenthonti-kiahk';
+const recordingData = {
+    hymnId: "aretenthonti-kiahk",
+    cantorId: "cantor-ibrahim",
+    audioUrl: "tracks/cantor-ibrahim/cantor-ibrahim_aretenthonti-kiahk.mp3",
+    markersUrl: "markers/cantor-ibrahim/cantor-ibrahim_aretenthonti-kiahk_markers.txt",
+    audioLength: 822.816,
+    active: true,
+    mode: "learn"
+};
+
+// --- End of Data ---
+
+
+async function addNewRecording() {
+    const firebaseApp = initializeApp(firebaseConfig);
+    const db = getFirestore(firebaseApp);
+    const auth = getAuth(firebaseApp);
+
+    try {
+        console.log('Authenticating anonymously to add new documents...');
+        await signInAnonymously(auth);
+        console.log('Authentication successful.');
+
+        // 1. Add/Update the Hymn document
+        const hymnRef = doc(db, 'hymns', hymnId);
+        const hymnDoc = await getDoc(hymnRef);
+
+        if (hymnDoc.exists()) {
+            console.log(`Hymn "${hymnId}" already exists. Overwriting with new data.`);
+        } else {
+            console.log(`Adding new hymn: "${hymnId}"`);
+        }
+        await setDoc(hymnRef, hymnData);
+        console.log('Hymn document created/updated successfully.');
+        
+        // 2. Add/Update the Recording document
+        const recordingRef = doc(db, 'recordings', recordingId);
+        const recordingDoc = await getDoc(recordingRef);
+        if (recordingDoc.exists()) {
+             console.log(`Recording "${recordingId}" already exists. Overwriting with new data.`);
+        } else {
+            console.log(`Adding new recording: "${recordingId}"`);
+        }
+        await setDoc(recordingRef, recordingData);
+        console.log('Recording document created/updated successfully.');
+        
+        console.log(`\n--- Operation Complete ---`);
+        console.log(`Successfully added hymn '${hymnId}' and recording '${recordingId}'.`);
+        console.log(`Note: If the 'kiahk' genre is new, you may need to add it to your 'genres' collection for it to appear in the app.`);
+
+
+    } catch (error) {
+        console.error('An error occurred during the process:', error);
+    } finally {
+        process.exit(0);
+    }
+}
+
+addNewRecording();
