@@ -36,7 +36,8 @@
     "db:add-doxology-lazarus-saturday": "tsx -r dotenv/config src/scripts/add-doxology-lazarus-saturday.ts",
     "db:add-praxis-response-lazarus-saturday": "tsx -r dotenv/config src/scripts/add-praxis-response-lazarus-saturday.ts",
     "db:add-aretenthonti-lent": "tsx -r dotenv/config src/scripts/add-aretenthonti-lent.ts",
-    "db:add-aretenthonti-kiahk": "tsx -r dotenv/config src/scripts/add-aretenthonti-kiahk.ts"
+    "db:add-aretenthonti-kiahk": "tsx -r dotenv/config src/scripts/add-aretenthonti-kiahk.ts",
+    "db:add-ou-nishti": "tsx -r dotenv/config src/scripts/add-ou-nishti.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
