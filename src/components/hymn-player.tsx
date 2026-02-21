@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { Hymn, Recording } from "@/lib/types";
@@ -56,6 +55,7 @@ function formatTime(seconds: number) {
 }
 
 const VISIBLE_DURATION_S = 60; // 1 minute window
+const PREVIOUS_RESTART_THRESHOLD = 3; // 3 seconds rule for previous button
 
 function useLyricContent(path?: string) {
   const [content, setContent] = useState<string | null>(null);
@@ -401,6 +401,12 @@ export function HymnPlayer({
   const loopSectionRef = useRef<{ start: number, end: number } | null>(null);
   const dragStartRef = useRef<{ x: number; time: number } | null>(null);
   
+  // Stable ref for current time to use in callbacks without triggering re-renders of the callback itself
+  const currentTimeRef = useRef(currentTime);
+  useEffect(() => {
+    currentTimeRef.current = currentTime;
+  }, [currentTime]);
+
   const sortedMarks = useMemo(() => [...(loadedMarks || [])].sort((a, b) => a - b), [loadedMarks]);
   
   useEffect(() => {
@@ -438,13 +444,29 @@ export function HymnPlayer({
     !!(hymn.lyricsEnglish || hymn.lyricsCoptic || hymn.lyricsArabic)
   , [hymn]);
 
+  const seek = useCallback((time: number) => {
+    if (!audioRef.current || !isFinite(duration) || duration <= 0) return;
+    const newTime = Math.max(0, Math.min(time, duration));
+    if (audioRef.current && isFinite(newTime)) {
+      audioRef.current.currentTime = newTime;
+    }
+    setCurrentTime(newTime);
+  }, [duration]);
+
+  const handlePreviousAction = useCallback(() => {
+    // Threshold for restarting vs going back: 3 seconds
+    if (currentTimeRef.current > PREVIOUS_RESTART_THRESHOLD) {
+      seek(0);
+    } else if (hasPrevious && onPrevious) {
+      onPrevious();
+    } else {
+      seek(0);
+    }
+  }, [hasPrevious, onPrevious, seek]);
+
   const handleNextHymn = useCallback(() => {
     onNext?.();
   }, [onNext]);
-
-  const handlePreviousHymn = useCallback(() => {
-    onPrevious?.();
-  }, [onPrevious]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -480,15 +502,6 @@ export function HymnPlayer({
         audioRef.current.playbackRate = playbackRate;
     }
   }, [playbackRate, audioSrc]);
-
-  const seek = useCallback((time: number) => {
-    if (!audioRef.current || !isFinite(duration) || duration <= 0) return;
-    const newTime = Math.max(0, Math.min(time, duration));
-    if (audioRef.current && isFinite(newTime)) {
-      audioRef.current.currentTime = newTime;
-    }
-    setCurrentTime(newTime);
-  }, [duration]);
 
   useEffect(() => {
     if (isRepeat && sortedActiveMarks.length > 0) {
@@ -613,8 +626,8 @@ export function HymnPlayer({
       navigator.mediaSession.setActionHandler('play', handlePlayPause);
       navigator.mediaSession.setActionHandler('pause', handlePlayPause);
 
-      if (onPrevious && hasPrevious) {
-        navigator.mediaSession.setActionHandler('previoustrack', handlePreviousHymn);
+      if (onPrevious) {
+        navigator.mediaSession.setActionHandler('previoustrack', handlePreviousAction);
       } else {
         navigator.mediaSession.setActionHandler('previoustrack', null);
       }
@@ -694,7 +707,7 @@ export function HymnPlayer({
         navigator.mediaSession.setActionHandler('seekbackward', null);
       }
     };
-  }, [currentRecording, hymn, hasPrevious, hasNext, onPrevious, onNext, handlePlayPause, handlePreviousHymn, handleNextHymn, handleNextSection, handlePrevSection, handleSkip]);
+  }, [currentRecording, hymn, hasPrevious, hasNext, onPrevious, onNext, handlePlayPause, handlePreviousAction, handleNextHymn, handleNextSection, handlePrevSection, handleSkip]);
 
 
   const handleSeekStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
@@ -1025,7 +1038,7 @@ export function HymnPlayer({
                           return (
                               <div
                                 key={i}
-                                className="absolute w-px rounded-full bg-primary/20"
+                                className="absolute w-px rounded-full bg-primary/10"
                                 style={{
                                     left: `${(i / (Math.ceil(duration) * 5)) * 100}%`,
                                     top: `${50 - barHeight / 2}%`,
@@ -1141,10 +1154,15 @@ export function HymnPlayer({
               </div>
               {(onNext || onPrevious) && (
                 <div className="flex justify-center items-center gap-4 border-t pt-4 mt-4">
-                    <Button variant="outline" size="lg" onClick={onPrevious} disabled={!hasPrevious}>
+                    <Button 
+                      variant="outline" 
+                      size="lg" 
+                      onClick={handlePreviousAction} 
+                      disabled={!hasPrevious && currentTime <= PREVIOUS_RESTART_THRESHOLD}
+                    >
                         <ChevronLeft className="mr-2 h-5 w-5" /> Previous
                     </Button>
-                    <Button variant="outline" size="lg" onClick={onNext} disabled={!hasNext}>
+                    <Button variant="outline" size="lg" onClick={handleNextHymn} disabled={!hasNext}>
                         Next <ChevronRight className="ml-2 h-5 w-5" />
                     </Button>
                 </div>
