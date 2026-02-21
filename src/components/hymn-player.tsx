@@ -355,8 +355,8 @@ const Skip10BackIcon = () => (
   <div className="relative flex items-center justify-center">
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
+      width="28"
+      height="28"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -368,7 +368,7 @@ const Skip10BackIcon = () => (
       <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
       <path d="M3 3v5h5" />
     </svg>
-    <span className="absolute text-[8px] font-bold mt-1.5">10</span>
+    <span className="absolute text-[9px] font-bold translate-y-[1px]">10s</span>
   </div>
 );
 
@@ -376,8 +376,8 @@ const Skip10ForwardIcon = () => (
   <div className="relative flex items-center justify-center">
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
+      width="28"
+      height="28"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -389,7 +389,7 @@ const Skip10ForwardIcon = () => (
       <path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
       <path d="M21 3v5h-5" />
     </svg>
-    <span className="absolute text-[8px] font-bold mt-1.5">10</span>
+    <span className="absolute text-[9px] font-bold translate-y-[1px]">10s</span>
   </div>
 );
 
@@ -1145,7 +1145,7 @@ export function HymnPlayer({
                                     <span className="sr-only">Previous Section</span>
                                 </Button>
                             ) : (
-                                <Button variant="outline" size="icon" className="rounded-full h-10 w-10" onClick={() => handleSkip(-10)}>
+                                <Button variant="outline" size="icon" className="rounded-full h-12 w-12" onClick={() => handleSkip(-10)}>
                                     <Skip10BackIcon />
                                     <span className="sr-only">Rewind 10 seconds</span>
                                 </Button>
@@ -1162,7 +1162,7 @@ export function HymnPlayer({
                                     <span className="sr-only">Next Section</span>
                                 </Button>
                             ) : (
-                                <Button variant="outline" size="icon" className="rounded-full h-10 w-10" onClick={() => handleSkip(10)}>
+                                <Button variant="outline" size="icon" className="rounded-full h-12 w-12" onClick={() => handleSkip(10)}>
                                      <Skip10ForwardIcon />
                                     <span className="sr-only">Fast Forward 10 seconds</span>
                                 </Button>
