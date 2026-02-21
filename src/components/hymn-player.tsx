@@ -181,7 +181,7 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
     arabic: false,
   });
   const [isContained, setIsContained] = useState(true);
-  const [fontSize, setFontSize] = useState('sm');
+  const [fontSize, setFontSize] = useState('lg');
   const fontSizes = ['sm', 'base', 'lg', 'xl'];
 
   const cycleFontSize = () => {
