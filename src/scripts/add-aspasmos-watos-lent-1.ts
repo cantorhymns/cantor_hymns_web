@@ -16,12 +16,12 @@ const hymnData = {
     lyricsEnglish: "lyrics/english/aspasmos-watos-lent-1_english.md"
 };
 
-const recordingId = 'aspasmos-watos-lent-1';
+const recordingId = 'cantor-ibrahim-aspasmos-watos-lent-1';
 const recordingData = {
-    hymnId: "aspasmos-watos-lent-1",
+    hymnId: "aspasmos-watos-lent-1", // Linked to the hymnId above
     cantorId: "cantor-ibrahim",
-    audioUrl: "tracks/cantor-ibrahim/aspasmos-watos-lent-1.mp3",
-    markersUrl: "markers/cantor-ibrahim/aspasmos-watos-lent-1_markers.txt",
+    audioUrl: "tracks/cantor-ibrahim/cantor-ibrahim_aspasmos-watos-lent-1.mp3",
+    markersUrl: "markers/cantor-ibrahim/cantor-ibrahim_aspasmos-watos-lent-1_markers.txt",
     audioLength: 532.7934583333333,
     active: true,
     mode: "learn"
