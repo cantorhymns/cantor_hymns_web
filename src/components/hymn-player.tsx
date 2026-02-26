@@ -661,6 +661,7 @@ export function HymnPlayer({
       navigator.mediaSession.setActionHandler('play', handlePlayPause);
       navigator.mediaSession.setActionHandler('pause', handlePlayPause);
 
+      // System-level Next/Previous should ALWAYS navigate hymns, not markers.
       if (onPrevious) {
         navigator.mediaSession.setActionHandler('previoustrack', handlePreviousAction);
       } else {
@@ -673,21 +674,11 @@ export function HymnPlayer({
         navigator.mediaSession.setActionHandler('nexttrack', null);
       }
 
-      const isLearnMode = currentRecording?.mode === 'learn';
-      navigator.mediaSession.setActionHandler('seekforward', () => {
-        if (isLearnMode) {
-          handleNextSection();
-        } else {
-          handleSkip(10);
-        }
-      });
-      navigator.mediaSession.setActionHandler('seekbackward', () => {
-        if (isLearnMode) {
-          handlePrevSection();
-        } else {
-          handleSkip(-10);
-        }
-      });
+      // System-level skip buttons (if present) always do a 10s jump.
+      // We explicitly avoid marker-jumping in the MediaSession to prevent confusion
+      // on car/phone displays where skip buttons are standard hymn navigation.
+      navigator.mediaSession.setActionHandler('seekforward', () => handleSkip(10));
+      navigator.mediaSession.setActionHandler('seekbackward', () => handleSkip(-10));
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -708,6 +699,7 @@ export function HymnPlayer({
         case 'ArrowRight':
             if (!event.repeat) {
                 event.preventDefault();
+                // Keyboard arrows DO jump markers in learn mode as it's a specific web-ui action.
                 if (isLearnMode) {
                     handleNextSection();
                 } else {
@@ -718,6 +710,7 @@ export function HymnPlayer({
         case 'ArrowLeft':
             if (!event.repeat) {
                 event.preventDefault();
+                // Keyboard arrows DO jump markers in learn mode as it's a specific web-ui action.
                 if (isLearnMode) {
                     handlePrevSection();
                 } else {
