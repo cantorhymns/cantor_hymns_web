@@ -503,6 +503,64 @@ export function HymnPlayer({
     onNext?.();
   }, [onNext]);
 
+  const handleNextSection = useCallback(() => {
+    if (!audioRef.current) return;
+    const audioTime = audioRef.current.currentTime;
+    const nextMark = sortedActiveMarks.find(mark => mark > audioTime + 0.5); 
+    if (nextMark !== undefined) {
+      seek(nextMark);
+    } else {
+      seek(duration);
+    }
+  }, [sortedActiveMarks, seek, duration]);
+
+  const handlePrevSection = useCallback(() => {
+    const REWIND_THRESHOLD = 2; // in seconds
+    if (!audioRef.current) return;
+    const audioTime = audioRef.current.currentTime;
+  
+    const reversedMarks = [...sortedActiveMarks].reverse();
+    
+    const currentSectionStartMarker = reversedMarks.find(mark => mark < audioTime);
+  
+    if (currentSectionStartMarker === undefined) {
+      seek(0);
+      return;
+    }
+  
+    if (audioTime > currentSectionStartMarker + REWIND_THRESHOLD) {
+      seek(currentSectionStartMarker);
+    } else {
+      const currentMarkerIndex = reversedMarks.indexOf(currentSectionStartMarker);
+      const previousSectionStartMarker = reversedMarks[currentMarkerIndex + 1];
+  
+      seek(previousSectionStartMarker !== undefined ? previousSectionStartMarker : 0);
+    }
+  }, [sortedActiveMarks, seek]);
+  
+  const handleSkip = useCallback((amount: number) => {
+    if (!audioRef.current) return;
+    seek(audioRef.current.currentTime + amount);
+  }, [seek]);
+
+  const handlePlayPause = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) {
+      return;
+    }
+
+    if (audio.paused) {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.error('PLAYBACK FAILED in handlePlayPause:', error.name, error.message);
+          });
+      }
+    } else {
+      audio.pause();
+    }
+  }, []);
+
   useEffect(() => {
     if (audioRef.current) {
         audioRef.current.currentTime = 0;
@@ -590,64 +648,10 @@ export function HymnPlayer({
     }
   }, [currentTime, duration]);
 
-  const handlePlayPause = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio) {
-      return;
-    }
-
-    if (audio.paused) {
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-          playPromise.catch(error => {
-            console.error('PLAYBACK FAILED in handlePlayPause:', error.name, error.message);
-          });
-      }
-    } else {
-      audio.pause();
-    }
-  }, []);
-
-  const handleNextSection = useCallback(() => {
-    if (!audioRef.current) return;
-    const nextMark = sortedActiveMarks.find(mark => mark > currentTime + 0.5); 
-    if (nextMark !== undefined) {
-      seek(nextMark);
-    } else {
-      seek(duration);
-    }
-  }, [sortedActiveMarks, currentTime, seek, duration]);
-
-  const handlePrevSection = useCallback(() => {
-    const REWIND_THRESHOLD = 2; // in seconds
-    if (!audioRef.current) return;
-  
-    const reversedMarks = [...sortedActiveMarks].reverse();
-    
-    const currentSectionStartMarker = reversedMarks.find(mark => mark < currentTime);
-  
-    if (currentSectionStartMarker === undefined) {
-      seek(0);
-      return;
-    }
-  
-    if (currentTime > currentSectionStartMarker + REWIND_THRESHOLD) {
-      seek(currentSectionStartMarker);
-    } else {
-      const currentMarkerIndex = reversedMarks.indexOf(currentSectionStartMarker);
-      const previousSectionStartMarker = reversedMarks[currentMarkerIndex + 1];
-  
-      seek(previousSectionStartMarker !== undefined ? previousSectionStartMarker : 0);
-    }
-  }, [sortedActiveMarks, currentTime, seek]);
-  
-  const handleSkip = useCallback((amount: number) => {
-    if (!audioRef.current) return;
-    seek(currentTime + amount);
-  }, [currentTime, seek]);
-
   useEffect(() => {
     if ('mediaSession' in navigator && currentRecording && hymn) {
+      const isLearnMode = currentRecording?.mode === 'learn';
+
       navigator.mediaSession.metadata = new MediaMetadata({
         title: hymn.name,
         artist: currentRecording.cantor?.name || 'Unknown Cantor',
@@ -674,11 +678,22 @@ export function HymnPlayer({
         navigator.mediaSession.setActionHandler('nexttrack', null);
       }
 
-      // System-level skip buttons (if present) always do a 10s jump.
-      // We explicitly avoid marker-jumping in the MediaSession to prevent confusion
-      // on car/phone displays where skip buttons are standard hymn navigation.
-      navigator.mediaSession.setActionHandler('seekforward', () => handleSkip(10));
-      navigator.mediaSession.setActionHandler('seekbackward', () => handleSkip(-10));
+      // System-level secondary skip buttons.
+      // If in Learn Mode, these jump markers. Otherwise, they do a 10s skip.
+      navigator.mediaSession.setActionHandler('seekforward', () => {
+        if (isLearnMode) {
+          handleNextSection();
+        } else {
+          handleSkip(10);
+        }
+      });
+      navigator.mediaSession.setActionHandler('seekbackward', () => {
+        if (isLearnMode) {
+          handlePrevSection();
+        } else {
+          handleSkip(-10);
+        }
+      });
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
