@@ -650,8 +650,6 @@ export function HymnPlayer({
 
   useEffect(() => {
     if ('mediaSession' in navigator && currentRecording && hymn) {
-      const isLearnMode = currentRecording?.mode === 'learn';
-
       navigator.mediaSession.metadata = new MediaMetadata({
         title: hymn.name,
         artist: currentRecording.cantor?.name || 'Unknown Cantor',
@@ -666,6 +664,8 @@ export function HymnPlayer({
       navigator.mediaSession.setActionHandler('pause', handlePlayPause);
 
       // System-level Next/Previous should ALWAYS navigate hymns, not markers.
+      // We explicitly DO NOT set seekforward/seekbackward here to ensure the system player
+      // prioritizes the Next/Prev track buttons in its UI layout (especially on mobile lock screens).
       if (onPrevious) {
         navigator.mediaSession.setActionHandler('previoustrack', handlePreviousAction);
       } else {
@@ -677,23 +677,6 @@ export function HymnPlayer({
       } else {
         navigator.mediaSession.setActionHandler('nexttrack', null);
       }
-
-      // System-level secondary skip buttons.
-      // If in Learn Mode, these jump markers. Otherwise, they do a 10s skip.
-      navigator.mediaSession.setActionHandler('seekforward', () => {
-        if (isLearnMode) {
-          handleNextSection();
-        } else {
-          handleSkip(10);
-        }
-      });
-      navigator.mediaSession.setActionHandler('seekbackward', () => {
-        if (isLearnMode) {
-          handlePrevSection();
-        } else {
-          handleSkip(-10);
-        }
-      });
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -746,8 +729,6 @@ export function HymnPlayer({
         navigator.mediaSession.setActionHandler('pause', null);
         navigator.mediaSession.setActionHandler('previoustrack', null);
         navigator.mediaSession.setActionHandler('nexttrack', null);
-        navigator.mediaSession.setActionHandler('seekforward', null);
-        navigator.mediaSession.setActionHandler('seekbackward', null);
       }
     };
   }, [currentRecording, hymn, hasPrevious, hasNext, onPrevious, onNext, handlePlayPause, handlePreviousAction, handleNextHymn, handleNextSection, handlePrevSection, handleSkip]);
