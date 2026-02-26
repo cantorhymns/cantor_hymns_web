@@ -39,7 +39,8 @@
     "db:add-aretenthonti-kiahk": "tsx -r dotenv/config src/scripts/add-aretenthonti-kiahk.ts",
     "db:add-ou-nishti": "tsx -r dotenv/config src/scripts/add-ou-nishti.ts",
     "db:add-aspasmos-watos-lent-1": "tsx -r dotenv/config src/scripts/add-aspasmos-watos-lent-1.ts",
-    "db:add-aspasmos-watos-lent-1-updated": "tsx -r dotenv/config src/scripts/add-aspasmos-watos-lent-1.ts"
+    "db:add-aspasmos-watos-lent-1-updated": "tsx -r dotenv/config src/scripts/add-aspasmos-watos-lent-1.ts",
+    "db:add-khristos-anesti-major": "tsx -r dotenv/config src/scripts/add-khristos-anesti-major.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
