@@ -45,7 +45,7 @@
     "db:add-ton-seena": "tsx -r dotenv/config src/scripts/add-ton-seena.ts",
     "db:add-tou-lithou": "tsx -r dotenv/config src/scripts/add-tou-lithou.ts",
     "db:add-teen-anastaseen": "tsx -r dotenv/config src/scripts/add-teen-anastaseen.ts",
-    "code:zip": "zip -r codebase.zip . -x 'node_modules/*' '.next/*' '.git/*'"
+    "code:export": "tar -czf codebase.tar.gz --exclude=node_modules --exclude=.next --exclude=.git ."
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",

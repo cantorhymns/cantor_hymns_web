@@ -1,3 +1,4 @@
+
 # Cantor - Coptic Hymn Learning App
 
 This is a high-performance Next.js 15 application built with React, Tailwind CSS, ShadCN UI, and Firebase.
@@ -11,8 +12,11 @@ This is a high-performance Next.js 15 application built with React, Tailwind CSS
 
 ## How to Download the Code
 
-1. **Export as ZIP:** Click the **Download** icon (cloud with a down arrow) in the top toolbar of Firebase Studio.
-2. **Push to GitHub:** Click the **GitHub** icon in the toolbar to connect your project to a remote repository.
+1. **Export as ZIP (UI):** Click the **Download** icon (cloud with a down arrow) in the top toolbar of Firebase Studio.
+2. **Export as Archive (Terminal):**
+   - Run `npm run code:export` in the terminal.
+   - Right-click the generated `codebase.tar.gz` in the file explorer and select **Download**.
+3. **Push to GitHub:** Click the **GitHub** icon in the toolbar to connect your project to a remote repository.
 
 ## Local Setup Instructions
 
