@@ -12,11 +12,10 @@ This is a high-performance Next.js 15 application built with React, Tailwind CSS
 
 ## How to Download the Code
 
-1. **Export as ZIP (UI):** Click the **Download** icon (cloud with a down arrow) in the top toolbar of Firebase Studio.
-2. **Export as Archive (Terminal):**
+1. **Export as Archive (Terminal):**
    - Run `npm run code:export` in the terminal.
    - Right-click the generated `codebase.tar.gz` in the file explorer and select **Download**.
-3. **Push to GitHub:** Click the **GitHub** icon in the toolbar to connect your project to a remote repository.
+2. **Push to GitHub:** Click the **GitHub** icon in the toolbar to connect your project to a remote repository.
 
 ## Local Setup Instructions
 
@@ -35,6 +34,11 @@ Once you have downloaded and unzipped the code:
    npm run dev
    ```
    Open [http://localhost:3000](http://localhost:3000) in your browser to see the results.
+
+## Documentation
+- [Mountain Duck Setup](./docs/MOUNTAIN_DUCK_SETUP.md): How to manage your audio files as a local drive.
+- [CORS Fix](./docs/CORS_FIX.md): Essential step if audio or lyrics fail to load.
+- [Mobile Conversion](./docs/mobile-conversion-prompt.md): AI prompt for moving to iOS/Android.
 
 ## Database Management
 This project includes built-in scripts to manage your Firestore data. You can run these from your terminal:
