@@ -28,4 +28,15 @@ Once mounted, please ensure you use the following folders to keep the app workin
 - `/lyrics/`: For your `.md` markdown lyric files.
 - `/backgrounds/`: For genre background images.
 
-**Note:** If you encounter permission errors, ensure your Google account has the **Storage Admin** role assigned in the [IAM section of the Google Cloud Console](https://console.cloud.google.com/iam-admin/iam).
+## Troubleshooting Permission Errors
+If you see an error saying **"You don’t have permission to view it"** or **"Verify disk permissions"**, follow these steps to fix your Google Cloud permissions:
+
+1. Go to the [Google Cloud IAM Console](https://console.cloud.google.com/iam-admin/iam?project=studio-127742305-c9528).
+2. Find your email address in the list.
+3. Click the **Edit** (pencil) icon next to your name.
+4. Click **Add Another Role**.
+5. Search for and select **Storage Admin**. This gives you full control over the files via Mountain Duck.
+6. Click **Save**.
+7. In Mountain Duck, **Disconnect** and then **Connect** again. It may take a minute for the new permissions to propagate.
+
+**Note:** The `storage.rules` file in your project controls app access, but Mountain Duck uses these "IAM Roles" for your desktop access.
