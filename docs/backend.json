@@ -4,236 +4,104 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "HymnGenre",
       "type": "object",
-      "description": "Represents a category or genre of hymns, used for organization and navigation within the app.",
+      "description": "Represents a category or genre of hymns.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the HymnGenre entity."
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the hymn genre, e.g., 'Holy Week', 'Kiahk', 'Resurrection'."
-        },
-        "description": {
-          "type": "string",
-          "description": "A brief description providing context or details about the hymn genre."
-        }
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "icon": { "type": "string" },
+        "backgroundUrl": { "type": "string" },
+        "contentUrl": { "type": "string" },
+        "active": { "type": "boolean" },
+        "cantorCloudActive": { "type": "boolean" }
       },
-      "required": [
-        "id",
-        "name"
-      ]
+      "required": ["id", "name", "active"]
+    },
+    "Cantor": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Cantor",
+      "type": "object",
+      "description": "Represents a person who records hymns.",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "rank": { "type": "number" },
+        "cantorCloudActive": { "type": "boolean" }
+      },
+      "required": ["id", "name"]
     },
     "Hymn": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Hymn",
       "type": "object",
-      "description": "Represents a specific hymn within a genre, identified by its title.",
+      "description": "Represents a specific hymn.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Hymn entity."
-        },
-        "title": {
-          "type": "string",
-          "description": "The title of the hymn, e.g., 'Tai shouri', 'Agios', 'Omonogenees'."
-        },
-        "hymnGenreId": {
-          "type": "string",
-          "description": "Reference to the HymnGenre this hymn belongs to. (Relationship: HymnGenre 1:N Hymn)"
-        },
-        "description": {
-          "type": "string",
-          "description": "A brief description or contextual information for the hymn."
-        }
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "genreId": { "type": "array", "items": { "type": "string" } },
+        "description": { "type": "string" },
+        "lyricsEnglish": { "type": "string" },
+        "lyricsCoptic": { "type": "string" },
+        "lyricsArabic": { "type": "string" }
       },
-      "required": [
-        "id",
-        "title",
-        "hymnGenreId"
-      ]
+      "required": ["id", "title", "genreId"]
     },
     "HymnRecording": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "HymnRecording",
       "type": "object",
-      "description": "Represents a specific audio recording of a hymn by a particular cantor, stored in the cloud.",
+      "description": "Represents a specific audio recording of a hymn.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the HymnRecording entity."
-        },
-        "hymnId": {
-          "type": "string",
-          "description": "Reference to the Hymn this recording is for. (Relationship: Hymn 1:N HymnRecording)"
-        },
-        "cantorName": {
-          "type": "string",
-          "description": "The name of the cantor who performed this recording, e.g., 'Cantor Tharwat', 'Cantor Ibrahim'."
-        },
-        "audioUrl": {
-          "type": "string",
-          "description": "The URL where the audio track file is stored in the cloud.",
-          "format": "uri"
-        },
-        "durationSeconds": {
-          "type": "number",
-          "description": "The total length of the audio track in seconds."
-        },
-        "isDefault": {
-          "type": "boolean",
-          "description": "A boolean flag indicating if this recording is the default choice for its associated hymn."
-        },
-        "description": {
-          "type": "string",
-          "description": "A brief description or additional notes about this specific recording."
-        }
+        "id": { "type": "string" },
+        "hymnId": { "type": "string" },
+        "cantorId": { "type": "string" },
+        "audioUrl": { "type": "string", "format": "uri" },
+        "markersUrl": { "type": "string" },
+        "audioLength": { "type": "number" },
+        "active": { "type": "boolean" },
+        "mode": { "type": "string", "enum": ["learn", "listen"] }
       },
-      "required": [
-        "id",
-        "hymnId",
-        "cantorName",
-        "audioUrl",
-        "durationSeconds",
-        "isDefault"
-      ]
-    },
-    "TrackMark": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "TrackMark",
-      "type": "object",
-      "description": "Represents a developer-defined point (mark) on a HymnRecording track, used to delineate sections for practice and navigation.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the TrackMark entity."
-        },
-        "hymnRecordingId": {
-          "type": "string",
-          "description": "Reference to the HymnRecording this mark is placed on. (Relationship: HymnRecording 1:N TrackMark)"
-        },
-        "positionSeconds": {
-          "type": "number",
-          "description": "The precise time in seconds from the beginning of the track where this mark is located."
-        },
-        "label": {
-          "type": "string",
-          "description": "An optional descriptive label for the mark, e.g., 'Intro Start', 'Verse 1', 'Chorus End'."
-        },
-        "defaultEnabled": {
-          "type": "boolean",
-          "description": "A boolean indicating the developer's default state for whether this mark should be considered active for sectioning. Users can toggle this state at runtime, but this reflects the initial configuration."
-        },
-        "description": {
-          "type": "string",
-          "description": "A description of the mark's purpose or significance within the hymn, for developer or content reference."
-        }
-      },
-      "required": [
-        "id",
-        "hymnRecordingId",
-        "positionSeconds",
-        "defaultEnabled"
-      ]
+      "required": ["id", "hymnId", "cantorId", "audioUrl", "active", "mode"]
     }
   },
   "auth": {
-    "providers": [
-      "password",
-      "anonymous"
-    ]
+    "providers": ["anonymous"]
   },
   "firestore": {
     "structure": [
       {
-        "path": "/hymnGenres/{hymnGenreId}",
+        "path": "/genres/{genreId}",
         "definition": {
           "entityName": "HymnGenre",
-          "schema": {
-            "$ref": "#/backend/entities/HymnGenre"
-          },
-          "description": "Top-level collection for hymn genres, allowing users to browse categories. All documents are publicly readable.",
-          "params": [
-            {
-              "name": "hymnGenreId",
-              "description": "Unique identifier for a hymn genre."
-            }
-          ]
+          "schema": { "$ref": "#/backend/entities/HymnGenre" },
+          "description": "Top-level collection for hymn genres."
         }
       },
       {
-        "path": "/hymnGenres/{hymnGenreId}/hymns/{hymnId}",
+        "path": "/hymns/{hymnId}",
         "definition": {
           "entityName": "Hymn",
-          "schema": {
-            "$ref": "#/backend/entities/Hymn"
-          },
-          "description": "Subcollection of hymns belonging to a specific genre. All documents are publicly readable. Includes denormalized 'hymnGenreId' for explicit relationship.",
-          "params": [
-            {
-              "name": "hymnGenreId",
-              "description": "Unique identifier of the parent hymn genre."
-            },
-            {
-              "name": "hymnId",
-              "description": "Unique identifier for a hymn."
-            }
-          ]
+          "schema": { "$ref": "#/backend/entities/Hymn" },
+          "description": "Top-level collection for hymns."
         }
       },
       {
-        "path": "/hymnGenres/{hymnGenreId}/hymns/{hymnId}/hymnRecordings/{hymnRecordingId}",
+        "path": "/cantors/{cantorId}",
+        "definition": {
+          "entityName": "Cantor",
+          "schema": { "$ref": "#/backend/entities/Cantor" },
+          "description": "Top-level collection for cantors."
+        }
+      },
+      {
+        "path": "/recordings/{recordingId}",
         "definition": {
           "entityName": "HymnRecording",
-          "schema": {
-            "$ref": "#/backend/entities/HymnRecording"
-          },
-          "description": "Subcollection of audio recordings for a specific hymn. Multiple recordings can exist per hymn. All documents are publicly readable. Includes denormalized 'hymnId' for explicit relationship.",
-          "params": [
-            {
-              "name": "hymnGenreId",
-              "description": "Unique identifier of the grandparent hymn genre."
-            },
-            {
-              "name": "hymnId",
-              "description": "Unique identifier of the parent hymn."
-            },
-            {
-              "name": "hymnRecordingId",
-              "description": "Unique identifier for a hymn recording."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/hymnGenres/{hymnGenreId}/hymns/{hymnId}/hymnRecordings/{hymnRecordingId}/trackMarks/{trackMarkId}",
-        "definition": {
-          "entityName": "TrackMark",
-          "schema": {
-            "$ref": "#/backend/entities/TrackMark"
-          },
-          "description": "Subcollection of developer-defined track marks for a specific hymn recording. These marks include a 'defaultEnabled' state. All documents are publicly readable. Includes denormalized 'hymnRecordingId' for explicit relationship.",
-          "params": [
-            {
-              "name": "hymnGenreId",
-              "description": "Unique identifier of the great-grandparent hymn genre."
-            },
-            {
-              "name": "hymnId",
-              "description": "Unique identifier of the grandparent hymn."
-            },
-            {
-              "name": "hymnRecordingId",
-              "description": "Unique identifier of the parent hymn recording."
-            },
-            {
-              "name": "trackMarkId",
-              "description": "Unique identifier for a track mark."
-            }
-          ]
+          "schema": { "$ref": "#/backend/entities/HymnRecording" },
+          "description": "Top-level collection for hymn recordings."
         }
       }
     ],
-    "reasoning": "The Firestore structure is designed to be highly scalable, secure, and debuggable, adhering to the core design principles and mandates. It primarily segregates public, read-only content from user-specific data, although constraints in the provided entity schemas limit the explicit definition of user-specific paths."
+    "reasoning": "The application uses a flat collection structure for better flexibility and easier querying across relationships."
   }
 }

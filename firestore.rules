@@ -3,29 +3,51 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * FIRESTORE SECURITY RULES DOCUMENTATION
+     * FIRESTORE SECURITY RULES
+     * These rules allow public read access to the hymn library data
+     * while restricting all client-side writes.
      */
 
     function isSignedIn(auth) {
       return auth != null;
     }
 
+    // Genres collection
+    match /genres/{genreId} {
+      allow get, list: if true;
+      allow write: if false;
+    }
+
+    // Hymns collection
+    match /hymns/{hymnId} {
+      allow get, list: if true;
+      allow write: if false;
+    }
+
+    // Cantors collection
+    match /cantors/{cantorId} {
+      allow get, list: if true;
+      allow write: if false;
+    }
+
+    // Recordings collection
+    match /recordings/{recordingId} {
+      allow get, list: if true;
+      allow write: if false;
+    }
+
+    // Support for legacy or alternative plural naming if used
     match /hymnGenres/{hymnGenreId} {
       allow get, list: if true;
-      allow create, update, delete: if isSignedIn(request.auth) && false;
-
+      allow write: if false;
+      
       match /hymns/{hymnId} {
         allow get, list: if true;
-        allow create, update, delete: if isSignedIn(request.auth) && false;
-
+        allow write: if false;
+        
         match /hymnRecordings/{hymnRecordingId} {
           allow get, list: if true;
-          allow create, update, delete: if isSignedIn(request.auth) && false;
-
-          match /trackMarks/{trackMarkId} {
-            allow get, list: if true;
-            allow create, update, delete: if isSignedIn(request.auth) && false;
-          }
+          allow write: if false;
         }
       }
     }
