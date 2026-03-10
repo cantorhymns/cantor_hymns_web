@@ -11,18 +11,11 @@ import { getFirestore } from 'firebase/firestore'
  * between the development environment and the production project.
  */
 export function initializeFirebase() {
-  if (!getApps().length) {
-    // Explicitly use the config object to avoid issues with 
-    // potentially misconfigured environment variables in the studio.
-    const firebaseApp = initializeApp(firebaseConfig);
-    return getSdks(firebaseApp);
-  }
-
-  // If already initialized, return the SDKs with the already initialized App
-  return getSdks(getApp());
-}
-
-export function getSdks(firebaseApp: FirebaseApp) {
+  // Always use the explicit config to ensure we are connected to the correct project
+  // and bucket, especially after environment resets.
+  const apps = getApps();
+  const firebaseApp = apps.length ? apps[0] : initializeApp(firebaseConfig);
+  
   return {
     firebaseApp,
     auth: getAuth(firebaseApp),

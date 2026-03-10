@@ -12,31 +12,28 @@ service cloud.firestore {
       return auth != null;
     }
 
-    // Genres collection
+    // Top-level collections
     match /genres/{genreId} {
       allow get, list: if true;
       allow write: if false;
     }
 
-    // Hymns collection
     match /hymns/{hymnId} {
       allow get, list: if true;
       allow write: if false;
     }
 
-    // Cantors collection
     match /cantors/{cantorId} {
       allow get, list: if true;
       allow write: if false;
     }
 
-    // Recordings collection
     match /recordings/{recordingId} {
       allow get, list: if true;
       allow write: if false;
     }
 
-    // Support for legacy or alternative plural naming if used
+    // Legacy or nested patterns support
     match /hymnGenres/{hymnGenreId} {
       allow get, list: if true;
       allow write: if false;
