@@ -4,47 +4,47 @@ service cloud.firestore {
 
     /**
      * FIRESTORE SECURITY RULES
-     * These rules allow public read access to the hymn library data
-     * while restricting all client-side writes.
+     * Allows public read access to the hymn library.
+     * Allows writes for authenticated users (including anonymous sessions used by scripts).
      */
 
-    function isSignedIn(auth) {
-      return auth != null;
+    function isSignedIn() {
+      return request.auth != null;
     }
 
     // Top-level collections
     match /genres/{genreId} {
       allow get, list: if true;
-      allow write: if false;
+      allow write: if isSignedIn();
     }
 
     match /hymns/{hymnId} {
       allow get, list: if true;
-      allow write: if false;
+      allow write: if isSignedIn();
     }
 
     match /cantors/{cantorId} {
       allow get, list: if true;
-      allow write: if false;
+      allow write: if isSignedIn();
     }
 
     match /recordings/{recordingId} {
       allow get, list: if true;
-      allow write: if false;
+      allow write: if isSignedIn();
     }
 
     // Legacy or nested patterns support
     match /hymnGenres/{hymnGenreId} {
       allow get, list: if true;
-      allow write: if false;
+      allow write: if isSignedIn();
       
       match /hymns/{hymnId} {
         allow get, list: if true;
-        allow write: if false;
+        allow write: if isSignedIn();
         
         match /hymnRecordings/{hymnRecordingId} {
           allow get, list: if true;
-          allow write: if false;
+          allow write: if isSignedIn();
         }
       }
     }
