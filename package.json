@@ -1,4 +1,3 @@
-
 {
   "name": "nextn",
   "version": "0.1.0",
@@ -44,7 +43,8 @@
     "db:add-khristos-anesti-minor": "tsx -r dotenv/config src/scripts/add-khristos-anesti-minor.ts",
     "db:add-ton-seena": "tsx -r dotenv/config src/scripts/add-ton-seena.ts",
     "db:add-tou-lithou": "tsx -r dotenv/config src/scripts/add-tou-lithou.ts",
-    "db:add-teen-anastaseen": "tsx -r dotenv/config src/scripts/add-teen-anastaseen.ts"
+    "db:add-teen-anastaseen": "tsx -r dotenv/config src/scripts/add-teen-anastaseen.ts",
+    "db:add-kata-ni-khoros-distribution": "tsx -r dotenv/config src/scripts/add-kata-ni-khoros-distribution.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
