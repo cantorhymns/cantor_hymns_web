@@ -29,14 +29,14 @@ Once mounted, please ensure you use the following folders to keep the app workin
 - `/backgrounds/`: For genre background images.
 
 ## Troubleshooting Permission Errors
-If you see an error saying **"You don’t have permission to view it"** or **"Verify disk permissions"**, follow these steps to fix your Google Cloud permissions:
+If you see an error saying **"You don’t have permission to view it"** or **"Verify disk permissions"** in Finder, this is a Google Cloud IAM issue. Follow these exact steps to fix it:
 
-1. Go to the [Google Cloud IAM Console](https://console.cloud.google.com/iam-admin/iam?project=studio-127742305-c9528).
-2. Find your email address in the list.
-3. Click the **Edit** (pencil) icon next to your name.
-4. Click **Add Another Role**.
-5. Search for and select **Storage Admin**. This gives you full control over the files via Mountain Duck.
-6. Click **Save**.
-7. In Mountain Duck, **Disconnect** and then **Connect** again. It may take a minute for the new permissions to propagate.
+1.  **Open the IAM Console**: Go to the [Google Cloud IAM page](https://console.cloud.google.com/iam-admin/iam?project=studio-127742305-c9528).
+2.  **Find your account**: Look for your email address in the list of principals.
+3.  **Edit Permissions**: Click the **pencil icon** (Edit principal) next to your email.
+4.  **Add Role**: Click **+ ADD ANOTHER ROLE**.
+5.  **Select Storage Admin**: Search for **"Storage Admin"** and select it. This specific role is required for Mountain Duck to list and manage files across the whole bucket.
+6.  **Save**: Click **Save**.
+7.  **Reconnect**: In Mountain Duck, **Disconnect** and then **Connect** again. It may take up to a minute for the new permissions to propagate.
 
-**Note:** The `storage.rules` file in your project controls app access, but Mountain Duck uses these "IAM Roles" for your desktop access.
+**Note:** Newer Firebase projects use "Uniform" access control by default, which means object-level permissions won't work; you MUST have the project-level role assigned above.

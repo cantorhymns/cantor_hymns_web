@@ -4,95 +4,27 @@ service cloud.firestore {
 
     /**
      * FIRESTORE SECURITY RULES DOCUMENTATION
-     *
-     * Core Philosophy:
-     * This ruleset implements a public content repository model. The application serves as a
-     * library for religious hymns, organized by genre, specific hymn, audio recordings, 
-     * and navigational track marks. 
-     *
-     * Data Structure:
-     * The data is organized in a strictly hierarchical nested structure:
-     * /hymnGenres/{genreId}
-     *   └── /hymns/{hymnId}
-     *       └── /hymnRecordings/{recordingId}
-     *           └── /trackMarks/{markId}
-     *
-     * Key Security Decisions:
-     * 1. Public Read Access: All content across all collections is publicly readable (including 
-     *    anonymous users) to facilitate content discovery and consumption.
-     * 2. Read-Only Posture: The current schema defines content as "developer-defined." Since 
-     *    the entities (HymnGenre, Hymn, etc.) lack ownership fields (e.g., 'authorId'), 
-     *    public write access is strictly denied to prevent unauthorized data modification.
-     * 3. Relational Integrity: In the event that writes are enabled in the future, placeholders 
-     *    are provided to ensure internal document IDs match the Firestore path IDs.
-     * 4. Denormalization for Authorization: While not currently used for complex authorization 
-     *    due to the public nature of the data, the schema includes denormalized parent IDs 
-     *    (e.g., hymnId inside a recording document) which supports flat-query capabilities.
      */
 
-    /**
-     * @description Global helper to check if the user is authenticated.
-     *              The 'auth' object must be passed explicitly from 'request.auth'.
-     */
-    function isSignedIn(auth) { // 'auth' is now a parameter
+    function isSignedIn(auth) {
       return auth != null;
     }
 
-    /**
-     * @description Top-level collection for organizing hymns by category.
-     * @path /hymnGenres/{hymnGenreId}
-     * @allow (get, list) for any user (public).
-     * @deny (create, update, delete) for any user (read-only content).
-     * @principle Public consumption with strict write protection.
-     */
     match /hymnGenres/{hymnGenreId} {
       allow get, list: if true;
+      allow create, update, delete: if isSignedIn(request.auth) && false;
 
-      // CRITICAL: Cannot implement owner-only writes. The 'HymnGenre' entity is missing an 'ownerId' or 'authorId' field.
-      // Fix: Use isSignedIn function with 'request.auth' and maintain 'false' for strict read-only.
-      allow create, update, delete: if isSignedIn(request.auth) && false; // TODO: Add owner validation once the schema is updated with an ownership field.
-
-      /**
-       * @description Subcollection of hymns belonging to a specific genre.
-       * @path /hymnGenres/{hymnGenreId}/hymns/{hymnId}
-       * @allow (get, list) for any user (public).
-       * @deny (create, update, delete) for any user.
-       * @principle Hierarchical data segregation for public content.
-       */
       match /hymns/{hymnId} {
         allow get, list: if true;
+        allow create, update, delete: if isSignedIn(request.auth) && false;
 
-        // CRITICAL: Cannot implement owner-only writes. The 'Hymn' entity is missing an 'ownerId' or 'authorId' field.
-        // Fix: Use isSignedIn function with 'request.auth' and maintain 'false' for strict read-only.
-        allow create, update, delete: if isSignedIn(request.auth) && false; // TODO: Add owner validation once the schema is updated with an ownership field.
-
-        /**
-         * @description Subcollection of audio recordings for a specific hymn.
-         * @path /hymnGenres/{hymnGenreId}/hymns/{hymnId}/hymnRecordings/{hymnRecordingId}
-         * @allow (get, list) for any user (public).
-         * @deny (create, update, delete) for any user.
-         * @principle Content-specific subcollections with global read access.
-         */
         match /hymnRecordings/{hymnRecordingId} {
           allow get, list: if true;
+          allow create, update, delete: if isSignedIn(request.auth) && false;
 
-          // CRITICAL: Cannot implement owner-only writes. The 'HymnRecording' entity is missing an 'ownerId' or 'authorId' field.
-          // Fix: Use isSignedIn function with 'request.auth' and maintain 'false' for strict read-only.
-          allow create, update, delete: if isSignedIn(request.auth) && false; // TODO: Add owner validation once the schema is updated with an ownership field.
-
-          /**
-           * @description Navigational marks for specific time points in an audio recording.
-           * @path /hymnGenres/{hymnGenreId}/hymns/{hymnId}/hymnRecordings/{hymnRecordingId}/trackMarks/{trackMarkId}
-           * @allow (get, list) for any user (public).
-           * @deny (create, update, delete) for any user.
-           * @principle Deeply nested content protection.
-           */
           match /trackMarks/{trackMarkId} {
             allow get, list: if true;
-
-            // CRITICAL: Cannot implement owner-only writes. The 'TrackMark' entity is missing an 'ownerId' or 'authorId' field.
-            // Fix: Use isSignedIn function with 'request.auth' and maintain 'false' for strict read-only.
-            allow create, update, delete: if isSignedIn(request.auth) && false; // TODO: Add owner validation once the schema is updated with an ownership field.
+            allow create, update, delete: if isSignedIn(request.auth) && false;
           }
         }
       }
