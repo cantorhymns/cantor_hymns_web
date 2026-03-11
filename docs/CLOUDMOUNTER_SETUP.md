@@ -1,31 +1,26 @@
-# Connecting CloudMounter to Firebase Storage
+# Connecting CloudMounter to Firebase Storage (S3 Method)
 
-To manage your audio and image files directly from your computer's file explorer using CloudMounter, follow these steps:
+To connect Google Cloud Storage (GCS) in CloudMounter, you should use the **Amazon S3** connection option because GCS is S3-compatible.
 
-## Step 1: Add New Connection
-1. Open **CloudMounter**.
-2. Click the **+** (plus) icon to add a new drive.
-3. Select **Google Cloud Storage** from the list of storage providers.
+## Step 1: Create HMAC Keys
+1. Open the [Google Cloud Console Storage Settings](https://console.cloud.google.com/storage/settings).
+2. Go to the **Interoperability** tab.
+3. If you haven't enabled interoperability, click **Enable interoperability access**.
+4. Under **HMAC keys for your user account**, click **Create a key**.
+5. Save your **Access Key** and **Secret Key** immediately.
 
-## Step 2: Authentication
-1. CloudMounter will open a browser window for Google OAuth.
-2. Log in with the **Google account** that owns your Firebase project.
-3. Grant CloudMounter permission to access your storage.
+## Step 2: Configure CloudMounter
+1. Open **CloudMounter** and click the **+** (plus) icon to add a new drive.
+2. Select **Amazon S3** from the list of storage providers.
 
-## Step 3: Connection Details
+## Step 3: Enter Connection Details
 1. **Connection Name**: Cantor Storage
-2. **Project ID**: `studio-127742305-c9528`
-3. **Bucket**: Locate and select the bucket named `studio-127742305-c9528.appspot.com`.
+2. **Server/Endpoint**: `https://storage.googleapis.com`
+3. **Access Key**: [Enter the Access Key from Step 1]
+4. **Secret Key**: [Enter the Secret Key from Step 1]
 
 ## Step 4: Mount
 1. Click **Mount**.
-2. The storage bucket will now appear as a regular network drive on your Mac or PC.
+2. Your storage buckets will now appear as a network drive. Locate the one named `studio-127742305-c9528.firebasestorage.app`.
 
-## Working with Files
-You can now drag and drop files into the folders we've established:
-- `/tracks/`: For your MP3 audio files.
-- `/markers/`: For your `.txt` marker files.
-- `/lyrics/`: For your `.md` markdown lyric files.
-- `/backgrounds/`: For genre background images.
-
-**Note:** If you see an "Access Denied" or "Forbidden" error, verify that your account has the **Storage Admin** role in the [Google Cloud Console](https://console.cloud.google.com/iam-admin/iam) for this project.
+**Note:** This is different from connecting to Google Drive, which is a separate consumer service. Always use the Amazon S3 option for your developer storage buckets.

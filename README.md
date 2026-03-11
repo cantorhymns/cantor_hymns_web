@@ -12,6 +12,7 @@ This is a high-performance Next.js 15 application built with React, Tailwind CSS
 
 ## Documentation
 - [CORS Fix](./docs/CORS_FIX.md): Essential step if audio or lyrics fail to load.
+- [CloudMounter Setup](./docs/CLOUDMOUNTER_SETUP.md): Guide for managing files via the S3-compatible GCS protocol.
 
 ## Database Management
 This project includes built-in scripts to manage your Firestore data. You can run these from your terminal:
