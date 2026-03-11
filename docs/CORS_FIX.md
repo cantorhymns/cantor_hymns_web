@@ -14,7 +14,7 @@ You can fix this using either the web-based Google Cloud Console or the command-
 This method uses the graphical user interface and doesn't require any local tools.
 
 1.  **Open the Google Cloud Console**: Navigate to the Cloud Storage browser for your project by clicking this link:
-    [https://console.cloud.google.com/storage/browser/studio-127742305-c9528.appspot.com](https://console.cloud.google.com/storage/browser/studio-127742305-c9528.appspot.com)
+    [https://console.cloud.google.com/storage/browser/studio-127742305-c9528.firebasestorage.app](https://console.cloud.google.com/storage/browser/studio-127742305-c9528.firebasestorage.app)
 
 2.  **IMPORTANT: If you don't see a bucket after clicking the link...**
 
@@ -24,7 +24,7 @@ This method uses the graphical user interface and doesn't require any local tool
 
     The direct link *should* select the correct project for you, but if it doesn't, you may need to select it manually before proceeding.
 
-3.  **Click the Bucket Name**: From the list of buckets, click on the name of your bucket. The name will be a blue link and will look like `studio-127742305-c9528.appspot.com`. This will take you to the **Bucket details** page.
+3.  **Click the Bucket Name**: From the list of buckets, click on the name of your bucket. The name will be a blue link and will look like `studio-127742305-c9528.firebasestorage.app`. This will take you to the **Bucket details** page.
 
 4.  **Go to the Permissions Tab**: Now that you are on the "Bucket details" page, you will see a row of tabs near the top (Objects, Permissions, Lifecycle, etc.). Click on the **Permissions** tab.
 
@@ -64,7 +64,7 @@ Create a new file on your local computer (e.g., on your Desktop) and name it `co
 Open a terminal or command prompt on your local computer. Then, run the following command:
 
 ```bash
-gcloud storage buckets update gs://studio-127742305-c9528.appspot.com --cors-file=cors.json
+gcloud storage buckets update gs://studio-127742305-c9528.firebasestorage.app --cors-file=cors.json
 ```
 
 This command tells Google Cloud to apply the rules from your `cors.json` file to your project's default storage bucket.
