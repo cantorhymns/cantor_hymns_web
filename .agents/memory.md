@@ -30,6 +30,7 @@ This file serves as the persistent "memory" for AI development sessions across m
 - [x] Committed all local changes and configurations
 - [x] Changed Git remote origin to `https://github.com/cantorhymns/cantor_hymns_web.git`
 - [x] Pushing to GitHub (Successfully authenticated and pushed)
+- [x] Created `src/scripts/add-ondos.ts` to add the new "Ondos" hymn and its HICS recording
 
 ## Next Steps / Backlog
 1. **Interactive Audio Player Tuning**: Test and tune marker snaps, AB-looping, and playhead rendering.
