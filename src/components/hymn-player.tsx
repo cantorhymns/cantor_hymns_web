@@ -388,6 +388,21 @@ const Skip10ForwardIcon = () => (
 );
 
 
+interface HymnPlayerProps {
+  hymn: Hymn;
+  onEnded: () => void;
+  autoplay?: boolean;
+  onNext?: () => void;
+  onPrevious?: () => void;
+  hasNext?: boolean;
+  hasPrevious?: boolean;
+  lyricsVisibleByDefault?: boolean;
+  showLyricsToggleButton?: boolean;
+  initialRecordingId?: string;
+  onRecordingChange?: (recording: Recording | undefined) => void;
+  genreId?: string | string[];
+}
+
 export function HymnPlayer({
   hymn,
   onEnded,
@@ -401,7 +416,7 @@ export function HymnPlayer({
   initialRecordingId,
   onRecordingChange,
   genreId,
-}) {
+}: HymnPlayerProps) {
   const { firebaseApp } = useFirebase();
   const storage = useMemo(() => firebaseApp ? getStorage(firebaseApp) : null, [firebaseApp]);
   const { toast } = useToast();

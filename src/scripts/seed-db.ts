@@ -72,7 +72,7 @@ async function seedDatabase() {
 
     // Seed Genres
     console.log(`Seeding ${genres.length} genres...`);
-    genres.forEach((genre) => {
+    genres.forEach((genre: any) => {
       const docRef = doc(db, 'genres', genre.id);
       seedBatch.set(docRef, {
         name: genre.name,
@@ -95,7 +95,7 @@ async function seedDatabase() {
 
     // Seed Hymns
     console.log(`Seeding ${hymns.length} hymns...`);
-    hymns.forEach((hymn) => {
+    hymns.forEach((hymn: any) => {
         const docRef = doc(db, 'hymns', hymn.id);
         // Explicitly map the fields to ensure they are all included
         seedBatch.set(docRef, {
