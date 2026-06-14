@@ -173,8 +173,84 @@ function useMarkersFile(path?: string) {
     return { marks, isLoading, error };
   }
 
+function useLyricsMappingFile(path?: string) {
+  const [mapping, setMapping] = useState<number[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
+  const { firebaseApp } = useFirebase();
+  const storage = useMemo(() => (firebaseApp ? getStorage(firebaseApp) : null), [firebaseApp]);
+
+  useEffect(() => {
+    if (!path || !storage) {
+      setMapping([]);
+      setIsLoading(false);
+      setError(null);
+      return;
+    }
+
+    let isCancelled = false;
+    const fetchContent = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const storageRef = ref(storage, path);
+        const url = await getDownloadURL(storageRef);
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Lyrics mapping file request failed with status ${response.status}`);
+        }
+        const textContent = (await response.text()).trim();
+        if (!isCancelled) {
+          if (textContent) {
+            // Split by line and parse each line as a number.
+            const parsedMapping = textContent.split(/\r?\n/).map(line => {
+              const num = parseInt(line.trim(), 10);
+              return isNaN(num) ? -1 : num;
+            });
+            setMapping(parsedMapping);
+          } else {
+            setMapping([]);
+          }
+        }
+      } catch (e: any) {
+        if (!isCancelled) {
+          setError(e.message || 'Failed to fetch lyrics mapping');
+          setMapping([]);
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchContent();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [path, storage]);
+
+  return { mapping, isLoading, error };
+}
+
+
+const LyricsDisplay = ({
+  hymn,
+  mode,
+  sortedActiveMarks,
+  currentTime,
+  seek,
+  lyricsMapping,
+}: {
+  hymn: Hymn;
+  mode?: string;
+  sortedActiveMarks?: number[];
+  currentTime?: number;
+  seek?: (time: number) => void;
+  lyricsMapping?: number[];
+}) => {
   const [visible, setVisible] = useState({
     english: true,
     coptic: true,
@@ -223,7 +299,7 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
         if (trimmedContent) {
           result[lang] = trimmedContent.split(/\n\s*\n/).map(v => v.trim());
         } else {
-           result[lang] = [];
+          result[lang] = [];
         }
       } else {
         result[lang] = [];
@@ -250,6 +326,33 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
   };
   
   const anyError = visibleLangs.map(lang => langConfigs[lang].error).find(Boolean);
+
+  const activeVerseIndex = useMemo(() => {
+    if (!mode || mode !== 'learn' || !lyricsMapping || lyricsMapping.length === 0 || currentTime === undefined) {
+      return -1;
+    }
+    let bestVerseIndex = -1;
+    let maxStartTime = -1;
+
+    for (let v = 0; v < lyricsMapping.length; v++) {
+      const mappedValue = lyricsMapping[v];
+      if (mappedValue === undefined || mappedValue === -1) {
+        continue;
+      }
+      
+      const startTime = mappedValue === 0 
+        ? 0 
+        : (sortedActiveMarks?.[mappedValue - 1] ?? -1);
+
+      if (startTime !== -1 && currentTime >= startTime) {
+        if (startTime >= maxStartTime) {
+          maxStartTime = startTime;
+          bestVerseIndex = v;
+        }
+      }
+    }
+    return bestVerseIndex;
+  }, [mode, lyricsMapping, sortedActiveMarks, currentTime]);
 
   if (!hasAnyLyrics) {
     return null;
@@ -310,39 +413,59 @@ const LyricsDisplay = ({ hymn }: { hymn: Hymn }) => {
              </div>
           ) : (
             <>
-              {Array.from({ length: maxVerses }).map((_, verseIndex) => (
-                <div key={verseIndex} className={cn(
-                  "flex flex-row",
-                  verseIndex > 0 && "border-t"
-                )}>
-                  {visibleLangs.map((lang, langIndex) => {
-                    const config = langConfigs[lang];
-                    const verse = versesByLang[lang]?.[verseIndex];
-                    return (
-                      <div
-                        key={lang}
-                        className={cn(
-                          "flex-1 p-4 min-w-0",
-                          langIndex > 0 && "border-l"
-                        )}
-                        dir={config.dir}
-                      >
+              {Array.from({ length: maxVerses }).map((_, verseIndex) => {
+                const mappedValue = (mode === 'learn' && lyricsMapping) ? (lyricsMapping[verseIndex] ?? -1) : -1;
+                const isActive = mode === 'learn' && verseIndex === activeVerseIndex;
+                const isClickable = mode === 'learn' && seek && mappedValue !== -1;
+
+                return (
+                  <div
+                    key={verseIndex}
+                    onClick={() => {
+                      if (isClickable && seek) {
+                        if (mappedValue === 0) {
+                          seek(0);
+                        } else if (sortedActiveMarks && sortedActiveMarks[mappedValue - 1] !== undefined) {
+                          seek(sortedActiveMarks[mappedValue - 1]);
+                        }
+                      }
+                    }}
+                    className={cn(
+                      "flex flex-row border-l-4 transition-all duration-200",
+                      verseIndex > 0 && "border-t",
+                      isActive ? "bg-primary/10 border-l-primary" : "border-l-transparent",
+                      isClickable && "cursor-pointer hover:bg-secondary/40"
+                    )}
+                  >
+                    {visibleLangs.map((lang, langIndex) => {
+                      const config = langConfigs[lang];
+                      const verse = versesByLang[lang]?.[verseIndex];
+                      return (
                         <div
-                          lang={config.lang}
-                          className={cn("text-muted-foreground", {
-                            'text-sm': fontSize === 'sm',
-                            'text-base': fontSize === 'base',
-                            'text-lg': fontSize === 'lg',
-                            'text-xl': fontSize === 'xl',
-                          })}
+                          key={lang}
+                          className={cn(
+                            "flex-1 p-4 min-w-0",
+                            langIndex > 0 && "border-l"
+                          )}
+                          dir={config.dir}
                         >
-                          {renderVerseContent(verse)}
+                          <div
+                            lang={config.lang}
+                            className={cn("text-muted-foreground", {
+                              'text-sm': fontSize === 'sm',
+                              'text-base': fontSize === 'base',
+                              'text-lg': fontSize === 'lg',
+                              'text-xl': fontSize === 'xl',
+                            })}
+                          >
+                            {renderVerseContent(verse)}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
+                      );
+                    })}
+                  </div>
+                );
+              })}
             </>
           )}
         </div>
@@ -428,6 +551,10 @@ export function HymnPlayer({
 
   const { marks: loadedMarks, isLoading: isLoadingMarks, error: marksError } = useMarkersFile(
     currentRecording?.mode === 'learn' ? currentRecording.markersUrl : undefined
+  );
+
+  const { mapping: lyricsMapping, isLoading: isLoadingMapping } = useLyricsMappingFile(
+    currentRecording?.mode === 'learn' ? currentRecording.lyricsMappingUrl : undefined
   );
 
   const isPlayerDisabled = !audioSrc || !!audioError;
@@ -890,7 +1017,11 @@ export function HymnPlayer({
         const playPromise = audio.play();
         if (playPromise !== undefined) {
             playPromise.catch((e) => {
-                console.error('AUTOPLAY FAILED in handleCanPlay:', e.name, e.message);
+                if (e.name === 'NotAllowedError') {
+                    console.warn('AUTOPLAY BLOCKED in handleCanPlay (user interaction required):', e.message);
+                } else {
+                    console.error('AUTOPLAY FAILED in handleCanPlay:', e.name, e.message);
+                }
             });
         }
     }
@@ -1231,7 +1362,14 @@ export function HymnPlayer({
       </Card>
       {lyricsVisible && hasAnyLyrics && (
         <div className="w-full max-w-3xl mx-auto mt-8">
-          <LyricsDisplay hymn={hymn} />
+          <LyricsDisplay
+            hymn={hymn}
+            mode={currentRecording?.mode}
+            sortedActiveMarks={sortedActiveMarks}
+            currentTime={currentTime}
+            seek={seek}
+            lyricsMapping={lyricsMapping}
+          />
         </div>
       )}
       

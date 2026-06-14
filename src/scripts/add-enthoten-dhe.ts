@@ -1,4 +1,3 @@
-
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 import { getAuth, signInAnonymously } from 'firebase/auth';
@@ -6,30 +5,28 @@ import { firebaseConfig } from '../firebase/config';
 
 // --- Data for the new Hymn and Recording ---
 
-const hymnId = 'pi-mairomi';
+const hymnId = 'enthoten-dhe';
 const hymnData = {
-    name: "Pi-Mairomi",
-    description: "A hymn for the Lord Jesus Christ, chanted during the Distribution of Holy Mysteries in the weekdays of Holy Lent.",
-    genreId: ["lent"],
-    lyricsArabic: "lyrics/arabic/pi-mairomi_arabic.md",
-    lyricsCoptic: "lyrics/coptic/pi-mairomi_coptic.md",
-    lyricsEnglish: "lyrics/english/pi-mairomi_english.md"
+    name: "Enthoten Dhe",
+    description: "A hymn for the apostles of Jesus Christ. Chanted after the Synaxarium or during the distribution of the holy mysteries.",
+    genreId: ["apostles-fast"],
+    lyricsArabic: "lyrics/arabic/enthoten-dhe_arabic.md",
+    lyricsCoptic: "lyrics/coptic/enthoten-dhe_coptic.md",
+    lyricsEnglish: "lyrics/english/enthoten-dhe_english.md"
 };
 
-const recordingId = 'cantor-ibrahim_pi-mairomi';
+const recordingId = 'hics_enthoten-dhe';
 const recordingData = {
-    hymnId: "pi-mairomi",
-    cantorId: "cantor-ibrahim",
-    audioUrl: "tracks/cantor-ibrahim/cantor-ibrahim_pi-mairomi.mp3",
-    markersUrl: "markers/cantor-ibrahim/cantor-ibrahim_pi-mairomi_markers.txt",
-    lyricsMappingUrl: "markers/cantor-ibrahim/cantor-ibrahim_pi-mairomi_lyrics_markers.txt",
-    audioLength: 597.420375,
+    hymnId: "enthoten-dhe",
+    cantorId: "hics",
+    audioUrl: "tracks/hics/hics_enthoten-dhe.mp3",
+    markersUrl: "markers/hics/hics_enthoten-dhe_markers.txt",
+    audioLength: 924.504,
     active: true,
     mode: "learn"
 };
 
 // --- End of Data ---
-
 
 async function addNewRecording() {
     const firebaseApp = initializeApp(firebaseConfig);
@@ -66,8 +63,7 @@ async function addNewRecording() {
         
         console.log(`\n--- Operation Complete ---`);
         console.log(`Successfully added hymn '${hymnId}' and recording '${recordingId}'.`);
-        console.log(`Note: If the 'lent' genre is new, you may need to add it to your 'genres' collection for it to appear in the app.`);
-
+        console.log(`Note: If the 'apostles-fast' genre is new, make sure it is added to your 'genres' collection for it to appear in the app.`);
 
     } catch (error) {
         console.error('An error occurred during the process:', error);

@@ -16,6 +16,9 @@ This file serves as the persistent "memory" for AI development sessions across m
   ```
 - **Port/Host**: The Next.js dev server starts locally on `http://localhost:3000`.
 
+## Git & Workflow Rules
+- **No Automatic Pushing**: Under no circumstances should the AI agent run `git push`. Pushing to the remote GitHub repository is managed solely by the user. The AI is permitted to make local edits and create files, but Git commits and pushes are reserved for the user.
+
 ## Key Architectural Decisions
 1. **Shadcn Calendar**: Downgraded `react-day-picker` to `@8` to match the custom calendar component signature. Do not upgrade to `@10` without rewriting `src/components/ui/calendar.tsx`.
 2. **Next.js Config**: Moved `allowedDevOrigins` to the root of `next.config.ts` (instead of `experimental`) to satisfy Next.js 15 type definitions.
@@ -31,6 +34,7 @@ This file serves as the persistent "memory" for AI development sessions across m
 - [x] Changed Git remote origin to `https://github.com/cantorhymns/cantor_hymns_web.git`
 - [x] Pushing to GitHub (Successfully authenticated and pushed)
 - [x] Created `src/scripts/add-ondos.ts` to add the new "Ondos" hymn and its HICS recording
+- [x] Created `src/scripts/add-enthoten-dhe.ts` to add the new "Enthoten Dhe" hymn and its HICS recording
 
 ## Next Steps / Backlog
 1. **Interactive Audio Player Tuning**: Test and tune marker snaps, AB-looping, and playhead rendering.

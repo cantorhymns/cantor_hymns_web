@@ -20,6 +20,7 @@ export interface Recording {
   active: boolean;
   mode: 'learn' | 'listen';
   audioLength?: number;
+  lyricsMappingUrl?: string;
 }
 
 export interface Hymn {

@@ -21,6 +21,7 @@ const recordingData = {
     cantorId: "hics",
     audioUrl: "tracks/hics/hics_ondos.mp3",
     markersUrl: "markers/hics/hics_ondos_markers.txt",
+    lyricsMappingUrl: "markers/hics/hics_ondos_lyrics_markers.txt",
     audioLength: 1689.44325,
     active: true,
     mode: "learn"
