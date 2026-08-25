@@ -215,8 +215,16 @@ function useLyricsMappingFile(path?: string) {
         }
       } catch (e: any) {
         if (!isCancelled) {
-          setError(e.message || 'Failed to fetch lyrics mapping');
-          setMapping([]);
+          const isNotFound = e.code === 'storage/object-not-found' || 
+                             e.message?.includes('storage/object-not-found') || 
+                             e.message?.includes('object-not-found');
+          if (isNotFound) {
+            // Silently ignore if mapping file does not exist
+            setMapping([]);
+          } else {
+            setError(e.message || 'Failed to fetch lyrics mapping');
+            setMapping([]);
+          }
         }
       } finally {
         if (!isCancelled) {
@@ -553,9 +561,22 @@ export function HymnPlayer({
     currentRecording?.mode === 'learn' ? currentRecording.markersUrl : undefined
   );
 
-  const { mapping: lyricsMapping, isLoading: isLoadingMapping } = useLyricsMappingFile(
-    currentRecording?.mode === 'learn' ? currentRecording.lyricsMappingUrl : undefined
-  );
+  const lyricsMappingUrl = useMemo(() => {
+    if (!currentRecording || currentRecording.mode !== 'learn') {
+      return undefined;
+    }
+    if (currentRecording.lyricsMappingUrl) {
+      return currentRecording.lyricsMappingUrl;
+    }
+    // Automatically derive the lyrics markers path from markersUrl
+    // e.g., "markers/cantor/hymn_markers.txt" -> "markers/cantor/hymn_lyrics_markers.txt"
+    if (currentRecording.markersUrl) {
+      return currentRecording.markersUrl.replace('_markers.txt', '_lyrics_markers.txt');
+    }
+    return undefined;
+  }, [currentRecording]);
+
+  const { mapping: lyricsMapping, isLoading: isLoadingMapping } = useLyricsMappingFile(lyricsMappingUrl);
 
   const isPlayerDisabled = !audioSrc || !!audioError;
   const [isPlaying, setIsPlaying] = useState(false);
