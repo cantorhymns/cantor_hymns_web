@@ -1,0 +1,37 @@
+[
+  {
+    "id": "cantor-bola",
+    "name": "Cantor Bola",
+    "cantorCloudActive": true
+  },
+  {
+    "id": "cantor-gad",
+    "name": "Cantor Gad",
+    "cantorCloudActive": true
+  },
+  {
+    "id": "cantor-ibrahim",
+    "name": "Cantor Ibrahim",
+    "cantorCloudActive": true
+  },
+  {
+    "id": "cantor-tharwat",
+    "cantorCloudActive": true,
+    "name": "Cantor Tharwat"
+  },
+  {
+    "id": "cantor-zaher",
+    "cantorCloudActive": false,
+    "name": "Cantor Zaher"
+  },
+  {
+    "id": "hics",
+    "cantorCloudActive": true,
+    "name": "HICS"
+  },
+  {
+    "id": "other",
+    "name": "Other",
+    "cantorCloudActive": false
+  }
+]

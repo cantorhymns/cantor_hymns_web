@@ -1,0 +1,1785 @@
+{
+  "generatedAt": "2026-10-20T22:24:24.631Z",
+  "genres": [
+    {
+      "id": "apostles-fast",
+      "contentUrl": "genres/content/apostles-fast_content.txt",
+      "backgroundUrl": "genres/backgrounds/ApostlesFast.webp",
+      "cantorCloudActive": true,
+      "name": "Apostles' Fast",
+      "active": true
+    },
+    {
+      "id": "holy-week",
+      "name": "Holy Week",
+      "cantorCloudActive": true,
+      "contentUrl": "genres/content/holy-week_content.txt",
+      "active": true,
+      "backgroundUrl": "genres/backgrounds/HolyWeek2.jpeg"
+    },
+    {
+      "id": "kiahk",
+      "active": true,
+      "name": "Kiahk",
+      "backgroundUrl": "genres/backgrounds/Kiahk1.jpeg",
+      "contentUrl": "genres/content/kiahk_content.txt",
+      "cantorCloudActive": true
+    },
+    {
+      "id": "lazarus-saturday",
+      "contentUrl": "genres/content/lazarus-saturday_content.txt",
+      "active": true,
+      "backgroundUrl": "genres/backgrounds/LazarusSaturday1.jpeg",
+      "name": "Lazarus Saturday",
+      "cantorCloudActive": true
+    },
+    {
+      "id": "lent",
+      "backgroundUrl": "genres/backgrounds/Lent2.jpeg",
+      "cantorCloudActive": true,
+      "active": true,
+      "name": "Lent",
+      "contentUrl": "genres/content/lent_content.txt"
+    },
+    {
+      "id": "nativity",
+      "active": true,
+      "cantorCloudActive": true,
+      "contentUrl": "genres/content/nativity_content.txt",
+      "backgroundUrl": "genres/backgrounds/Nativity2.jpeg",
+      "name": "Nativity"
+    },
+    {
+      "id": "resurrection",
+      "name": "Resurrection",
+      "backgroundUrl": "genres/backgrounds/Resurrection1.jpeg",
+      "active": true,
+      "cantorCloudActive": true,
+      "contentUrl": "genres/content/resurrection_content.txt"
+    }
+  ],
+  "cantors": [
+    {
+      "id": "cantor-bola",
+      "name": "Cantor Bola",
+      "cantorCloudActive": true
+    },
+    {
+      "id": "cantor-gad",
+      "name": "Cantor Gad",
+      "cantorCloudActive": true
+    },
+    {
+      "id": "cantor-ibrahim",
+      "name": "Cantor Ibrahim",
+      "cantorCloudActive": true
+    },
+    {
+      "id": "cantor-tharwat",
+      "cantorCloudActive": true,
+      "name": "Cantor Tharwat"
+    },
+    {
+      "id": "cantor-zaher",
+      "cantorCloudActive": false,
+      "name": "Cantor Zaher"
+    },
+    {
+      "id": "hics",
+      "cantorCloudActive": true,
+      "name": "HICS"
+    },
+    {
+      "id": "other",
+      "name": "Other",
+      "cantorCloudActive": false
+    }
+  ],
+  "hymns": [
+    {
+      "id": "tarh",
+      "lyricsEnglish": "lyrics/english/tarh_english.md",
+      "lyricsCoptic": "lyrics/coptic/tarh_coptic.md",
+      "description": "The great exposition hymn chanted in Vespers Praises in the month of Kiahk and Holy Lent.",
+      "genreId": [
+        "kiahk",
+        "lent"
+      ],
+      "name": "Al-Tarh",
+      "lyricsArabic": "lyrics/arabic/tarh_arabic.md",
+      "recordings": [
+        {
+          "id": "cantor-gad_tarh",
+          "active": true,
+          "hymnId": "tarh",
+          "markersUrl": "markers/cantor-gad/cantor-gad_tarh_markers.txt",
+          "audioLength": 1350.948583333334,
+          "cantorId": "cantor-gad",
+          "mode": "listen",
+          "audioUrl": "tracks/cantor-gad/cantor-gad_tarh.mp3",
+          "cantor": {
+            "id": "cantor-gad",
+            "name": "Cantor Gad",
+            "cantorCloudActive": true
+          }
+        },
+        {
+          "id": "cantor-ibrahim_tarh",
+          "active": true,
+          "mode": "learn",
+          "hymnId": "tarh",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_tarh_markers.txt",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_tarh.mp3",
+          "audioLength": 1609.012291666667,
+          "cantorId": "cantor-ibrahim",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "alleluia-al-asr",
+      "genreId": [
+        "kiahk",
+        "lent"
+      ],
+      "lyricsArabic": "lyrics/arabic/alleluia-al-asr_arabic.md",
+      "name": "Alleluia Al Asr",
+      "description": "Chanted during Vespers Praises at the conclusion of the Fourth Canticle in the month of Kiahk and Holy Lent. Alleluia \"Al Asr\" translates to Alleluia of the late afternoon, the time of the day during which the hymn is chanted.",
+      "lyricsCoptic": "lyrics/coptic/alleluia-al-asr_coptic.md",
+      "lyricsEnglish": "lyrics/english/alleluia-al-asr_english.md",
+      "recordings": [
+        {
+          "id": "cantor-bola_alleluia-al-asr",
+          "mode": "learn",
+          "audioLength": 647.079175,
+          "markersUrl": "markers/cantor-bola/cantor-bola_alleluia-al-asr_markers.txt",
+          "hymnId": "alleluia-al-asr",
+          "cantorId": "cantor-bola",
+          "audioUrl": "tracks/cantor-bola/cantor-bola_alleluia-al-asr.mp3",
+          "active": true,
+          "cantor": {
+            "id": "cantor-bola",
+            "name": "Cantor Bola",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "anok-pe-pi-kouji",
+      "lyricsCoptic": "lyrics/coptic/anok-pe-pi-kouji_coptic.md",
+      "lyricsEnglish": "lyrics/english/anok-pe-pi-kouji_english.md",
+      "name": "Anok Pe Pi-Kouji",
+      "lyricsArabic": "lyrics/arabic/anok-pe-pi-kouji_arabic.md",
+      "genreId": [
+        "holy-week"
+      ],
+      "description": "Psalm 151 chanted at the beginning of Bright Saturday.",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_anok-pe-pi-kouji",
+          "hymnId": "anok-pe-pi-kouji",
+          "audioLength": 916.349375,
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_anok-pe-pi-kouji_markers.txt",
+          "active": true,
+          "cantorId": "cantor-ibrahim",
+          "mode": "learn",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_anok-pe-pi-kouji.mp3",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "aretenthonti-kiahk",
+      "name": "Aretenthonti",
+      "lyricsCoptic": "lyrics/coptic/aretenthonti_coptic.md",
+      "genreId": [
+        "kiahk"
+      ],
+      "lyricsEnglish": "lyrics/english/aretenthonti_english.md",
+      "lyricsArabic": "lyrics/arabic/aretenthonti_arabic.md",
+      "description": "The first verse of the 8th part of the Saturday Theotokia chanted in a melismatic tune in the month of Kiahk and Holy Lent.",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_aretenthonti-kiahk",
+          "hymnId": "aretenthonti-kiahk",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_aretenthonti-kiahk_markers.txt",
+          "active": true,
+          "audioLength": 822.816,
+          "cantorId": "cantor-ibrahim",
+          "mode": "learn",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_aretenthonti-kiahk.mp3",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "aretenthonti-lent",
+      "lyricsArabic": "lyrics/arabic/aretenthonti_arabic.md",
+      "lyricsEnglish": "lyrics/english/aretenthonti_english.md",
+      "lyricsCoptic": "lyrics/coptic/aretenthonti_coptic.md",
+      "name": "Aretenthonti",
+      "description": "The first verse of the 8th part of the Saturday Theotokia chanted in a melismatic tune in the month of Kiahk and Holy Lent.",
+      "genreId": [
+        "lent"
+      ],
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_aretenthonti-lent",
+          "active": true,
+          "hymnId": "aretenthonti-lent",
+          "audioLength": 823.04,
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_aretenthonti-lent_markers.txt",
+          "cantorId": "cantor-ibrahim",
+          "mode": "learn",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_aretenthonti-lent.mp3",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "aspasmos-watos-lent-1",
+      "description": "Aspasmos Watos for Great Lent. Verses are also found in the doxology.",
+      "lyricsEnglish": "lyrics/english/aspasmos-watos-lent-1_english.md",
+      "lyricsCoptic": "lyrics/coptic/aspasmos-watos-lent-1_coptic.md",
+      "name": "Aspasmos Watos",
+      "lyricsArabic": "lyrics/arabic/aspasmos-watos-lent-1_arabic.md",
+      "genreId": [
+        "lent"
+      ],
+      "recordings": [
+        {
+          "id": "cantor-ibrahim-aspasmos-watos-lent-1",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_aspasmos-watos-lent-1_markers.txt",
+          "mode": "learn",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_aspasmos-watos-lent-1.mp3",
+          "audioLength": 532.7934583333333,
+          "hymnId": "aspasmos-watos-lent-1",
+          "cantorId": "cantor-ibrahim",
+          "active": true,
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "avechnon",
+      "lyricsCoptic": "lyrics/coptic/avechnon_coptic.md",
+      "lyricsEnglish": "lyrics/english/avechnon_english.md",
+      "genreId": [
+        "holy-week"
+      ],
+      "lyricsArabic": "lyrics/arabic/avechnon_arabic.md",
+      "description": "Mournful Psalm Chant in a melismatic tune, chanted in the 3rd hour of Thursday Eve and the 1st hour of Covenant Thursday of Holy Week. The tune is the same as Pek Ethronos.",
+      "name": "Avechnon",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_avechnon",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_avechnon_markers.txt",
+          "hymnId": "avechnon",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_avechnon.mp3",
+          "audioLength": 1186.1159,
+          "cantorId": "cantor-ibrahim",
+          "active": true,
+          "mode": "learn",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        },
+        {
+          "id": "cantor-tharwat_avechnon",
+          "hymnId": "avechnon",
+          "markersUrl": "markers/cantor-tharwat/cantor-tharwat_avechnon_markers.txt",
+          "active": true,
+          "cantorId": "cantor-tharwat",
+          "mode": "listen",
+          "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_avechnon.mp3",
+          "audioLength": 1146.801625,
+          "cantor": {
+            "id": "cantor-tharwat",
+            "cantorCloudActive": true,
+            "name": "Cantor Tharwat"
+          }
+        }
+      ]
+    },
+    {
+      "id": "doxology-lazarus-saturday",
+      "description": "Doxology for Lazarus Saturday.",
+      "lyricsEnglish": "lyrics/english/doxology-lazarus-saturday_english.md",
+      "lyricsCoptic": "lyrics/coptic/doxology-lazarus-saturday_coptic.md",
+      "name": "Doxology",
+      "lyricsArabic": "lyrics/arabic/doxology-lazarus-saturday_arabic.md",
+      "genreId": [
+        "lazarus-saturday"
+      ],
+      "recordings": [
+        {
+          "id": "cantor-tharwat_doxology-lazarus-saturday",
+          "mode": "listen",
+          "markersUrl": "markers/cantor-tharwat/cantor-tharwat_doxology-lazarus-saturday_markers.txt",
+          "hymnId": "doxology-lazarus-saturday",
+          "cantorId": "cantor-tharwat",
+          "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_doxology-lazarus-saturday.mp3",
+          "active": true,
+          "audioLength": 112.1175,
+          "cantor": {
+            "id": "cantor-tharwat",
+            "cantorCloudActive": true,
+            "name": "Cantor Tharwat"
+          }
+        }
+      ]
+    },
+    {
+      "id": "entho-te-ti-shouri",
+      "name": "Entho Te Ti-Shouri",
+      "lyricsArabic": "lyrics/arabic/entho-te-ti-shouri_arabic.md",
+      "genreId": [
+        "lent"
+      ],
+      "description": "Hymn of the censer chanted in the weekdays of Holy Lent.",
+      "lyricsCoptic": "lyrics/coptic/entho-te-ti-shouri_coptic.md",
+      "lyricsEnglish": "lyrics/english/entho-te-ti-shouri_english.md",
+      "recordings": [
+        {
+          "id": "cantor-bola_entho-te-ti-shouri",
+          "mode": "learn",
+          "audioLength": 278.386925,
+          "cantorId": "cantor-bola",
+          "hymnId": "entho-te-ti-shouri",
+          "audioUrl": "tracks/cantor-bola/cantor-bola_entho-te-ti-shouri.mp3",
+          "markersUrl": "markers/cantor-bola/cantor-bola_entho-te-ti-shouri_markers.txt",
+          "active": true,
+          "cantor": {
+            "id": "cantor-bola",
+            "name": "Cantor Bola",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "enthoten-dhe",
+      "description": "A hymn for the apostles of Jesus Christ. Chanted after the Synaxarium or during the distribution of the holy mysteries.",
+      "name": "Enthoten Dhe",
+      "lyricsCoptic": "lyrics/coptic/enthoten-dhe_coptic.md",
+      "lyricsEnglish": "lyrics/english/enthoten-dhe_english.md",
+      "genreId": [
+        "apostles-fast"
+      ],
+      "lyricsArabic": "lyrics/arabic/enthoten-dhe_arabic.md",
+      "recordings": [
+        {
+          "id": "hics_enthoten-dhe",
+          "audioUrl": "tracks/hics/hics_enthoten-dhe.mp3",
+          "mode": "learn",
+          "active": true,
+          "cantorId": "hics",
+          "hymnId": "enthoten-dhe",
+          "markersUrl": "markers/hics/hics_enthoten-dhe_markers.txt",
+          "audioLength": 924.504,
+          "cantor": {
+            "id": "hics",
+            "cantorCloudActive": true,
+            "name": "HICS"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ere-pi-esmou",
+      "genreId": [
+        "holy-week"
+      ],
+      "lyricsArabic": "lyrics/arabic/ere-pi-esmou_arabic.md",
+      "lyricsEnglish": "lyrics/english/ere-pi-esmou_english.md",
+      "description": "A hymn for the blessing of Saint John the Evangelist and Theologian, the author of the Book of Revelation. Chanted prior to reading the Book of Revelation on Bright Saturday.",
+      "lyricsCoptic": "lyrics/coptic/ere-pi-esmou_coptic.md",
+      "name": "Ere Pi-Esmou",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_ere-pi-esmou",
+          "mode": "learn",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ere-pi-esmou_markers.txt",
+          "audioLength": 252.0032653061225,
+          "active": true,
+          "hymnId": "ere-pi-esmou",
+          "cantorId": "cantor-ibrahim",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ere-pi-esmou.mp3",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "ethvetee-general-funeral",
+      "genreId": [
+        "holy-week"
+      ],
+      "lyricsArabic": "lyrics/arabic/ethvetee-general-funeral_arabic.md",
+      "lyricsEnglish": "lyrics/english/ethvetee-general-funeral_english.md",
+      "description": "Mournful tune of the Pauline Epistle in the General Funeral prayer of Holy Week.",
+      "lyricsCoptic": "lyrics/coptic/ethvetee-general-funeral_coptic.md",
+      "name": "Ethve Ti-Anastasis (General Funeral)",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_ethvetee-general-funeral",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ethvetee-general-funeral.mp3",
+          "cantorId": "cantor-ibrahim",
+          "active": true,
+          "mode": "learn",
+          "hymnId": "ethvetee-general-funeral",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ethvetee-general-funeral_markers.txt",
+          "audioLength": 613.30285,
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        },
+        {
+          "id": "cantor-tharwat_ethvetee-general-funeral",
+          "markersUrl": "markers/cantor-tharwat/cantor-tharwat_ethvetee-general-funeral_markers.txt",
+          "mode": "listen",
+          "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_ethvetee-general-funeral.mp3",
+          "active": true,
+          "audioLength": 564.6105625,
+          "hymnId": "ethvetee-general-funeral",
+          "cantorId": "cantor-tharwat",
+          "cantor": {
+            "id": "cantor-tharwat",
+            "cantorCloudActive": true,
+            "name": "Cantor Tharwat"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ethvetee-good-friday",
+      "lyricsEnglish": "lyrics/english/ethvetee-good-friday_english.md",
+      "lyricsCoptic": "lyrics/coptic/ethvetee-good-friday_coptic.md",
+      "description": "Mournful tune of the Pauline Epistle in the Ninth Hour of Good Friday.",
+      "lyricsArabic": "lyrics/arabic/ethvetee-good-friday_arabic.md",
+      "name": "Ethve Ti-Anastasis (Good Friday)",
+      "genreId": [
+        "holy-week"
+      ],
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_ethvetee-good-friday",
+          "hymnId": "ethvetee-good-friday",
+          "active": true,
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ethvetee-good-friday_markers.txt",
+          "audioLength": 561.606525,
+          "cantorId": "cantor-ibrahim",
+          "mode": "learn",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ethvetee-good-friday.mp3",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        },
+        {
+          "id": "cantor-tharwat_ethvetee-good-friday",
+          "markersUrl": "markers/cantor-tharwat/cantor-tharwat_ethvetee-good-friday_markers.txt",
+          "mode": "listen",
+          "hymnId": "ethvetee-good-friday",
+          "audioLength": 522.3183125,
+          "active": true,
+          "cantorId": "cantor-tharwat",
+          "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_ethvetee-good-friday.mp3",
+          "cantor": {
+            "id": "cantor-tharwat",
+            "cantorCloudActive": true,
+            "name": "Cantor Tharwat"
+          }
+        }
+      ]
+    },
+    {
+      "id": "genethlion",
+      "lyricsEnglish": "lyrics/english/genethlion_english.md",
+      "description": "Chanted in the Divine Liturgy of the Feast of the Nativity after the Praxis reading and also during the distribution of the Holy Sacraments.",
+      "genreId": [
+        "nativity"
+      ],
+      "lyricsCoptic": "lyrics/coptic/genethlion_coptic.md",
+      "name": "Genethlion",
+      "lyricsArabic": "lyrics/arabic/genethlion_arabic.md",
+      "recordings": [
+        {
+          "id": "cantor-gad_genethlion",
+          "audioUrl": "tracks/cantor-gad/cantor-gad_genethlion.mp3",
+          "cantorId": "cantor-gad",
+          "audioLength": 705.854675,
+          "markersUrl": "markers/cantor-gad/cantor-gad_genethlion_markers.txt",
+          "hymnId": "genethlion",
+          "active": true,
+          "mode": "learn",
+          "cantor": {
+            "id": "cantor-gad",
+            "name": "Cantor Gad",
+            "cantorCloudActive": true
+          }
+        },
+        {
+          "id": "hics_genethlion",
+          "audioUrl": "tracks/hics/hics_genethlion.mp3",
+          "cantorId": "hics",
+          "hymnId": "genethlion",
+          "mode": "listen",
+          "active": true,
+          "audioLength": 602.749375,
+          "markersUrl": "markers/hics/hics_genethlion_markers.txt",
+          "cantor": {
+            "id": "hics",
+            "cantorCloudActive": true,
+            "name": "HICS"
+          }
+        }
+      ]
+    },
+    {
+      "id": "gholghotha",
+      "name": "Gholghota",
+      "description": "Hymn for the burial of the Lord, chanted in the 12th hour of Good Friday as the Conclusion Canon.",
+      "lyricsArabic": "lyrics/arabic/gholghotha_arabic.md",
+      "lyricsEnglish": "lyrics/english/gholghotha_english.md",
+      "genreId": [
+        "holy-week"
+      ],
+      "lyricsCoptic": "lyrics/coptic/gholghotha_coptic.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_gholghotha",
+          "active": true,
+          "audioLength": 716.9305833333333,
+          "cantorId": "cantor-ibrahim",
+          "hymnId": "gholghotha",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_gholghotha.mp3",
+          "mode": "learn",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_gholghotha_markers.txt",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "great-hoos",
+      "genreId": [
+        "lent"
+      ],
+      "name": "Great Hoos",
+      "description": "The Great Hoos, Psalm 96, chanted at the beginning of Midnight Praises in the month of Kiahk and Holy Lent.",
+      "recordings": []
+    },
+    {
+      "id": "yodas",
+      "genreId": [
+        "holy-week"
+      ],
+      "lyricsArabic": "lyrics/arabic/yodas_arabic.md",
+      "name": "Judas",
+      "description": "A hymn for Judas' reprimand, chanted on Covenant Thursday in a procession while the deacons are going clockwise.",
+      "lyricsCoptic": "lyrics/coptic/yodas_coptic.md",
+      "lyricsEnglish": "lyrics/english/yodas_english.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_yodas",
+          "active": true,
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_yodas.mp3",
+          "cantorId": "cantor-ibrahim",
+          "hymnId": "yodas",
+          "audioLength": 469.94285,
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_yodas_markers.txt",
+          "mode": "learn",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "kata-ni-khoros",
+      "genreId": [
+        "resurrection"
+      ],
+      "lyricsArabic": "lyrics/arabic/kata-ni-khoros_arabic.md",
+      "name": "Kata Ni Khoros (Al Hegab)",
+      "description": "Chanted prior to \"Ya Kol Al Sofoof\" for the Holy Resurrection. Known as \"Kata Al Hegab\", which translates to \"Kata of the Veil\" since it is chanted in front of the Altar Veil.",
+      "lyricsCoptic": "lyrics/coptic/kata-ni-khoros_coptic.md",
+      "lyricsEnglish": "lyrics/english/kata-ni-khoros_english.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_kata-ni-khoros",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_kata-ni-khoros.mp3",
+          "active": true,
+          "mode": "learn",
+          "cantorId": "cantor-ibrahim",
+          "hymnId": "kata-ni-khoros",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_kata-ni-khoros_markers.txt",
+          "audioLength": 746.1094,
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        },
+        {
+          "id": "hics_kata-ni-khoros",
+          "mode": "listen",
+          "markersUrl": "markers/hics/hics_kata-ni-khoros_markers.txt",
+          "cantorId": "hics",
+          "audioUrl": "tracks/hics/hics_kata-ni-khoros.mp3",
+          "hymnId": "kata-ni-khoros",
+          "active": true,
+          "audioLength": 1289.3257,
+          "cantor": {
+            "id": "hics",
+            "cantorCloudActive": true,
+            "name": "HICS"
+          }
+        }
+      ]
+    },
+    {
+      "id": "kata-ni-khoros-distribution",
+      "genreId": [
+        "resurrection"
+      ],
+      "name": "Kata Ni-Khoros (Distribution)",
+      "lyricsArabic": "lyrics/arabic/kata-ni-khoros-distribution_arabic.md",
+      "description": "Chanted during the Distribution of the Holy Mysteries from the Feast of Resurrection until the 39th day of the Holy Fifty Days.",
+      "lyricsCoptic": "lyrics/coptic/kata-ni-khoros-distribution_coptic.md",
+      "lyricsEnglish": "lyrics/english/kata-ni-khoros-distribution_english.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_kata-ni-khoros-distribution",
+          "active": true,
+          "mode": "learn",
+          "hymnId": "kata-ni-khoros-distribution",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_kata-ni-khoros-distribution.mp3",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_kata-ni-khoros-distribution_markers.txt",
+          "cantorId": "cantor-ibrahim",
+          "audioLength": 532.8718333333334,
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "ke-eperto",
+      "description": "Mournful introduction to the reading of the gospel. The same tune is used for the mournful psalm chants.",
+      "lyricsCoptic": "lyrics/coptic/ke-eperto_coptic.md",
+      "name": "Ke Eperto",
+      "genreId": [
+        "holy-week"
+      ],
+      "lyricsEnglish": "lyrics/english/ke-eperto_english.md",
+      "lyricsArabic": "lyrics/arabic/ke-eperto_arabic.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_ke-eperto",
+          "audioLength": 637.62285,
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ke-eperto_markers.txt",
+          "hymnId": "ke-eperto",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ke-eperto.mp3",
+          "mode": "learn",
+          "active": true,
+          "cantorId": "cantor-ibrahim",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "khristos-anesti-major",
+      "lyricsArabic": "lyrics/arabic/khristos-anesti_arabic.md",
+      "genreId": [
+        "resurrection"
+      ],
+      "lyricsCoptic": "lyrics/coptic/khristos-anesti_coptic.md",
+      "name": "Khristos Anesti (Major)",
+      "lyricsEnglish": "lyrics/english/khristos-anesti_english.md",
+      "description": "The hymn of the resurrection, Khristos Anesti, in its major tune.",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_khristos-anesti-major",
+          "hymnId": "khristos-anesti-major",
+          "active": true,
+          "audioLength": 289.5412083333333,
+          "cantorId": "cantor-ibrahim",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_khristos-anesti-major_markers.txt",
+          "mode": "learn",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_khristos-anesti-major.mp3",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "khristos-anesti-minor",
+      "description": "The hymn of the resurrection, Khristos Anesti, in its minor tune.",
+      "lyricsArabic": "lyrics/arabic/khristos-anesti_arabic.md",
+      "name": "Khristos Anesti (Minor)",
+      "genreId": [
+        "resurrection"
+      ],
+      "lyricsEnglish": "lyrics/english/khristos-anesti_english.md",
+      "lyricsCoptic": "lyrics/coptic/khristos-anesti_coptic.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_khristos-anesti-minor",
+          "mode": "learn",
+          "cantorId": "cantor-ibrahim",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_khristos-anesti-minor_markers.txt",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_khristos-anesti-minor.mp3",
+          "audioLength": 116.9240833333333,
+          "hymnId": "khristos-anesti-minor",
+          "active": true,
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "psalm-150-kiahk",
+      "name": "Kiahk Psalm 150",
+      "lyricsEnglish": "lyrics/english/psalm-150-annual_english.md",
+      "lyricsCoptic": "lyrics/coptic/psalm-150-annual_coptic.md",
+      "description": "Psalm 150 of the Distribution of the Holy Sacraments in the month of Kiahk.",
+      "genreId": [
+        "kiahk"
+      ],
+      "lyricsArabic": "lyrics/arabic/psalm-150-annual_arabic.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_psalm-150-kiahk",
+          "audioLength": 1013.23755,
+          "mode": "learn",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_psalm-150-kiahk_markers.txt",
+          "cantorId": "cantor-ibrahim",
+          "hymnId": "psalm-150-kiahk",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_psalm-150-kiahk.mp3",
+          "active": true,
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "lazaros-amou",
+      "description": "A hymn for Lazarus Saturday, chanted during the Distribution of the Holy Sacraments.",
+      "lyricsArabic": "lyrics/arabic/lazaros-amou_arabic.md",
+      "name": "Lazaros Amou",
+      "genreId": [
+        "lazarus-saturday"
+      ],
+      "lyricsEnglish": "lyrics/english/lazaros-amou_english.md",
+      "lyricsCoptic": "lyrics/coptic/lazaros-amou_coptic.md",
+      "recordings": [
+        {
+          "id": "cantor-tharwat_lazaros-amou",
+          "active": true,
+          "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_lazaros-amou.mp3",
+          "cantorId": "cantor-tharwat",
+          "hymnId": "lazaros-amou",
+          "audioLength": 624.195875,
+          "markersUrl": "markers/cantor-tharwat/cantor-tharwat_lazaros-amou_markers.txt",
+          "mode": "listen",
+          "cantor": {
+            "id": "cantor-tharwat",
+            "cantorCloudActive": true,
+            "name": "Cantor Tharwat"
+          }
+        }
+      ]
+    },
+    {
+      "id": "je-efesmaroout-lent-weekdays",
+      "genreId": [
+        "lent"
+      ],
+      "name": "Lenten Je Efesmaroout (Weekdays)",
+      "lyricsEnglish": "lyrics/english/je-efesmaroout_english.md",
+      "lyricsCoptic": "lyrics/coptic/je-efesmaroout_coptic.md",
+      "description": "Lenten weekdays tune for Je Efesmaroout, chanted during the Distribution of the Holy Sacraments before Pi-Mairomi.",
+      "lyricsArabic": "lyrics/arabic/je-efesmaroout_arabic.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_je-efesmaroout-lent-weekdays",
+          "audioLength": 185.573875,
+          "hymnId": "je-efesmaroout-lent-weekdays",
+          "mode": "learn",
+          "cantorId": "cantor-ibrahim",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_je-efesmaroout-lent-weekdays.mp3",
+          "active": true,
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_je-efesmaroout-lent-weekdays_markers.txt",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        },
+        {
+          "id": "hics_je-efesmaroout-lent-weekdays",
+          "markersUrl": "markers/hics/hics_je-efesmaroout-lent-weekdays_markers.txt",
+          "hymnId": "je-efesmaroout-lent-weekdays",
+          "audioLength": 143.5950833333333,
+          "audioUrl": "tracks/hics/hics_je-efesmaroout-lent-weekdays.mp3",
+          "cantorId": "hics",
+          "active": true,
+          "mode": "listen",
+          "cantor": {
+            "id": "hics",
+            "cantorCloudActive": true,
+            "name": "HICS"
+          }
+        }
+      ]
+    },
+    {
+      "id": "kyrie-eleison-lent",
+      "genreId": [
+        "lent"
+      ],
+      "lyricsArabic": "lyrics/arabic/kyrie-eleison-lent_arabic.md",
+      "description": "Melismatic Kyrie Eleison, chanted in place of the Verses of Cymbals in Matins of the weekdays of Holy Lent.",
+      "lyricsEnglish": "lyrics/english/kyrie-eleison-lent_english.md",
+      "lyricsCoptic": "lyrics/coptic/kyrie-eleison-lent_coptic.md",
+      "name": "Lenten Kyrie Eleison",
+      "recordings": [
+        {
+          "id": "cantor-bola_kyrie-eleison-lent",
+          "cantorId": "cantor-bola",
+          "markersUrl": "markers/cantor-bola/cantor-bola_kyrie-eleison-lent_markers.txt",
+          "hymnId": "kyrie-eleison-lent",
+          "audioLength": 361.978775,
+          "active": true,
+          "audioUrl": "tracks/cantor-bola/cantor-bola_kyrie-eleison-lent.mp3",
+          "mode": "learn",
+          "cantor": {
+            "id": "cantor-bola",
+            "name": "Cantor Bola",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "psalm-150-lent-weekdays",
+      "genreId": [
+        "lent"
+      ],
+      "description": "Psalm 150 of the Distribution of the Holy Sacraments in the weekdays of Holy Lent.",
+      "lyricsArabic": "lyrics/arabic/psalm-150-lent_arabic.md",
+      "name": "Lenten Psalm 150 (Weekdays)",
+      "subGenreId": {
+        "lent": "Liturgy Weekdays"
+      },
+      "lyricsEnglish": "lyrics/english/psalm-150-lent_english.md",
+      "lyricsCoptic": "lyrics/coptic/psalm-150-lent_coptic.md",
+      "recordings": [
+        {
+          "id": "cantor-bola_psalm-150-lent-weekdays",
+          "audioLength": 722.311825,
+          "cantorId": "cantor-bola",
+          "audioUrl": "tracks/cantor-bola/cantor-bola_psalm-150-lent-weekdays.mp3",
+          "hymnId": "psalm-150-lent-weekdays",
+          "markersUrl": "markers/cantor-bola/cantor-bola_psalm-150-lent-weekdays_markers.txt",
+          "active": true,
+          "mode": "learn",
+          "cantor": {
+            "id": "cantor-bola",
+            "name": "Cantor Bola",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "sherat-lent",
+      "name": "Lenten Sherat",
+      "lyricsEnglish": "lyrics/english/theotokia-lobsh-saturday_english.md",
+      "lyricsCoptic": "lyrics/coptic/theotokia-lobsh-saturday_coptic.md",
+      "genreId": [
+        "lent"
+      ],
+      "description": "The Lenten Sherat (translating to \"The Hails\"), the Lobsh of Saturday Theotokia, chanted in Vespers Praises on Saturdays of Holy Lent.",
+      "lyricsArabic": "lyrics/arabic/theotokia-lobsh-saturday_arabic.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_sherat-lent",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_sherat-lent_markers.txt",
+          "mode": "learn",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_sherat-lent.mp3",
+          "audioLength": 1678.915916666667,
+          "hymnId": "sherat-lent",
+          "active": true,
+          "cantorId": "cantor-ibrahim",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "meghalo",
+      "genreId": [
+        "lent"
+      ],
+      "lyricsEnglish": "lyrics/english/meghalo_english.md",
+      "lyricsCoptic": "lyrics/coptic/meghalo_coptic.md",
+      "description": "Chanted in the weekends, first Monday and last Friday of Holy Lent after the Synaxarium.",
+      "lyricsArabic": "lyrics/arabic/meghalo_arabic.md",
+      "name": "Meghalo",
+      "recordings": [
+        {
+          "id": "cantor-bola_meghalo",
+          "hymnId": "meghalo",
+          "audioLength": 1149.28325,
+          "markersUrl": "markers/cantor-bola/cantor-bola_meghalo_markers.txt",
+          "active": true,
+          "mode": "listen",
+          "audioUrl": "tracks/cantor-bola/cantor-bola_meghalo.mp3",
+          "cantorId": "cantor-bola",
+          "cantor": {
+            "id": "cantor-bola",
+            "name": "Cantor Bola",
+            "cantorCloudActive": true
+          }
+        },
+        {
+          "id": "cantor-ibrahim_meghalo",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_meghalo_markers.txt",
+          "audioLength": 1028.49305,
+          "mode": "learn",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_meghalo.mp3",
+          "hymnId": "meghalo",
+          "cantorId": "cantor-ibrahim",
+          "active": true,
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "mournful-agios",
+      "description": "Mournful tune of the hymn of the Trisagion.",
+      "lyricsCoptic": "lyrics/coptic/agios_3x3_coptic.md",
+      "name": "Mournful Agios",
+      "genreId": [
+        "holy-week"
+      ],
+      "lyricsEnglish": "lyrics/english/agios_3x3_english.md",
+      "lyricsArabic": "lyrics/arabic/agios_3x3_arabic.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_mournful-agios",
+          "hymnId": "mournful-agios",
+          "cantorId": "cantor-ibrahim",
+          "mode": "learn",
+          "audioLength": 1308.5257,
+          "active": true,
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_mournful-agios_markers.txt",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_mournful-agios.mp3",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "mournful-tai-shouri",
+      "description": "Mournful hymn of the censer, chanted in the 6th hour of Good Friday after the Paschal Praise.",
+      "lyricsEnglish": "lyrics/english/tai-shouri_english.md",
+      "genreId": [
+        "holy-week"
+      ],
+      "lyricsCoptic": "lyrics/coptic/tai-shouri_coptic.md",
+      "name": "Mournful Tai Shouri",
+      "lyricsArabic": "lyrics/arabic/tai-shouri_arabic.md",
+      "recordings": [
+        {
+          "id": "cantor-bola_mournful-tai-shouri",
+          "markersUrl": "markers/cantor-bola/cantor-bola_mournful-tai-shouri_markers.txt",
+          "audioLength": 701.49225,
+          "mode": "learn",
+          "cantorId": "cantor-bola",
+          "hymnId": "mournful-tai-shouri",
+          "audioUrl": "tracks/cantor-bola/cantor-bola_mournful-tai-shouri.mp3",
+          "active": true,
+          "cantor": {
+            "id": "cantor-bola",
+            "name": "Cantor Bola",
+            "cantorCloudActive": true
+          }
+        },
+        {
+          "id": "cantor-tharwat_mournful-tai-shouri",
+          "markersUrl": "markers/cantor-tharwat/cantor-tharwat_mournful-tai-shouri_markers.txt",
+          "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_mournful-tai-shouri.mp3",
+          "mode": "listen",
+          "cantorId": "cantor-tharwat",
+          "active": true,
+          "audioLength": 661.524875,
+          "hymnId": "mournful-tai-shouri",
+          "cantor": {
+            "id": "cantor-tharwat",
+            "cantorCloudActive": true,
+            "name": "Cantor Tharwat"
+          }
+        },
+        {
+          "id": "hics_mournful-tai-shouri",
+          "audioUrl": "tracks/hics/hics_mournful-tai-shouri.mp3",
+          "hymnId": "mournful-tai-shouri",
+          "cantorId": "hics",
+          "audioLength": 564.55835,
+          "mode": "listen",
+          "active": true,
+          "markersUrl": "markers/hics/hics_mournful-tai-shouri_markers.txt",
+          "cantor": {
+            "id": "hics",
+            "cantorCloudActive": true,
+            "name": "HICS"
+          }
+        }
+      ]
+    },
+    {
+      "id": "mournful-ti-shouri",
+      "description": "Mournful hymn of the censer, chanted in the 9th hour of Good Friday after the Paschal Praise.",
+      "genreId": [
+        "holy-week"
+      ],
+      "lyricsEnglish": "lyrics/english/ti-shouri_english.md",
+      "lyricsArabic": "lyrics/arabic/ti-shouri_arabic.md",
+      "name": "Mournful Ti Shouri",
+      "lyricsCoptic": "lyrics/coptic/ti-shouri_coptic.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_mournful-ti-shouri",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_mournful-ti-shouri.mp3",
+          "active": true,
+          "mode": "learn",
+          "audioLength": 293.9559,
+          "hymnId": "mournful-ti-shouri",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_mournful-ti-shouri_markers.txt",
+          "cantorId": "cantor-ibrahim",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        },
+        {
+          "id": "cantor-tharwat_mournful-ti-shouri",
+          "cantorId": "cantor-tharwat",
+          "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_mournful-ti-shouri.mp3",
+          "hymnId": "mournful-ti-shouri",
+          "markersUrl": "markers/cantor-tharwat/cantor-tharwat_mournful-ti-shouri_markers.txt",
+          "audioLength": 374.46525,
+          "active": true,
+          "mode": "listen",
+          "cantor": {
+            "id": "cantor-tharwat",
+            "cantorCloudActive": true,
+            "name": "Cantor Tharwat"
+          }
+        }
+      ]
+    },
+    {
+      "id": "omonogenees",
+      "name": "O Monogenees",
+      "lyricsCoptic": "lyrics/coptic/omonogenees_coptic.md",
+      "lyricsEnglish": "lyrics/english/omonogenees_english.md",
+      "lyricsArabic": "lyrics/arabic/omonogenees_arabic.md",
+      "genreId": [
+        "holy-week"
+      ],
+      "description": "Chanted in the 6th hour of Good Friday.",
+      "recordings": [
+        {
+          "id": "cantor-bola_omonogenees",
+          "active": true,
+          "hymnId": "omonogenees",
+          "audioLength": 967.4971666666667,
+          "audioUrl": "tracks/cantor-bola/cantor-bola_omonogenees.mp3",
+          "mode": "learn",
+          "cantorId": "cantor-bola",
+          "markersUrl": "markers/cantor-bola/cantor-bola_omonogenees_markers.txt",
+          "cantor": {
+            "id": "cantor-bola",
+            "name": "Cantor Bola",
+            "cantorCloudActive": true
+          }
+        },
+        {
+          "id": "cantor-tharwat_omonogenees",
+          "markersUrl": "markers/cantor-tharwat/cantor-tharwat_omonogenees_markers.txt",
+          "cantorId": "cantor-tharwat",
+          "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_omonogenees.mp3",
+          "active": true,
+          "audioLength": 858.72325,
+          "hymnId": "omonogenees",
+          "mode": "listen",
+          "cantor": {
+            "id": "cantor-tharwat",
+            "cantorCloudActive": true,
+            "name": "Cantor Tharwat"
+          }
+        },
+        {
+          "id": "hics_omonogenees",
+          "hymnId": "omonogenees",
+          "cantorId": "hics",
+          "mode": "listen",
+          "active": true,
+          "audioUrl": "tracks/hics/hics_omonogenees.mp3",
+          "audioLength": 672.104475,
+          "markersUrl": "markers/hics/hics_omonogenees_markers.txt",
+          "cantor": {
+            "id": "hics",
+            "cantorCloudActive": true,
+            "name": "HICS"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ondos",
+      "lyricsArabic": "lyrics/arabic/ondos_arabic.md",
+      "description": "A hymn for the apostles of Jesus Christ. Chanted before reading the Catholic Epistle.",
+      "name": "Ondos",
+      "lyricsCoptic": "lyrics/coptic/ondos_coptic.md",
+      "genreId": [
+        "apostles-fast"
+      ],
+      "lyricsEnglish": "lyrics/english/ondos_english.md",
+      "recordings": [
+        {
+          "id": "hics_ondos",
+          "cantorId": "hics",
+          "audioLength": 1689.44325,
+          "lyricsMappingUrl": "markers/hics/hics_ondos_lyrics_markers.txt",
+          "audioUrl": "tracks/hics/hics_ondos.mp3",
+          "mode": "learn",
+          "hymnId": "ondos",
+          "markersUrl": "markers/hics/hics_ondos_markers.txt",
+          "active": true,
+          "cantor": {
+            "id": "hics",
+            "cantorCloudActive": true,
+            "name": "HICS"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ou-nishti",
+      "name": "Ou-Nishti",
+      "lyricsCoptic": "lyrics/coptic/ou-nishti_coptic.md",
+      "description": "Chanted during the Distribution of the Holy Scarements in the weekends of Holy Lent.",
+      "lyricsEnglish": "lyrics/english/ou-nishti_english.md",
+      "lyricsArabic": "lyrics/arabic/ou-nishti_arabic.md",
+      "genreId": [
+        "lent"
+      ],
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_ou-nishti",
+          "audioLength": 1297.031833333333,
+          "active": true,
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ou-nishti_markers.txt",
+          "mode": "learn",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ou-nishti.mp3",
+          "cantorId": "cantor-ibrahim",
+          "hymnId": "ou-nishti",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "oukatee",
+      "lyricsArabic": "lyrics/arabic/oukatee_arabic.md",
+      "genreId": [
+        "holy-week"
+      ],
+      "lyricsEnglish": "lyrics/english/oukatee_english.md",
+      "description": "Mournful hymn of the homilies read during Holy Week.",
+      "lyricsCoptic": "lyrics/coptic/oukatee_coptic.md",
+      "name": "Oukatee Shesees",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_oukatee",
+          "hymnId": "oukatee",
+          "cantorId": "cantor-ibrahim",
+          "mode": "learn",
+          "audioLength": 651.964075,
+          "active": true,
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_oukatee_markers.txt",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_oukatee.mp3",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "panouti",
+      "lyricsCoptic": "lyrics/coptic/panouti_coptic.md",
+      "name": "Panouti Panouti",
+      "description": "Chanted in the Distribution of the Holy Mysteries on Bright Saturday.",
+      "genreId": [
+        "holy-week"
+      ],
+      "lyricsEnglish": "lyrics/english/panouti_english.md",
+      "lyricsArabic": "lyrics/arabic/panouti_arabic.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_panouti",
+          "cantorId": "cantor-ibrahim",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_panouti_markers.txt",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_panouti.mp3",
+          "mode": "learn",
+          "audioLength": 912.248125,
+          "hymnId": "panouti",
+          "active": true,
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "pek-ethronos",
+      "description": "Mournful Psalm Chant in a melismatic tune, chanted in the 11th hour of Tuesday morning and 12th hour of Good Friday of Holy Week.",
+      "name": "Pek Ethronos",
+      "lyricsArabic": "lyrics/arabic/pek-ethronos_arabic.md",
+      "lyricsEnglish": "lyrics/english/pek-ethronos_english.md",
+      "genreId": [
+        "holy-week"
+      ],
+      "lyricsCoptic": "lyrics/coptic/pek-ethronos_coptic.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_pek-ethronos",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_pek-ethronos_markers.txt",
+          "active": true,
+          "cantorId": "cantor-ibrahim",
+          "hymnId": "pek-ethronos",
+          "audioLength": 1210.331425,
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_pek-ethronos.mp3",
+          "mode": "learn",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        },
+        {
+          "id": "cantor-tharwat_pek-ethronos",
+          "markersUrl": "markers/cantor-tharwat/cantor-tharwat_pek-ethronos_markers.txt",
+          "mode": "listen",
+          "hymnId": "pek-ethronos",
+          "cantorId": "cantor-tharwat",
+          "audioLength": 1132.9305625,
+          "active": true,
+          "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_pek-ethronos.mp3",
+          "cantor": {
+            "id": "cantor-tharwat",
+            "cantorCloudActive": true,
+            "name": "Cantor Tharwat"
+          }
+        }
+      ]
+    },
+    {
+      "id": "phai-etaf-enf",
+      "lyricsCoptic": "lyrics/coptic/phai-etaf-enf_coptic.md",
+      "name": "Phai Etaf Enf",
+      "lyricsEnglish": "lyrics/english/phai-etaf-enf_english.md",
+      "lyricsArabic": "lyrics/arabic/phai-etaf-enf_arabic.md",
+      "description": "Hymn of the Cross, chanted in Covenant Thursday and Good Friday of Holy Week, and in the feasts of the Cross.",
+      "genreId": [
+        "holy-week"
+      ],
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_phai-etaf-enf",
+          "hymnId": "phai-etaf-enf",
+          "cantorId": "cantor-ibrahim",
+          "active": true,
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_phai-etaf-enf.mp3",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_phai-etaf-enf_markers.txt",
+          "mode": "learn",
+          "audioLength": 459.493875,
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        },
+        {
+          "id": "cantor-tharwat_phai-etaf-enf",
+          "mode": "listen",
+          "markersUrl": "markers/cantor-tharwat/cantor-tharwat_phai-etaf-enf_markers.txt",
+          "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_phai-etaf-enf.mp3",
+          "audioLength": 399.3860625,
+          "active": true,
+          "cantorId": "cantor-tharwat",
+          "hymnId": "phai-etaf-enf",
+          "cantor": {
+            "id": "cantor-tharwat",
+            "cantorCloudActive": true,
+            "name": "Cantor Tharwat"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pi-mairomi",
+      "description": "A hymn for the Lord Jesus Christ, chanted during the Distribution of Holy Mysteries in the weekdays of Holy Lent.",
+      "name": "Pi-Mairomi",
+      "genreId": [
+        "lent"
+      ],
+      "lyricsEnglish": "lyrics/english/pi-mairomi_english.md",
+      "lyricsArabic": "lyrics/arabic/pi-mairomi_arabic.md",
+      "lyricsCoptic": "lyrics/coptic/pi-mairomi_coptic.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_pi-mairomi",
+          "active": true,
+          "hymnId": "pi-mairomi",
+          "cantorId": "cantor-ibrahim",
+          "mode": "learn",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_pi-mairomi_markers.txt",
+          "audioLength": 597.420375,
+          "lyricsMappingUrl": "markers/cantor-ibrahim/cantor-ibrahim_pi-mairomi_lyrics_markers.txt",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_pi-mairomi.mp3",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        },
+        {
+          "id": "hics_pi-mairomi",
+          "audioUrl": "tracks/hics/hics_pi-mairomi.mp3",
+          "mode": "listen",
+          "cantorId": "hics",
+          "hymnId": "pi-mairomi",
+          "markersUrl": "markers/hics/hics_pi-mairomi_markers.txt",
+          "audioLength": 390.4783333333334,
+          "active": true,
+          "cantor": {
+            "id": "hics",
+            "cantorCloudActive": true,
+            "name": "HICS"
+          }
+        }
+      ]
+    },
+    {
+      "id": "praxeon-ton",
+      "name": "Praxeon Ton",
+      "description": "The reading of the Praxis of Covenant Thursday in a mournful tune.",
+      "lyricsArabic": "lyrics/arabic/praxeon_arabic.md",
+      "lyricsEnglish": "lyrics/english/praxeon_english.md",
+      "genreId": [
+        "holy-week"
+      ],
+      "lyricsCoptic": "lyrics/coptic/praxeon_coptic.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_praxeon-ton",
+          "active": true,
+          "hymnId": "praxeon-ton",
+          "lyricsMappingUrl": "markers/cantor-ibrahim/cantor-ibrahim_praxeon-ton_lyrics_markers.txt",
+          "mode": "learn",
+          "cantorId": "cantor-ibrahim",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_praxeon-ton.mp3",
+          "audioLength": 2560.0261,
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_praxeon-ton_markers.txt",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "praxis-response-lazarus-saturday",
+      "lyricsCoptic": "lyrics/coptic/verses-of-cymbals-lazarus-saturday_coptic.md",
+      "name": "Praxis Response",
+      "lyricsEnglish": "lyrics/english/verses-of-cymbals-lazarus-saturday_english.md",
+      "lyricsArabic": "lyrics/arabic/verses-of-cymbals-lazarus-saturday_arabic.md",
+      "description": "Praxis Response for Lazarus Saturday",
+      "genreId": [
+        "lazarus-saturday"
+      ],
+      "recordings": [
+        {
+          "id": "cantor-tharwat_praxis-response-lazarus-saturday",
+          "markersUrl": "markers/cantor-tharwat/cantor-tharwat_praxis-response-lazarus-saturday_markers.txt",
+          "mode": "listen",
+          "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_praxis-response-lazarus-saturday.mp3",
+          "audioLength": 119.5363125,
+          "hymnId": "praxis-response-lazarus-saturday",
+          "cantorId": "cantor-tharwat",
+          "active": true,
+          "cantor": {
+            "id": "cantor-tharwat",
+            "cantorCloudActive": true,
+            "name": "Cantor Tharwat"
+          }
+        }
+      ]
+    },
+    {
+      "id": "share-ephnouti",
+      "description": "Praxis Response in the weekdays of Holy Lent.",
+      "lyricsArabic": "lyrics/arabic/share-ephnouti_arabic.md",
+      "genreId": [
+        "lent"
+      ],
+      "name": "Share Ephnouti",
+      "lyricsEnglish": "lyrics/english/share-ephnouti_english.md",
+      "lyricsCoptic": "lyrics/coptic/share-ephnouti_coptic.md",
+      "recordings": [
+        {
+          "id": "cantor-bola_share-ephnouti",
+          "hymnId": "share-ephnouti",
+          "mode": "learn",
+          "active": true,
+          "cantorId": "cantor-bola",
+          "markersUrl": "markers/cantor-bola/cantor-bola_share-ephnouti_markers.txt",
+          "audioUrl": "tracks/cantor-bola/cantor-bola_share-ephnouti.mp3",
+          "audioLength": 210.546925,
+          "cantor": {
+            "id": "cantor-bola",
+            "name": "Cantor Bola",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "somatos",
+      "lyricsCoptic": "lyrics/coptic/somatos_coptic.md",
+      "lyricsEnglish": "lyrics/english/somatos_english.md",
+      "name": "Somatos",
+      "lyricsArabic": "lyrics/arabic/somatos_arabic.md",
+      "description": "The Conclusion Canon in the weekdays of Holy Lent.",
+      "genreId": [
+        "lent"
+      ],
+      "recordings": [
+        {
+          "id": "cantor-bola_somatos",
+          "cantorId": "cantor-bola",
+          "audioUrl": "tracks/cantor-bola/cantor-bola_somatos.mp3",
+          "active": true,
+          "markersUrl": "markers/cantor-bola/cantor-bola_somatos_markers.txt",
+          "mode": "learn",
+          "hymnId": "somatos",
+          "audioLength": 121.417125,
+          "cantor": {
+            "id": "cantor-bola",
+            "name": "Cantor Bola",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "teen-anastaseen",
+      "lyricsCoptic": "lyrics/coptic/teen-anastaseen_coptic.md",
+      "description": "The 4th hymn chanted during the procession of the resurrection until the 39th day of the holy 50 days.",
+      "name": "Teen Anastaseen",
+      "lyricsEnglish": "lyrics/english/teen-anastaseen_english.md",
+      "lyricsArabic": "lyrics/arabic/teen-anastaseen_arabic.md",
+      "genreId": [
+        "resurrection"
+      ],
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_teen-anastaseen",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_teen-anastaseen_markers.txt",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_teen-anastaseen.mp3",
+          "hymnId": "teen-anastaseen",
+          "active": true,
+          "audioLength": 212.401625,
+          "cantorId": "cantor-ibrahim",
+          "mode": "learn",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "tenen",
+      "name": "Tenen",
+      "lyricsCoptic": "lyrics/coptic/tenen_coptic.md",
+      "description": "Psali Watos for the Three Saintly Children, chanted in Midnight Praises during the month of Kiahk and on Bright Saturday.",
+      "lyricsEnglish": "lyrics/english/tenen_english.md",
+      "genreId": [
+        "kiahk"
+      ],
+      "lyricsArabic": "lyrics/arabic/tenen_arabic.md",
+      "recordings": [
+        {
+          "id": "cantor-gad_tenen",
+          "markersUrl": "markers/cantor-gad/cantor-gad_tenen_markers.txt",
+          "cantorId": "cantor-gad",
+          "active": true,
+          "mode": "learn",
+          "audioUrl": "tracks/cantor-gad/cantor-gad_tenen.mp3",
+          "hymnId": "tenen",
+          "audioLength": 1252.3,
+          "cantor": {
+            "id": "cantor-gad",
+            "name": "Cantor Gad",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "stones",
+      "name": "The Stones",
+      "lyricsCoptic": "lyrics/coptic/stones_coptic.md",
+      "genreId": [
+        "holy-week"
+      ],
+      "description": "The names of the 12 precious stones used for the foundation of the walls of the city, chanted in the 21st chapter of the Book of Revelation in Bright Saturday.",
+      "lyricsEnglish": "lyrics/english/stones_english.md",
+      "lyricsArabic": "lyrics/arabic/stones_arabic.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_stones",
+          "cantorId": "cantor-ibrahim",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_stones.mp3",
+          "audioLength": 401.4759,
+          "active": true,
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_stones_markers.txt",
+          "mode": "learn",
+          "hymnId": "stones",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "ti-epistolee",
+      "lyricsCoptic": "lyrics/coptic/ti-epistolee_coptic.md",
+      "lyricsEnglish": "lyrics/english/ti-epistolee_english.md",
+      "lyricsArabic": "lyrics/arabic/ti-epistolee_arabic.md",
+      "genreId": [
+        "holy-week"
+      ],
+      "description": "Mournful tune of the Pauline Epistle in the Sixth Hour of Good Friday.",
+      "name": "Ti-Epistolee",
+      "recordings": [
+        {
+          "id": "cantor-tharwat_ti-epistolee",
+          "hymnId": "ti-epistolee",
+          "markersUrl": "markers/cantor-tharwat/cantor-tharwat_ti-epistolee_markers.txt",
+          "audioLength": 572.76,
+          "active": true,
+          "cantorId": "cantor-tharwat",
+          "mode": "learn",
+          "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_ti-epistolee.mp3",
+          "cantor": {
+            "id": "cantor-tharwat",
+            "cantorCloudActive": true,
+            "name": "Cantor Tharwat"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ton-seena",
+      "lyricsCoptic": "lyrics/coptic/ton-seena_coptic.md",
+      "genreId": [
+        "resurrection"
+      ],
+      "name": "Ton Seena",
+      "lyricsArabic": "lyrics/arabic/ton-seena_arabic.md",
+      "lyricsEnglish": "lyrics/english/ton-seena_english.md",
+      "description": "The 2nd hymn chanted during the procession of the resurrection until the 39th day of the holy 50 days.",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_ton-seena",
+          "cantorId": "cantor-ibrahim",
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ton-seena_markers.txt",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ton-seena.mp3",
+          "audioLength": 81.711,
+          "mode": "learn",
+          "active": true,
+          "hymnId": "ton-seena",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "tou-lithou",
+      "description": "The 3rd hymn chanted during the procession of the resurrection until the 39th day of the holy 50 days.",
+      "genreId": [
+        "resurrection"
+      ],
+      "name": "Tou Lithou",
+      "lyricsCoptic": "lyrics/coptic/tou-lithou_coptic.md",
+      "lyricsEnglish": "lyrics/english/tou-lithou_english.md",
+      "lyricsArabic": "lyrics/arabic/tou-lithou_arabic.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_tou-lithou",
+          "active": true,
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_tou-lithou_markers.txt",
+          "hymnId": "tou-lithou",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_tou-lithou.mp3",
+          "cantorId": "cantor-ibrahim",
+          "audioLength": 150.857125,
+          "mode": "learn",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "tribes",
+      "lyricsArabic": "lyrics/arabic/tribes_arabic.md",
+      "name": "Tribes of Israel",
+      "genreId": [
+        "holy-week"
+      ],
+      "description": "The names of the 12 tribes of Israel sealed, chanted in the 7th chapter of the Book of Revelation in Bright Saturday.",
+      "lyricsCoptic": "lyrics/coptic/tribes_coptic.md",
+      "lyricsEnglish": "lyrics/english/tribes_english.md",
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_tribes",
+          "audioLength": 421.694675,
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_tribes_markers.txt",
+          "active": true,
+          "mode": "learn",
+          "cantorId": "cantor-ibrahim",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_tribes.mp3",
+          "hymnId": "tribes",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "verses-of-cymbals-lazarus-saturday",
+      "lyricsArabic": "lyrics/arabic/verses-of-cymbals-lazarus-saturday_arabic.md",
+      "name": "Verses of Cymbals",
+      "description": "Verses of Cymbals for Lazarus Saturday",
+      "genreId": [
+        "lazarus-saturday"
+      ],
+      "lyricsCoptic": "lyrics/coptic/verses-of-cymbals-lazarus-saturday_coptic.md",
+      "lyricsEnglish": "lyrics/english/verses-of-cymbals-lazarus-saturday_english.md",
+      "recordings": [
+        {
+          "id": "cantor-tharwat_verses-of-cymbals-lazarus-saturday",
+          "mode": "listen",
+          "active": true,
+          "hymnId": "verses-of-cymbals-lazarus-saturday",
+          "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_verses-of-cymbals-lazarus-saturday.mp3",
+          "audioLength": 20.8979375,
+          "cantorId": "cantor-tharwat",
+          "markersUrl": "markers/cantor-tharwat/cantor-tharwat_verses-of-cymbals-lazarus-saturday_markers.txt",
+          "cantor": {
+            "id": "cantor-tharwat",
+            "cantorCloudActive": true,
+            "name": "Cantor Tharwat"
+          }
+        }
+      ]
+    }
+  ]
+}

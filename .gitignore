@@ -35,3 +35,9 @@ next-env.d.ts
 # Export files
 codebase.zip
 codebase.tar.gz
+
+# Local staging & Python cache
+staging/
+__pycache__/
+*.pyc
+

@@ -1,0 +1,58 @@
+[
+  {
+    "id": "apostles-fast",
+    "contentUrl": "genres/content/apostles-fast_content.txt",
+    "backgroundUrl": "genres/backgrounds/ApostlesFast.webp",
+    "cantorCloudActive": true,
+    "name": "Apostles' Fast",
+    "active": true
+  },
+  {
+    "id": "holy-week",
+    "name": "Holy Week",
+    "cantorCloudActive": true,
+    "contentUrl": "genres/content/holy-week_content.txt",
+    "active": true,
+    "backgroundUrl": "genres/backgrounds/HolyWeek2.jpeg"
+  },
+  {
+    "id": "kiahk",
+    "active": true,
+    "name": "Kiahk",
+    "backgroundUrl": "genres/backgrounds/Kiahk1.jpeg",
+    "contentUrl": "genres/content/kiahk_content.txt",
+    "cantorCloudActive": true
+  },
+  {
+    "id": "lazarus-saturday",
+    "contentUrl": "genres/content/lazarus-saturday_content.txt",
+    "active": true,
+    "backgroundUrl": "genres/backgrounds/LazarusSaturday1.jpeg",
+    "name": "Lazarus Saturday",
+    "cantorCloudActive": true
+  },
+  {
+    "id": "lent",
+    "backgroundUrl": "genres/backgrounds/Lent2.jpeg",
+    "cantorCloudActive": true,
+    "active": true,
+    "name": "Lent",
+    "contentUrl": "genres/content/lent_content.txt"
+  },
+  {
+    "id": "nativity",
+    "active": true,
+    "cantorCloudActive": true,
+    "contentUrl": "genres/content/nativity_content.txt",
+    "backgroundUrl": "genres/backgrounds/Nativity2.jpeg",
+    "name": "Nativity"
+  },
+  {
+    "id": "resurrection",
+    "name": "Resurrection",
+    "backgroundUrl": "genres/backgrounds/Resurrection1.jpeg",
+    "active": true,
+    "cantorCloudActive": true,
+    "contentUrl": "genres/content/resurrection_content.txt"
+  }
+]
