@@ -14,6 +14,8 @@ import html
 import json
 import os
 import re
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 import urllib.parse
 import urllib.request
 from html.parser import HTMLParser
