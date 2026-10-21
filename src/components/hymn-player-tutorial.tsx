@@ -28,18 +28,18 @@ import { Button } from './ui/button';
 
 const tutorialSteps = [
   {
-    title: 'Learn vs. Listen Mode',
+    title: 'Recording Types',
     description:
-      'Recordings marked with a green dot are in "Learn Mode", with interactive sections. Others are for listening.',
+      'Recordings marked with a green dot feature interactive sections with synchronized markers. Grey dots indicate continuous recordings.',
     visual: () => (
       <div className="inline-flex flex-col items-start gap-2 rounded-lg border bg-background p-3 text-sm">
         <div className="flex items-center gap-3">
-          <div className="h-2 w-2 flex-shrink-0 rounded-full bg-green-500" />
-          <span className="font-medium">Learn Mode Cantor</span>
+          <div className="h-2 w-2 flex-shrink-0 rounded-full bg-emerald-500" />
+          <span className="font-medium">Interactive Recording</span>
         </div>
         <div className="flex items-center gap-3">
-          <div className="h-2 w-2 flex-shrink-0 rounded-full bg-muted-foreground/50" />
-          <span className="text-muted-foreground">Listen Mode Cantor</span>
+          <div className="h-2 w-2 flex-shrink-0 rounded-full bg-zinc-400 dark:bg-zinc-500" />
+          <span className="text-muted-foreground">Continuous Recording</span>
         </div>
       </div>
     ),
@@ -47,7 +47,7 @@ const tutorialSteps = [
   {
     title: 'Navigate Sections',
     description:
-      'In Learn Mode, use the skip buttons to jump between pre-defined sections of the hymn.',
+      'For interactive recordings, use the skip buttons to jump smoothly between pre-defined sections of the hymn.',
     visual: () => (
         <div className="inline-flex flex-col items-center gap-3 rounded-lg border bg-background p-4">
             <div className="relative h-2 w-32 rounded-full bg-secondary">

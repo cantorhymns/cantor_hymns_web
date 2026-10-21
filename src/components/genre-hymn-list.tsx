@@ -17,8 +17,12 @@ import { useOrderedHymns } from '@/lib/hooks/useOrderedHymns';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const HymnCard = ({ hymn, genreId }: { hymn: Hymn; genreId: string }) => {
-  const learnCount = hymn.recordings?.filter(r => r.mode === 'learn').length || 0;
-  const listenCount = hymn.recordings?.filter(r => r.mode === 'listen').length || 0;
+  const hasLearn = hymn.recordings?.some(r => r.mode === 'learn');
+  const hasListen = hymn.recordings?.some(r => r.mode === 'listen');
+  const cantors = (hymn.recordings?.map(r => r.cantor?.name).filter(Boolean) as string[]) || [];
+  const uniqueCantors = Array.from(new Set(cantors));
+  const cantorSummary = uniqueCantors.length > 0 ? uniqueCantors.join(', ') : 'No recordings';
+
   return (
     <Link href={`/hymn/${hymn.id}?genre=${genreId}`} key={hymn.id} className="group">
       <Card className="h-full flex flex-col transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 group-hover:border-primary/50">
@@ -26,23 +30,16 @@ const HymnCard = ({ hymn, genreId }: { hymn: Hymn; genreId: string }) => {
           <CardTitle className="font-headline text-2xl text-primary">
             {hymn.name}
           </CardTitle>
-          <CardDescription className="flex items-center gap-4 text-base">
-            {learnCount > 0 && (
-              <div className="flex items-center gap-1.5 font-medium">
-                <div className="h-2 w-2 rounded-full bg-green-500" />
-                <span>{learnCount} Learn</span>
-              </div>
-            )}
-            {listenCount > 0 && (
-              <div className="flex items-center gap-1.5 font-medium text-muted-foreground/80">
-                <span>{listenCount} Listen</span>
-              </div>
-            )}
-            {(learnCount === 0 && listenCount === 0) && (
-              <div className="flex items-center gap-1.5 font-medium text-muted-foreground/80">
-                <span>No active recordings</span>
-              </div>
-            )}
+          <CardDescription className="flex items-center justify-between gap-2 text-sm text-muted-foreground pt-1">
+            <span className="truncate">{cantorSummary}</span>
+            <div className="flex items-center gap-1.5 shrink-0">
+              {hasLearn && (
+                <div className="h-2 w-2 rounded-full bg-emerald-500" title="Interactive Practice" />
+              )}
+              {hasListen && (
+                <div className="h-2 w-2 rounded-full bg-zinc-400 dark:bg-zinc-500" title="Continuous Chanting" />
+              )}
+            </div>
           </CardDescription>
         </CardHeader>
       </Card>

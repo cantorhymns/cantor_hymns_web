@@ -1186,7 +1186,13 @@ export function HymnPlayer({
                               {hymn.recordings.map((rec) => (
                                   <SelectItem key={rec.id} value={rec.id}>
                                       <div className="flex items-center gap-2">
-                                          {rec.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
+                                          <div
+                                              className={`h-2 w-2 rounded-full ${
+                                                  rec.mode === 'learn'
+                                                      ? 'bg-emerald-500'
+                                                      : 'bg-zinc-400 dark:bg-zinc-500'
+                                              }`}
+                                          />
                                           <span>{rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}</span>
                                       </div>
                                   </SelectItem>
@@ -1195,7 +1201,13 @@ export function HymnPlayer({
                       </Select>
                   ) : (
                       <div className="flex items-center justify-center gap-2 h-10 px-3 border rounded-md text-sm text-muted-foreground bg-secondary/50 w-full">
-                          {currentRecording.mode === 'learn' && <div className="h-2 w-2 rounded-full bg-green-500" />}
+                          <div
+                              className={`h-2 w-2 rounded-full ${
+                                  currentRecording.mode === 'learn'
+                                      ? 'bg-emerald-500'
+                                      : 'bg-zinc-400 dark:bg-zinc-500'
+                              }`}
+                          />
                           <span className="truncate">{currentRecording.cantor?.name || '...'}</span>
                       </div>
                   )}
