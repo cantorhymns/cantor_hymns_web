@@ -4,6 +4,7 @@ import { getAuth, signInAnonymously } from 'firebase/auth';
 import { firebaseConfig } from '../firebase/config';
 import * as fs from 'fs';
 import * as path from 'path';
+import { uploadCatalogToStorage } from './upload-catalog-to-storage';
 
 interface PublishOptions {
   hymnId: string;
@@ -139,6 +140,15 @@ export async function publishHymnToCatalog(options: PublishOptions) {
       fs.writeFileSync(path.join(dir, 'catalog.json'), JSON.stringify(catalog, null, 2), 'utf-8');
       console.log(`Synced catalog to: ${dir}`);
     }
+  }
+
+  // 7. Push live to Firebase Storage (instant sync across web & mobile)
+  console.log('\n☁️ Pushing updated catalog to Firebase Storage for live sync...');
+  try {
+    await uploadCatalogToStorage();
+    console.log('✅ Catalog is live on Firebase Storage!');
+  } catch (storageErr) {
+    console.warn('⚠️ Warning: Failed to upload catalog to Firebase Storage:', storageErr);
   }
 
   console.log(`\n🎉 Successfully published "${name}" to JSON catalog across web and mobile!`);

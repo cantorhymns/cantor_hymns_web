@@ -2,14 +2,15 @@
 import { useMemo } from 'react';
 import { Hymn } from '@/lib/types';
 import { useFileContent } from './useFileContent';
-import { getHymn } from '@/lib/services/catalog';
+import { getHymn, useCatalog } from '@/lib/services/catalog';
 
 const CANTORS_ORDER_FILE_PATH = 'tracks/cantors_order.txt';
 
 export function useHymn(hymnId?: string) {
+  const catalog = useCatalog();
   const { content: cantorsOrderFile, isLoading: isCantorsOrderLoading, error: cantorsOrderError } = useFileContent(CANTORS_ORDER_FILE_PATH);
 
-  const rawHymn = useMemo(() => getHymn(hymnId), [hymnId]);
+  const rawHymn = useMemo(() => getHymn(hymnId), [catalog, hymnId]);
 
   const cantorsOrder = useMemo(() => {
     if (!cantorsOrderFile) return [];
@@ -48,6 +49,6 @@ export function useHymn(hymnId?: string) {
   return {
     data: hymnWithRecordings,
     isLoading: isCantorsOrderLoading,
-    error: cantorsOrderError,
+    error: cantorsOrderError
   };
 }

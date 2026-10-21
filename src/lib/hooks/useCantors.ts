@@ -2,14 +2,15 @@
 import { useMemo } from 'react';
 import { Cantor } from '@/lib/types';
 import { useFileContent } from './useFileContent';
-import { getCantors } from '@/lib/services/catalog';
+import { getCantors, useCatalog } from '@/lib/services/catalog';
 
 const CANTORS_ORDER_FILE_PATH = 'tracks/cantors_order.txt';
 
 export function useCantors() {
+  const catalog = useCatalog();
   const { content: orderFileContent, isLoading: isOrderLoading, error: orderFileError } = useFileContent(CANTORS_ORDER_FILE_PATH);
 
-  const allCantors = useMemo(() => getCantors(), []);
+  const allCantors = useMemo(() => getCantors(), [catalog]);
 
   const processedCantors = useMemo(() => {
     if (!orderFileContent) {

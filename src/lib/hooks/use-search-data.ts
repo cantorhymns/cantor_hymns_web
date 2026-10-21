@@ -1,6 +1,6 @@
 'use client';
 import { useMemo } from 'react';
-import { getHymns, getGenres, getCantors, getAllRecordings } from '@/lib/services/catalog';
+import { getHymns, getGenres, getCantors, getAllRecordings, useCatalog } from '@/lib/services/catalog';
 import { Hymn, Genre, Cantor } from '../types';
 
 export interface HymnSearchResult {
@@ -14,6 +14,8 @@ export interface HymnSearchResult {
 }
 
 export function useSearchData() {
+  const catalog = useCatalog();
+
   const hymnSearchResults = useMemo((): HymnSearchResult[] => {
     const allHymns = getHymns();
     const allGenres = getGenres();
@@ -46,7 +48,7 @@ export function useSearchData() {
     });
 
     return results;
-  }, []);
+  }, [catalog]);
 
-  return { data: hymnSearchResults, isLoading: false };
+  return { data: hymnSearchResults, hymnSearchResults, isLoading: false, error: null };
 }

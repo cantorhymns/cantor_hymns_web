@@ -119,7 +119,7 @@ python3 .agents/skills/cantor-agent/scripts/detect_markers.py generate \
   - `lyrics/coptic/<hymnId>_coptic.md`
   - `lyrics/english/<hymnId>_english.md`
   - `lyrics/arabic/<hymnId>_arabic.md`
-- Registers the hymn and recording into the JSON catalog across both web (`src/data`, `public/data`) and mobile (`cantor_hymns_mobile/src/data`):
+- Registers the hymn and recording into the JSON catalog across both web (`src/data`, `public/data`) and mobile (`cantor_hymns_mobile/src/data`), and automatically pushes `data/catalog.json` live to **Firebase Storage** so both Web and Mobile apps receive instant live updates without needing a code redeploy or App Store release:
   - Script: `src/scripts/publish-hymn.ts`
   ```bash
   npx tsx src/scripts/publish-hymn.ts \
@@ -129,6 +129,10 @@ python3 .agents/skills/cantor-agent/scripts/detect_markers.py generate \
     --cantor "cantor-gad" \
     --mode "learn" \
     --description "Psali Watos for the Three Saintly Children..."
+  ```
+- To manually re-upload local catalog changes to Firebase Storage at any time:
+  ```bash
+  npm run catalog:push
   ```
 
 

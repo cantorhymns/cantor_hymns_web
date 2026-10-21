@@ -2,14 +2,15 @@
 import { useMemo } from 'react';
 import { Genre } from '@/lib/types';
 import { useFileContent } from './useFileContent';
-import { getGenres, getGenre } from '@/lib/services/catalog';
+import { getGenres, getGenre, useCatalog } from '@/lib/services/catalog';
 
 const GENRES_ORDER_FILE_PATH = 'genres/genres_order.txt';
 
 export function useGenres() {
+  const catalog = useCatalog();
   const { content: orderFileContent, isLoading: isOrderLoading, error: orderFileError } = useFileContent(GENRES_ORDER_FILE_PATH);
 
-  const activeGenres = useMemo(() => getGenres(), []);
+  const activeGenres = useMemo(() => getGenres(), [catalog]);
 
   const processedGenres = useMemo(() => {
     if (!orderFileContent) {
@@ -40,6 +41,7 @@ export function useGenres() {
 }
 
 export function useGenre(genreId?: string) {
-  const genre = useMemo(() => getGenre(genreId), [genreId]);
+  const catalog = useCatalog();
+  const genre = useMemo(() => getGenre(genreId), [catalog, genreId]);
   return { data: genre, isLoading: false, error: null };
 }
