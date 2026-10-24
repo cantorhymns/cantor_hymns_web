@@ -1,5 +1,17 @@
 [
   {
+    "id": "tarh",
+    "lyricsEnglish": "lyrics/english/tarh_english.md",
+    "lyricsCoptic": "lyrics/coptic/tarh_coptic.md",
+    "description": "The great exposition hymn chanted in Vespers Praises in the month of Kiahk and Holy Lent.",
+    "genreId": [
+      "kiahk",
+      "lent"
+    ],
+    "name": "Al-Tarh",
+    "lyricsArabic": "lyrics/arabic/tarh_arabic.md"
+  },
+  {
     "id": "alleluia-al-asr",
     "genreId": [
       "kiahk",
@@ -133,6 +145,20 @@
     ]
   },
   {
+    "id": "doxology-1-kiahk",
+    "name": "First Kiahk Doxology",
+    "genreId": [
+      "kiahk"
+    ],
+    "description": "The First Doxology for the month of Kiahk and the Nativity Fast (Ke Ghar Aishansaji).",
+    "lyricsEnglish": "lyrics/english/doxology-1-kiahk_english.md",
+    "lyricsCoptic": "lyrics/coptic/doxology-1-kiahk_coptic.md",
+    "lyricsArabic": "lyrics/arabic/doxology-1-kiahk_arabic.md",
+    "subGenreId": {
+      "kiahk": "Vespers"
+    }
+  },
+  {
     "id": "genethlion",
     "lyricsEnglish": "lyrics/english/genethlion_english.md",
     "description": "Chanted in the Divine Liturgy of the Feast of the Nativity after the Praxis reading and also during the distribution of the Holy Sacraments.",
@@ -155,23 +181,15 @@
     "lyricsCoptic": "lyrics/coptic/gholghotha_coptic.md"
   },
   {
-    "id": "great-hoos",
+    "id": "yodas",
     "genreId": [
-      "lent"
+      "holy-week"
     ],
-    "name": "Great Hoos",
-    "description": "The Great Hoos, Psalm 96, chanted at the beginning of Midnight Praises in the month of Kiahk and Holy Lent."
-  },
-  {
-    "id": "je-efesmaroout-lent-weekdays",
-    "genreId": [
-      "lent"
-    ],
-    "name": "Lenten Je Efesmaroout (Weekdays)",
-    "lyricsEnglish": "lyrics/english/je-efesmaroout_english.md",
-    "lyricsCoptic": "lyrics/coptic/je-efesmaroout_coptic.md",
-    "description": "Lenten weekdays tune for Je Efesmaroout, chanted during the Distribution of the Holy Sacraments before Pi-Mairomi.",
-    "lyricsArabic": "lyrics/arabic/je-efesmaroout_arabic.md"
+    "lyricsArabic": "lyrics/arabic/yodas_arabic.md",
+    "name": "Judas",
+    "description": "A hymn for Judas' reprimand, chanted on Covenant Thursday in a procession while the deacons are going clockwise.",
+    "lyricsCoptic": "lyrics/coptic/yodas_coptic.md",
+    "lyricsEnglish": "lyrics/english/yodas_english.md"
   },
   {
     "id": "kata-ni-khoros",
@@ -229,15 +247,15 @@
     "lyricsCoptic": "lyrics/coptic/khristos-anesti_coptic.md"
   },
   {
-    "id": "kyrie-eleison-lent",
+    "id": "psalm-150-kiahk",
+    "name": "Kiahk Psalm 150",
+    "lyricsEnglish": "lyrics/english/psalm-150-annual_english.md",
+    "lyricsCoptic": "lyrics/coptic/psalm-150-annual_coptic.md",
+    "description": "Psalm 150 of the Distribution of the Holy Sacraments in the month of Kiahk.",
     "genreId": [
-      "lent"
+      "kiahk"
     ],
-    "lyricsArabic": "lyrics/arabic/kyrie-eleison-lent_arabic.md",
-    "description": "Melismatic Kyrie Eleison, chanted in place of the Verses of Cymbals in Matins of the weekdays of Holy Lent.",
-    "lyricsEnglish": "lyrics/english/kyrie-eleison-lent_english.md",
-    "lyricsCoptic": "lyrics/coptic/kyrie-eleison-lent_coptic.md",
-    "name": "Lenten Kyrie Eleison"
+    "lyricsArabic": "lyrics/arabic/psalm-150-annual_arabic.md"
   },
   {
     "id": "lazaros-amou",
@@ -249,6 +267,53 @@
     ],
     "lyricsEnglish": "lyrics/english/lazaros-amou_english.md",
     "lyricsCoptic": "lyrics/coptic/lazaros-amou_coptic.md"
+  },
+  {
+    "id": "je-efesmaroout-lent-weekdays",
+    "genreId": [
+      "lent"
+    ],
+    "name": "Lenten Je Efesmaroout (Weekdays)",
+    "lyricsEnglish": "lyrics/english/je-efesmaroout_english.md",
+    "lyricsCoptic": "lyrics/coptic/je-efesmaroout_coptic.md",
+    "description": "Lenten weekdays tune for Je Efesmaroout, chanted during the Distribution of the Holy Sacraments before Pi-Mairomi.",
+    "lyricsArabic": "lyrics/arabic/je-efesmaroout_arabic.md"
+  },
+  {
+    "id": "kyrie-eleison-lent",
+    "genreId": [
+      "lent"
+    ],
+    "lyricsArabic": "lyrics/arabic/kyrie-eleison-lent_arabic.md",
+    "description": "Melismatic Kyrie Eleison, chanted in place of the Verses of Cymbals in Matins of the weekdays of Holy Lent.",
+    "lyricsEnglish": "lyrics/english/kyrie-eleison-lent_english.md",
+    "lyricsCoptic": "lyrics/coptic/kyrie-eleison-lent_coptic.md",
+    "name": "Lenten Kyrie Eleison"
+  },
+  {
+    "id": "psalm-150-lent-weekdays",
+    "genreId": [
+      "lent"
+    ],
+    "description": "Psalm 150 of the Distribution of the Holy Sacraments in the weekdays of Holy Lent.",
+    "lyricsArabic": "lyrics/arabic/psalm-150-lent_arabic.md",
+    "name": "Lenten Psalm 150 (Weekdays)",
+    "subGenreId": {
+      "lent": "Liturgy Weekdays"
+    },
+    "lyricsEnglish": "lyrics/english/psalm-150-lent_english.md",
+    "lyricsCoptic": "lyrics/coptic/psalm-150-lent_coptic.md"
+  },
+  {
+    "id": "sherat-lent",
+    "name": "Lenten Sherat",
+    "lyricsEnglish": "lyrics/english/theotokia-lobsh-saturday_english.md",
+    "lyricsCoptic": "lyrics/coptic/theotokia-lobsh-saturday_coptic.md",
+    "genreId": [
+      "lent"
+    ],
+    "description": "The Lenten Sherat (translating to \"The Hails\"), the Lobsh of Saturday Theotokia, chanted in Vespers Praises on Saturdays of Holy Lent.",
+    "lyricsArabic": "lyrics/arabic/theotokia-lobsh-saturday_arabic.md"
   },
   {
     "id": "meghalo",
@@ -373,7 +438,7 @@
   },
   {
     "id": "pi-mairomi",
-    "description": "A hymn for the Lord Jesus Christ, chanted during the Distribution of Holy Mysteries in the weekdays of Holy Lent.",
+    "description": "A hymn for my Lord Jesus Christ, chanted during the Distribution of Holy Mysteries in the weekdays of Holy Lent.",
     "name": "Pi-Mairomi",
     "genreId": [
       "lent"
@@ -405,31 +470,6 @@
     ]
   },
   {
-    "id": "psalm-150-kiahk",
-    "name": "Kiahk Psalm 150",
-    "lyricsEnglish": "lyrics/english/psalm-150-annual_english.md",
-    "lyricsCoptic": "lyrics/coptic/psalm-150-annual_coptic.md",
-    "description": "Psalm 150 of the Distribution of the Holy Sacraments in the month of Kiahk.",
-    "genreId": [
-      "kiahk"
-    ],
-    "lyricsArabic": "lyrics/arabic/psalm-150-annual_arabic.md"
-  },
-  {
-    "id": "psalm-150-lent-weekdays",
-    "genreId": [
-      "lent"
-    ],
-    "description": "Psalm 150 of the Distribution of the Holy Sacraments in the weekdays of Holy Lent.",
-    "lyricsArabic": "lyrics/arabic/psalm-150-lent_arabic.md",
-    "name": "Lenten Psalm 150 (Weekdays)",
-    "subGenreId": {
-      "lent": "Liturgy Weekdays"
-    },
-    "lyricsEnglish": "lyrics/english/psalm-150-lent_english.md",
-    "lyricsCoptic": "lyrics/coptic/psalm-150-lent_coptic.md"
-  },
-  {
     "id": "share-ephnouti",
     "description": "Praxis Response in the weekdays of Holy Lent.",
     "lyricsArabic": "lyrics/arabic/share-ephnouti_arabic.md",
@@ -441,17 +481,6 @@
     "lyricsCoptic": "lyrics/coptic/share-ephnouti_coptic.md"
   },
   {
-    "id": "sherat-lent",
-    "name": "Lenten Sherat",
-    "lyricsEnglish": "lyrics/english/theotokia-lobsh-saturday_english.md",
-    "lyricsCoptic": "lyrics/coptic/theotokia-lobsh-saturday_coptic.md",
-    "genreId": [
-      "lent"
-    ],
-    "description": "The Lenten Sherat (translating to \"The Hails\"), the Lobsh of Saturday Theotokia, chanted in Vespers Praises on Saturdays of Holy Lent.",
-    "lyricsArabic": "lyrics/arabic/theotokia-lobsh-saturday_arabic.md"
-  },
-  {
     "id": "somatos",
     "lyricsCoptic": "lyrics/coptic/somatos_coptic.md",
     "lyricsEnglish": "lyrics/english/somatos_english.md",
@@ -461,29 +490,6 @@
     "genreId": [
       "lent"
     ]
-  },
-  {
-    "id": "stones",
-    "name": "The Stones",
-    "lyricsCoptic": "lyrics/coptic/stones_coptic.md",
-    "genreId": [
-      "holy-week"
-    ],
-    "description": "The names of the 12 precious stones used for the foundation of the walls of the city, chanted in the 21st chapter of the Book of Revelation in Bright Saturday.",
-    "lyricsEnglish": "lyrics/english/stones_english.md",
-    "lyricsArabic": "lyrics/arabic/stones_arabic.md"
-  },
-  {
-    "id": "tarh",
-    "lyricsEnglish": "lyrics/english/tarh_english.md",
-    "lyricsCoptic": "lyrics/coptic/tarh_coptic.md",
-    "description": "The great exposition hymn chanted in Vespers Praises in the month of Kiahk and Holy Lent.",
-    "genreId": [
-      "kiahk",
-      "lent"
-    ],
-    "name": "Al-Tarh",
-    "lyricsArabic": "lyrics/arabic/tarh_arabic.md"
   },
   {
     "id": "teen-anastaseen",
@@ -506,6 +512,17 @@
       "kiahk"
     ],
     "lyricsArabic": "lyrics/arabic/tenen_arabic.md"
+  },
+  {
+    "id": "stones",
+    "name": "The Stones",
+    "lyricsCoptic": "lyrics/coptic/stones_coptic.md",
+    "genreId": [
+      "holy-week"
+    ],
+    "description": "The names of the 12 precious stones used for the foundation of the walls of the city, chanted in the 21st chapter of the Book of Revelation in Bright Saturday.",
+    "lyricsEnglish": "lyrics/english/stones_english.md",
+    "lyricsArabic": "lyrics/arabic/stones_arabic.md"
   },
   {
     "id": "ti-epistolee",
@@ -561,16 +578,5 @@
     ],
     "lyricsCoptic": "lyrics/coptic/verses-of-cymbals-lazarus-saturday_coptic.md",
     "lyricsEnglish": "lyrics/english/verses-of-cymbals-lazarus-saturday_english.md"
-  },
-  {
-    "id": "yodas",
-    "genreId": [
-      "holy-week"
-    ],
-    "lyricsArabic": "lyrics/arabic/yodas_arabic.md",
-    "name": "Judas",
-    "description": "A hymn for Judas' reprimand, chanted on Covenant Thursday in a procession while the deacons are going clockwise.",
-    "lyricsCoptic": "lyrics/coptic/yodas_coptic.md",
-    "lyricsEnglish": "lyrics/english/yodas_english.md"
   }
 ]

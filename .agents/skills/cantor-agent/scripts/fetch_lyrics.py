@@ -217,16 +217,18 @@ class TasbehaHymnParser(HTMLParser):
                 self._capture_target = None
 
 
-def clean_joined_text(lines: List[str], is_arabic: bool = False) -> str:
+def clean_joined_text(lines: List[str], is_arabic: bool = False, strip_crosses: bool = True) -> str:
     joined = " ".join(line.strip() for line in lines if line and line.strip())
     joined = re.sub(r"\s+", " ", joined).strip()
+    if strip_crosses and joined.startswith("+"):
+        joined = joined[1:].strip()
     if is_arabic:
         for wrong, right in KNOWN_TEXT_FIXES.items():
             joined = joined.replace(wrong, right)
     return joined
 
 
-def parse_tasbeha_hymn(raw_html: str, source_url: str = "") -> Dict[str, Any]:
+def parse_tasbeha_hymn(raw_html: str, source_url: str = "", strip_crosses: bool = True) -> Dict[str, Any]:
     parser = TasbehaHymnParser()
     parser.feed(raw_html)
 
@@ -245,10 +247,10 @@ def parse_tasbeha_hymn(raw_html: str, source_url: str = "") -> Dict[str, Any]:
         english_lines = [line["english"] for line in para["lines"] if line["english"]]
         arabic_lines = [line["arabic"] for line in para["lines"] if line["arabic"]]
 
-        coptic_stanza = clean_joined_text(coptic_lines)
-        translit_stanza = clean_joined_text(translit_lines)
-        english_stanza = clean_joined_text(english_lines)
-        arabic_stanza = clean_joined_text(arabic_lines, is_arabic=True)
+        coptic_stanza = clean_joined_text(coptic_lines, strip_crosses=strip_crosses)
+        translit_stanza = clean_joined_text(translit_lines, strip_crosses=strip_crosses)
+        english_stanza = clean_joined_text(english_lines, strip_crosses=strip_crosses)
+        arabic_stanza = clean_joined_text(arabic_lines, is_arabic=True, strip_crosses=strip_crosses)
 
         if coptic_stanza or english_stanza or arabic_stanza:
             stanzas.append(

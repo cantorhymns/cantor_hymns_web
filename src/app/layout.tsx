@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/header';
+import { Footer } from '@/components/footer';
 import { Toaster } from '@/components/ui/toaster';
 import { FirebaseClientProvider } from '@/firebase';
 import { AuthGate } from '@/components/auth-gate';
@@ -10,6 +11,7 @@ import { SearchProvider } from '@/components/search-provider';
 import { HymnSearchDialog } from '@/components/hymn-search-dialog';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://cantorhymns.com'),
   title: {
     default: 'Cantor',
     template: '%s | Cantor',
@@ -55,6 +57,7 @@ export default function RootLayout({
               <div className="relative flex min-h-screen flex-col">
                 <Header />
                 <main className="flex-1">{children}</main>
+                <Footer />
               </div>
               <HymnSearchDialog />
             </SearchProvider>

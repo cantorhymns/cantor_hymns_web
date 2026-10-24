@@ -9,7 +9,7 @@ import { firebaseConfig } from '../firebase/config';
 const hymnId = 'pi-mairomi';
 const hymnData = {
     name: "Pi-Mairomi",
-    description: "A hymn for the Lord Jesus Christ, chanted during the Distribution of Holy Mysteries in the weekdays of Holy Lent.",
+    description: "A hymn for my Lord Jesus Christ, chanted during the Distribution of Holy Mysteries in the weekdays of Holy Lent.",
     genreId: ["lent"],
     lyricsArabic: "lyrics/arabic/pi-mairomi_arabic.md",
     lyricsCoptic: "lyrics/coptic/pi-mairomi_coptic.md",

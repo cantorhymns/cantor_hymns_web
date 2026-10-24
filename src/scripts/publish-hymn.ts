@@ -10,6 +10,7 @@ interface PublishOptions {
   hymnId: string;
   name: string;
   genres: string[];
+  subGenreId?: Record<string, string>;
   description?: string;
   cantorId: string;
   mode: 'learn' | 'listen';
@@ -18,7 +19,7 @@ interface PublishOptions {
 }
 
 export async function publishHymnToCatalog(options: PublishOptions) {
-  const { hymnId, name, genres, description, cantorId, mode, audioLength, filesToUpload } = options;
+  const { hymnId, name, genres, subGenreId, description, cantorId, mode, audioLength, filesToUpload } = options;
 
   console.log(`\n📦 Publishing "${name}" (${hymnId}) for cantor "${cantorId}"...`);
 
@@ -64,7 +65,7 @@ export async function publishHymnToCatalog(options: PublishOptions) {
 
   // 3. Upsert Hymn
   const existingHymnIndex = hymns.findIndex(h => h.id === hymnId);
-  const hymnRecord = {
+  const hymnRecord: any = {
     id: hymnId,
     name,
     genreId: genres,
@@ -73,6 +74,10 @@ export async function publishHymnToCatalog(options: PublishOptions) {
     lyricsCoptic: `lyrics/coptic/${hymnId}_coptic.md`,
     lyricsArabic: `lyrics/arabic/${hymnId}_arabic.md`,
   };
+
+  if (subGenreId && Object.keys(subGenreId).length > 0) {
+    hymnRecord.subGenreId = subGenreId;
+  }
 
   if (existingHymnIndex >= 0) {
     hymns[existingHymnIndex] = { ...hymns[existingHymnIndex], ...hymnRecord };
@@ -92,6 +97,7 @@ export async function publishHymnToCatalog(options: PublishOptions) {
     cantorId,
     audioUrl: `tracks/${cantorId}/${recordingId}.mp3`,
     markersUrl: `markers/${cantorId}/${recordingId}_markers.txt`,
+    lyricsMappingUrl: `markers/${cantorId}/${recordingId}_lyrics_markers.txt`,
     audioLength: audioLength || 0,
     active: true,
     mode: mode || 'learn',

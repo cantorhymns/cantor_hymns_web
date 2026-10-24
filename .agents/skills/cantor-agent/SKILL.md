@@ -52,8 +52,10 @@ python3 .agents/skills/cantor-agent/scripts/enhance_audio.py \
 ## Step 2: Smart Audio Boundary & Preface Trimming
 - Combines waveform envelope analysis ([trim_audio.py](./scripts/trim_audio.py)) with multimodal audio listening (`view_file` on extracted opening/closing clips):
   1. Run `trim_audio.py analyze` to locate exact vocal onset/offset and opening/closing pauses.
-  2. Extract the first 25s and last 20s and listen with `view_file` to verify whether any opening segment is a spoken commentary/preface or the first chanted word of the hymn.
-  3. Run `trim_audio.py trim` to remove spoken prefaces/outros and leading/trailing dead air with smooth micro-fades.
+  2. Extract the opening and closing clips and listen with `view_file` to verify the boundaries.
+  3. **Pre-roll Rule**: Always leave **`0.5s`** of natural quiet lead-in before the initial vocal onset (e.g. if vocal onset is at `4.46s`, trim start is `3.96s`).
+  4. **Outro Boundary Rule**: Cut cleanly in the breath gap immediately after the final verse/cadence before any subsequent hymn/doxology begins.
+  5. Run `trim_audio.py trim` to export the clean track with smooth micro-fades.
 
 ```bash
 python3 .agents/skills/cantor-agent/scripts/trim_audio.py analyze \
@@ -73,6 +75,7 @@ python3 .agents/skills/cantor-agent/scripts/trim_audio.py trim \
   - `staging/lyrics/coptic/<hymnId>_coptic.md`
   - `staging/lyrics/english/<hymnId>_english.md`
   - `staging/lyrics/arabic/<hymnId>_arabic.md`
+- **Crosses Rule**: Automatically strip leading crosses (`+ `) from even/alternating verses so all stanzas appear as clean text without choir markers.
 - Script: [fetch_lyrics.py](./scripts/fetch_lyrics.py)
 
 ```bash
@@ -92,6 +95,13 @@ python3 .agents/skills/cantor-agent/scripts/fetch_lyrics.py fetch \
 ## Step 4 & Step 6: Pedagogical Marker Detection & Lyrics-to-Marker Connection
 - Uses `25ms` RMS envelope valley detection + Dynamic Programming ([detect_markers.py](./scripts/detect_markers.py)) to place learning markers at natural breath pauses (`~8–22s` sections, averaging `~11–14s`, matching existing CantorHymns recordings).
 - Each marker is positioned in the quiet breath pause `~75ms` before the next vocal phrase onset so looping a section in Learn Mode never clips the preceding note or misses the attack.
+- **Marker Rules**:
+  - **No `0.00` in `markers.txt`**: The audio player internally prepends `0` for Section 1 (`const marksForLooping = [0, ...sortedActiveMarks]`). For an $N$-verse hymn, `markers.txt` must contain exactly $N-1$ timestamps (Marker 1 = Verse 2, Marker 2 = Verse 3, etc.).
+  - **Doxologies & Melisma-less Hymns**: Markers are placed strictly on verse boundaries (no sub-verse melisma breakdowns).
+  - **`lyrics_markers.txt` Format**: Must be a **newline-separated list of integers** (`0\n1\n2...`), NOT a JSON string. Each line $i$ maps Verse $i$ (1-based) to its section index (`0` for track start, `1` for Marker 1, `2` for Marker 2, etc.).
+  - **User Marker Feedback Terminology**:
+    - *"Started earlier"*: The section started **earlier than intended** (meaning trailing syllables / previous verse audio are heard before this section) $\rightarrow$ **DELAY the marker** (increase timestamp).
+    - *"Started later"*: The section started **later than intended** (meaning the first syllable / onset was cut off or late) $\rightarrow$ **ADVANCE the marker** (decrease timestamp).
 - Supports `--anchor-times` (verified via `top-pauses` + audio listening with `view_file`) so stanza boundaries have exact markers and automatically generates `<cantorId>_<hymnId>_lyrics_markers.txt` (Step 6, mapping each stanza to `0` or its 1-based marker index).
 
 ```bash
@@ -112,6 +122,7 @@ python3 .agents/skills/cantor-agent/scripts/detect_markers.py generate \
 ---
 
 ## Step 5: Firebase Storage & Static JSON Catalog Publishing
+- **No Firestore**: Firestore has been fully decommissioned. Under no circumstances should any script or agent attempt to write to or sync with Firestore.
 - Uploads all media files to their canonical paths in Firebase Storage:
   - `tracks/<cantorId>/<cantorId>_<hymnId>.mp3`
   - `markers/<cantorId>/<cantorId>_<hymnId>_markers.txt`

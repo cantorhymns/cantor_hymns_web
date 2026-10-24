@@ -671,5 +671,16 @@
     "markersUrl": "markers/hics/hics_pi-mairomi_markers.txt",
     "audioLength": 390.4783333333334,
     "active": true
+  },
+  {
+    "id": "hics_doxology-1-kiahk",
+    "hymnId": "doxology-1-kiahk",
+    "cantorId": "hics",
+    "audioUrl": "tracks/hics/hics_doxology-1-kiahk.mp3",
+    "markersUrl": "markers/hics/hics_doxology-1-kiahk_markers.txt",
+    "lyricsMappingUrl": "markers/hics/hics_doxology-1-kiahk_lyrics_markers.txt",
+    "audioLength": 226.25,
+    "active": true,
+    "mode": "learn"
   }
 ]

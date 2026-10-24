@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-20T22:24:24.631Z",
+  "generatedAt": "2026-10-21T20:01:49.009Z",
   "genres": [
     {
       "id": "apostles-fast",
@@ -523,6 +523,38 @@
       ]
     },
     {
+      "id": "doxology-1-kiahk",
+      "name": "First Kiahk Doxology",
+      "genreId": [
+        "kiahk"
+      ],
+      "description": "The First Doxology for the month of Kiahk and the Nativity Fast (Ke Ghar Aishansaji).",
+      "lyricsEnglish": "lyrics/english/doxology-1-kiahk_english.md",
+      "lyricsCoptic": "lyrics/coptic/doxology-1-kiahk_coptic.md",
+      "lyricsArabic": "lyrics/arabic/doxology-1-kiahk_arabic.md",
+      "subGenreId": {
+        "kiahk": "Vespers"
+      },
+      "recordings": [
+        {
+          "id": "hics_doxology-1-kiahk",
+          "hymnId": "doxology-1-kiahk",
+          "cantorId": "hics",
+          "audioUrl": "tracks/hics/hics_doxology-1-kiahk.mp3",
+          "markersUrl": "markers/hics/hics_doxology-1-kiahk_markers.txt",
+          "lyricsMappingUrl": "markers/hics/hics_doxology-1-kiahk_lyrics_markers.txt",
+          "audioLength": 226.25,
+          "active": true,
+          "mode": "learn",
+          "cantor": {
+            "id": "hics",
+            "cantorCloudActive": true,
+            "name": "HICS"
+          }
+        }
+      ]
+    },
+    {
       "id": "genethlion",
       "lyricsEnglish": "lyrics/english/genethlion_english.md",
       "description": "Chanted in the Divine Liturgy of the Feast of the Nativity after the Praxis reading and also during the distribution of the Holy Sacraments.",
@@ -592,15 +624,6 @@
           }
         }
       ]
-    },
-    {
-      "id": "great-hoos",
-      "genreId": [
-        "lent"
-      ],
-      "name": "Great Hoos",
-      "description": "The Great Hoos, Psalm 96, chanted at the beginning of Midnight Praises in the month of Kiahk and Holy Lent.",
-      "recordings": []
     },
     {
       "id": "yodas",
@@ -832,12 +855,13 @@
           "hymnId": "lazaros-amou",
           "audioLength": 624.195875,
           "markersUrl": "markers/cantor-tharwat/cantor-tharwat_lazaros-amou_markers.txt",
-          "mode": "listen",
+          "mode": "learn",
           "cantor": {
             "id": "cantor-tharwat",
             "cantorCloudActive": true,
             "name": "Cantor Tharwat"
-          }
+          },
+          "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_lazaros-amou_lyrics_markers.txt"
         }
       ]
     },
@@ -1402,7 +1426,7 @@
     },
     {
       "id": "pi-mairomi",
-      "description": "A hymn for the Lord Jesus Christ, chanted during the Distribution of Holy Mysteries in the weekdays of Holy Lent.",
+      "description": "A hymn for my Lord Jesus Christ, chanted during the Distribution of Holy Mysteries in the weekdays of Holy Lent.",
       "name": "Pi-Mairomi",
       "genreId": [
         "lent"
