@@ -1,5 +1,6 @@
 
 import type { Metadata } from 'next';
+import localFont from 'next/font/local';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/header';
@@ -31,6 +32,12 @@ export const metadata: Metadata = {
   },
 };
 
+const athanasius = localFont({
+  src: '../../public/fonts/CopticVine-Athanasius.ttf',
+  variable: '--font-athanasius',
+  display: 'swap',
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -50,7 +57,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="font-body antialiased">
+      <body className={cn("font-body antialiased", athanasius.variable)}>
         <FirebaseClientProvider>
           <AuthGate>
             <SearchProvider>

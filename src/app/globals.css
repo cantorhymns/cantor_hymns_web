@@ -61,7 +61,8 @@
 
 @font-face {
   font-family: 'Athanasius';
-  src: url('/fonts/CopticVine-Athanasius.ttf') format('truetype');
+  src: url('https://firebasestorage.googleapis.com/v0/b/studio-127742305-c9528.firebasestorage.app/o/fonts%2FCopticVine-Athanasius.ttf?alt=media') format('truetype'),
+       url('/fonts/CopticVine-Athanasius.ttf') format('truetype');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -75,11 +76,11 @@
     @apply bg-background text-foreground;
   }
   [lang="cop"] {
-    font-family: 'Athanasius', "Noto Sans Coptic", sans-serif;
+    font-family: var(--font-athanasius), 'Athanasius', "Noto Sans Coptic", sans-serif;
     font-size: 1.1em;
   }
   .font-coptic {
-    font-family: 'Athanasius', "Noto Sans Coptic", sans-serif;
+    font-family: var(--font-athanasius), 'Athanasius', "Noto Sans Coptic", sans-serif;
   }
   /* Ensure rendered markdown inherits verse font-size and line-height dynamically */
   .prose {
