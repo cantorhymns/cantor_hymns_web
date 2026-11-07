@@ -44,4 +44,6 @@ __pycache__/
 # Marketing & Design assets (kept locally)
 cover_art/
 app_store_screenshots/
+public/audio_previews/
+public/remaster_preview.html
 

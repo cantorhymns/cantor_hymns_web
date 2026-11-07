@@ -33,6 +33,14 @@ This file serves as the persistent "memory" for AI development sessions across m
    - Trimming must leave **`0.5s`** quiet lead-in before the first vocal attack.
    - Lyrics fetched from Tasbeha.org must have leading alternating crosses (`+ `) stripped from stanzas.
    - Subgenres are governed by `genres/content/<genre>_content.txt` in Firebase Storage and mapped via `subGenreId: { <genre>: '<Subgenre>' }`.
+5. **Recitative & Doxology Marker Placement Protocol**:
+   - **Never guess or randomly nudge markers**: If a user reports a marker is early/late, re-analyze with phonetic alignment rather than nudging timestamps.
+   - **Beware 4th-Line Intra-Verse Pauses**: In Coptic doxologies and recitative hymns (e.g. Roumi, Mo'aqab), the 4th line of a stanza frequently has an internal breath pause before the final cadence phrase (e.g., Verse 1 line 4 *"ymnoumen se"* ... pause ... *"adikhostasia"*). Energy valley detectors often mistakenly latch onto this pause, setting markers 2-3 seconds early and catching the final word of the previous verse.
+   - **Phonetic Verification**: Always verify the exact timestamp where the previous verse's final word ends and the next verse's opening word begins (using Whisper word timestamps or waveform phoneme inspection) before placing markers. Markers belong in the breath gap `50-100ms` prior to the new verse onset.
+6. **Archival Track Audio & Metadata Policies**:
+   - **Audio Fidelity**: Do not apply DSP, reverb, convolution, or heavy remastering filters by default. Preserve original recordings unaltered unless explicitly requested by the user.
+   - **Spoken Intros**: Trim spoken Arabic announcements (e.g. *"الرومي الأول: يقال بعد..."*) from archival recordings, maintaining a clean `0.5s` lead-in before chanting.
+   - **Titles & Descriptions**: For sequential series (e.g. Roumi 1–9, Mo'aqab 1–9), keep titles concise (e.g. `"Roumi 1"`) without opening lyrics, and omit descriptions unless specifically asked.
 
 ## Current Project Status
 - [x] Web app migrated from Firebase Studio export
@@ -45,8 +53,18 @@ This file serves as the persistent "memory" for AI development sessions across m
 - [x] Pushing to GitHub (Successfully authenticated and pushed)
 - [x] Created `src/scripts/add-ondos.ts` to add the new "Ondos" hymn and its HICS recording
 - [x] Created `src/scripts/add-enthoten-dhe.ts` to add the new "Enthoten Dhe" hymn and its HICS recording
+- [x] Configured mobile project (`cantor_hymns_mobile`) with EAS Build & TestFlight submission
+- [x] Uploaded iOS production build 1.0.0 (1) to Apple App Store Connect / TestFlight
+- [x] Prepared App Store marketing assets (5244x2950 promo banner, promotional copy, keywords)
+- [x] Added static `/privacy` Privacy Policy page and global footer for `cantorhymns.com/privacy`
+- [x] Synced missing `lyricsMappingUrl` fields for Kiahk Psalm 150, Ke Eperto, and Tenen to live Firebase Storage catalog
+- [x] Implemented native iOS Lock Screen, Control Center, Dynamic Island, and CarPlay Now Playing controls in mobile app (`expo-audio` `setActiveForLockScreen` with track metadata & artwork)
+- [x] Added 18 Roumi and Mo'aqab hymns for Kiahk Vespers Praises (Cantor Tharwat) with clean titles, trimmed intros, original audio, and published to live CDN catalog
+- [x] Generated and verified precise verse markers for `roumi-1` with 1:1 lyrics mapping
 
 ## Next Steps / Backlog
-1. **Interactive Audio Player Tuning**: Test and tune marker snaps, AB-looping, and playhead rendering.
-2. **AI Integration**: Implement server-side AI tutors using Genkit flows.
-3. **Mobile Client Preparation**: Once web features are fully stabilized, prepare the mobile client in `cantor_hymns_mobile` targeting the same Firebase project.
+1. **Test Lock Screen Controls**: Run local build / Expo to test Lock Screen player widget and car audio playback.
+2. **App Store Review & Release**: Complete App Store submission (Age rating, contact info, screenshots).
+3. **CarPlay Entitlement (v1.1 Roadmap)**: Request Apple CarPlay Audio Entitlement on developer.apple.com for car dashboard app icon.
+3. **Interactive Audio Player Tuning**: Test and tune marker snaps, AB-looping, and playhead rendering.
+4. **AI Integration**: Implement server-side AI tutors using Genkit flows.

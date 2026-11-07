@@ -6,6 +6,7 @@ export interface Cantor {
   id: string;
   name: string;
   rank: number;
+  active?: boolean;
   cantorCloudActive?: boolean;
 }
 
@@ -18,9 +19,11 @@ export interface Recording {
   /** Path to the markers text file in Storage. This is the source of truth for "learn" mode. */
   markersUrl: string;
   active: boolean;
-  mode: 'learn' | 'listen';
+  mode?: 'learn' | 'listen';
   audioLength?: number;
   lyricsMappingUrl?: string;
+  markers?: number[];
+  lyricsMapping?: number[];
 }
 
 export interface Hymn {
@@ -28,9 +31,15 @@ export interface Hymn {
   name: string;
   genreId: string[];
   description?: string;
+  subGenreId?: Record<string, string>;
   lyricsEnglish?: string;
   lyricsCoptic?: string;
   lyricsArabic?: string;
+  lyrics?: {
+    coptic: string;
+    english: string;
+    arabic: string;
+  };
   recordings?: Recording[]; // Optional because they are fetched separately
 }
 
@@ -42,6 +51,7 @@ export interface Genre {
   icon: string;
   backgroundUrl?: string;
   contentUrl?: string;
+  content?: string;
   active: boolean;
   cantorCloudActive?: boolean;
 }

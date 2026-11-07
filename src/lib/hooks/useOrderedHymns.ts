@@ -9,9 +9,11 @@ import { Hymn } from '../types';
 export function useOrderedHymns(genreId?: string) {
     const { data: genre, isLoading: isGenreLoading } = useGenre(genreId);
     const { data: allHymnsForGenre, isLoading: areHymnsLoading } = useHymns(genreId); 
-    const { content: fileContent, isLoading: isContentLoading } = useFileContent(genre?.contentUrl);
+    const storagePath = genre?.content ? undefined : genre?.contentUrl;
+    const { content: storageFileContent, isLoading: isContentLoading } = useFileContent(storagePath);
+    const fileContent = genre?.content || storageFileContent;
 
-    const isLoading = isGenreLoading || areHymnsLoading || (genre?.contentUrl && isContentLoading);
+    const isLoading = isGenreLoading || areHymnsLoading || (!genre?.content && !!genre?.contentUrl && isContentLoading);
 
     const result = useMemo(() => {
         if (!allHymnsForGenre || !genre) return { groupedHymns: null, flatPlaylist: [] };

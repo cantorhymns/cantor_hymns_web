@@ -35,7 +35,7 @@
     "audioLength": 1149.28325,
     "markersUrl": "markers/cantor-bola/cantor-bola_meghalo_markers.txt",
     "active": true,
-    "mode": "listen",
+    "mode": "learn",
     "audioUrl": "tracks/cantor-bola/cantor-bola_meghalo.mp3",
     "cantorId": "cantor-bola"
   },
@@ -117,7 +117,8 @@
     "mode": "learn",
     "audioUrl": "tracks/cantor-gad/cantor-gad_tenen.mp3",
     "hymnId": "tenen",
-    "audioLength": 1252.3
+    "audioLength": 1252.3,
+    "lyricsMappingUrl": "markers/cantor-gad/cantor-gad_tenen_lyrics_markers.txt"
   },
   {
     "id": "cantor-ibrahim-aspasmos-watos-lent-1",
@@ -247,7 +248,8 @@
     "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ke-eperto.mp3",
     "mode": "learn",
     "active": true,
-    "cantorId": "cantor-ibrahim"
+    "cantorId": "cantor-ibrahim",
+    "lyricsMappingUrl": "markers/cantor-ibrahim/cantor-ibrahim_ke-eperto_lyrics_markers.txt"
   },
   {
     "id": "cantor-ibrahim_khristos-anesti-major",
@@ -379,7 +381,8 @@
     "cantorId": "cantor-ibrahim",
     "hymnId": "psalm-150-kiahk",
     "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_psalm-150-kiahk.mp3",
-    "active": true
+    "active": true,
+    "lyricsMappingUrl": "markers/cantor-ibrahim/cantor-ibrahim_psalm-150-kiahk_lyrics_markers.txt"
   },
   {
     "id": "cantor-ibrahim_sherat-lent",
@@ -671,5 +674,16 @@
     "markersUrl": "markers/hics/hics_pi-mairomi_markers.txt",
     "audioLength": 390.4783333333334,
     "active": true
+  },
+  {
+    "id": "hics_doxology-1-kiahk",
+    "hymnId": "doxology-1-kiahk",
+    "cantorId": "hics",
+    "audioUrl": "tracks/hics/hics_doxology-1-kiahk.mp3",
+    "markersUrl": "markers/hics/hics_doxology-1-kiahk_markers.txt",
+    "lyricsMappingUrl": "markers/hics/hics_doxology-1-kiahk_lyrics_markers.txt",
+    "audioLength": 226.25,
+    "active": true,
+    "mode": "learn"
   }
 ]

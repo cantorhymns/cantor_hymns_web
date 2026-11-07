@@ -61,7 +61,8 @@ export async function fetchRemoteCatalog(): Promise<boolean> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-    const res = await fetch(FIREBASE_STORAGE_CATALOG_URL, {
+    const cacheBuster = `&_t=${Date.now()}`;
+    const res = await fetch(`${FIREBASE_STORAGE_CATALOG_URL}${cacheBuster}`, {
       signal: controller.signal,
       cache: 'no-cache',
     });
@@ -121,7 +122,7 @@ export function getGenre(genreId?: string): Genre | null {
 }
 
 export function getCantors(): Cantor[] {
-  return activeCatalog.cantors;
+  return activeCatalog.cantors.filter(c => c.active !== false);
 }
 
 export function getCantor(cantorId?: string): Cantor | null {

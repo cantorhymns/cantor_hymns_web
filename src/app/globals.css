@@ -59,6 +59,14 @@
   }
 }
 
+@font-face {
+  font-family: 'Athanasius';
+  src: url('/fonts/CopticVine-Athanasius.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -67,10 +75,20 @@
     @apply bg-background text-foreground;
   }
   [lang="cop"] {
-    font-family: "Noto Sans Coptic", sans-serif;
+    font-family: 'Athanasius', "Noto Sans Coptic", sans-serif;
+    font-size: 1.1em;
   }
-  /* Add vertical margin to paragraphs inside the rendered markdown */
+  .font-coptic {
+    font-family: 'Athanasius', "Noto Sans Coptic", sans-serif;
+  }
+  /* Ensure rendered markdown inherits verse font-size and line-height dynamically */
+  .prose {
+    font-size: inherit;
+    line-height: inherit;
+  }
   .prose p {
-    @apply my-3;
+    font-size: inherit;
+    line-height: inherit;
+    @apply my-2;
   }
 }

@@ -20,8 +20,8 @@ import {
   Play,
   Pause,
   Repeat,
-  SkipBack,
-  SkipForward,
+  ChevronsLeft,
+  ChevronsRight,
   FastForward,
   XCircle,
   Maximize2,
@@ -37,7 +37,7 @@ import {
 import { getDownloadURL, ref, getStorage } from "firebase/storage";
 import { useFirebase } from "@/firebase";
 import { Skeleton } from "./ui/skeleton";
-import { cn } from "@/lib/utils";
+import { cn, formatCantorName } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
@@ -91,12 +91,21 @@ function useLyricContent(path?: string) {
         }
       } catch (e: any) {
         if (!isCancelled) {
-          let detailedError = `Failed to fetch from ${path}. Error: ${e.message}`;
-          // Check for the classic CORS error signature
-          if (e.message.toLowerCase().includes('failed to fetch')) {
-            detailedError += `\n\nThis is often a Cross-Origin (CORS) issue. Your web app domain may not be authorized to fetch from Firebase Storage. Please check your bucket's CORS configuration in the Google Cloud Console.`;
+          const isNotFound =
+            e.code === 'storage/object-not-found' ||
+            e.message?.includes('storage/object-not-found') ||
+            e.message?.includes('object-not-found');
+          if (isNotFound) {
+            setContent(null);
+            setError(null);
+          } else {
+            let detailedError = `Failed to fetch from ${path}. Error: ${e.message}`;
+            // Check for the classic CORS error signature
+            if (e.message.toLowerCase().includes('failed to fetch')) {
+              detailedError += `\n\nThis is often a Cross-Origin (CORS) issue. Your web app domain may not be authorized to fetch from Firebase Storage. Please check your bucket's CORS configuration in the Google Cloud Console.`;
+            }
+            setError(detailedError);
           }
-          setError(detailedError);
         }
       } finally {
         if (!isCancelled) {
@@ -153,8 +162,17 @@ function useMarkersFile(path?: string) {
           }
         } catch (e: any) {
           if (!isCancelled) {
-            setError(e.message || 'Failed to fetch markers');
-            setMarks([]);
+            const isNotFound =
+              e.code === 'storage/object-not-found' ||
+              e.message?.includes('storage/object-not-found') ||
+              e.message?.includes('object-not-found');
+            if (isNotFound) {
+              setMarks([]);
+              setError(null);
+            } else {
+              setError(e.message || 'Failed to fetch markers');
+              setMarks([]);
+            }
           }
         } finally {
           if (!isCancelled) {
@@ -265,8 +283,8 @@ const LyricsDisplay = ({
     arabic: false,
   });
   const [isContained, setIsContained] = useState(true);
-  const [fontSize, setFontSize] = useState('lg');
-  const fontSizes = ['sm', 'base', 'lg', 'xl'];
+  const [fontSize, setFontSize] = useState<'base' | 'lg' | 'xl' | '2xl'>('xl');
+  const fontSizes: Array<'base' | 'lg' | 'xl' | '2xl'> = ['base', 'lg', 'xl', '2xl'];
 
   const cycleFontSize = () => {
     const currentIndex = fontSizes.indexOf(fontSize);
@@ -274,15 +292,29 @@ const LyricsDisplay = ({
     setFontSize(fontSizes[nextIndex]);
   };
 
-  const { content: englishContent, isLoading: isLoadingEnglish, error: errorEnglish } = useLyricContent(hymn.lyricsEnglish);
-  const { content: copticContent, isLoading: isLoadingCoptic, error: errorCoptic } = useLyricContent(hymn.lyricsCoptic);
-  const { content: arabicContent, isLoading: isLoadingArabic, error: errorArabic } = useLyricContent(hymn.lyricsArabic);
+  const inlineEnglish = hymn.lyrics?.english?.trim() || null;
+  const inlineCoptic = hymn.lyrics?.coptic?.trim() || null;
+  const inlineArabic = hymn.lyrics?.arabic?.trim() || null;
+
+  const { content: fetchedEnglish, isLoading: isLoadingEnglish, error: errorEnglish } = useLyricContent(
+    inlineEnglish ? undefined : hymn.lyricsEnglish
+  );
+  const { content: fetchedCoptic, isLoading: isLoadingCoptic, error: errorCoptic } = useLyricContent(
+    inlineCoptic ? undefined : hymn.lyricsCoptic
+  );
+  const { content: fetchedArabic, isLoading: isLoadingArabic, error: errorArabic } = useLyricContent(
+    inlineArabic ? undefined : hymn.lyricsArabic
+  );
+
+  const englishContent = inlineEnglish || fetchedEnglish;
+  const copticContent = inlineCoptic || fetchedCoptic;
+  const arabicContent = inlineArabic || fetchedArabic;
 
   const available = useMemo(() => ({
-    english: hymn.lyricsEnglish,
-    coptic: hymn.lyricsCoptic,
-    arabic: hymn.lyricsArabic,
-  }), [hymn.lyricsEnglish, hymn.lyricsCoptic, hymn.lyricsArabic]);
+    english: Boolean(inlineEnglish || hymn.lyricsEnglish),
+    coptic: Boolean(inlineCoptic || hymn.lyricsCoptic),
+    arabic: Boolean(inlineArabic || hymn.lyricsArabic),
+  }), [inlineEnglish, inlineCoptic, inlineArabic, hymn.lyricsEnglish, hymn.lyricsCoptic, hymn.lyricsArabic]);
 
   const allAvailableLangs = useMemo(() => (Object.keys(available) as Array<keyof typeof available>)
     .filter(lang => available[lang]), [available]);
@@ -305,7 +337,11 @@ const LyricsDisplay = ({
       if (config.content) {
         const trimmedContent = config.content.trim();
         if (trimmedContent) {
-          result[lang] = trimmedContent.split(/\n\s*\n/).map(v => v.trim());
+          if (trimmedContent.includes('\n\n')) {
+            result[lang] = trimmedContent.split(/\n\s*\n/).map(v => v.trim()).filter(Boolean);
+          } else {
+            result[lang] = trimmedContent.split(/\r?\n/).map(v => v.trim()).filter(Boolean);
+          }
         } else {
           result[lang] = [];
         }
@@ -459,11 +495,12 @@ const LyricsDisplay = ({
                         >
                           <div
                             lang={config.lang}
-                            className={cn("text-muted-foreground", {
-                              'text-sm': fontSize === 'sm',
+                            className={cn("text-muted-foreground leading-relaxed", {
                               'text-base': fontSize === 'base',
                               'text-lg': fontSize === 'lg',
                               'text-xl': fontSize === 'xl',
+                              'text-2xl': fontSize === '2xl',
+                              'font-coptic': lang === 'coptic',
                             })}
                           >
                             {renderVerseContent(verse)}
@@ -557,12 +594,16 @@ export function HymnPlayer({
   const [audioError, setAudioError] = useState<string | null>(null);
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
 
+  const hasInlineMarks = Array.isArray((currentRecording as any)?.markers) && (currentRecording as any).markers.length > 0;
+  const hasInlineMapping = Array.isArray((currentRecording as any)?.lyricsMapping) && (currentRecording as any).lyricsMapping.length > 0;
+  const isLearnMode = currentRecording?.mode === 'learn' || hasInlineMarks;
+
   const { marks: loadedMarks, isLoading: isLoadingMarks, error: marksError } = useMarkersFile(
-    currentRecording?.mode === 'learn' ? currentRecording.markersUrl : undefined
+    (!hasInlineMarks && currentRecording?.markersUrl) ? currentRecording.markersUrl : undefined
   );
 
   const lyricsMappingUrl = useMemo(() => {
-    if (!currentRecording || currentRecording.mode !== 'learn') {
+    if (!currentRecording || hasInlineMapping) {
       return undefined;
     }
     if (currentRecording.lyricsMappingUrl) {
@@ -574,7 +615,7 @@ export function HymnPlayer({
       return currentRecording.markersUrl.replace('_markers.txt', '_lyrics_markers.txt');
     }
     return undefined;
-  }, [currentRecording]);
+  }, [currentRecording, hasInlineMapping]);
 
   const { mapping: lyricsMapping, isLoading: isLoadingMapping } = useLyricsMappingFile(lyricsMappingUrl);
 
@@ -605,7 +646,21 @@ export function HymnPlayer({
     currentTimeRef.current = currentTime;
   }, [currentTime]);
 
-  const sortedMarks = useMemo(() => [...(loadedMarks || [])].sort((a, b) => a - b), [loadedMarks]);
+  const sortedMarks = useMemo(() => {
+    const inlineMarks = (currentRecording as any)?.markers;
+    if (Array.isArray(inlineMarks) && inlineMarks.length > 0) {
+      return [...inlineMarks].sort((a, b) => a - b);
+    }
+    return [...(loadedMarks || [])].sort((a, b) => a - b);
+  }, [currentRecording, loadedMarks]);
+
+  const effectiveLyricsMapping = useMemo(() => {
+    const inlineMapping = (currentRecording as any)?.lyricsMapping;
+    if (Array.isArray(inlineMapping) && inlineMapping.length > 0) {
+      return inlineMapping;
+    }
+    return lyricsMapping || [];
+  }, [currentRecording, lyricsMapping]);
   
   useEffect(() => {
     if (hymn && hymn.recordings && hymn.recordings.length > 0) {
@@ -621,15 +676,15 @@ export function HymnPlayer({
   }, [hymn, initialRecordingId]);
 
   useEffect(() => {
-    if (currentRecording?.mode === 'learn') {
+    if (isLearnMode || sortedMarks.length > 0) {
         setActiveMarks(sortedMarks);
     } else {
         setActiveMarks([]);
     }
-  }, [sortedMarks, currentRecording?.mode]);
+  }, [sortedMarks, isLearnMode]);
   
   const sortedActiveMarks = useMemo(() => [...activeMarks].sort((a, b) => a - b), [activeMarks]);
-  const displayedMarks = useMemo(() => currentRecording?.mode === 'learn' ? sortedMarks : [], [currentRecording, sortedMarks]);
+  const displayedMarks = useMemo(() => (isLearnMode || sortedMarks.length > 0) ? sortedMarks : [], [isLearnMode, sortedMarks]);
 
   const playbackSpeeds = [1.0, 1.25, 1.5, 1.75, 2.0];
   const handleSpeedChange = () => {
@@ -639,7 +694,14 @@ export function HymnPlayer({
   };
 
   const hasAnyLyrics = useMemo(() => 
-    !!(hymn.lyricsEnglish || hymn.lyricsCoptic || hymn.lyricsArabic)
+    Boolean(
+      hymn.lyricsEnglish ||
+      hymn.lyricsCoptic ||
+      hymn.lyricsArabic ||
+      hymn.lyrics?.coptic?.trim() ||
+      hymn.lyrics?.english?.trim() ||
+      hymn.lyrics?.arabic?.trim()
+    )
   , [hymn]);
 
   const seek = useCallback((time: number) => {
@@ -848,7 +910,7 @@ export function HymnPlayer({
         return;
       }
       
-      const isLearnMode = currentRecording?.mode === 'learn';
+      const hasActiveMarkers = sortedMarks.length > 0;
 
       switch (event.code) {
         case 'Space':
@@ -860,8 +922,10 @@ export function HymnPlayer({
         case 'ArrowRight':
             if (!event.repeat) {
                 event.preventDefault();
-                // Keyboard arrows DO jump markers in learn mode as it's a specific web-ui action.
-                if (isLearnMode) {
+                // Shift+Arrow forces 10-second skip; normal Arrow jumps marker if available, else skips 10s
+                if (event.shiftKey) {
+                    handleSkip(10);
+                } else if (hasActiveMarkers) {
                     handleNextSection();
                 } else {
                     handleSkip(10);
@@ -871,8 +935,10 @@ export function HymnPlayer({
         case 'ArrowLeft':
             if (!event.repeat) {
                 event.preventDefault();
-                // Keyboard arrows DO jump markers in learn mode as it's a specific web-ui action.
-                if (isLearnMode) {
+                // Shift+Arrow forces 10-second skip; normal Arrow jumps marker if available, else skips 10s
+                if (event.shiftKey) {
+                    handleSkip(-10);
+                } else if (hasActiveMarkers) {
                     handlePrevSection();
                 } else {
                     handleSkip(-10);
@@ -1119,7 +1185,7 @@ export function HymnPlayer({
       )
   }
   
-  const showControls = currentRecording?.mode === 'learn';
+  const showControls = isLearnMode || sortedMarks.length > 0;
   const showLoadingSpinner = isLoadingAudio || (showControls && isLoadingMarks);
 
   return (
@@ -1188,12 +1254,12 @@ export function HymnPlayer({
                                       <div className="flex items-center gap-2">
                                           <div
                                               className={`h-2 w-2 rounded-full ${
-                                                  rec.mode === 'learn'
+                                                  (rec.mode === 'learn' || (rec.markers && rec.markers.length > 0))
                                                       ? 'bg-emerald-500'
                                                       : 'bg-zinc-400 dark:bg-zinc-500'
                                               }`}
                                           />
-                                          <span>{rec.cantor?.name || `Rec: ${rec.id.substring(0,4)}`}</span>
+                                          <span>{formatCantorName(rec.cantor?.name || rec.cantorId || `Rec: ${rec.id.substring(0,4)}`)}</span>
                                       </div>
                                   </SelectItem>
                               ))}
@@ -1203,12 +1269,12 @@ export function HymnPlayer({
                       <div className="flex items-center justify-center gap-2 h-10 px-3 border rounded-md text-sm text-muted-foreground bg-secondary/50 w-full">
                           <div
                               className={`h-2 w-2 rounded-full ${
-                                  currentRecording.mode === 'learn'
+                                  (currentRecording.mode === 'learn' || (currentRecording.markers && currentRecording.markers.length > 0))
                                       ? 'bg-emerald-500'
                                       : 'bg-zinc-400 dark:bg-zinc-500'
                               }`}
                           />
-                          <span className="truncate">{currentRecording.cantor?.name || '...'}</span>
+                          <span className="truncate">{formatCantorName(currentRecording.cantor?.name || currentRecording.cantorId || '...')}</span>
                       </div>
                   )}
               </div>
@@ -1301,30 +1367,30 @@ export function HymnPlayer({
 
                   <div className="flex flex-col items-center gap-4">
                       <div className="flex items-center gap-4">
-                            {showControls ? (
-                                <Button variant="ghost" size="icon" onClick={handlePrevSection} disabled={sortedActiveMarks.length === 0}>
-                                    <SkipBack className="h-6 w-6" />
+                            {showControls && sortedActiveMarks.length > 0 ? (
+                                <Button variant="ghost" size="icon" onClick={handlePrevSection} title="Previous Section (← Left Arrow)">
+                                    <ChevronsLeft className="h-6 w-6" />
                                     <span className="sr-only">Previous Section</span>
                                 </Button>
                             ) : (
-                                <Button variant="outline" size="icon" className="rounded-full h-12 w-12" onClick={() => handleSkip(-10)}>
+                                <Button variant="outline" size="icon" className="rounded-full h-12 w-12" onClick={() => handleSkip(-10)} title="Rewind 10 seconds (← Left Arrow)">
                                     <Skip10BackIcon />
                                     <span className="sr-only">Rewind 10 seconds</span>
                                 </Button>
                             )}
 
-                            <Button size="icon" className="h-16 w-16 rounded-full" onClick={handlePlayPause}>
+                            <Button size="icon" className="h-16 w-16 rounded-full" onClick={handlePlayPause} title={isPlaying ? "Pause (Space)" : "Play (Space)"}>
                                 {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
                                 <span className="sr-only">{isPlaying ? "Pause" : "Play"}</span>
                             </Button>
 
-                            {showControls ? (
-                                <Button variant="ghost" size="icon" onClick={handleNextSection} disabled={sortedActiveMarks.length === 0}>
-                                    <SkipForward className="h-6 w-6" />
+                            {showControls && sortedActiveMarks.length > 0 ? (
+                                <Button variant="ghost" size="icon" onClick={handleNextSection} title="Next Section (→ Right Arrow)">
+                                    <ChevronsRight className="h-6 w-6" />
                                     <span className="sr-only">Next Section</span>
                                 </Button>
                             ) : (
-                                <Button variant="outline" size="icon" className="rounded-full h-12 w-12" onClick={() => handleSkip(10)}>
+                                <Button variant="outline" size="icon" className="rounded-full h-12 w-12" onClick={() => handleSkip(10)} title="Fast Forward 10 seconds (→ Right Arrow)">
                                      <Skip10ForwardIcon />
                                     <span className="sr-only">Fast Forward 10 seconds</span>
                                 </Button>
@@ -1397,11 +1463,11 @@ export function HymnPlayer({
         <div className="w-full max-w-3xl mx-auto mt-8">
           <LyricsDisplay
             hymn={hymn}
-            mode={currentRecording?.mode}
+            mode={isLearnMode || sortedMarks.length > 0 ? 'learn' : currentRecording?.mode}
             sortedActiveMarks={sortedActiveMarks}
             currentTime={currentTime}
             seek={seek}
-            lyricsMapping={lyricsMapping}
+            lyricsMapping={effectiveLyricsMapping}
           />
         </div>
       )}

@@ -578,5 +578,329 @@
     ],
     "lyricsCoptic": "lyrics/coptic/verses-of-cymbals-lazarus-saturday_coptic.md",
     "lyricsEnglish": "lyrics/english/verses-of-cymbals-lazarus-saturday_english.md"
+  },
+  {
+    "id": "roumi-1",
+    "name": "Roumi 1",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/roumi-1_english.md",
+    "lyricsCoptic": "lyrics/coptic/roumi-1_coptic.md",
+    "lyricsArabic": "lyrics/arabic/roumi-1_arabic.md",
+    "lyrics": {
+      "coptic": "Ⲥⲩⲛⲇⲟⲝⲁⲥⲑⲱⲙⲉⲛ ⲏ̀ⲙⲉⲣⲁⲛ: ⲉⲑⲃⲏϯ ⲱ̀ ϯⲡ̀ⲣⲟⲥⲧⲁⲥⲓⲁ: ⲁⲛϣⲁⲛⲉ̀ⲣⲫⲙⲉⲩⲓ̀ ⲙ̀ⲡⲉⲣⲁⲛ: ⲩ̀ⲙⲛⲟⲩⲙⲉⲛ ⲥⲉ ⲁ̀ⲇⲓⲭⲟⲥⲧⲁⲥⲓⲁ.\n\nⲀⲥⲡⲓⲗⲉ ⲕⲉ ⲁ̀ⲅⲓⲱⲧⲉⲣⲁ: ⲡⲁⲥⲏⲥ ⲕ̀ⲧⲏⲥⲉⲱⲥ ⲇⲓⲁⲡⲁⲛⲧⲟⲥ: ⲕⲉ ⲏ̀ ⲕⲟⲣⲏ ⲁ̀ⲗⲏⲑⲉⲥⲧⲉⲣⲁ: ϫⲉ ⲡ̀Ϣⲏⲣⲓ ⲙ̀Ⲫϯ ⲁ̀ⲙⲓⲁⲛⲧⲟⲥ.\n\nⲢⲱⲙⲁⲗⲉⲟⲥ ⲡⲟⲗⲩⲉ̀ⲗⲉⲟⲥ: ⲁϥⲓ̀ ϣⲁⲣⲟⲛ ⲥⲉⲥⲁⲣⲕⲱⲙⲉⲛⲟⲥ: ⲉ̀ⲃⲟⲗϧⲉⲛ ⲧⲉⲙⲟⲩⲙⲓ ⲉⲩⲕ̀ⲗⲉⲟⲥ: ⲉⲛ ⲙⲩⲥⲧⲏⲣⲓⲟⲛ ⲑⲁⲩⲙⲁⲝⲉⲛⲟⲛ.\n\nⲔⲉ ⲇⲓ ⲁⲩⲧⲟⲩ ⲁ̀ⲛⲟⲛ ⲩ̀ⲙⲛⲟⲩⲙⲉⲛ: ⲉⲛ ⲥ̀ⲧⲓⲭⲉⲣⲁ ⲕⲉ ⲁⲛⲧⲓⲫⲱⲛⲟⲛ: ⲕⲉ ⲇⲓⲁⲥⲟⲩ ⲉ̀ⲡⲉⲛⲟ̀ⲩⲙⲉⲛ: ⲓ̀ⲡⲱⲙⲉⲛ ⲇⲉ ⲉ̀ⲡⲓⲫⲁⲛⲟⲛ.\n\nⲒⲥ ⲡ̀Ϣⲏⲣⲓ ⲛ̀Ⲗⲟⲅⲟⲥ ⲉⲑⲣⲱⲧⲉⲃ: ϧⲉⲛ ⲕⲉⲛϥ ⲙ̀Ⲡⲉϥⲓⲱⲧ ⲉⲧⲁⲥⲁⲡ̀ϣⲱⲓ: ⲛ̀ⲁ̀ⲣⲭⲏ ⲛⲓⲃⲉⲛ ⲱ̀ ϯⲁ̀ⲧⲑⲱⲗⲉⲃ: ⲁ̀ⲣⲉⲉ̀ⲛϥ ⲉϥⲧⲁⲗⲏⲟⲩⲧ ⲉ̀ϫⲉⲛ ⲛⲉϫ̀ⲫⲟⲓ.\n\nⲤⲉⲣⲁϣⲓ ⲛⲉⲙⲉ ⲛ̀ϫⲉ ϯⲟⲓⲕⲟⲩⲙⲉⲛⲏ: ⲛⲉⲙ ⲛⲏⲉ̀ⲧϣⲟⲡ ⲛ̀ϧⲏⲧⲥ ⲉⲩⲥⲟⲡ: ϫⲉ ⲭⲉⲣⲉ ⲕⲉ ⲭⲁⲣⲓⲧⲱⲙⲉⲛⲏ: Ⲡⲟ̅ⲥ̅ ⲛⲉⲙⲉ ⲱ̀ ⲑⲏⲉ̅ⲑ̅ⲩ̅.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲥⲙⲁⲙⲁⲧ: ϣⲁ ⲡⲓⲛⲓϥⲓ ⲛ̀ⲧⲉ ⲗⲉⲩⲧⲉⲟⲥ: ϫⲉ ⲁⲣⲉϫⲓⲙⲓ ⲅⲁⲣ ⲛ̀ⲟⲩϩ̀ⲙⲟⲧ: ϧⲁⲧⲉⲛ ⲡⲉⲚⲟⲩϯ Ⲩⲓⲟⲥ Ⲑⲉⲟⲥ.",
+      "english": "Today we glorify, because of you O intercessor, when we remembered your name, praising you with accord.\n\nO Pure one holier than all the creation, and all their kinds, and the truly young girl, for the Son of God us far above.\n\nThe strong the merciful One, came to us incarnated, from the proud fountain, by a wondrous and strange mystery.\n\nFor because of her we praise, with songs and great joy, and because of her we praise, and proclaim out and say.\n\nBehold the Son the Word, who abides in the bosom of His Father, who is above all principalities, O undefiled you carried Him in your arms.\n\nThe creation rejoices with you, and all those who dwell therein, saying \"Rejoice O full of grace, the Lord is with you O holy one.\"\n\nWe glorify you O blessed one, until the last breath saying, \"You have found favor before, your God the Son of God.\"",
+      "arabic": "نتمجد في هذا اليوم من أجلك أيتها الشفيعة إذا ما ذكرنا أسمك مسبحين إياك باتفاق.\n\nيا طاهرة واقدس من كل الخليقة بأسرها وفتاة حقيقية لأن ابن الله المنزة.\n\nالقوى الكثير الرحمة أتي إلينا متجسداً من ينبوعك الفاخر بسر عجيب غريب.\n\nفمن أجله نحن نسبح بترنيم وتهليل ومن أجلك نمدح ونقول جهراً.\n\nها هوذا الابن الكلمة المتكئ في حضن ابيه الذي هو فوق كل رئاسة أيتها الغير الدنسة حملته راكباً على ذراعيك.\n\nتفرح معك المسكونة وسكانها معاً قائلين افرحي يا ممتلئة نعمة الرب معك أيتها الطاهرة.\n\nنمجدك ايتها المباركة، إلى النفس الأخير، لأنك وجدت نعمة، عند إلهك ابن الله."
+    }
+  },
+  {
+    "id": "moaqab-1",
+    "name": "Mo'aqab 1",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/moaqab-1_english.md",
+    "lyricsCoptic": "lyrics/coptic/moaqab-1_coptic.md",
+    "lyricsArabic": "lyrics/arabic/moaqab-1_arabic.md",
+    "lyrics": {
+      "coptic": "Ⲁⲓⲛⲁϩⲱⲥ ⲛⲁⲕ Ⲡⲟ̅ⲥ̅ ⲛ̀ⲟⲩⲛⲁⲓ: ⲁⲓⲛⲁⲕⲱϯ ⲛ̀ⲥⲁ ⲡⲉⲕⲟⲩϫⲁⲓ: ⲙⲁⲕⲁϯ ⲛⲏⲓ ⲕⲁⲧⲁ ⲡⲉⲕⲛⲁⲓ: ⲭⲱ ⲛⲏⲓ ⲉ̀ⲃⲟⲗ ⲛ̀ⲧⲁⲙⲉⲧⲁ̀ⲧϩⲏⲧ.\n\nⲬⲱ ⲛⲏⲓ ⲉ̀ⲃⲟⲗ ⲛ̀ⲧⲁⲙⲉⲧⲁ̀ⲧϩⲏⲧ: ⲁ̀ⲣⲓⲟⲩⲱⲓⲛⲓ ⲙ̀ⲡⲁϩⲏⲧ: ⲉⲑⲣⲓϫⲱ ⲙ̀ⲡⲧⲁⲓⲟ ⲛ̀ⲧⲉ ⲧⲁⲓϣⲉⲗⲉⲧ: ϯⲁ̀ⲧⲑⲱⲗⲉⲃ ⲛ̀ⲥⲉⲙⲛⲏ.\n\nϮⲁ̀ⲧⲑⲱⲗⲉⲃ ⲛ̀ⲥⲉⲙⲛⲏ: ϯⲟⲩⲣⲱ ⲛ̀ⲁ̀ⲗⲏⲑⲓⲛⲏ: ⲑⲁ ϯⲛⲓϣϯ ⲛ̀ⲧⲓⲙⲏ: ϯⲠⲁⲣⲑⲉⲛⲟⲥ ⲙ̀ⲙⲁⲥⲛⲟⲩϯ.\n\nϮⲠⲁⲣⲑⲉⲛⲟⲥ ⲙ̀ⲙⲁⲥⲛⲟⲩϯ: ⲑⲏⲉ̀ⲧⲁⲥⲓ̀ⲛⲓ ⲛⲁⲛ ⲙ̀Ⲫϯ: ⲉϥⲧⲁⲗⲏⲟⲩⲧ ⲉ̀ϫⲉⲛ ⲛⲉⲥⲙⲟϯ: ⲕⲁⲧⲁ ⲧⲉϥⲙⲉⲧⲟ̀ⲓⲕⲟⲛⲟⲙⲓⲁ.\n\nⲔⲁⲧⲁ ⲧⲉϥⲙⲉⲧⲟ̀ⲓⲕⲟⲛⲟⲙⲓⲁ: ⲛⲉⲙ ⲧⲉϥⲙⲉⲧⲛⲓϣϯ ⲛ̀ⲥⲟⲫⲓⲁ: ⲁⲥϥⲁⲓ ϧⲁⲣⲟϥ ⲛ̀ϫⲉ Ⲙⲁⲣⲓⲁ: ⲟⲩⲇⲉ ⲙ̀ⲡⲉϥⲥⲉⲛ ⲡⲉϥⲑ̀ⲣⲟⲛⲟⲥ.\n\nⲞⲩⲇⲉ ⲙ̀ⲡⲉϥⲥⲟⲛ ⲡⲉϥⲑ̀ⲣⲟⲛⲟⲥ: ⲥⲁⲡ̀ϣⲱⲓ ⲛ̀ⲛⲓⲁ̀ⲅⲅⲉⲗⲟⲥ: ⲉϥⲭⲏ ϧⲉⲛ ⲑ̀ⲛⲉϫⲓ ⲛ̀ϯⲠⲁⲣⲑⲉⲛⲟⲥ: ⲟⲩ ⲡⲉ ⲡⲁⲓϩⲱⲃ ⲉⲧⲟⲓ ⲛ̀ϣ̀ⲫⲏⲣⲓ.\n\nⲞⲩ ⲡⲉ ⲡⲁⲓϩⲱⲃ ⲉⲧⲟⲓ ⲛ̀ϣ̀ⲫⲏⲣⲓ: ⲛⲉⲙ ⲟⲩⲙⲩⲥⲧⲏⲣⲓⲟⲛ ⲛ̀ϫⲱⲣⲓ: ϫⲉ ⲁ̀Ⲫϯ ⲟⲩⲱⲣⲡ ⲙ̀ⲠⲉϥϢⲏⲣⲓ: ⲉⲑⲃⲉ ⲧⲉϥⲙⲉⲧⲁ̀ⲅⲁⲑⲟⲥ.\n\nⲈⲑⲃⲉ ⲧⲉϥⲙⲉⲧⲁ̀ⲅⲁⲑⲟⲥ: ⲁϥϭⲓⲥⲁⲣⲝ ϧⲉⲛ ϯⲠⲁⲣⲑⲉⲛⲟⲥ: ⲉⲑⲃⲉ ⲫⲁⲓ ⲥⲉⲣⲁϣⲓ ⲛⲉⲙⲁⲥ: ⲛ̀ϫⲉ ϯⲕ̀ⲧⲏⲥⲓⲥ ⲧⲏⲣⲥ ⲉⲩⲥⲟⲡ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲉⲛϩⲟⲧ: ⲉⲧϥⲁⲓ ϧⲁ ⲡⲓⲖⲟⲅⲟⲥ ⲛ̀ⲧⲉ Ⲫ̀ⲓⲱⲧ: ϫⲉ ⲭⲉⲣⲉ ⲑⲏⲉ̀ⲑⲙⲉϩ ⲛ̀ϩ̀ⲙⲟⲧ: ⲟⲩⲟϩ Ⲡⲟ̅ⲥ̅ ϣⲟⲡ ⲛⲉⲙⲉ.",
+      "english": "I will praise You O Lord of mercy, I will seek Your salvation, teach me according to Your mercy, forgive me my ignorance.\n\nForgive me my ignorance, enlighten my heart, that I may proclaim the honor of this bride, the chaste and undefiled.\n\nThe chaste and undefiled, the true queen, with great honor, the Virgin Mother of God.\n\nThe Virgin Mother of God, who brought us God, carried on her shoulders, according to His economy.\n\nAccording to His economy, and His great wisdom, Mary carried Him , while He did not leave His throne.\n\nWhile He did not leave His throne, and He is above the angels, He was in the womb of the Virgin, what a great wonder.\n\nWhat a great wonder, and a powerful mystery, for God sent His Son, because of His goodness.\n\nBecause of His goodness, He took flesh from the Virgin, therefore the whole creation, rejoices with her.\n\nWe glorify you O trusted one, who carried the Word of the Father saying, \"Hail to you O full of grace, the Lord is with you.\"",
+      "arabic": "اسبحك يا رب الرحمة، واطلب خلاصك، افهمني كرحمتك، إغفر لي جهالتي.\n\nإغفر لي جهالتي، وأضئ قلبي، لكي انطق بكرامة هذه العروسة، الغير الدنسة الهادئة.\n\nالغير الدنسة الهادئة، الملكة الحقيقية، ذات الكرامة العظيمة، العذراء والدة الإله.\n\nالعذراء والدة الإله، التي أحضرت لنا، الله محمولاً، علي منكبها كتدبيره.\n\nعلي منكبها كتدبيره، وحكمته العظيمة، حملته مرتمريم، ولم يفارق كرسيه.\n\nولم يفارق كرسيه، وهو فوق الملائكة، وهو كائن في بطن العذراء، فما هو هذا الامر العجيب.\n\nفما هو هذا الامر العجيب، والسر القوي، ان الله ارسل لنا ابنه، من اجل صلاحه.\n\nمن اجل صلاحه، تجسد من العذراء، من اجل هذا تفرح معها، كل المسكونة معاً.\n\nنمجدك أيتها الأمينة، الحاملة كلمة الآب قائلين، إفرحي يا ممتلئة نعمة، الرب معك."
+    }
+  },
+  {
+    "id": "roumi-2",
+    "name": "Roumi 2",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/roumi-2_english.md",
+    "lyricsCoptic": "lyrics/coptic/roumi-2_coptic.md",
+    "lyricsArabic": "lyrics/arabic/roumi-2_arabic.md",
+    "lyrics": {
+      "coptic": "ⲀⲪϯ ⲟⲩⲱⲣⲡ ⲙ̀ⲡⲉϥⲙ̀ⲙⲁⲩⲁⲧϥ: ⲛ̀Ⲗⲟⲅⲟⲥ ⲉⲕ ⲧⲟⲛ ⲁ̀ⲛⲱⲅⲉⲟⲥ: ⲛ̀ⲧⲉϥϯ ⲙ̀ⲫ̀ⲛⲟϩⲉⲙ ⲉ̀ⲃⲟⲗϩⲓⲧⲟⲧϥ: ⲓⲥ ⲧⲟⲛ ⲕⲟⲥⲙⲟⲛ ⲛ̀ⲕⲁⲧⲟⲅⲉⲟⲥ.\n\nⲈ̀ϣⲱⲡⲁ̀ϥϣⲁⲛⲉ̀ⲩⲇⲟⲕⲓⲥⲉⲛ: ⲕⲉ ⲉ̀ⲝⲁⲡⲉⲥⲧⲓⲗⲉⲛ ⲧⲟ Ⲡ̀ⲛⲉⲩⲙⲁ: ⲱ̀ ⲥⲁⲩⲧⲱⲥ ⲏ̀ⲑⲉⲗⲓⲥⲉⲛ: ⲁϥⲉ̀ⲣϧⲏⲓⲃⲓ ⲉ̀ⲡⲉϥⲥ̀ⲕⲩⲛⲟⲙⲁ.\n\nⲈⲑⲃⲉ ⲡ̀ϫⲓⲛϭⲓⲥⲁⲣⲝ ⲙ̀ⲠⲉϥϢⲏⲣⲓ: ⲟ̀ ⲅⲉⲛⲛⲏⲧⲟⲥ ⲁⲕⲧⲓⲍⲟⲙⲉⲛⲟⲥ: ⲉ̀ⲧⲁ ⲛⲓⲡ̀ⲣⲟⲫⲏⲧⲏⲥ ⲧⲏⲣⲟⲩ ⲫⲓⲣⲓ: ⲉ̀ⲡⲉϥⲣⲁⲛ ⲇⲉⲇⲟⲝⲁⲍⲱⲙⲉⲛⲟⲥ.\n\nⲠⲁⲓⲣⲏϯ ⲧⲉⲛⲉ̀ⲣⲕⲩⲣⲓⲍⲓⲛ: ϧⲉⲛ ⲡⲉϥⲇⲟⲝⲓⲥ ⲉ̀ⲧⲓ ⲉⲕⲧⲉⲛⲱⲥ: ⲟⲩⲟϩ ⲧⲉⲛⲉ̀ⲣⲙⲁⲕⲁⲣⲓⲍⲓⲛ: ⲛ̀ⲧⲉϥⲙⲁⲩ ⲛ̀ⲥⲁⲃⲏ ⲙ̀Ⲡⲁⲣⲑⲉⲛⲟⲥ.\n\nⲔⲉ ⲓ̀ⲡⲱⲙⲉⲛ ⲁⲛⲉⲩ ⲥⲩⲛⲧⲓⲥⲙⲟⲥ: ⲕⲉ ⲁ̀ⲛⲉⲙⲡⲟⲇⲓⲥⲧⲟⲥ ⲟ̀ⲗⲱⲛ: ⲧⲉⲛϯ ⲛⲉ ⲙ̀ⲡⲓⲭⲉⲣⲉⲧⲓⲥⲙⲟⲥ: ⲛⲉⲙ Ⲅⲁⲃⲣⲓⲏⲗ ⲡⲓⲁ̀ⲣⲭⲏⲁ̀ⲅⲅⲉⲗⲱⲛ.\n\nⲰ̀ ⲑⲏⲉ̀ⲧⲁⲥⲙⲉⲥ ⲫⲓⲗⲁⲛⲑ̀ⲣⲱⲡⲟⲥ: ϧⲉⲛ ⲧⲉⲥⲕⲟⲓⲗⲓⲁⲥ ⲕⲁⲩⲭⲱⲙⲉⲛⲟⲥ: ϫⲉ ⲉ̀ⲃⲟⲗ ϩⲓⲧⲉⲛ ⲡⲉⲕⲁⲣⲡⲟⲥ: ⲁ̀ ⲡⲓⲟⲩϫⲁⲓ ⲧⲁϩⲉ ⲡⲉⲛⲅⲉⲛⲟⲥ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲥⲙⲁⲙⲁⲧ: ϣⲁ ⲡⲓⲛⲓϥⲓ ⲛ̀ⲧⲉ ⲗⲉⲩⲧⲉⲟⲥ: ϫⲉ ⲁⲣⲉϫⲓⲙⲓ ⲅⲁⲣ ⲛ̀ⲟⲩϩ̀ⲙⲟⲧ: ϧⲁⲧⲉⲛ ⲡⲉⲚⲟⲩϯ Ⲩⲓⲟⲥ Ⲑⲉⲟⲥ.",
+      "english": "God has sent His only-begotten, the Word from above, to give salvation through Him, to the earthily world.\n\nWhen He became happy, he sent the Spirit, as He wished, he overshadowed His world.\n\nBecause of the incarnation of His Son, who was born but not created, whom all the prophets spoke, through His glorified name.\n\nLikewise we preach also, by His eternal glory, and we are elated, by His mother the wise Virgin.\n\nAnd we all say, without excuse or hindrance, \"We send unto you greeting, with Gabriel the Archangel.\"\n\nO you who gave birth to the Lover of mankind, in her proud womb, for through your fruit, salvation came to our race.\n\nWe glorify you O blessed one, until the last breath saying, \"You have found favor before, your God the Son of God.\"",
+      "arabic": "الله أرسل وحيده الكلمة من العلو. ليعطي النجاة للعالم الأرضي من قبله.\n\nإذ قد سر وأرسل الروح كما أراد وظلل مسكنه.\n\nمن أجل تجسد ابنه المولود الغير المخلوق الذي كل الأنبياء أخبروا باسمه الممجد.\n\nكذلك نبشر أيضاً بمجده دائماً ونغبط امه العذراء الحكيمة.\n\nونقول كلنا بغير عذر ولا مانع. نعطيك السلام مع غبريال رئيس الملائكة.\n\nيا التي ولدت محب البشر من حشاها المفتخر لأن من قبل ثمرتك قد ادرك الخلاص جنسنا.\n\nنمجدك أيتها المباركة، إلى النفس الأخير، لأنك وجدت نعمة، عند إلهك ابن الله."
+    }
+  },
+  {
+    "id": "moaqab-2",
+    "name": "Mo'aqab 2",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/moaqab-2_english.md",
+    "lyricsCoptic": "lyrics/coptic/moaqab-2_coptic.md",
+    "lyricsArabic": "lyrics/arabic/moaqab-2_arabic.md",
+    "lyrics": {
+      "coptic": "Ⲃⲱⲣⲡ ⲛⲏⲓ ⲙ̀ⲡⲉⲕⲛⲓϣϯ ⲛⲛⲁⲓ: Ⲡⲟ̅ⲥ̅ Ⲫϯ ⲛ̀ⲧⲉ ⲡⲁⲟ̀ⲩϫⲁⲓ: ⲟⲩⲇⲉ ⲙ̀ⲡⲉⲣⲭⲁⲣⲱⲕ ⲉ̀ⲣⲟⲓ: ϫⲉ ⲁⲩⲁ̀ϣⲁⲓ ⲛ̀ϫⲉ ⲛⲁⲛⲟⲃⲓ.\n\nϪⲉ ⲁⲩⲁ̀ϣⲁⲓ ⲛ̀ϫⲉ ⲛⲁⲛⲟⲃⲓ: ⲙ̀ⲙⲟⲛⲧⲏⲓ ⲛ̀ϩⲁⲛϩ̀ⲃⲏⲟⲩⲓ: ⲉ̀ⲛⲁⲛⲉⲩ ⲛⲉⲙ ϩⲁⲛⲉ̀ⲣⲙⲱⲟⲩⲓ̀: ⲙ̀ⲙⲟⲛⲧⲏⲓ ⲛ̀ⲟⲩⲡⲁⲣⲣⲏⲥⲓⲁ.\n\nⲘ̀ⲙⲟⲛⲧⲏⲓ ⲛ̀ⲟⲩⲡⲁⲣⲣⲏⲥⲓⲁ: ⲉ̀ⲃⲏⲗ ⲉ̀ϯⲛⲓϣϯ ⲙ̀ⲡ̀ⲣⲉⲥⲃⲓⲁ: ⲛ̀ⲧⲉ ⲧⲁⲟ̅ⲥ̅ ⲛ̀ⲛⲏⲃ Ⲙⲁⲣⲓⲁ: ϯⲥⲉⲙⲛⲉ ⲛ̀ⲕⲁⲑⲁⲣⲟⲥ.\n\nϮⲥⲉⲙⲛⲉ ⲛ̀ⲕⲁⲑⲁⲣⲟⲥ: ⲑⲏⲉ̀ⲧⲁⲩⲟ̀ⲩⲱⲣⲡ ϣⲁⲣⲟⲥ: ⲛ̀ϫⲉ Ⲅⲁⲃⲣⲓⲏⲗ ⲡⲓⲁ̀ⲅⲅⲉⲗⲟⲥ: ⲁϥⲉⲣⲭⲉⲣⲉⲧⲓⲍⲓⲛ ⲙ̀ⲙⲟⲥ.\n\nⲀϥⲉⲣⲭⲉⲣⲉⲧⲓⲍⲓⲛ ⲙ̀ⲙⲟⲥ: ϧⲉⲛ ⲫ̀ⲣⲁϣⲓ ⲛ̀ⲧⲉ ⲡⲓⲕⲟⲥⲙⲟⲥ: ⲙ̀ⲡⲁⲓⲣⲏϯ ⲉϥϫⲱ ⲙ̀ⲙⲟⲥ: ϫⲉ ⲭⲉⲣⲉ ⲑⲏⲉ̀ⲑⲙⲉϩ ⲛ̀ϩ̀ⲙⲟⲧ.\n\nϪⲉ ⲭⲉⲣⲉ ⲑⲏⲉ̀ⲑⲙⲉϩ ⲛ̀ϩ̀ⲙⲟⲧ: ⲭⲉⲣⲉ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲉⲛϩⲟⲧ: ϫⲉ ⲁⲣⲉϫⲓⲙⲓ ⲅⲁⲣ ⲛ̀ⲟⲩϩ̀ⲙⲟⲧ: ϫⲉ ⲁ̀ⲣⲉϥⲁⲓ ϧⲁ ⲡⲓⲖⲟⲅⲟⲥ.\n\nϪⲉ ⲁ̀ⲣⲉϥⲁⲓ ϧⲁ ⲡⲓⲖⲟⲅⲟⲥ: ⲡ̀Ϣⲏⲣⲓ ⲛ̀Ⲇⲏⲙⲓⲟⲩⲣⲅⲟⲥ: ⲉ̀ⲧⲉ ⲛ̀ⲑⲟϥ ⲡⲉ ⲡⲉⲕⲁⲣⲡⲟⲥ: ⲉ̀ⲧⲁϥⲁ̀ⲓⲧⲉⲛ ⲛ̀ⲣⲉⲙϩⲉ.\n\nⲈ̀ⲧⲁϥⲁ̀ⲓⲧⲉⲛ ⲛ̀ⲣⲉⲙϩⲉ: ⲉ̀ⲃⲟⲗϩⲁ ϯⲙⲉⲧⲃⲱⲕ ⲉⲧϩⲏ: ϫⲉ ⲛ̀ⲑⲟϥ ⲡⲉ ⲡⲉⲛⲚⲟⲩϯ ⲓⲥϫⲉⲛ ϩⲏ: ⲁ̀ⲣⲉⲙⲁⲥϥ ⲥⲱⲙⲁⲧⲓⲕⲟⲥ.\n\nⲀ̀ⲣⲉⲙⲁⲥϥ ⲥⲱⲙⲁⲧⲓⲕⲟⲥ: ϩⲓϫⲉⲛ ⲡⲓⲕⲁϩⲓ ⲁϭⲛⲉ ⲡⲁⲑⲟⲥ: ⲁϥϩⲱⲧⲡ ⲉ̀ⲣⲟⲛ ⲛⲉⲙ ⲛⲉϥⲁ̀ⲅⲅⲉⲗⲟⲥ: ⲕⲁⲧⲁ ⲧⲉϥⲙⲉⲧⲁ̀ⲅⲁⲑⲟⲥ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲉⲛϩⲟⲧ: ⲉⲧϥⲁⲓ ϧⲁ ⲡⲓⲖⲟⲅⲟⲥ ⲛ̀ⲧⲉ Ⲫ̀ⲓⲱⲧ: ϫⲉ ⲭⲉⲣⲉ ⲑⲏⲉ̀ⲑⲙⲉϩ ⲛ̀ϩ̀ⲙⲟⲧ: ⲟⲩⲟϩ Ⲡⲟ̅ⲥ̅ ϣⲟⲡ ⲛⲉⲙⲉ.",
+      "english": "Send me Your great mercy, O Lord God of my salvation, and do not be silent from me, for my sins have increased.\n\nFor my sins have increased, and I have no good works, nor tears, for I have no favor.\n\nFor I have no favor, except the great intercessions, of my lady Mary, the chaste and pure one.\n\nThe chaste and pure one, unto whom was sent, Gabriel the angel, and greeted her.\n\nAnd he greeted her, with the gladness of the world, likewise saying, \"Hail to you O full of grace.\"\n\n\"Hail to you O full of grace,\" hail to you O trusted one, you have found grace, for you carried the Word.\n\nFor you carried the Word, the Son of the Creator, who is your fruit, who has made us free.\n\nWho has made us free, from the old slavery, for He is our God of the old time, you gave birth to Him in the flesh.\n\nYou gave birth to Him in the flesh, on earth without pain, and He reconciled us with His angels, according to His goodness.\n\nWe glorify you O trusted one, who carried the Word of the Father saying, \"Hail to you O full of grace, the Lord is with you.\"",
+      "arabic": "ارسل لي عظيم رحمتك، ايها الرب اله خلاصي، ولا تسكت عني، لأن خطاياي قد كثرت.\n\nلأن خطاياي قد كثرت، وليس لي اعمال صالحة، ولا دموع، وليس لي دالة.\n\nوليس لي دالة، الا عظم شفاعة، سيدتي السيدة مرتمريم، العفيفة النقية.\n\nالعفيفة النقية، التي أرسل اليها، غبريال الملاك، وسلم عليها.\n\nوسلم عليها، بفرح العالم، هكذا قائلا، افرحي يا ممتلئة نعمة.\n\nافرحي يا ممتلئة نعمة، السلام لك ايتها الأمينة، لأنك قد وجدت نعمة، لأنك حملت الكلمة.\n\nلأنك حملت الكلمة، الإبن الخالق، الذي هو ثمرتك، الذي جعلنا احراراً.\n\nالذي جعلنا احراراً، من العبودية القديمة، لانه هو إلهنا منذ البدء، ولدته جسدياً.\n\nولدته جسدياً، علي الأرض من غير ألم، وصالحنا مع ملائكته، كصلاحه.\n\nنمجدك أيتها الأمينة، الحاملة كلمة الآب قائلين، إفرحي يا ممتلئة نعمة، الرب معك."
+    }
+  },
+  {
+    "id": "roumi-3",
+    "name": "Roumi 3",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/roumi-3_english.md",
+    "lyricsCoptic": "lyrics/coptic/roumi-3_coptic.md",
+    "lyricsArabic": "lyrics/arabic/roumi-3_arabic.md",
+    "lyrics": {
+      "coptic": "Ⲣⲁⲙⲁ Ⲫ̀ϯ ⲛ̀ⲑⲟ ϩⲱⲓ Ⲙⲁⲣⲓⲁ: ⲡⲉϫⲓⲛⲙⲓⲥⲓ ⲁ̀ⲛⲉ̀ⲣⲙⲏⲛⲉⲩⲧⲟⲥ: ⲱ̀ ϯⲥⲉⲙⲛⲉ ⲙ̀ⲙⲁⲣⲅⲁⲣⲓⲧⲁⲣⲓⲁ: ⲕⲉ ⲏ̀ ⲕⲟⲣⲏ Ⲑⲉⲟⲩ ⲡ̀ⲛⲉⲩⲥ̀ⲧⲟⲥ.\n\nϪⲉ ⲁ̀ⲣⲉⲙⲟⲣϯ ϧⲉⲛ ϯⲥⲟⲫⲓⲁ: ⲛ̀ⲧⲉ Ⲡⲟ̅ⲥ̅ ⲕⲉ ⲭⲁⲣⲓⲧⲱⲙⲉⲛⲏ: ⲁ̀ⲣⲉⲙⲁⲥϥ ⲁϭⲛⲉ ⲥⲩⲛⲁⲫⲓⲁ: ⲧⲉⲡⲁⲣⲑⲉⲛⲓⲁ ⲫⲩⲗⲁⲧⲧⲟⲙⲉⲛⲏ.\n\nⲆⲓⲁ ⲥⲟⲩ ⲉⲩⲫⲏⲙⲓⲥⲱⲙⲉⲛ: ⲱ̀ ⲝⲩⲗⲟⲛ ⲍⲱⲏ̀ⲥ ⲛ̀ⲁ̀ⲇⲟⲗⲟⲥ: ⲕⲉ ⲕ̀ⲣⲁⲍⲱⲙⲉⲛ ⲉⲩⲫⲩⲓⲥⲱⲙⲉⲛ: ϧⲉⲛ ⲟⲩⲗⲁⲥ ⲉϥϣⲉⲡϣⲱⲡ ⲉⲩⲗⲁⲗⲟⲥ.\n\nϨⲱⲥ ⲙⲁⲛϣⲉⲗⲉⲧ ⲛ̀ⲁ̀ⲧⲧⲁⲕⲟ: ⲁⲡⲓⲠ̀ⲛⲉⲩⲙⲁ ⲉ̅ⲑ̅ⲩ̅ ⲓ̀ ⲉ̀ⲡⲓⲫ̀ⲟⲓⲧⲏⲥⲓⲥ: ϫⲉ ⲁ̀ⲣⲉϣⲱⲡⲓ ⲛ̀ⲟⲩⲡ̀ⲣⲟⲥⲧⲟⲕⲟ: ⲧⲟⲩ ⲕⲟⲥⲙⲟⲩ ⲡⲉⲣⲁⲧⲱⲛ ⲧⲏⲥ ⲅⲏⲥ.\n\nⲞⲩⲟϩ ⲟⲩϫⲟⲙ ⲛ̀ⲧⲉ ⲫⲏⲉ̀ⲧϭⲟⲥⲓ: ⲉⲑⲛⲁⲉ̀ⲣϧⲏⲓⲃⲓ ⲉ̀ⲣⲟ Ⲙⲁⲣⲓⲁ: ⲱ̀ ⲗⲩⲧⲣⲱⲥⲓⲥ ⲛ̀ⲧⲉ ⲛⲏⲉ̀ⲧϧⲟⲥⲓ: ⲟⲓ ⲉⲛ ⲫⲓⲗⲁⲕⲏ ⲟⲓ ⲉⲛ ⲝⲟⲣⲓⲁ.\n\nϪⲉ ⲁ̀ⲣⲉϫ̀ⲫⲟ ⲙ̀ⲡⲓⲁ̀ⲗⲏⲑⲓⲛⲟⲥ: Ⲩⲓⲟⲥ Ⲑⲉⲟⲥ ⲫⲁ ⲡⲓⲣⲁⲛ ⲉⲧϭⲉϩ: ⲉ̀ⲧⲁϥⲛⲁϩⲙⲉⲛ ⲉⲕ ⲧⲱⲛ ⲇⲉⲓⲛⲟⲥ: ⲫⲱϥ ⲡⲉ ⲡⲓⲱ̀ⲟⲩ ϣⲁ ⲛⲓⲉ̀ⲛⲉϩ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲥⲙⲁⲙⲁⲧ: ϣⲁ ⲡⲓⲛⲓϥⲓ ⲛ̀ⲧⲉ ⲗⲉⲩⲧⲉⲟⲥ: ϫⲉ ⲁⲣⲉϫⲓⲙⲓ ⲅⲁⲣ ⲛ̀ⲟⲩϩ̀ⲙⲟⲧ: ϧⲁⲧⲉⲛ ⲡⲉⲚⲟⲩϯ Ⲩⲓⲟⲥ Ⲑⲉⲟⲥ.",
+      "english": "You are God´s chariot O Mary, and your birth is indescribable, O chaste pearl, the girl who is full of God.\n\nFor you were girdled of the wisdom, of God O full of grace, you borne Him without the seed of men, and your virginity is sealed.\n\nBecause of you we praise, the Branch of life, without deception proclaiming, in an elegant tongue and beautiful manner.\n\nAs a bride without blemish, the Holy Spirit came and dwelled on you, for you became the hope, of the world and all the earth.\n\nAnd the power the Most High overshadowed you, O Mary the rescue of those in tribulations, those who are in prisons, and those who are exiled.\n\nFor you gave birth to the true One, the Son of God of the exalted name, who rescued us from the tribulations, glory be to Him unto the ages.\n\nWe glorify you O blessed one, until the last breath saying, \"You have found favor before, your God the Son of God.\"",
+      "arabic": "أنت هي مركبة الله يا مريم. وميلادك لا يُفسر يا جوهرة عفيفة وفتاة متنفسة بالله.\n\nلأنك أشتملت بحكمة الرب أيتها الممتلئة نعمة ولدته بغير مباضعة وبتوليتك محفوظة.\n\nمن أجلك نمدح يا عود الحياة التي بغير غش ونصرخ قائلين بلسان ماهر حسن المنطق.\n\nمثل خدر بغير فساد الروح القدس قد أتي وحل عليك. لأنك صرت رجاء العالم وأقطار الأرض.\n\nوقوة العلي ظللتك يا مريم يا نجاة المتعوبين والذين في السجون والذين في النفي.\n\nلأنك ولدت الحقيقي ابن الله ذو الاسم المرتفع الذي نجانا من المعاطب له المجد إلى الآباد.\n\nنمجدك أيتها المباركة، إلى النفس الأخير، لأنك وجدت نعمة، عند إلهك ابن الله."
+    }
+  },
+  {
+    "id": "moaqab-3",
+    "name": "Mo'aqab 3",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/moaqab-3_english.md",
+    "lyricsCoptic": "lyrics/coptic/moaqab-3_coptic.md",
+    "lyricsArabic": "lyrics/arabic/moaqab-3_arabic.md",
+    "lyrics": {
+      "coptic": "Ⲅⲉ ⲅⲁⲣ ⲛ̀ⲑⲟⲕ ⲟⲩⲣⲉϥϣⲉⲛϩⲏⲧ: Ⲡⲟ̅ⲥ̅ Ⲫϯ ⲡⲓⲛⲁⲏ̀ⲧ: ⲁ̀ⲛⲟⲕ ⲟⲩⲣⲱⲙⲓ ⲛ̀ⲁ̀ⲧϩⲏⲧ: ⲟⲩⲣⲉϥⲉ̀ⲣⲛⲟⲃⲓ ⲉ̀ⲙⲁϣⲱ.\n\nⲞⲩⲣⲉϥⲉ̀ⲣⲛⲟⲃⲓ ⲉ̀ⲙⲁϣⲱ: ⲉϥⲙⲉϩ ⲙ̀ⲙⲉⲧⲣⲉϥϩⲓⲡ̀ϩⲟ: ⲁⲗⲗⲁ ⲁⲓⲭⲁϩⲑⲏⲓ ⲉ̀ⲡⲉⲕϩⲟ: ⲙⲟⲓ ⲛⲏⲓ ⲛ̀ⲟ̀ⲩⲙⲉⲧⲁⲛⲟⲓⲁ.\n\nⲘⲟⲓ ⲛⲏⲓ ⲛ̀ⲟ̀ⲩⲙⲉⲧⲁⲛⲟⲓⲁ: ⲟⲩⲟϩ ⲥⲱⲗϫ ⲛ̀ⲛⲁⲁ̀ⲛⲟⲙⲓⲁ: ϩⲓⲧⲉⲛ ⲡⲓϣ̀ⲗⲏⲗ ⲛ̀ϯⲁ̀ⲅⲓⲁ: ϯϣⲉⲗⲉⲧ ⲛ̀ⲁ̀ⲧⲅⲁⲙⲟⲥ.\n\nϮϣⲉⲗⲉⲧ ⲛ̀ⲁ̀ⲧⲅⲁⲙⲟⲥ: ⲉ̀ⲧⲁ ⲡⲓⲠ̀ⲛⲉⲩⲙⲁ ⲙ̀Ⲡⲁⲣⲁⲕⲗⲏⲧⲟⲥ: ⲓ̀ ⲉ̀ϫⲱⲥ ⲁϥⲥⲟⲃϯ ⲙ̀ⲙⲟⲥ: ⲉ̀ⲟ̀ⲩⲙⲁⲛϣⲱⲡⲓ ⲛ̀ⲧⲉ ⲡⲓⲚⲩⲙⲫⲓⲟⲥ.\n\nⲈ̀ⲟ̀ⲩⲙⲁⲛϣⲱⲡⲓ ⲛ̀ⲧⲉ ⲡⲓⲚⲩⲙⲫⲓⲟⲥ: ⲉ̀ⲧⲉ ⲛ̀ⲑⲟϥ ⲡⲉ ⲡⲓⲖⲟⲅⲟⲥ: ⲡⲉⲛⲚⲟⲩϯ ⲛ̀ⲁ̀ⲗⲏⲑⲓⲛⲟⲥ: ⲫ̀ⲣⲉϥⲑⲁⲙⲓⲟ ⲛ̀ⲛⲓⲭ̀ⲣⲟⲛⲟⲥ.\n\nⲪ̀ⲣⲉϥⲑⲁⲙⲓⲟ ⲛ̀ⲛⲓⲭ̀ⲣⲟⲛⲟⲥ: ⲁϥⲓ ⲁϥⲉ̀ⲣⲥⲱⲙⲁⲧⲓⲕⲟⲥ: ϣⲁ ⲛ̀ⲧⲉϥⲛⲁϩⲙⲉⲛ ϧⲁ ⲡⲉϥⲗⲁⲟⲥ: ϫⲉ ⲛ̀ⲑⲟϥ ⲡⲉ ⲡⲉⲛⲞⲩⲣⲟ.\n\nϪⲉ ⲛ̀ⲑⲟϥ ⲡⲉ ⲡⲉⲛⲞⲩⲣⲟ: ⲙ̀ⲙⲟⲛ ϧⲁⲉ̀ ⲉ̀ⲧⲉϥⲙⲉⲧⲟⲩⲣⲟ: ⲉϥⲙⲏⲛ ⲉ̀ⲃⲟⲗ ⲉϥⲉ̀ⲣⲟ̀ⲩⲣⲟ: ⲉ̀ϫⲉⲛ ⲡ̀ⲏⲓ ⲛ̀Ⲓⲁⲕⲱⲃ ϣⲁ ⲉ̀ⲛⲉϩ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲉⲛϩⲟⲧ: ⲉⲧϥⲁⲓ ϧⲁ ⲡⲓⲖⲟⲅⲟⲥ ⲛ̀ⲧⲉ Ⲫ̀ⲓⲱⲧ: ϫⲉ ⲭⲉⲣⲉ ⲑⲏⲉ̀ⲑⲙⲉϩ ⲛ̀ϩ̀ⲙⲟⲧ: ⲟⲩⲟϩ Ⲡⲟ̅ⲥ̅ ϣⲟⲡ ⲛⲉⲙⲉ.",
+      "english": "For you are compassionate, O Lord God the merciful, I am an ignorant man, and a very sinful one.\n\nAnd a very sinful one, full of hypocrisy, I take refuge in you, grant me repentance.\n\nGrant me repentance, for my iniquities, through the prayers of the holy, the immaculate bride.\n\nThe immaculate bride, over whom the Spirit the Paraclete dwelt, He prepared her to be, a place for the Bridegroom.\n\nA place for the Bridegroom, which is the Word, our true God, the Creator of the ages.\n\nThe Creator of the ages, came and took flesh, to save us His people, for He is our King.\n\nFor He is our King, and His kingdom shall have no end, He will always reign, over the house of Jacob forever.\n\nWe glorify you O faithful one, who carried the Word of the Father, \"Hail to you O full of grace, the Lord is with you.\"",
+      "arabic": "لأنك أنت متحنن، أيها الرب الاله الرحوم، وأنا انسان جاهل، وخاطئ جداً.\n\nوخاطئ جداً، ومملوء نفاقاً، لكني توكلت علي وجهك، اعطني توبة.\n\nاعطني توبة، وأمح أثامي، بصلاة القديسة، العروس التي بغير زواج.\n\nالعروس التي بغير زواج، التي الروح المعزي، حل عليها وأعدها، مسكناً للختن.\n\nمسكناً للختن، الذي هو الكلمة، الهنا الحقيقي، خالق الدهور.\n\nخالق الدهور، أتي وتجسد، حتي نجانا نحن شعبه، لأنه هو ملكنا.\n\nلأنه هو ملكنا، وليس لملكه انقضاء، دائما يملك علي بيت يعقوب الي الابد.\n\nنمجدك أيتها الأمينة، الحاملة كلمة الآب قائلين، إفرحي يا ممتلئة نعمة، الرب معك."
+    }
+  },
+  {
+    "id": "roumi-4",
+    "name": "Roumi 4",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/roumi-4_english.md",
+    "lyricsCoptic": "lyrics/coptic/roumi-4_coptic.md",
+    "lyricsArabic": "lyrics/arabic/roumi-4_arabic.md",
+    "lyrics": {
+      "coptic": "Ⲕⲩⲣⲓⲉ ⲧⲓⲥ ⲟ̀ⲙⲓⲟⲥ ⲥⲓ: ⲉⲛ ⲑⲉⲉ̀ⲓⲥ ⲛⲉⲙ ⲛⲓϭⲓⲥⲉⲩ: ⲇⲟⲝⲁ ⲥⲓ ϧⲉⲛ ⲛⲏⲉ̀ⲧϭⲟⲥⲓ: ⲕⲁⲓ ⲏ ⲅⲏ ϣⲁⲧ̀ϧⲁⲉ̀ ⲛ̀ⲛⲓⲥⲏⲟⲩ.\n\nⲘⲏ ⲁⲛ ϧⲉⲛ ϯⲡⲁⲣⲁⲕⲗⲏⲥⲓⲥ: ⲟⲩⲇⲉ ⲧⲁ ⲉ̀ⲣⲅⲁⲧⲁ ⲟ̀ⲥⲓⲁ: ⲁⲕⲟ̀ⲩⲱⲛϩ ⲛⲁⲛ ⲛ̀ⲉ̀ⲡⲓⲕ̀ⲗⲏⲥⲓⲥ: ⲙ̀ⲡⲓϭⲱⲣⲡ ⲛ̀ⲧⲉ ⲧⲉⲕⲉ̀ⲝⲟⲩⲥⲓⲁ.\n\nⲠ̀ⲗⲏⲛ ϧⲉⲛ ⲛⲉⲕⲛⲁⲓ ⲁⲕⲧⲁⲛϧⲟⲛ: ⲁⲕϣⲁⲛⲓ̀ ⲛⲁⲛ ⲙ̀ⲫ̀ⲣⲏϯ ⲛ̀ⲟⲩⲣⲱⲙⲓ: ⲁⲩⲑⲱⲛ ⲛⲓⲉ̀ⲡⲓⲥⲧⲓⲙⲏ̀ ⲁⲣⲭⲱⲛ: ⲉ̀ⲣⲟⲩ ⲥⲩⲛⲁⲙⲁ ⲕⲁⲧⲁ ⲫ̀ⲧⲱⲙⲓ.\n\nⲤⲓ ⲡ̀ⲣⲉⲡⲓ ⲩ̀ⲙⲛⲟⲥ ⲉⲕⲧⲉⲛⲟⲥ: ⲛⲉⲙ Ⲡⲉⲕⲓⲱⲧ ⲉⲧⲁϥⲧⲁⲟ̀ⲩⲟⲕ: ⲱ̀ ⲫⲏⲉ̀ⲧ ϧⲉⲛ ⲑ̀ⲛⲉϫⲓ ⲛ̀ϯⲠⲁⲣⲑⲉⲛⲟⲥ: ⲁϥϭⲓ ⲛ̀ⲟⲩⲙⲟⲣⲫⲏ ⲙ̀ⲃⲱⲕ.\n\nⲢⲱⲙⲓ ⲛⲓⲃⲉⲛ ⲫ̀ⲑⲟⲅⲅⲟⲙⲉⲛⲟⲥ: ⲉⲕ ⲧⲟⲛ ⲕⲟⲥⲙⲟⲛ ⲃⲓⲱⲧⲓⲕⲟⲛ: ⲁⲩϫⲟⲥ ϫⲉ ⲛ̀ⲑⲟ ⲅⲁⲣ ⲡⲉ ⲡⲓⲅⲉⲛⲟⲥ: ⲛⲉⲙ ϯⲛⲟⲩⲛⲓ ⲛ̀Ⲇⲁⲩⲓⲇⲓⲕⲟⲛ.\n\nϪⲉ ⲁⲣⲉⲙⲓⲥⲓ ⲙ̀ⲡⲁⲛⲧⲁⲛⲁⲝ: ⲡⲉⲛⲚⲏⲃ ⲡⲉⲛⲤⲱⲧⲏⲣ Ⲓⲏ̅ⲥ̅ Ⲡⲭ̅ⲥ̅: ⲡⲓⲙⲟⲛⲟⲅⲉⲛⲏⲥ ⲕⲁⲧⲁ ⲥⲁⲣⲝ: ⲉⲑⲃⲉ ⲧⲉⲛⲙⲉⲧⲉ̀ⲗⲁⲭⲓⲥⲧⲟⲥ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲥⲙⲁⲙⲁⲧ: ϣⲁ ⲡⲓⲛⲓϥⲓ ⲛ̀ⲧⲉ ⲗⲉⲩⲧⲉⲟⲥ: ϫⲉ ⲁⲣⲉϫⲓⲙⲓ ⲅⲁⲣ ⲛ̀ⲟⲩϩ̀ⲙⲟⲧ: ϧⲁⲧⲉⲛ ⲡⲉⲚⲟⲩϯ Ⲩⲓⲟⲥ Ⲑⲉⲟⲥ.",
+      "english": "",
+      "arabic": "يا رب من يشبهك في الآلهة والأرباب. المجد لك في الأعالي وعلى الأرض إلى آخر الأزمان.\n\nليس بأبتهال ولا أعمال بارة. أظهرت لنا سر أعلان سلطانك.\n\nلكن بمراحمك أحيينا إذ أتيت إلينا مثل إنسان فأين هم الرؤساء ذوو الألباب، ليقولوا معاً كما يليق.\n\nلك ينبغي التسبيح دائماً. مع أبيك الذي أرسلك يا الذي من بطن العذراء أخذ شكل العبد.\n\nكل إنسان ناطق في العالم الحيوي قال أنك أنت هي الجنس والأصل الداوودي.\n\nلأنك ولدت ملك الكل سيدنا ومخلصنا يسوع المسيح الوحيد الجنس بالجسد من أجل مسكنتنا.\n\nنمجدك أيتها المباركة، إلى النفس الأخير، لأنك وجدت نعمة، عند إلهك ابن الله."
+    }
+  },
+  {
+    "id": "moaqab-4",
+    "name": "Mo'aqab 4",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/moaqab-4_english.md",
+    "lyricsCoptic": "lyrics/coptic/moaqab-4_coptic.md",
+    "lyricsArabic": "lyrics/arabic/moaqab-4_arabic.md",
+    "lyrics": {
+      "coptic": "Ⲇⲉⲥⲡⲟⲧⲁ ⲡⲓⲢⲉϥⲉⲣϩⲉⲙⲓ: ⲛ̀ⲑⲟⲕ ⲅⲁⲣ ⲡⲉ ⲫⲏⲉ̀ⲧⲉⲙⲓ: ⲉ̀ϯⲙⲉⲧϫⲱⲃ ⲛ̀ⲧⲉ ϯⲙⲉⲧⲣⲱⲙⲓ: ϫⲉ ⲛ̀ⲑⲟⲕ ⲁⲕⲑⲁⲙⲓⲟⲓ.\n\nϪⲉ ⲛ̀ⲑⲟⲕ ⲁⲕⲑⲁⲙⲓⲟⲓ: ⲟⲩⲟϩ ⲕ̀ⲥⲱⲟⲩⲛ ⲙ̀ⲙⲟⲓ: ϯⲧⲱⲃϩ ⲙ̀ⲙⲟⲕ ⲥⲱⲧⲉⲙ ⲉ̀ⲣⲟⲓ: ⲙⲁϩ̀ⲑⲏⲕ ⲉ̀ⲧⲁⲃⲟⲏⲑⲓⲁ.\n\nⲘⲁϩ̀ⲑⲏⲕ ⲉ̀ⲧⲁⲃⲟⲏⲑⲓⲁ: ⲭⲱ ⲛⲏⲓ ⲉ̀ⲃⲟⲗ ⲛ̀ⲛⲁⲁ̀ⲛⲟⲙⲓⲁ: ⲉⲑⲃⲉ ϯϩⲓⲉⲃⲓ ⲛ̀ⲁ̀ⲧⲕⲁⲕⲓⲁ: Ⲙⲁⲣⲓⲁ ϯⲑⲉⲟⲧⲟⲕⲟⲥ.\n\nⲘⲁⲣⲓⲁ ϯⲑⲉⲟⲧⲟⲕⲟⲥ: ϯⲛⲟⲩⲛⲓ ⲛⲉⲙ ⲡⲓⲅⲉⲛⲟⲥ: ⲛ̀ⲧⲉ Ⲇⲁⲩⲓⲇ ⲡⲓϩⲩⲙⲛⲟⲇⲟⲥ: ⲫ̀ⲙⲁⲛϣⲱⲡⲓ ⲛ̀ⲧⲉ ⲡⲓⲧⲟⲩⲃⲟ.\n\nⲪ̀ⲙⲁⲛϣⲱⲡⲓ ⲛ̀ⲧⲉ ⲡⲓⲧⲟⲩⲃⲟ: ⲛⲉⲙ ⲑ̀ⲙⲁⲩ ⲙ̀ⲡⲓⲢⲉϥⲑⲁⲙⲓⲟ: ⲡⲉⲛⲚⲟⲩϯ ⲉ̀ⲧⲁϥⲑⲉⲃⲓⲟ: ⲁϥϭⲓ ⲛ̀ⲟⲩⲙⲟⲣⲫⲏ ⲙ̀ⲃⲱⲕ.\n\nⲀϥϭⲓ ⲛ̀ⲟⲩⲙⲟⲣⲫⲏ ⲙ̀ⲃⲱⲕ: ϣⲁ ⲛ̀ⲧⲉϥⲥⲱϯ ⲙ̀ⲡⲉϥⲃⲱⲕ: Ⲁ̀ⲇⲁⲙ ⲛⲉⲙ ⲛⲏⲉ̀ⲧⲟⲓ ⲙ̀ⲃⲱⲕ: ⲕⲁⲧⲁ ⲡⲉϥⲛⲁⲓ ⲁϥⲛⲟϩⲉⲙ ⲙ̀ⲙⲱⲟⲩ.\n\nⲔⲁⲧⲁ ⲡⲉϥⲛⲁⲓ ⲁϥⲛⲟϩⲉⲙ ⲙ̀ⲙⲱⲟⲩ: ⲉ̀ⲃⲟⲗϩⲁ ϯⲙⲉⲧⲃⲱⲕ ⲉⲧϩⲱⲟⲩ: ⲙ̀ⲫⲏⲉ̀ⲧⲁϥⲉ̀ⲣⲟ̅ⲥ̅ ⲉⲣⲱⲟⲩ: ⲉⲑⲃⲉ ⲡ̀ⲥⲟϭⲛⲓ ⲙ̀ⲡⲓϩⲟϥ.\n\nⲈⲑⲃⲉ ⲡ̀ⲥⲟϭⲛⲓ ⲙ̀ⲡⲓϩⲟϥ: Ⲁ̀ⲇⲁⲙ ⲡⲓϣⲟⲣⲡ ⲁϥϩⲓⲟⲩⲓ̀ ⲙ̀ⲙⲟϥ: ⲉⲑⲃⲉ Ⲙⲁⲣⲓⲁ ⲁⲩⲧⲁⲥⲑⲟϥ: ⲉ̀ⲧⲉϥⲁ̀ⲣⲭⲏ ⲛ̀ⲕⲉⲥⲟⲡ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲉⲛϩⲟⲧ: ⲉⲧϥⲁⲓ ϧⲁ ⲡⲓⲖⲟⲅⲟⲥ ⲛ̀ⲧⲉ Ⲫ̀ⲓⲱⲧ: ϫⲉ ⲭⲉⲣⲉ ⲑⲏⲉ̀ⲑⲙⲉϩ ⲛ̀ϩ̀ⲙⲟⲧ: ⲟⲩⲟϩ Ⲡⲟ̅ⲥ̅ ϣⲟⲡ ⲛⲉⲙⲉ.",
+      "english": "O Master and Provider, You are full of knowledge, of the weakness of mankind, for You have created me.\n\nFor You have created me, and You know me, I entreat You to hear me, be unto me a help.\n\nBe unto me a help, forgive me my iniquities, for the sake of the unblemished lamb, Mary the Theotokos.\n\nMary the Theotokos, from the root and descendants, of David the psalmist, the place of purity.\n\nThe place of purity, and the mother of the Creator, our God humbled Himself, and took the form of a servant.\n\nAnd accepted the form of a servant, to save His servants, Adam and those who were in slavery, He saved them according to His mercy.\n\nHe saved them according to His mercy, from bitter slavery, from the one who had made himself master over them, through the deceit of the serpent.\n\nThrough the deceit of the serpent, the first Adam fell, and through Mary was restored again, to his authority.\n\nWe glorify you O faithful one, who carried the Word of the Father, \"Hail to you O full of grace, the Lord is with you.\"",
+      "arabic": "أيها السيد المدبر، أنت تعرف، بضعف البشرية، لأنك انت خلقتني.\n\nلأنك انت خلقتني، وتعرفني، اطلب اليك اسمعني، وأصغ لمعونتي.\n\nوأصغ لمعونتي، واغفر لي اثامي، من اجل النعجة التي بلا شر، مريم والدة الاله.\n\nمريم والدة الاله، اصل وجنس، داود المرتل، مسكن الطهارة.\n\nمسكن الطهارة، وام الخالق، الهنا الذي اتضع، وأخذ شكل العبد.\n\nوأخذ شكل العبد، حتي خلص عبده، آدم والمستعبدين، كرحمته خلصهم.\n\nكرحمته خلصهم، من العبودية الرديئة، التي لمن قد ساد عليهم، من أجل مشورة الحية.\n\nمن أجل مشورة الحية، آدم الاول قد سقط، ومن أجل مريم قد رجع الي رئاسته دفعة أخري.\n\nنمجدك أيتها الأمينة، الحاملة كلمة الآب قائلين، إفرحي يا ممتلئة نعمة، الرب معك."
+    }
+  },
+  {
+    "id": "roumi-5",
+    "name": "Roumi 5",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/roumi-5_english.md",
+    "lyricsCoptic": "lyrics/coptic/roumi-5_coptic.md",
+    "lyricsArabic": "lyrics/arabic/roumi-5_arabic.md",
+    "lyrics": {
+      "coptic": "Ⲓⲥ ϩⲏⲡⲡⲉ Ⲡⲟ̅ⲥ̅ ⲫⲏⲉ̀ⲧⲁϥϣⲁⲛϣ: ⲛ̀ⲛⲉⲓⲟϯ ϧⲉⲛ ⲡⲓⲇ̀ⲣⲩⲙⲟⲥ: ⲁϥⲛⲁϩⲙⲟⲩ ⲉ̀ⲃⲟⲗϩⲁ ⲛⲓⲟ̀ⲩⲱⲛϣ: ⲉⲧϩⲱⲗⲉⲙ ⲛ̀ⲧⲉ ⲡⲓⲇⲟⲕⲓⲙⲟⲥ.\n\nⲀϥⲧⲉⲙⲙⲱⲟⲩ ⲙ̀ⲡⲓⲙⲁⲛⲛⲁ ⲧⲏⲣⲟⲩ: ⲁϥⲧ̀ⲥⲱⲟ̀ⲩ ⲙ̀ⲡⲓⲙⲱⲟ̀ⲩ ϧⲉⲛ ⲟⲩⲕⲟϩ ⲙ̀ⲡⲉⲧⲣⲁ: ⲟⲩⲟϩ ⲁϥϭⲱⲣⲡ ⲉ̀ⲛⲟⲩⲡ̀ⲣⲉⲥⲃⲩⲧⲉⲣⲟⲩ: ⲛⲉⲙ ⲛⲟⲩⲙⲓⲕⲣⲱⲛ ⲥⲓⲙⲓⲱⲛ ⲫⲉⲇⲣⲁ.\n\nⲀϥⲥⲱⲧⲡ ⲙ̀ⲙⲟ ⲛ̀ⲟ̀ⲩⲧⲟⲣⲟⲥ ⲛⲁϥ: Ⲁ̀ⲇⲁⲙ ⲧⲟⲩ ⲅⲏⲓⲛⲟⲩ ⲑⲩⲅⲁⲧⲏⲣ: ⲉⲑⲣⲉϥ ⲥⲱϯ ⲛ̀ⲛⲏⲉ̀ⲧⲁⲩⲣⲁⲛⲁϥ: ϫⲉ ⲭⲉⲣⲉ ⲛⲩⲙⲫⲏⲧⲟⲩ Ⲡⲁⲧⲏⲣ.\n\nⲀ̀ⲣⲉϣⲱⲡⲓ ⲛ̀ⲟⲩⲫⲉ ⲙ̀ⲙⲁϩⲥ̀ⲛⲟⲩϯ: ⲉⲧⲥⲟⲃϯ ⲉ̀ⲡⲓⲟ̀ⲩⲱⲓⲛⲓ ⲙ̀ⲙⲏⲓ: ⲁϥϣⲁⲓ ⲛ̀ϧⲏϯ ⲱ̀ ϯⲙⲁⲥⲛⲟⲩϯ: ⲛ̀ϫⲉ ⲡⲓⲣⲏ ⲛ̀ⲧⲉ ϯⲙⲉⲑⲙⲏⲓ.\n\nⲀ̀ⲣⲉϫ̀ⲫⲟϥ ϩⲓⲧⲉⲛ ⲟⲩⲡ̀ⲣⲟⲫⲏⲧⲓⲁ: ⲁϭⲛⲉ ϫ̀ⲣⲟϫ ⲟⲩⲇⲉ ⲫ̀ⲑⲁⲣⲥⲓⲁⲛ: ⲕⲉ ⲱⲥ ⲁⲩⲧⲱⲥ ⲧⲏⲥ ⲁ̀ⲗⲏⲑⲓⲁ: ⲭⲱⲣⲓⲥ ⲇⲓⲭ̀ⲟⲥⲧⲁⲥⲓⲁⲛ.\n\nϦⲉⲛ ⲕⲉⲛϥ ⲙ̀Ⲡⲉϥⲓⲱⲧ ⲫⲁ ⲡⲓⲱ̀ⲟⲩ: ⲙⲁⲣⲉⲛϩⲱⲥ ⲉ̀ⲣⲟϥ ϩⲱⲥ Ⲑⲉⲟⲥ: ⲟⲩⲟϩ ⲛ̀ⲧⲉⲛϫⲱ ⲛⲁϥ ⲛⲉⲙ ⲧⲉϥⲙⲁⲩ: ϩⲱⲥ ⲣⲱⲙⲓ ⲛ̀ⲕⲁⲗⲱⲥ ⲇⲓⲕⲉⲟⲥ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲥⲙⲁⲙⲁⲧ: ϣⲁ ⲡⲓⲛⲓϥⲓ ⲛ̀ⲧⲉ ⲗⲉⲩⲧⲉⲟⲥ: ϫⲉ ⲁⲣⲉϫⲓⲙⲓ ⲅⲁⲣ ⲛ̀ⲟⲩϩ̀ⲙⲟⲧ: ϧⲁⲧⲉⲛ ⲡⲉⲚⲟⲩϯ Ⲩⲓⲟⲥ Ⲑⲉⲟⲥ.",
+      "english": "",
+      "arabic": "ها هوذا الرب الذي أعال آبائك في البرية وأنقذهم من ذائب المجرب الخاطفة.\n\nوأطعمهم المن جميعاً وسقاهم الماء من صخرة صماء. ثم أعلن لمشائخهم وشبانهم آيات بهية.\n\nإختارك مسكناً له يا إبنه آدم الأرضي ليخلص الذين أرضوه فأفرحي يا عروسة الآب.\n\nصرت سماء ثانية معدة للنور الحقيقي وأشرق منك يا والدة الإله شمس البر.\n\nولدته بالنبوة بغير زرع ولا فساد وهو بالحقيقية كما هو بغير افتراق.\n\nفي حضن أبيه الممجد فلنسبحه كإله ونمدحه مع أمه كإنسان صالح صديق.\n\nنمجدك أيتها المباركة، إلى النفس الأخير، لأنك وجدت نعمة، عند إلهك ابن الله."
+    }
+  },
+  {
+    "id": "moaqab-5",
+    "name": "Mo'aqab 5",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/moaqab-5_english.md",
+    "lyricsCoptic": "lyrics/coptic/moaqab-5_coptic.md",
+    "lyricsArabic": "lyrics/arabic/moaqab-5_arabic.md",
+    "lyrics": {
+      "coptic": "Ⲉⲑⲃⲉ ⲡⲉⲕⲣⲁⲛ Ⲡⲟ̅ⲥ̅ ⲙ̀ⲡⲉⲣϫⲱⲛⲧ: ϣⲁ ⲉ̀ⲛⲉϩ ⲉϫⲉⲛ ⲡⲉⲕⲥⲱⲛⲧ: ⲁⲗⲗⲁ ⲕⲁⲧⲁ ⲡⲉⲕⲛⲁⲓ ϫⲟⲩϣⲧ: ϧⲉⲛ ⲫ̀ⲃⲁⲗ ⲛ̀ⲛⲉⲕⲙⲉⲧϣⲉⲛϩⲏⲧ.\n\nϦⲉⲛ ⲫ̀ⲃⲁⲗ ⲛ̀ⲛⲉⲕⲙⲉⲧϣⲉⲛϩⲏⲧ: ϫⲟⲩϣⲧ ⲉ̀ⲣⲟⲓ ⲱ̀ ⲡⲓⲛⲁⲏ̀ⲧ: ⲁⲣⲓⲟ̀ⲩⲱⲓⲛⲓ ⲙ̀ⲡⲁϩⲏⲧ: ⲙⲁϩϥ ⲉ̀ⲃⲟⲗϧⲉⲛ ⲧⲉⲕⲥⲟⲫⲓⲁ.\n\nⲘⲁϩϥ ⲉ̀ⲃⲟⲗϧⲉⲛ ⲧⲉⲕⲥⲟⲫⲓⲁ: ⲉⲑⲣⲓϫⲱ ⲛ̀ⲛⲓⲉ̀ⲩⲫⲏⲙⲓⲁ: ⲛ̀ⲧⲉ ⲧⲁⲟ̅ⲥ̅ ⲛ̀ⲁ̀ⲧⲕⲁⲕⲓⲁ: Ⲙⲁⲣⲓⲁ ϯϣⲉⲗⲉⲧ ⲙ̀ⲙⲏⲓ.\n\nⲘⲁⲣⲓⲁ ϯϣⲉⲗⲉⲧ ⲙ̀ⲙⲏⲓ: ϯⲫⲉ ⲙ̀ⲙⲁϩⲥ̀ⲛⲟⲩϯ ⲛ̀ⲧⲁⲫ̀ⲙⲏⲓ: ⲉ̀ⲧⲁ ⲡⲓⲣⲏ ⲛ̀ⲧⲉ ϯⲙⲉⲑⲙⲏⲓ: ⲁϥϣⲁⲓ ⲛⲁⲛ ⲉ̀ⲃⲟⲗⲛ̀ϧⲏⲧⲥ.\n\nⲀϥϣⲁⲓ ⲛⲁⲛ ⲉ̀ⲃⲟⲗⲛ̀ϧⲏⲧⲥ: ⲛ̀ϫⲉ ⲫⲏⲉ̀ⲧⲁϥⲉ̀ⲣϩⲏⲧⲥ: ⲁϥⲑⲁⲙⲓⲟ ⲛ̀ϯⲕ̀ⲧⲏⲥⲓⲥ ⲧⲏⲣⲥ: ⲉ̀ⲧⲉ ⲛ̀ⲑⲟϥ ⲡⲉ Ⲓⲏ̅ⲥ̅ Ⲡⲭ̅ⲥ̅.\n\nⲈ̀ⲧⲉ ⲛ̀ⲑⲟϥ ⲡⲉ Ⲓⲏ̅ⲥ̅ Ⲡⲭ̅ⲥ̅: ⲡⲓⲣⲏ ⲛ̀ⲧⲉ ϯⲙⲉⲑⲙⲏⲓ ⲁ̀ⲗⲏⲑⲱⲥ: ⲉ̀ⲧⲁϥϣⲁⲓ ⲛ̀ⲛⲓⲡⲓⲥⲧⲟⲥ: ⲉ̀ⲃⲟⲗϧⲉⲛ ⲑ̀ⲛⲉϫⲓ ⲛ̀ϯⲠⲁⲣⲑⲉⲛⲟⲥ.\n\nⲈ̀ⲃⲟⲗϧⲉⲛ ⲑ̀ⲛⲉϫⲓ ⲛ̀ϯⲠⲁⲣⲑⲉⲛⲟⲥ: ⲁⲩϫ̀ⲫⲟϥ ⲁϭⲛⲉ ⲡⲁⲑⲟⲥ: ⲁϥⲛⲟϩⲉⲙ ⲙ̀ⲡⲉϥⲗⲁⲟⲥ: ⲉ̀ⲃⲟⲗϧⲉⲛ ⲧ̀ϫⲓϫ ⲛ̀ⲧⲉ ⲛ̀ⲟⲩϫⲁϫⲓ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲉⲛϩⲟⲧ: ⲉⲧϥⲁⲓ ϧⲁ ⲡⲓⲖⲟⲅⲟⲥ ⲛ̀ⲧⲉ Ⲫ̀ⲓⲱⲧ: ϫⲉ ⲭⲉⲣⲉ ⲑⲏⲉ̀ⲑⲙⲉϩ ⲛ̀ϩ̀ⲙⲟⲧ: ⲟⲩⲟϩ Ⲡⲟ̅ⲥ̅ ϣⲟⲡ ⲛⲉⲙⲉ.",
+      "english": "For the sake of Your name Lord do not be angry, with Your people forever, but look down according to Your mercy, with Your merciful eyes.\n\nWith Your merciful eyes, look upon me O merciful One, enlighten my heart, and fill me with Your wisdom.\n\nAnd fill me with Your wisdom, to sing praises, unto my unblemished Lady, Mary the true bride.\n\nMary the true bride, the true second heaven, from which the Sun of Righteousness, shone over us.\n\nShone over us, He who has begun, He created all creation, this is Jesus Christ.\n\nThis is Jesus Christ, the true Sun of the righteousness, who has shone upon the faithful, from the womb of the Virgin.\n\nFrom the womb of the Virgin, He was born without pain, and He saved His people, from the arm of their enemies.\n\nWe glorify you O faithful one, who carried the Word of the Father, \"Hail to you O full of grace, the Lord is with you.\"",
+      "arabic": "من أجل اسمك يا رب لا تغضب، إلي الابد علي خليقتك، لكن برحمتك انظر، بعين رأفتك.\n\nبعين رأفتك، انظر إلي أيها الرحوم، وأضئ قلبي، واملأه من حكمتك.\n\nواملأه من حكمتك، لكي أقول مدائح، سيدتي التي بغير شر، مريم العروسة الحقيقية.\n\nمريم العروسة الحقيقية، السماء الثانية الحقيقية، التي شمس البر، أشرق لنا منها.\n\nأشرق لنا منها، الذي ابتدأ فخلق، البرية كلها، الذي هو يسوع المسيح.\n\nالذي هو يسوع المسيح، شمس البر بالحقيقة، الذي أشرق للمؤمنين، من بطن العذراء.\n\nمن بطن العذراء، ولد بغير ألم، وخلص شعبه، من يد أعدائهم.\n\nنمجدك أيتها الأمينة، الحاملة كلمة الآب قائلين، إفرحي يا ممتلئة نعمة، الرب معك."
+    }
+  },
+  {
+    "id": "roumi-6",
+    "name": "Roumi 6",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/roumi-6_english.md",
+    "lyricsCoptic": "lyrics/coptic/roumi-6_coptic.md",
+    "lyricsArabic": "lyrics/arabic/roumi-6_arabic.md",
+    "lyrics": {
+      "coptic": "Ⲥⲟⲙⲥ ⲟⲩⲟϩ ⲙⲁⲓⲁ̀ⲧⲉⲛ ⲑⲏⲛⲟⲩ: ϧⲉⲛ ⲛⲁⲓⲙⲩⲥⲧⲏⲣⲓⲟⲛ ⲉⲧϩⲏⲡ: ⲧⲉⲧⲉⲛϫⲉⲙⲟⲩ ⲉ̀ϯⲠⲁⲣⲑⲉⲛⲟⲥ: ⲟⲩⲙⲩⲧⲏⲣ Ⲭ̀ⲣⲓⲥⲧⲟⲩ Ⲑⲉⲟⲩ ⲡⲉⲛⲚⲏⲃ.\n\nⲈⲑⲃⲉⲟ̀ⲩ ⲡⲉϫⲉ ⲡⲓⲆⲩⲛⲁⲧⲟⲥ: ⲙ̀ⲡⲉϥⲃⲱⲕ Ⲙⲱⲩⲥⲏⲥ ⲡⲟⲓ̀ⲏⲥⲟⲛ: ⲛ̀ⲟⲩⲥ̀ⲕⲩⲛⲏ ⲛⲉⲙ ⲟⲩⲕⲓⲃⲱⲧⲟⲥ: ⲟⲩⲟϩ ⲗⲁⲗⲱⲥ ϧⲉⲛ ⲡⲓⲭ̀ⲣⲩⲥⲟⲛ.\n\nⲀⲣⲓϩⲱⲃ ⲙⲉⲛ ⲛ̀ⲟⲩⲕⲁⲡⲥⲁⲕⲏⲥ: ⲉ̀ⲡⲓⲙⲁⲛⲛⲁ ⲧⲩⲡⲟⲛ ⲧⲁ ⲉ̀ⲡⲓⲅⲉⲓⲁ: ⲭⲁⲧⲟⲩ ⲁⲩⲧⲟⲩⲥ ⲛⲉⲙ ⲛⲓⲡ̀ⲗⲁⲕⲏⲥ: ϧⲉⲛ ⲑ̀ⲙⲏϯ ⲛ̀ϯⲥ̀ⲕⲩⲛⲟⲡⲓⲅⲉⲓⲁ.\n\nⲚⲁⲓ ⲧⲏⲣⲟⲩ ⲁⲩϣⲱⲡⲓ ⲛ̀ⲧⲩⲡⲓⲕⲟⲛ: ⲉ̀ϯⲡⲁⲛⲁ̀ⲅⲓⲁ ⲁ̀ⲙⲟⲗⲩⲛⲧⲟⲥ: ⲏ̀ ⲥ̀ⲕⲩⲛⲟⲙⲁ ⲁⲛⲑ̀ⲣⲟⲡⲓⲕⲟⲛ: Ⲙⲁⲣⲓⲁ ⲡⲓⲘⲁⲛⲛⲁ ⲡⲉ Ⲡⲭ̅ⲥ̅.\n\nⲠ̀Ⲟⲩⲣⲟ ⲛⲧⲉ ⲡ̀ⲱ̀ⲟⲩ Ⲓⲏ̅ⲥ̅ ⲡⲓⲙⲓⲥⲓ: ⲉⲕ ⲧⲟⲛ ⲁⲣⲣⲏⲕⲧⲟⲥ ⲧⲟⲓ̀ⲭⲟⲥ: ⲁϥⲓ̀ ⲉ̀ⲡⲓⲕⲟⲥⲙⲟⲥ ⲉ̀ⲃⲟⲗϧⲉⲛ ⲡ̀ϭⲓⲥⲓ: ⲥⲩⲙ Ⲡⲁⲧⲣⲓ ⲁ̀ⲛⲉ̀ⲩⲧⲟⲓⲭⲟⲥ.\n\nⲠⲓⲡⲁⲣⲁⲇⲓⲥⲟⲥ ⲉϣⲗⲏⲗⲟⲩⲓ̀: ϫⲉ ⲁϥⲓ̀ ⲁϥⲉⲣϣ̀ⲫⲏⲣ ⲛⲉⲙⲁⲛ: ⲁ̀ⲛⲟⲛ ϧⲁ ⲛⲓⲁ̀ⲡⲟⲣⲟⲥ ⲛ̀ⲥ̀ⲃⲱⲟⲩⲓ̀: ⲟⲩⲟϩ ⲁϥϣⲉⲛϩⲏⲧ ⲁϥⲥⲱϯ ⲙ̀ⲙⲟⲛ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲥⲙⲁⲙⲁⲧ: ϣⲁ ⲡⲓⲛⲓϥⲓ ⲛ̀ⲧⲉ ⲗⲉⲩⲧⲉⲟⲥ: ϫⲉ ⲁⲣⲉϫⲓⲙⲓ ⲅⲁⲣ ⲛ̀ⲟⲩϩ̀ⲙⲟⲧ: ϧⲁⲧⲉⲛ ⲡⲉⲚⲟⲩϯ Ⲩⲓⲟⲥ Ⲑⲉⲟⲥ.",
+      "english": "",
+      "arabic": "انظروا وتأملوا في هذه الأسرار الخفية. تجدونها على العذراء أم المسيح الإله سيدنا.\n\nلماذا قال القوى لعبده موسي أصنع قبة وتابوتاً وصفحة بالذهب.\n\nوأعمل قسطاً للمن مثالاً للأرضيين. وضعها مع الألواح في وسط المظال.\n\nهذه كلها كانت مثالاً لذات كل القدس القبة الناسوتية الطاهرة مريم والمن هو المسيح.\n\nملك المجد يسوع المولود من السرور المنيع أتي إلى العالم من العلاء وهو مع الآب بغير افتراق.\n\nالفردوس يتهلل لأنه قد جاء وأشترك معنا نحن الناقصين الفهم وتحنن وخلصنا.\n\nنمجدك أيتها المباركة، إلى النفس الأخير، لأنك وجدت نعمة، عند إلهك ابن الله."
+    }
+  },
+  {
+    "id": "moaqab-6",
+    "name": "Mo'aqab 6",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/moaqab-6_english.md",
+    "lyricsCoptic": "lyrics/coptic/moaqab-6_coptic.md",
+    "lyricsArabic": "lyrics/arabic/moaqab-6_arabic.md",
+    "lyrics": {
+      "coptic": "Ⲍⲉⲟϣ ⲛ̀ϫⲉ ⲛⲁⲡⲁⲣⲁⲡⲧⲱⲙⲁ: ⲛⲉⲙ ⲡ̀ⲑⲱⲗⲉⲃ ⲛ̀ⲧⲉ ⲡⲁⲥⲱⲙⲁ: ⲉⲩⲉ̀ⲣⲕⲟⲩϫⲓ ⲛ̀ϫⲉ ⲛⲁⲕⲁⲑⲁⲣⲧⲱⲙⲁ: ⲡⲁⲚⲟⲩϯ ⲙ̀ⲡⲉⲣⲭⲁϯ ⲛ̀ⲥⲱⲕ.\n\nⲠⲁⲚⲟⲩϯ ⲙ̀ⲡⲉⲣⲭⲁⲧ ⲛ̀ⲥⲱⲕ: ⲁⲗⲗⲁ ⲙⲁⲧⲁⲥⲑⲟⲓ ϩⲁⲣⲟⲕ: ⲛ̀ⲧⲁⲓ̀ⲣⲓ ⲙ̀ⲡⲉⲧⲉϩⲛⲁⲕ: ⲉⲑⲃⲉ ⲑⲏⲉ̅ⲑ̅ⲩ̅ ⲛ̀ⲧⲁⲕ.\n\nⲈⲑⲃⲉ ⲑⲏⲉ̅ⲑ̅ⲩ̅ ⲛ̀ⲧⲁⲕ: Ⲙⲁⲣⲓⲁ ⲫ̀ⲙⲁⲛ̀ⲉⲙⲧⲟⲛ ⲙ̀ⲙⲟⲕ: ⲉ̀ⲧⲁⲕϩⲟⲛϩⲉⲛ ⲙ̀Ⲙⲱⲩⲥⲏⲥ ⲡⲉⲕⲃⲱⲕ: ⲁϥⲑⲁⲙⲓⲟ ⲙ̀ⲡⲉⲥⲧⲩⲡⲟⲥ.\n\nⲀϥⲑⲁⲙⲓⲟ ⲙ̀ⲡⲉⲥⲧⲩⲡⲟⲥ: ⲕⲁⲧⲁ ⲡⲉⲕϩⲟⲛϩⲉⲛ ⲕⲁⲗⲱⲥ: ϫⲉ ⲁϥⲑⲁⲙⲓⲟ ⲛ̀ⲟⲩⲕⲓⲃⲱⲧⲟⲥ: ϧⲉⲛ ϩⲁⲛϣⲉ ⲙ̀ⲡⲁⲩⲕⲓⲛⲟⲛ.\n\nϦⲉⲛ ϩⲁⲛϣⲉ ⲙ̀ⲡⲁⲩⲕⲓⲛⲟⲛ: ⲛⲉⲙ ⲡⲓⲥ̀ⲧⲁⲙⲛⲟⲥ ⲛ̀ⲛⲟⲩⲃ ⲇⲉⲟⲛ: ⲛⲉⲙ ϯⲗⲩⲭⲛⲓⲁ ⲛ̀ⲕⲁⲗⲁⲙⲟⲛ: ⲛⲉⲙ ϯϣⲟⲩⲣⲏ ⲛⲉⲙ ⲛⲓⲥ̀ⲕⲉⲩⲟⲥ.\n\nⲚⲉⲙ ϯϣⲟⲩⲣⲏ ⲛⲉⲙ ⲛⲓⲥ̀ⲕⲉⲩⲟⲥ: ⲉⲧⲭⲏ ϧⲉⲛ ϯⲕⲓⲃⲱⲧⲟⲥ: ⲁ̀ ⲛⲁⲓ ⲧⲏⲣⲟⲩ ⲉⲣⲧⲩⲡⲟⲥ: ⲉⲑⲃⲉ ϯⲑⲉⲟⲧⲟⲕⲟⲥ.\n\nⲈⲑⲃⲉ ϯⲑⲉⲟ̀ⲧⲟⲕⲟⲥ: ⲁⲩⲟⲩⲱⲛ ⲙ̀ⲡⲓⲡⲁⲣⲁⲇⲓⲥⲟⲥ: ϫⲉ ⲁ̀Ⲡⲟ̅ⲥ̅ ⲛⲁⲓ ϧⲁ ⲡⲉϥⲗⲁⲟⲥ: ⲁϥⲓ̀ ⲟⲩⲟϩ ⲁϥⲥⲱϯ ⲙ̀ⲙⲟⲛ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲉⲛϩⲟⲧ: ⲉⲧϥⲁⲓ ϧⲁ ⲡⲓⲖⲟⲅⲟⲥ ⲛ̀ⲧⲉ Ⲫ̀ⲓⲱⲧ: ϫⲉ ⲭⲉⲣⲉ ⲑⲏⲉ̀ⲑⲙⲉϩ ⲛ̀ϩ̀ⲙⲟⲧ: ⲟⲩⲟϩ Ⲡⲟ̅ⲥ̅ ϣⲟⲡ ⲛⲉⲙⲉ.",
+      "english": "Many are my iniquities, and the impurities of my body, and few are my virtues, O my God do not turn away from me.\n\nO my God do not turn away from me, but bring me back to You, to do Your will, for the sake of Your saint.\n\nFor the sake of Your saint, Mary Your resting place, concerning whom You ordered your servant Moses, to make a simple of.\n\nTo make a simple of, according to Your good command, for he made a tabernacle, out of almond wood.\n\nOut of almond wood, and also a golden vessel, and a lampstand with a rod, the censer and the barrels.\n\nThe censer and the barrels, that were placed in the tabernacle, are all symbols, because of the Theotokos.\n\nBecause of the Theotokos, paradise has been reopened, for the Lord was merciful to His people, He came and saved us.\n\nWe glorify you O faithful one, who carried the Word of the Father, \"Hail to you O full of grace, the Lord is with you.\"",
+      "arabic": "ثيرة هي زلاتي، ودنس جسدي، وقليلة هي فضائلي، يا الهي لا تتركني عنك.\n\nيا الهي لا تتركني عنك، بل ردني اليك، لأصنع إراداتك، من أجل قديستك.\n\nمن أجل قديستك، مريم موضع راحتك، التي أمرت موسي عبدك، صنع مثلها.\n\nصنع مثلها، كأمرك جيدا، لأنه صنع تابوتاً، من خشب اللوز.\n\nمن خشب اللوز، والقسط الذهب أيضاً، والمنارة ذات السيقان، والمجمرة والأواني.\n\nوالمجمرة والأواني، الموضوعة في التابوت، هؤلاء كلها، مثال لوالدة الاله.\n\nمثال لوالدة الاله، فتح الفردوس، لأن الرب رحم شعبه، أتي وخلصنا.\n\nنمجدك أيتها الأمينة، الحاملة كلمة الآب قائلين، إفرحي يا ممتلئة نعمة، الرب معك."
+    }
+  },
+  {
+    "id": "roumi-7",
+    "name": "Roumi 7",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/roumi-7_english.md",
+    "lyricsCoptic": "lyrics/coptic/roumi-7_coptic.md",
+    "lyricsArabic": "lyrics/arabic/roumi-7_arabic.md",
+    "lyrics": {
+      "coptic": "Ⲁⲣⲓⲝⲁⲧⲉ ⲛⲉⲙⲏⲓ ⲙ̀ⲫⲟⲟⲩ: ⲧⲱ Ⲑⲉⲟⲩ ⲉⲛ ⲉⲩⲭⲁⲣⲓⲥⲧⲓⲁ: ⲁⲛⲓⲟⲩⲓ̀ ⲛ̀ⲉ̀ⲡⲉⲛⲟⲩⲥ ⲛⲉⲙ ⲡ̀ⲱ̀ⲟⲩ: ⲉ̀ϯⲟⲩⲣⲱ ⲛ̀ⲧⲉ ϯⲁ̀ⲣⲓⲥⲧⲓⲁ.\n\nⲀϫⲟⲥ ϫⲉ ⲁ̀Ⲡⲟ̅ⲥ̅ ⲉⲩⲇⲟⲕⲓⲥⲉⲛ: ⲛ̀ϧⲏϯ ⲕⲁⲧⲁⲫⲩⲅⲓⲟⲛ: ⲧⲓ ⲟ̀ⲛⲟⲙⲁ ⲥⲟⲩ ⲓ̀ⲡⲱⲙⲉⲛ: ⲱ̀ ⲑⲏⲉ̀ⲧϭⲟⲥⲓ ⲉ̀ⲛⲓⲅⲓⲟⲛ.\n\nⲞⲩⲣⲁⲛⲟⲛ ⲕⲉ ⲑ̀ⲣⲟⲛⲟⲛ ⲉ̀ⲡⲓⲅⲏ: ⲟ̀ⲧⲓ ⲧⲟⲛ ⲁ̀ⲭⲱⲣⲓⲧⲟⲛ: ⲉⲭⲱⲣⲉⲥⲁⲥ ⲕⲉ ⲕⲁⲗⲏ ⲡⲩⲅⲏ: ⲡ̀ⲗⲁⲥⲧⲏⲥⲁⲥ ⲧⲟⲛ ⲁ̀ⲣⲣⲏⲧⲟⲛ.\n\nⲬⲉⲣⲟⲩⲃⲓⲙ ⲥⲉ ⲕⲁⲗⲉⲥⲱⲙⲉⲛ: ⲟ̀ⲧⲓ ⲧⲟⲛ ⲁ̀ⲯ̀ⲏⲗⲁ ⲫⲏⲥⲓⲥ: ⲉ̀ⲃⲁⲥⲧⲁⲥ ⲕⲉ ⲁ̀ⲥⲱⲙⲉⲛ: ϧⲉⲛ ⲟⲩⲁ̀ⲑⲗⲏⲥⲓⲥ ⲡⲁⲣⲁⲫⲩⲥⲓⲥ.\n\nⲔ̀ⲗⲏⲑⲓⲥⲁ ⲙⲏⲧⲏⲣ Ⲑⲉⲟⲩ: ⲡⲓⲞⲩⲣⲟ ⲙ̀ⲙⲏⲓ ⲛ̀ⲉ̀ⲧⲁ̀ⲍⲟⲛ: ⲕⲁⲣⲇⲓⲁⲥ ⲕⲉ ⲛⲉⲫⲣⲟⲩⲥ ⲇⲓⲕⲉⲟⲩ: ϧⲉⲛ ⲟⲩϩⲱⲃ ⲙ̀ⲡⲁⲣⲁⲇⲟⲝⲟⲛ.\n\nⲈⲙⲙⲁⲛⲟⲩⲏⲗ ⲫⲏⲉ̀ⲧⲁⲣⲉⲙⲁⲥϥ: ⲉⲑⲃⲉ ⲫⲁⲓ ⲁϥⲁ̀ⲣⲉϩ ⲉ̀ⲣⲟ: ⲧⲉⲛϩⲱⲥ ⲉ̀ⲣⲟϥ ⲧⲉⲛⲉⲣϩⲟⲩⲟ̀ ϭⲁⲥϥ: ⲕⲁⲑⲉⲕⲁⲥⲧⲏⲛ ⲡ̀ⲣⲱⲓ̀ ⲕⲉ ⲉⲥⲡⲉⲣⲁ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲥⲙⲁⲙⲁⲧ: ϣⲁ ⲡⲓⲛⲓϥⲓ ⲛ̀ⲧⲉ ⲗⲉⲩⲧⲉⲟⲥ: ϫⲉ ⲁⲣⲉϫⲓⲙⲓ ⲅⲁⲣ ⲛ̀ⲟⲩϩ̀ⲙⲟⲧ: ϧⲁⲧⲉⲛ ⲡⲉⲚⲟⲩϯ Ⲩⲓⲟⲥ Ⲑⲉⲟⲥ.",
+      "english": "",
+      "arabic": "ابتدإوا معي اليوم بالشكر لله. وقدموا مديحاً ومجداً لملكة الكمال.\n\nقولوا أن الرب قد سُر بك أيتها الملجاء نقول ما هو اسمك يا من ارتفعت على الأرضيين.\n\nسماء وكرسي على الأرض لأن الغير المحوي حويته وينبوعاً صالحاً غير موصوف أنبعته.\n\nشاروبيم ندعوك لن الغير الملموس حملته ثم نسبح بإجتهاد يفوق الطبيعة.\n\nدعيت أم الله الملك الحقيقي البار فاحص القلوب والكلي بأمر معجز.\n\nعمانوئيل الذي ولدته من أجل هذا حفظك نسبحه ونزيده علواً كل يوم باكراً وعشية.\n\nنمجدك أيتها المباركة، إلى النفس الأخير، لأنك وجدت نعمة، عند إلهك ابن الله."
+    }
+  },
+  {
+    "id": "moaqab-7",
+    "name": "Mo'aqab 7",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/moaqab-7_english.md",
+    "lyricsCoptic": "lyrics/coptic/moaqab-7_coptic.md",
+    "lyricsArabic": "lyrics/arabic/moaqab-7_arabic.md",
+    "lyrics": {
+      "coptic": "Ⲏ̀ⲇⲉⲟⲥ ⲛⲓⲃⲉⲛ ⲛ̀ⲧⲉ ⲛⲓⲛⲟⲃⲓ: ⲛⲉⲙ ϩⲁⲛⲙⲏϣ ⲉⲩϩⲱⲟⲩ ⲛ̀ϩ̀ⲃⲏⲟⲩⲓ̀: ⲁⲩⲑⲱⲟⲩⲧⲥ ⲉ̀ⲣⲟⲓ ⲱ̀ ⲡⲓⲁ̀ⲑⲛⲟⲃⲓ: ⲡⲁⲤⲱⲧⲏⲣ ϣⲉⲛϩⲏⲧ ϧⲁⲣⲟⲓ.\n\nⲠⲁⲤⲱⲧⲏⲣ ϣⲉⲛϩⲏⲧ ϧⲁⲣⲟⲓ: ϧⲉⲛ ⲛⲁⲛⲟⲃⲓ ⲙ̀ⲡⲉⲣⲧⲁⲕⲟⲓ: ⲁⲗⲗⲁ ⲱ̀ⲟⲩⲛ̀ϩⲏⲧ ⲉ̀ϫⲱⲓ: ⲙⲟⲓ ⲛⲏⲓ ⲛ̀ⲟⲩⲙⲉⲧⲁⲛⲟⲓⲁ.\n\nⲘⲟⲓ ⲛⲏⲓ ⲛ̀ⲟⲩⲙⲉⲧⲁⲛⲟⲓⲁ: ⲟⲩⲟϩ ⲥⲱⲗϫ ⲛ̀ⲛⲁⲁ̀ⲛⲟⲙⲓⲁ: ϩⲓⲧⲉⲛ ⲡⲓϣⲗⲏⲗ ⲛ̀ⲧⲉ Ⲙⲁⲣⲓⲁ: ϯϣⲉⲗⲉⲧ ⲙ̀ⲡⲁⲣⲁⲇⲟⲝⲟⲛ.\n\nϮϣⲉⲗⲉⲧ ⲙ̀ⲡⲁⲣⲁⲇⲟⲍⲟⲛ: ⲡⲓⲁ̀ϩⲟ ⲛ̀ⲧⲉ ⲛⲓⲁ̀ⲅⲁⲑⲟⲛ: ϫⲉ ⲁⲥⲙⲓⲥⲓ ⲙ̀Ⲫϯ ⲛⲁⲛ: ⲉ̀ⲧⲉ Ⲉⲙⲙⲁⲛⲟⲩⲏⲗ ⲡⲉⲛⲞⲩⲣⲟ.\n\nⲈ̀ⲧⲉ Ⲉⲙⲙⲁⲛⲟⲩⲏⲗ ⲡⲉⲛⲞⲩⲣⲟ: Ⲓⲏ̅ⲥ̅ Ⲡⲭ̅ⲥ̅ ⲡⲓⲣⲉϥⲑⲁⲙⲓⲟ: ⲁⲥⲙⲁⲥϥ ⲛ̀ϫⲉ ϯⲟⲩⲣⲱ: ⲉⲥⲧⲟⲃ ⲛ̀ϫⲉ ⲧⲉⲥⲡⲁⲣⲑⲉⲛⲓⲁ.\n\nⲈⲥⲧⲟⲃ ⲛ̀ϫⲉ ⲧⲉⲥⲡⲁⲣⲑⲉⲛⲓⲁ: ϫⲉ ⲁⲥⲙⲓⲥⲓ ⲁϭⲛⲉ ⲥⲩⲛⲟⲩⲥⲓⲁ: ⲛ̀ⲉ̀ⲙⲡ̀ϣⲁ ⲛ̀ϩⲁⲛⲇⲟⲝⲟⲗⲟⲅⲓⲁ: ϫⲉ ⲁⲥϣⲱⲡⲓ ⲛ̀ⲟⲩⲑ̀ⲣⲟⲛⲟⲥ.\n\nϪⲉ ⲁⲥϣⲱⲡⲓ ⲛ̀ⲟⲩⲑ̀ⲣⲟⲛⲟⲥ: ⲙ̀Ⲫϯ ⲡⲓⲆⲏⲙⲓⲟⲩⲣⲅⲟⲥ: ⲫⲱϥ ⲡⲉ ⲡⲓⲱ̀ⲟⲩ ⲛⲉⲙ ⲡⲓϩⲩⲙⲛⲟⲥ: ⲓⲥϫⲉⲛ ϯⲛⲟⲩ ⲛⲉⲙ ϣⲁ ⲉ̀ⲛⲉϩ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲉⲛϩⲟⲧ: ⲉⲧϥⲁⲓ ϧⲁ ⲡⲓⲖⲟⲅⲟⲥ ⲛ̀ⲧⲉ Ⲫ̀ⲓⲱⲧ: ϫⲉ ⲭⲉⲣⲉ ⲑⲏⲉ̀ⲑⲙⲉϩ ⲛ̀ϩ̀ⲙⲟⲧ: ⲟⲩⲟϩ Ⲡⲟ̅ⲥ̅ ϣⲟⲡ ⲛⲉⲙⲉ.",
+      "english": "Every enjoyment of sin, and many bad works have come upon me, O You who is without sin, my Savior show me compassion.\n\nMy Savior show me compassion, and do not destroy me in my sins, be patient with me, grant me repentance.\n\nGrant me repentance, cleanse me from all my iniquities, through the prayers of Mary, the glorified bride.\n\nThe glorified bride, the treasure of goodness, she gave birth to God for us, Emmanuel our King.\n\nEmmanuel our King, Jesus Christ the Creator, was born of the queen, and her virginity was sealed.\n\nAnd her virginity was sealed, for she gave birth without seed of man, she is worthy of glorification, for she became the throne.\n\nFor she became the throne, of God the Creator, to whom all glory and praise is due, now and unto the ages.\n\nWe glorify you O faithful one, who carried the Word of the Father, \"Hail to you O full of grace, the Lord is with you.\"",
+      "arabic": "كل لذات الخطية، وأعمال كثيرة رديئة، أجتمعت علي يا من بغير خطية، يا مخلصي تحنن علي.\n\nيا مخلصي تحنن علي، ولا تهلكني بخطاياي، لكن تمهل علي، واعطني توبة.\n\nاعطني توبة، وامح أثامي، بصلوات مريم، العروسة المُمجدة.\n\nالعروسة المُمجدة، كنز الخيرات، لأنها ولدت لنا الله، الذي هو عمانوئيل ملكنا.\n\nالذي هو عمانوئيل ملكنا، يسوع المسيح الخالق، ولدته الملكة، وبتوليتها مختومة.\n\nوبتوليتها مختومة، لأنها ولدت بغير مباضعة، تستحق التمجيد، لأنها صارت كرسياً.\n\nلأنها صارت كرسياً، لله الخالق، له المجد والتسبيح، من الأن وإلي الابد.\n\nنمجدك أيتها الأمينة، الحاملة كلمة الآب قائلين، إفرحي يا ممتلئة نعمة، الرب معك."
+    }
+  },
+  {
+    "id": "roumi-8",
+    "name": "Roumi 8",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/roumi-8_english.md",
+    "lyricsCoptic": "lyrics/coptic/roumi-8_coptic.md",
+    "lyricsArabic": "lyrics/arabic/roumi-8_arabic.md",
+    "lyrics": {
+      "coptic": "Ⲕⲁⲗⲱⲥ ⲓ̀ⲇⲉⲛ ⲥⲉ Ⲓⲁⲕⲱⲃ: ⲡⲉⲛⲓⲱⲧ ⲕ̀ⲗⲓⲙⲁⲕⲁ ⲙ̀ⲯⲩⲭⲱⲛ: ⲉⲥϭⲟⲥⲓ ⲉ̀ⲧ̀ⲫⲉ ⲉ̀ⲣⲉ Ⲡⲟ̅ⲥ̅ ⲫⲏⲉ̅ⲑ̅ⲩ̅: ϩⲉⲙⲥⲓ ϩⲓϫⲱⲥ ⲱ̀ ϯⲧ̀ⲣⲩⲅⲱⲛ.\n\nⲠⲁⲛⲩⲙⲛⲓⲇⲟⲥ ⲛ̀ⲕⲟⲥⲙⲓⲕⲏ: ⲉⲧⲁⲥϣⲉⲡ ⲡⲓⲀ̀ⲭⲱⲣⲓⲧⲟⲥ: ϧⲉⲛ ⲧⲉⲥⲙⲏⲧⲣⲁ ⲙ̀ⲡⲁⲣⲑⲉⲛⲓⲕⲏ: ⲛⲉⲙ ⲡⲉⲥⲁ̀ⲙⲏⲣ ⲡⲁⲛⲁ̀ⲣⲉⲧⲟⲥ.\n\nϪⲉ ⲁϥⲓ̀ⲣⲓ ⲛ̀ⲛⲉⲥ̀ⲡⲗⲁⲅⲭⲛⲟⲛ ⲑ̀ⲣⲟⲛⲟⲛ: ⲕⲉ ⲡⲁⲗⲓⲛ ⲧⲏⲛ ⲥⲩⲛ ⲅⲁⲥⲧⲏⲣⲁ: ⲉ̀ⲫⲩⲗⲁⲧⲧⲟⲙⲉⲛⲏ ⲉⲝ ⲟ̀ⲩⲣⲁⲛⲟⲛ: ⲉ̀ⲡⲉⲣⲅⲁⲥⲧⲟ ⲡ̀ⲗⲁⲧⲓⲧⲉⲣⲁ.\n\nⲘⲁⲣⲉⲛϫⲟⲥ ⲧⲏⲣⲉⲛ ⲱ̀ ⲡⲓⲙⲟⲕⲓ: ⲁⲙⲟⲗⲩⲥⲙⲁⲧⲟⲥ ⲙⲁⲕⲁⲣⲓⲟⲥ: ⲁ̀ⲣⲉⲧⲉⲛⲑⲱⲛϯ ⲉ̀ϯⲙⲟⲩⲕⲓ: ⲑⲏⲉ̀ⲧⲁ Ⲓⲁⲕⲱⲃ ⲛⲁⲩ ⲉⲣⲟⲥ.\n\nⲬⲉⲣⲉ ⲛⲉ ⲉ̀ⲃⲟⲗϩⲓⲧⲟⲧⲉⲛ: ⲉⲕ ⲧⲟⲛ ⲑⲩⲥⲁⲩⲣⲟⲛ ⲥⲉ ⲅⲁⲣ ⲉⲧⲧⲟⲃ: ⲁⲣⲉⲙⲓⲥⲓ ⲙ̀ⲫⲏⲉ̀ⲑⲙⲟⲧⲉⲛ: ⲙ̀ⲙⲟϥ ϧⲉⲛ ⲛⲏⲉ̅ⲑ̅ⲩ̅.\n\nϢⲱⲡⲓ ⲛⲁⲛ ⲛ̀ⲟⲩⲡ̀ⲣⲟⲥⲧⲁⲥⲓⲁ: ϧⲁⲧⲟⲧϥ ⲉⲑⲣⲉⲛϣⲱⲡⲓ ⲛ̀ⲁ̀ⲧϩⲏⲃⲓ: ⲛ̀ⲧⲉϥⲑⲟⲩⲱ̀ⲧⲉⲛ ⲇⲏⲙⲟⲥⲓⲁ: ϧⲉⲛ ⲧⲉϥⲙⲉⲧⲟⲩⲣⲟ ⲉⲧ ϧⲉⲛ ⲛⲓⲫⲏⲟⲩⲓ̀.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲥⲙⲁⲙⲁⲧ: ϣⲁ ⲡⲓⲛⲓϥⲓ ⲛ̀ⲧⲉ ⲗⲉⲩⲧⲉⲟⲥ: ϫⲉ ⲁⲣⲉϫⲓⲙⲓ ⲅⲁⲣ ⲛ̀ⲟⲩϩ̀ⲙⲟⲧ: ϧⲁⲧⲉⲛ ⲡⲉⲚⲟⲩϯ Ⲩⲓⲟⲥ Ⲑⲉⲟⲥ.",
+      "english": "",
+      "arabic": "حسناً رآك يعقوب أبونا مثل سلم ذي نفس مرتفعة إلى السماء والرب القدوس جالس عليها أيتها اليمامة.\n\nالكلية السبح العالمي التي قبلت الغير المحوي في احشاءِها البتولي وحِجرها الفاخر.\n\nلأنه صنع أحشاك عرشاً وأيضاً بطنك المختوم جعله أوسع من السموات.\n\nفلنقل كلنا يا إناء طاهراً مغبوطاً تشبهت بالسلم الذي رآه يعقوب.\n\nالسلام لك من قبلنا لأن من كنزك المختوم ولدت المستريح في القديسين.\n\nكوني لنا شفيعة عنده لنكون بغير حزن ويجمعنا جميعاً في ملكوته السمائي.\n\nنمجدك أيتها المباركة، إلى النفس الأخير، لأنك وجدت نعمة، عند إلهك ابن الله."
+    }
+  },
+  {
+    "id": "moaqab-8",
+    "name": "Mo'aqab 8",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/moaqab-8_english.md",
+    "lyricsCoptic": "lyrics/coptic/moaqab-8_coptic.md",
+    "lyricsArabic": "lyrics/arabic/moaqab-8_arabic.md",
+    "lyrics": {
+      "coptic": "Ⲑⲉⲟⲥ ⲙ̀ⲡⲉⲣⲭⲁⲧ ⲛ̀ⲥⲱⲕ: ⲙ̀ⲡⲉⲣϩⲓⲧ ⲥⲁⲃⲟⲗ ⲙ̀ⲙⲟⲕ: ϫⲉ ⲁⲓⲱϣ ⲉ̀ⲡ̀ϣⲱⲓ ϩⲁⲣⲟⲕ: ⲥⲱⲧⲉⲙ ⲉⲧⲁⲥ̀ⲙⲏ ⲛ̀ⲭⲱⲗⲉⲙ.\n\nⲤⲱⲧⲉⲙ ⲉ̀ⲧⲁⲥ̀ⲙⲏ ⲛ̀ⲭ̀ⲱⲗⲉⲙ: ⲱ̀ ⲫⲏⲉ̀ⲑⲟ̀ⲩⲱϣ ⲉ̀ⲛⲟϩⲉⲙ: ⲛ̀ⲛⲏ ⲧⲏⲣⲟⲩ ⲉ̀ⲧⲁⲩⲥⲱⲣⲉⲙ: ⲉⲑⲃⲉ ⲡ̀ⲁ̀ϣⲁⲓ ⲛ̀ⲧⲉ ⲡⲉⲕⲛⲁⲓ.\n\nⲈⲑⲃⲉ ⲡ̀ⲁ̀ϣⲁⲓ ⲛ̀ⲧⲉ ⲡⲉⲕⲛⲁⲓ: ⲁⲕⲟ̀ⲩⲱⲣⲡ ⲙ̀ⲡⲉⲕⲟ̀ⲩϫⲁⲓ: ⲉ̀ⲧⲉ Ⲓⲏ̅ⲥ̅ Ⲡⲭ̅ⲥ̅ ⲁϥϣⲁⲓ: ⲁϥϭⲓⲥⲁⲣⲝ ϧⲉⲛ ϯⲠⲁⲣⲑⲉⲛⲟⲥ.\n\nⲀϥϭⲓⲥⲁⲣⲝ ϧⲉⲛ ϯⲠⲁⲣⲑⲉⲛⲟⲥ: ⲉ̀ⲧⲁ Ⲓⲁⲕⲱⲃ ⲡⲓⲇⲓⲕⲉⲟⲥ: ⲁϥϯ ⲛⲁⲛ ⲙ̀ⲡⲉϥⲛⲓϣϯ ⲛ̀ⲧⲩⲡⲟⲥ: ⲕⲁⲧⲁ ⲫ̀ⲣⲏϯ ⲉⲧⲁϥϫⲟⲥ.\n\nⲔⲁⲧⲁ ⲫ̀ⲣⲏϯ ⲉⲧⲁϥϫⲟⲥ: ϫⲉ ⲁⲓⲛⲁⲩ ⲉ̀ⲟ̀ⲩⲙⲟⲩⲕⲓ ⲁ̀ⲗⲏⲑⲟⲥ: ⲉ̀ⲣⲉ Ⲫϯ ϩⲉⲙⲥⲓ ϩⲓϫⲱⲥ: ⲉ̀ⲧⲉ ϯⲥⲉⲙⲛⲉ ⲛ̀ⲕ̀ⲁⲑⲁⲣⲟⲥ.\n\nⲈ̀ⲧⲉ ϯⲥⲉⲙⲛⲉ ⲛ̀ⲕ̀ⲁⲑⲁⲣⲟⲥ: ⲡⲉ ϯⲙⲟⲩⲕⲓ ⲁ̀ⲗⲏⲑⲟⲥ: ⲉ̀ⲧⲁ Ⲓⲁⲕⲱⲃ ⲉⲣⲙⲉⲑⲣⲉ ϧⲁⲣⲟⲥ: ϫⲉ ⲁⲥϥⲁⲓ ϧⲁ Ⲡⲟ̅ⲥ̅ ⲛ̀ⲧⲉ ⲡ̀ⲱ̀ⲟⲩ.\n\nϪⲉ ⲁⲥϥⲁⲓ ϧⲁ Ⲡⲟ̅ⲥ̅ ⲛ̀ⲧⲉ ⲡ̀ⲱ̀ⲟⲩ: ⲟⲩⲟϩ ⲡ̀Ⲟⲩⲣⲟ ⲛ̀ⲧⲉ ⲛⲓⲟ̀ⲩⲣⲱⲟⲩ: ⲡⲓⲛⲓϣϯ ⲙ̀ⲙⲁⲛⲉ̀ⲥⲱⲟⲩ: ⲉ̀ⲧⲁϥⲑⲱⲟⲩϯ ⲛ̀ⲛⲓⲡⲓⲥⲧⲟⲥ.\n\nⲈ̀ⲧⲁϥⲑⲱⲟⲩϯ ⲛ̀ⲛⲓⲡⲓⲥⲧⲟⲥ: ⲁϥϩⲟⲧⲡⲟⲩ ⲛⲉⲙ ⲛⲓⲁ̀ⲅⲅⲉⲗⲟⲥ: ⲁϥⲁ̀ⲓⲧⲟⲩ ⲛ̀ⲕ̀ⲗⲏⲣⲟⲛⲟⲙⲟⲥ: ⲛ̀ⲧⲉϥⲙⲉⲧⲟⲩⲣⲟ ⲛ̀ⲉ̀ⲛⲉϩ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲉⲛϩⲟⲧ: ⲉⲧϥⲁⲓ ϧⲁ ⲡⲓⲖⲟⲅⲟⲥ ⲛ̀ⲧⲉ Ⲫ̀ⲓⲱⲧ: ϫⲉ ⲭⲉⲣⲉ ⲑⲏⲉ̀ⲑⲙⲉϩ ⲛ̀ϩ̀ⲙⲟⲧ: ⲟⲩⲟϩ Ⲡⲟ̅ⲥ̅ ϣⲟⲡ ⲛⲉⲙⲉ.",
+      "english": "O God do not turn away from me, and do not reject me, for I called unto You, hear my voice speedily.\n\nHear my voice speedily, O You who wish salvation, for all who have gone astray, because of the abundance of Your mercy.\n\nBecause of the abundance of Your mercy, You have sent Your salvation, through the appearance of Jesus Christ, He took flesh from the Virgin.\n\nHe took flesh from the Virgin, concerning which Jacob the righteous gave, a great symbol, as he spoke.\n\nAs he spoke, I truly saw a ladder, on which God was seated on, the chaste and pure.\n\nThe chaste and pure, truly is the ladder, to which Jacob testified, for she carried the Lord of glory.\n\nFor she carried the Lord of glory, and the King of kings, the great Shepherd, who has gathered the faithful.\n\nWho has gathered the faithful, and united them with the angels, He made them heirs, of His eternal kingdom.\n\nWe glorify you O faithful one, who carried the Word of the Father, \"Hail to you O full of grace, the Lord is with you.\"",
+      "arabic": "يا الله لا ترفضني، ولا تطرحني عنك، لأني صرخت اليك، اسمع صوتي عاجلاً.\n\nاسمع صوتي عاجلاً، يا من يشاء، خلاص جميع الضالين، من اجل كثيرة رحمتك.\n\nمن اجل كثيرة رحمتك، ارسلت خلاصك، الذي ليسوع المسيح أشرق، متجسداً من العذراء.\n\nمتجسداً من العذراء، الذي يعقوب الصديق، أعطانا مثاله العظيم، كما قال.\n\nكما قال، اني رأيت سلماً بالحقيقة، والله جالس عليه، التي هي العفيفة النقية.\n\nالتي هي العفيفة النقية، السلم الحقيقي، الذي يعقوب شهد عنه، لانها حملت رب المجد.\n\nلانها حملت رب المجد، وملك الملوك، الراعي العظيم، الذي جمع المؤمنين.\n\nالذي جمع المؤمنين، وألفهم مع الملائكة، وصيرهم وارثين، لملكوته الابدية.\n\nنمجدك أيتها الأمينة، الحاملة كلمة الآب قائلين، إفرحي يا ممتلئة نعمة، الرب معك."
+    }
+  },
+  {
+    "id": "roumi-9",
+    "name": "Roumi 9",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/roumi-9_english.md",
+    "lyricsCoptic": "lyrics/coptic/roumi-9_coptic.md",
+    "lyricsArabic": "lyrics/arabic/roumi-9_arabic.md",
+    "lyrics": {
+      "coptic": "Ⲓⲥ ⲁ̀ⲛⲁⲧⲟⲗⲏ ⲕⲉ ⲇⲩⲥⲓⲥ: ⲏ̀ⲗⲓⲟⲩ ⲛⲉⲙ ⲡⲉⲙϩⲓⲧ ϣⲁ ⲫ̀ⲣⲏⲥ: ⲥⲓ ⲡ̀ⲣⲟⲥⲫⲉⲣⲟⲩⲥⲓⲛ ⲉ̀ⲛⲉⲥⲓⲥ: ⲉⲩϫⲱ ⲙ̀ⲙⲟⲥ ϧⲉⲛ ⲟⲩⲛⲟⲩⲥ ⲉϥⲣⲏⲥ.\n\nⲰ̀ ⲑⲏⲉ̀ⲧⲁⲥϣⲱⲡ ⲉ̀ⲣⲟⲥ ⲡ̀ⲗⲏⲣⲱⲙⲁ: ⲧⲏⲥ ⲁ̀ⲅⲓⲁⲥ Ⲧ̀ⲣⲓⲁ̀ⲇⲟⲥ: ⲟⲩⲟϩ ⲁⲥϣⲱⲡ ⲛ̀ⲟⲩⲥ̀ⲕⲏⲛⲟⲙⲁ: ⲧⲟⲩ Ⲩ̀ⲓⲟⲩ Ⲇⲁⲩⲓⲇ ⲡⲓϩⲩⲙⲛⲟⲇⲟⲥ.\n\nⲞ̀ Ⲡⲁⲧⲏⲣ ⲉ̀ⲝⲁⲗⲉ̀ⲝⲁⲧⲟ ⲥⲟⲩ: ⲕⲉ Ⲡ̀ⲛⲉⲩⲙⲁ ⲉ̀ⲡⲓⲥⲕⲓ̀ⲁⲥⲉⲛ: Ⲩ̀ⲓⲟⲥ ⲙⲉⲛ ⲉ̀ⲡⲓⲥⲕⲉ̀ⲯⲁⲧⲟ ⲥⲟⲩ: ⲥⲁⲣⲕⲱⲑⲏ̀ⲥⲁⲥ ⲏ̀ ⲁ̀ⲅⲁⲡⲏⲥⲉⲛ.\n\nϨⲏⲡⲡⲉ ⲓⲥ Ⲡⲟ̅ⲥ̅ ⲁϥⲓ̀ ⲉ̀ⲃⲟⲗ ⲛ̀ϧⲏϯ: ⲱ̀ ⲑⲏⲉ̀ⲧⲥ̀ⲙⲁⲙⲁⲧ: ⲛ̀ⲧⲉⲗⲓ̀ⲁ̀ ⲟⲩⲟϩ ⲉⲧⲥⲉⲗⲥⲱⲗ: ϧⲉⲛ ⲡ̀ⲱ̀ⲟⲩ ⲛⲉⲙ ⲡ̀ⲧⲁⲓⲟ ⲛⲉⲙ ⲡⲓϩ̀ⲙⲟⲧ.\n\nⲚ̀ⲧⲉϥϯ ⲙ̀ⲫ̀ⲛⲟϩⲉⲙ ⲙ̀ⲡⲓⲕⲟⲥⲙⲟⲥ: ⲉⲧⲁϥⲑⲁⲙⲓⲟϥ ϧⲉⲛ ⲡⲉϥⲟ̀ⲩⲱϣ: ⲛ̀ⲧⲟⲩⲟ̀ⲩϫⲁⲓ ⲁⲡⲟ ⲡⲓⲣⲁⲥⲙⲟⲥ: ⲉⲑⲃⲉ ⲛⲉϥⲙⲉⲧϣⲉⲛϩⲏⲧ ⲉⲧⲟϣ.\n\nⲦⲉⲛϩⲱⲥ ⲉ̀ⲣⲟϥ ⲁ̀ⲥⲙⲁ ⲕⲉⲛⲟⲛ: ⲟⲩⲟϩ ⲟⲛ ⲧⲉⲛⲉⲣϩⲟⲩⲟ̀ ϭⲁⲥϥ: ⲕⲉ ⲉ̀ⲛⲟⲩⲙⲉⲛ ⲇⲓⲁⲙⲉⲛⲟⲛ: ⲛⲁϩⲣⲉⲛ ⲇⲉⲥⲡⲓⲛⲁ ⲑⲏⲉ̀ⲧⲁⲥⲙⲁⲥϥ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲥⲙⲁⲙⲁⲧ: ϣⲁ ⲡⲓⲛⲓϥⲓ ⲛ̀ⲧⲉ ⲗⲉⲩⲧⲉⲟⲥ: ϫⲉ ⲁⲣⲉϫⲓⲙⲓ ⲅⲁⲣ ⲛ̀ⲟⲩϩ̀ⲙⲟⲧ: ϧⲁⲧⲉⲛ ⲡⲉⲚⲟⲩϯ Ⲩⲓⲟⲥ Ⲑⲉⲟⲥ.",
+      "english": "",
+      "arabic": "من مشارق الشمس إلي مغاربها ومن الشمال إلى الجنوب يقدمون لك التسبيح قائلين بعقل مستيقظ.\n\nيا التي قبلت كمال الثالوث المقدس وصارت مسكناً لابن داود المرتل.\n\nالآب اختارك والروح ظللك والإبن تعهدك متجسداً منك كما أحب.\n\nهوذا الرب خرج منك أيتها المباركة الكاملة والمزينة بالمجد والإكرام والنعمة.\n\nليعطي الخلاص للعالم الذي خلقه بإرادته لينجوا من التجربة من أجل رأفاته الكثيرة.\n\nنسبحه تسبيحاً جديداً وأيضاً نزيده علواً ثم نسبح دائماً أمام سيدتنا التي ولدته.\n\nنمجدك أيتها المباركة، إلى النفس الأخير، لأنك وجدت نعمة، عند إلهك ابن الله."
+    }
+  },
+  {
+    "id": "moaqab-9",
+    "name": "Mo'aqab 9",
+    "genreId": [
+      "kiahk"
+    ],
+    "subGenreId": {
+      "kiahk": "Vespers Praises"
+    },
+    "lyricsEnglish": "lyrics/english/moaqab-9_english.md",
+    "lyricsCoptic": "lyrics/coptic/moaqab-9_coptic.md",
+    "lyricsArabic": "lyrics/arabic/moaqab-9_arabic.md",
+    "lyrics": {
+      "coptic": "Ⲓⲏ̅ⲥ̅ Ⲡⲭ̅ⲥ̅ ⲡⲁⲃⲟⲓ̀ⲑⲟⲥ: ⲛⲁⲓ ϧⲁ ⲧⲁⲙⲉⲧⲉ̀ⲗⲁⲭⲓⲥⲧⲟⲥ: ⲉⲑⲃⲉ ⲧⲉⲕⲙⲉⲧⲁ̀ⲅⲁⲑⲟⲥ: ⲙ̀ⲡⲉⲣⲱⲡ ⲉ̀ⲣⲟⲓ ⲛ̀ⲛⲁⲁ̀ⲛⲟⲙⲓⲁ.\n\nⲘ̀ⲡⲉⲣⲱⲡ ⲉ̀ⲣⲟⲓ ⲛ̀ⲛⲁⲁ̀ⲛⲟⲙⲓⲁ: ⲛⲉⲙ ⲫ̀ⲛⲟⲃⲓ ⲛ̀ⲧⲁϩⲩⲗⲓⲕⲓⲁ: ⲁⲗⲗⲁ ⲥⲟⲗϫⲟⲩ ⲉⲑⲃⲉ Ⲙⲁⲣⲓⲁ: ⲉ̀ⲧⲁⲕⲓ̀ ⲁⲕϣⲱⲡⲓ ⲛ̀ϧⲏⲧⲥ.\n\nⲈⲧⲁⲕⲓ̀ ⲁⲕϣⲱⲡⲓ ⲛ̀ϧⲏⲧⲥ: ϫⲉ ⲛ̀ⲑⲟⲕ ⲡⲉ ⲉ̀ⲧⲁⲕⲉ̀ⲣϩⲏⲧⲥ: ⲁⲕⲥⲟⲃϯ ⲙ̀ⲙⲟⲥ ⲟⲩⲟϩ ⲁⲕⲥⲉⲙⲛⲏⲧⲥ: ⲉⲑⲃⲉ ⲫ̀ⲛⲟϩⲉⲙ ⲙ̀ⲡⲓⲕⲟⲥⲙⲟⲥ.\n\nⲈⲑⲃⲉ ⲫ̀ⲛⲟϩⲉⲙ ⲙ̀ⲡⲓⲕⲟⲥⲙⲟⲥ: ⲛⲉⲙ ⲡⲓⲣⲱⲙⲓ ⲛ̀ⲁ̀ⲣⲭⲉⲟⲥ: ⲁⲕⲓ̀ ⲁⲕⲉⲣⲥⲱⲙⲁⲧⲓⲕⲟⲥ: ⲉ̀ⲃⲟⲗϧⲉⲛ ϯϣⲉⲗⲉⲧ Ⲙⲁⲣⲓⲁ.\n\nⲈ̀ⲃⲟⲗϧⲉⲛ ϯϣⲉⲗⲉⲧ Ⲙⲁⲣⲓⲁ: ⲕⲁⲧⲁ ⲧⲉⲕⲉ̀ⲡⲁⲅⲅⲉⲗⲓⲁ: ⲁⲕⲥⲱϯ ⲛ̀ⲧⲉⲕⲕ̀ⲗⲏⲣⲟⲛⲟⲙⲓⲁ: ⲉ̀ⲧⲉ ⲁ̀ⲛⲟⲛ ϧⲁ ⲛⲓⲡⲓⲥⲧⲟⲥ.\n\nⲈ̀ⲧⲉ ⲁⲛⲟⲛ ϧⲁ ⲛⲓⲡⲓⲥⲧⲟⲥ: ⲧⲉⲛϩⲱⲥ ⲉ̀ⲣⲟⲕ ⲉⲛϫⲱ ⲙ̀ⲙⲟⲥ: ϫⲉ ⲫⲱⲕ ⲡⲉ ⲡⲓⲱ̀ⲟⲩ ⲛⲉⲙ ⲡⲓϩⲩⲙⲛⲟⲥ: ⲓⲥϫⲉⲛ ϯⲛⲟⲩ ⲛⲉⲙ ϣⲁ ⲉ̀ⲛⲉϩ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲉⲛϩⲟⲧ: ⲉⲧϥⲁⲓ ϧⲁ ⲡⲓⲖⲟⲅⲟⲥ ⲛ̀ⲧⲉ Ⲫ̀ⲓⲱⲧ: ϫⲉ ⲭⲉⲣⲉ ⲑⲏⲉ̀ⲑⲙⲉϩ ⲛ̀ϩ̀ⲙⲟⲧ: ⲟⲩⲟϩ Ⲡⲟ̅ⲥ̅ ϣⲟⲡ ⲛⲉⲙⲉ.",
+      "english": "Jesus Christ my Helper, have mercy upon Your poor one, for the sake of Your goodness, do not count my iniquities.\n\nDo not count my iniquities, and the sins of my youth, wipe them out for the sake of Mary, to whom You came and dwelt in.\n\nTo whom You came and dwelt in, for You are the One who begun, You prepared and established her, for the salvation of the world.\n\nFor the salvation of the world, and the first man, You came and took flesh, from the bride Mary.\n\nFrom the bride Mary, according to Your promises, You saved Your heritage, we the faithful.\n\nWe the faithful, praise You saying, \"Unto you is due glory and praise, from now and forever.\"\n\nWe glorify you O faithful one, who carried the Word of the Father, \"Hail to you O full of grace, the Lord is with you.\"",
+      "arabic": "يا يسوع المسيح معيني، ارحم حقارتي، من اجل صلاحك، لا تحسب علي اثامي.\n\nلا تحسب علي اثامي، وخطايا شبابي، لكن امحها من اجل مريم، التي أتيت وحللت فيها.\n\nالتي أتيت وحللت فيها، لأنك انت الذي ابتدأت، وأعددتها وثبتها، من أجل خلاص العالم.\n\nمن أجل خلاص العالم، والانسان الاول، أتيت وتجسدت، من العروسة مريم.\n\nمن العروسة مريم، كموعدك، وخلصت ميراثك، أي نحن المؤمنون.\n\nأي نحن المؤمنون، نسبحك قائلين، لك المجد والتسبيح، من الآن وإلي الابد.\n\nنمجدك أيتها الأمينة، الحاملة كلمة الآب قائلين، إفرحي يا ممتلئة نعمة، الرب معك."
+    }
   }
 ]

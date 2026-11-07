@@ -10,7 +10,8 @@ import { useAudioMetadata } from './use-audio-metadata';
 
 
 export const RecordingDetails = ({ recording, validationMap, isLoading: isValidationLoading }: { recording: Recording, validationMap: ValidationMap, isLoading: boolean }) => {
-    const { content: markersContent, isLoading: isMarkersContentLoading, error: markersError } = useFileContent(recording.mode === 'learn' ? recording.markersUrl : undefined);
+    const hasMarkers = (recording.markers && recording.markers.length > 0) || !!recording.markersUrl;
+    const { content: markersContent, isLoading: isMarkersContentLoading, error: markersError } = useFileContent(recording.markersUrl);
     const { duration: browserDuration, isLoading: isBrowserDurationLoading, error: browserDurationError } = useAudioMetadata(recording.audioUrl);
     
     return (
@@ -23,7 +24,7 @@ export const RecordingDetails = ({ recording, validationMap, isLoading: isValida
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <p><strong>Cantor:</strong> {recording.cantor?.name || 'N/A'}</p>
-                        <p><strong>Mode:</strong> {recording.mode}</p>
+                        <p><strong>Markers:</strong> {hasMarkers ? (recording.markers?.length ? `${recording.markers.length} markers` : 'Available') : 'None'}</p>
                         <p><strong>Active:</strong> {String(recording.active)}</p>
                         <p><strong>DB Audio Length:</strong> {recording.audioLength ? `${recording.audioLength.toFixed(4)}s` : <span className="text-amber-600">Not Set</span>}</p>
                         <p>
@@ -41,7 +42,7 @@ export const RecordingDetails = ({ recording, validationMap, isLoading: isValida
                     <div className="space-y-1">
                         <p><strong>Audio File:</strong></p>
                         <ValidationChip path={recording.audioUrl} validationMap={validationMap} isLoading={isValidationLoading} />
-                        {recording.mode === 'learn' && (
+                        {hasMarkers && recording.markersUrl && (
                             <>
                                 <p className="pt-2"><strong>Markers File:</strong></p>
                                 <ValidationChip path={recording.markersUrl} validationMap={validationMap} isLoading={isValidationLoading} />
@@ -49,7 +50,7 @@ export const RecordingDetails = ({ recording, validationMap, isLoading: isValida
                         )}
                     </div>
                 </div>
-                 {recording.mode === 'learn' && (
+                 {hasMarkers && recording.markersUrl && (
                      <div className='pt-2'>
                         <strong>Markers File Content:</strong>
                         {isMarkersContentLoading ? (

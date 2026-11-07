@@ -1,21 +1,10 @@
 'use client';
 import { useMemo } from 'react';
-import { Hymn } from '@/lib/types';
-import { useFileContent } from './useFileContent';
 import { getHymn, useCatalog } from '@/lib/services/catalog';
-
-const CANTORS_ORDER_FILE_PATH = 'tracks/cantors_order.txt';
 
 export function useHymn(hymnId?: string) {
   const catalog = useCatalog();
-  const { content: cantorsOrderFile, isLoading: isCantorsOrderLoading, error: cantorsOrderError } = useFileContent(CANTORS_ORDER_FILE_PATH);
-
   const rawHymn = useMemo(() => getHymn(hymnId), [catalog, hymnId]);
-
-  const cantorsOrder = useMemo(() => {
-    if (!cantorsOrderFile) return [];
-    return cantorsOrderFile.split('\n').map(id => id.trim()).filter(Boolean);
-  }, [cantorsOrderFile]);
 
   const hymnWithRecordings = useMemo(() => {
     if (!rawHymn) return null;
@@ -23,19 +12,14 @@ export function useHymn(hymnId?: string) {
     const recordings = [...(rawHymn.recordings || [])];
 
     recordings.sort((a, b) => {
-      if (a.mode === 'learn' && b.mode !== 'learn') return -1;
-      if (a.mode !== 'learn' && b.mode === 'learn') return 1;
+      const aHasMarkers = (a.markers && a.markers.length > 0) || a.mode === 'learn';
+      const bHasMarkers = (b.markers && b.markers.length > 0) || b.mode === 'learn';
+      if (aHasMarkers && !bHasMarkers) return -1;
+      if (!aHasMarkers && bHasMarkers) return 1;
 
-      const aId = a.cantorId;
-      const bId = b.cantorId;
-      const indexA = cantorsOrder.indexOf(aId);
-      const indexB = cantorsOrder.indexOf(bId);
-
-      if (indexA !== -1 && indexB !== -1) {
-        return indexA - indexB;
-      }
-      if (indexA !== -1) return -1;
-      if (indexB !== -1) return 1;
+      const rankA = a.cantor?.rank ?? 99;
+      const rankB = b.cantor?.rank ?? 99;
+      if (rankA !== rankB) return rankA - rankB;
 
       return (a.cantor?.name || '').localeCompare(b.cantor?.name || '');
     });
@@ -44,11 +28,11 @@ export function useHymn(hymnId?: string) {
       ...rawHymn,
       recordings,
     };
-  }, [rawHymn, cantorsOrder]);
+  }, [rawHymn]);
 
   return {
     data: hymnWithRecordings,
-    isLoading: isCantorsOrderLoading,
-    error: cantorsOrderError
+    isLoading: false,
+    error: null,
   };
 }

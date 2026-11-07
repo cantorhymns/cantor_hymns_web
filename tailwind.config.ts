@@ -23,6 +23,7 @@ export default {
         body: ['Alegreya', 'serif'],
         headline: ['Alegreya', 'serif'],
         code: ['monospace'],
+        coptic: ['Athanasius', 'Noto Sans Coptic', 'sans-serif'],
       },
       colors: {
         background: 'hsl(var(--background))',

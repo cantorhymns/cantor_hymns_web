@@ -5,46 +5,69 @@ service cloud.firestore {
     /**
      * FIRESTORE SECURITY RULES
      * Allows public read access to the hymn library.
-     * Allows writes for authenticated users (including anonymous sessions used by scripts).
+     * Allows writes only for authorized users (admins and editors).
      */
 
     function isSignedIn() {
       return request.auth != null;
     }
 
-    // Top-level collections
+    function isSuperAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'cantorhymns@gmail.com' ||
+        request.auth.token.email == 'andrewekladious@gmail.com'
+      );
+    }
+
+    function isAuthorized() {
+      return isSuperAdmin() || (
+        isSignedIn() && (
+          exists(/databases/$(database)/documents/authorized_users/$(request.auth.uid)) ||
+          (request.auth.token.email != null && exists(/databases/$(database)/documents/authorized_users/$(request.auth.token.email)))
+        )
+      );
+    }
+
+    // Public read for everyone, write only for authorized users
     match /genres/{genreId} {
       allow get, list: if true;
-      allow write: if isSignedIn();
+      allow write: if isAuthorized();
     }
 
     match /hymns/{hymnId} {
       allow get, list: if true;
-      allow write: if isSignedIn();
+      allow write: if isAuthorized();
     }
 
     match /cantors/{cantorId} {
       allow get, list: if true;
-      allow write: if isSignedIn();
+      allow write: if isAuthorized();
     }
 
     match /recordings/{recordingId} {
       allow get, list: if true;
-      allow write: if isSignedIn();
+      allow write: if isAuthorized();
+    }
+
+    // User authorization management
+    match /authorized_users/{userId} {
+      allow get: if isAuthorized();
+      allow list: if isAuthorized();
+      allow write: if isAuthorized();
     }
 
     // Legacy or nested patterns support
     match /hymnGenres/{hymnGenreId} {
       allow get, list: if true;
-      allow write: if isSignedIn();
+      allow write: if isAuthorized();
       
       match /hymns/{hymnId} {
         allow get, list: if true;
-        allow write: if isSignedIn();
+        allow write: if isAuthorized();
         
         match /hymnRecordings/{hymnRecordingId} {
           allow get, list: if true;
-          allow write: if isSignedIn();
+          allow write: if isAuthorized();
         }
       }
     }

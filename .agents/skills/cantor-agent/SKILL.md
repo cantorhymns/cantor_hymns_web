@@ -29,9 +29,9 @@ python3 .agents/skills/cantor-agent/scripts/search_and_download.py search \
 
 ---
 
-## Step 1b: Optional Archival Audio Restoration (Only for Old/Cassette Recordings)
-- **IMPORTANT RULE:** Do **NOT** apply `cassette-remaster` to all recordings! Modern, clean recordings should be kept in their natural state.
-- Run `--inspect-only` first to check if a track has severe high-frequency rolloff (`>= 15 dB` drop between `500 Hz` and `3500 Hz`), and **ask the user** before applying `cassette-remaster`.
+## Step 1b: Archival Audio Preservation & Restoration Rules
+- **DEFAULT PREFERENCE: Unaltered Originals**: Keep recordings in their natural state. Do **NOT** apply DSP, reverb, echo, EQ, or high-frequency lifting filters unless explicitly requested and approved by the user.
+- **Cassette Remastering Constraint**: Run `--inspect-only` first to check if a track has severe high-frequency rolloff (`>= 15 dB` drop between `500 Hz` and `3500 Hz`), and **ask the user** before applying `cassette-remaster`.
 - Script: [enhance_audio.py](./scripts/enhance_audio.py)
 
 ```bash
@@ -52,8 +52,8 @@ python3 .agents/skills/cantor-agent/scripts/enhance_audio.py \
 ## Step 2: Smart Audio Boundary & Preface Trimming
 - Combines waveform envelope analysis ([trim_audio.py](./scripts/trim_audio.py)) with multimodal audio listening (`view_file` on extracted opening/closing clips):
   1. Run `trim_audio.py analyze` to locate exact vocal onset/offset and opening/closing pauses.
-  2. Extract the opening and closing clips and listen with `view_file` to verify the boundaries.
-  3. **Pre-roll Rule**: Always leave **`0.5s`** of natural quiet lead-in before the initial vocal onset (e.g. if vocal onset is at `4.46s`, trim start is `3.96s`).
+  2. **Cassette Spoken Announcement Removal**: Archival cassettes often open with spoken Arabic announcements (e.g., *"الرومي الأول: يقال بعد..."* from `0.0s` to `~3s`), followed by a silence gap before chanting starts. Identify the announcement boundary and cut it completely.
+  3. **Pre-roll Rule**: Always leave **`0.5s`** of natural quiet lead-in before the initial vocal onset (e.g. if vocal onset is at `4.46s`, trim start is `3.96s`) with a smooth micro-fade (`afade=t=in:ss=0:d=0.15`).
   4. **Outro Boundary Rule**: Cut cleanly in the breath gap immediately after the final verse/cadence before any subsequent hymn/doxology begins.
   5. Run `trim_audio.py trim` to export the clean track with smooth micro-fades.
 
@@ -96,9 +96,15 @@ python3 .agents/skills/cantor-agent/scripts/fetch_lyrics.py fetch \
 - Uses `25ms` RMS envelope valley detection + Dynamic Programming ([detect_markers.py](./scripts/detect_markers.py)) to place learning markers at natural breath pauses (`~8–22s` sections, averaging `~11–14s`, matching existing CantorHymns recordings).
 - Each marker is positioned in the quiet breath pause `~75ms` before the next vocal phrase onset so looping a section in Learn Mode never clips the preceding note or misses the attack.
 - **Marker Rules**:
-  - **No `0.00` in `markers.txt`**: The audio player internally prepends `0` for Section 1 (`const marksForLooping = [0, ...sortedActiveMarks]`). For an $N$-verse hymn, `markers.txt` must contain exactly $N-1$ timestamps (Marker 1 = Verse 2, Marker 2 = Verse 3, etc.).
+  - **No `0.00` in markers array**: The audio player internally prepends `0` for Section 1 (`const marksForLooping = [0, ...sortedActiveMarks]`). For an $N$-verse hymn, markers must contain exactly $N-1$ timestamps (Marker 1 = Verse 2, Marker 2 = Verse 3, etc.).
   - **Doxologies & Melisma-less Hymns**: Markers are placed strictly on verse boundaries (no sub-verse melisma breakdowns).
-  - **`lyrics_markers.txt` Format**: Must be a **newline-separated list of integers** (`0\n1\n2...`), NOT a JSON string. Each line $i$ maps Verse $i$ (1-based) to its section index (`0` for track start, `1` for Marker 1, `2` for Marker 2, etc.).
+  - **Recitative Stanzas & The 4th-Line Pause Trap**:
+    - In Coptic doxologies and recitative hymns (e.g., Roumi, Mo'aqab), the 4th line of a stanza often has an internal breathing pause or melodic slowdown before the cadence word (e.g., Verse 1 line 4 *"ymnoumen se"* ... pause ... *"adikhostasia"*).
+    - **Never guess or randomly nudge markers**: Simple RMS valley finders will pick that internal pause, placing the marker 2 to 3 seconds too early and catching the final line/word of the previous verse.
+    - **Whisper / Phonetic Verification**: Always transcribe the boundary region (using Whisper word timestamps or waveform phoneme inspection) to identify the true end of the previous stanza and the onset of the new stanza's first word. Place the marker in the silence `50–100ms` before the new stanza's vocal attack.
+  - **Inline Storage First**: Markers (`markers: number[]`) and Lyrics Mappings (`lyricsMapping: number[]`) are stored directly on the recording document in Cloud Firestore and embedded inline in `catalog.json`.
+  - **`lyrics_markers.txt` Format**: A newline-separated list of integers (`0\n1\n2...`). Each line $i$ maps Verse $i$ (1-based) to its section index (`0` for track start, `1` for Marker 1, `2` for Marker 2, etc.).
+  - **Dynamic Learn Mode**: The green indicator dot, playback controls, and section looping activate automatically based on the presence of markers (`markers.length > 0`).
   - **User Marker Feedback Terminology**:
     - *"Started earlier"*: The section started **earlier than intended** (meaning trailing syllables / previous verse audio are heard before this section) $\rightarrow$ **DELAY the marker** (increase timestamp).
     - *"Started later"*: The section started **later than intended** (meaning the first syllable / onset was cut off or late) $\rightarrow$ **ADVANCE the marker** (decrease timestamp).
@@ -121,30 +127,102 @@ python3 .agents/skills/cantor-agent/scripts/detect_markers.py generate \
 
 ---
 
-## Step 5: Firebase Storage & Static JSON Catalog Publishing
-- **No Firestore**: Firestore has been fully decommissioned. Under no circumstances should any script or agent attempt to write to or sync with Firestore.
-- Uploads all media files to their canonical paths in Firebase Storage:
-  - `tracks/<cantorId>/<cantorId>_<hymnId>.mp3`
-  - `markers/<cantorId>/<cantorId>_<hymnId>_markers.txt`
-  - `markers/<cantorId>/<cantorId>_<hymnId>_lyrics_markers.txt`
-  - `lyrics/coptic/<hymnId>_coptic.md`
-  - `lyrics/english/<hymnId>_english.md`
-  - `lyrics/arabic/<hymnId>_arabic.md`
-- Registers the hymn and recording into the JSON catalog across both web (`src/data`, `public/data`) and mobile (`cantor_hymns_mobile/src/data`), and automatically pushes `data/catalog.json` live to **Firebase Storage** so both Web and Mobile apps receive instant live updates without needing a code redeploy or App Store release:
-  - Script: `src/scripts/publish-hymn.ts`
-  ```bash
-  npx tsx src/scripts/publish-hymn.ts \
-    --hymn-id "tenen" \
-    --name "Tenen" \
-    --genres "kiahk" \
-    --cantor "cantor-gad" \
-    --mode "learn" \
-    --description "Psali Watos for the Three Saintly Children..."
-  ```
-- To manually re-upload local catalog changes to Firebase Storage at any time:
-  ```bash
-  npm run catalog:push
-  ```
+## Step 5: Cloud Firestore, Storage & Static CDN Catalog Publishing
+
+CantorAgent is responsible for maintaining all application data (lyrics, hymns, genres, recordings, and markers). The architecture uses a two-tier database system:
+1. **Cloud Firestore (Live Source of Truth for Admin Portal)**:
+   - Queried directly by the Admin Portal at `/admin/seasons`, `/admin/hymns`, and `/admin/cantors`.
+   - Every hymn (`hymns/{hymnId}`), recording (`recordings/{cantorId}_{hymnId}`), and season (`genres/{genreId}`) must exist in Firestore so admins can view, edit, and rank them.
+   - Always authenticate writes using `signInAnonymously(auth)` from Firebase Auth.
+2. **Static Edge CDN (`data/catalog.json` in Firebase Storage)**:
+   - High-performance, zero-latency CDN edge cache serving both Web and Mobile apps.
+   - All hymns, recordings, markers, and inlined lyrics are bundled together for instant offline/online playback.
+3. **4-Way Local Directory Mirroring**:
+   - Any data update must always sync across all 4 locations:
+     - `src/data/` (Web source & components)
+     - `data/` (Backend scripts source)
+     - `public/data/` (Web static asset serving)
+     - `../cantor_hymns_mobile/src/data/` (Mobile app offline bundle)
+
+---
+
+### Standard Data Update Operations
+
+#### 1. Ingesting & Publishing a New Hymn & Recording
+Use the unified publishing script [`publish-hymn.ts`](../../../src/scripts/publish-hymn.ts):
+```bash
+npx tsx src/scripts/publish-hymn.ts \
+  --hymn-id "tenen" \
+  --name "Tenen" \
+  --genres "kiahk" \
+  --subgenre "Midnight Praises" \
+  --cantor "cantor-gad" \
+  --audio-file "staging/tracks/cantor-gad/cantor-gad_tenen.mp3" \
+  --audio-length 1252.3 \
+  --markers-file "staging/markers/cantor-gad/cantor-gad_tenen_markers.txt" \
+  --lyrics-mapping-file "staging/markers/cantor-gad/cantor-gad_tenen_lyrics_markers.txt" \
+  --description "Psali Watos for the Three Saintly Children..." \
+  --mode "learn"
+```
+*This script automatically:*
+- Uploads audio track and marker text files to Firebase Storage.
+- Reads and inlines lyrics from `staging/lyrics/{coptic,english,arabic}/<hymnId>_*.md`.
+- Inlines `markers: number[]` and `lyricsMapping: number[]` directly into the recording.
+- Inserts `<hymnId>` under the specified `subGenre:<Name>` in `genre.content` (Zero "Other" Hymns Rule).
+- Updates documents in Cloud Firestore (`hymns`, `recordings`, `genres`).
+- Syncs `hymns.json`, `recordings.json`, `genres.json`, and `catalog.json` across all 4 directories.
+- Pushes the live `catalog.json` to Firebase Storage CDN.
+
+#### 2. Updating Lyrics for an Existing Hymn
+Use [`update-lyrics.ts`](../../../src/scripts/update-lyrics.ts) whenever correcting or re-fetching lyrics:
+```bash
+npx tsx src/scripts/update-lyrics.ts \
+  --hymn-id "tenen" \
+  --coptic-file "staging/lyrics/coptic/tenen_coptic.md" \
+  --english-file "staging/lyrics/english/tenen_english.md" \
+  --arabic-file "staging/lyrics/arabic/tenen_arabic.md"
+```
+*Updates Firestore, updates `hymns.json`, rebuilds `catalog.json`, syncs all 4 directories, and deploys to CDN.*
+
+#### 3. Updating Learning Markers or Lyrics Mapping
+Use [`update-markers.ts`](../../../src/scripts/update-markers.ts) whenever nudging timestamps or adjusting verse mappings:
+```bash
+npx tsx src/scripts/update-markers.ts \
+  --cantor "cantor-gad" \
+  --hymn-id "tenen" \
+  --markers-file "staging/markers/cantor-gad/cantor-gad_tenen_markers.txt" \
+  --lyrics-mapping-file "staging/markers/cantor-gad/cantor-gad_tenen_lyrics_markers.txt"
+```
+*Updates Firestore, updates `recordings.json`, rebuilds `catalog.json`, syncs all 4 directories, and deploys to CDN.*
+
+#### 4. Manually Compiling & Pushing the Edge CDN Snapshot
+To re-push the live catalog snapshot to Firebase Storage CDN at any time:
+```bash
+npm run catalog:push
+```
+
+---
+
+### Critical Data Integrity Rules
+
+1. **Zero "Other" Hymns Rule**:
+   - Every hymn assigned to a `genreId` MUST be explicitly listed under that genre's `content` string under a `subGenre:<Subgenre Name>` heading.
+   - Never leave hymns unassigned in `genres.json` or `catalog.json`; unassigned hymns will drop into "Other Hymns".
+2. **Preserve Liturgical Season Ranks (Kiahk is #1)**:
+   - All `genres.json` files have explicit `rank` values:
+     - `#1: Kiahk`
+     - `#2: Nativity`
+     - `#3: Lent`
+     - `#4: Lazarus Saturday`
+     - `#5: Holy Week`
+     - `#6: Resurrection`
+     - `#7: Apostles' Fast`
+   - **Never overwrite `rank` with `undefined` or default to 99**. When sorting genres, sort strictly by `(a.rank ?? 99) - (b.rank ?? 99)`. Never sort genres alphabetically with `localeCompare` without rank checks, as that will improperly push "Apostles' Fast" to the top.
+3. **Naming & Sequential Verses**:
+   - For sequential liturgical series (e.g., Roumi 1–9, Mo'aqab 1–9): Titles must remain clean and strictly numbered (`"Roumi 1"`, `"Mo'aqab 1"`). Do not append lyrics or Arabic names to the title.
+   - Omit descriptions for sequential liturgical verses unless specifically instructed.
+4. **Preserve Other Seasons & Hymns**:
+   - Never replace or truncate `genres.json` or `catalog.json` with a single-season object. Any script modifying data must merge into the complete 7-season, 70-hymn library.
 
 
 

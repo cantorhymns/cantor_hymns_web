@@ -64,7 +64,7 @@ export function DebugClientPage() {
             const audioInvalid = r.audioUrl && validationMap.get(r.audioUrl) === 'invalid';
             let markerIssue = false;
 
-            if (r.mode === 'learn') {
+            if ((r.markers && r.markers.length > 0) || r.markersUrl) {
                 const markersFileInvalid = !r.markersUrl || validationMap.get(r.markersUrl) === 'invalid';
                 markerIssue = markersFileInvalid;
             }
