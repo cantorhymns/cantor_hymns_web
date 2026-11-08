@@ -94,14 +94,29 @@ python3 .agents/skills/cantor-agent/scripts/fetch_lyrics.py fetch \
 
 ## Step 4 & Step 6: Pedagogical Marker Detection & Lyrics-to-Marker Connection
 - Uses `25ms` RMS envelope valley detection + Dynamic Programming ([detect_markers.py](./scripts/detect_markers.py)) to place learning markers at natural breath pauses (`~8–22s` sections, averaging `~11–14s`, matching existing CantorHymns recordings).
-- Each marker is positioned in the quiet breath pause `~75ms` before the next vocal phrase onset so looping a section in Learn Mode never clips the preceding note or misses the attack.
+- Each marker is positioned in the quiet breath pause `~150–250ms` before the next vocal phrase onset so looping a section in Learn Mode leaves a natural, audible breather without clipping into the preceding note or missing the attack.
 - **Marker Rules**:
   - **No `0.00` in markers array**: The audio player internally prepends `0` for Section 1 (`const marksForLooping = [0, ...sortedActiveMarks]`). For an $N$-verse hymn, markers must contain exactly $N-1$ timestamps (Marker 1 = Verse 2, Marker 2 = Verse 3, etc.).
   - **Doxologies & Melisma-less Hymns**: Markers are placed strictly on verse boundaries (no sub-verse melisma breakdowns).
   - **Recitative Stanzas & The 4th-Line Pause Trap**:
     - In Coptic doxologies and recitative hymns (e.g., Roumi, Mo'aqab), the 4th line of a stanza often has an internal breathing pause or melodic slowdown before the cadence word (e.g., Verse 1 line 4 *"ymnoumen se"* ... pause ... *"adikhostasia"*).
     - **Never guess or randomly nudge markers**: Simple RMS valley finders will pick that internal pause, placing the marker 2 to 3 seconds too early and catching the final line/word of the previous verse.
-    - **Whisper / Phonetic Verification**: Always transcribe the boundary region (using Whisper word timestamps or waveform phoneme inspection) to identify the true end of the previous stanza and the onset of the new stanza's first word. Place the marker in the silence `50–100ms` before the new stanza's vocal attack.
+    - **Whisper / Phonetic Verification**: Always transcribe the boundary region (using Whisper word timestamps or waveform phoneme inspection) to identify the true end of the previous stanza and the onset of the new stanza's first word.
+
+### Critical Recitative Marker Rules (Learned from Roumi & Mo'aqab Ground Truth):
+1. **The Breather Pre-Roll (~100–250ms)**:
+   - Never place the marker flush against the first vocal consonant attack. Always position it `~150–250ms` (approx `0.15–0.25s`) before the vocal attack in the breath silence. This ensures section looping in Learn Mode begins with a comfortable, natural breath intake rather than an abrupt attack.
+2. **The "Mid-Stanza / 2nd-Line Pause" Trap**:
+   - In 4-line recitative verses, the cantor frequently takes a pronounced breath after Line 1 before singing Line 2, while the transition between verses (from the previous verse into Line 1) may have little to no silence.
+   - **Crucial**: Simple RMS valley finders mistakenly latch onto the pause after Line 1, placing the marker 2 to 4 seconds *after* the verse has already started!
+   - Every verse marker MUST be anchored to the very beginning of **Line 1 (the initial word of the stanza)**, never to the pause between Line 1 and Line 2.
+3. **The Universal "Tenti Oo Ne" (Ⲧⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ) Final Verse Rule**:
+   - In the final conclusion verse (`Ⲧⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲥⲙⲁⲙⲁⲧ: ϣⲁ ⲡⲓⲛⲓϥⲓ ⲛ̀ⲧⲉ ⲗⲉⲩⲧⲉⲟⲥ...`), the first line (*"Ten-ti-o-ou ne o-the-ets-mamat"*) lasts `~4.5–5.5 seconds`, followed by a prominent pause before *"Sha pi-nifi..."*.
+   - Naive valley detectors will consistently place the marker at *"Sha pi-nifi"*—missing the entire opening line of the conclusion!
+   - Always anchor the marker at the vocal onset of `Ⲧⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ` (Ten-ti-o-ou ne), which is consistently located **~5 seconds earlier** than the breath pause before `Sha pi-nifi`.
+4. **Breathless / Continuous Verse-to-Verse Transitions**:
+   - When a cantor chants continuously from the cadence note of one verse into the first note of the next verse without taking a breath, there will be no silence valley in the RMS envelope.
+   - When this happens, do not look for deep silence (which will jump into the middle of the verse). Instead, identify the melodic cadence resolution of the previous verse and place the marker at the pitch/phoneme restart of the new verse with a `-150ms` breather buffer.
   - **Inline Storage First**: Markers (`markers: number[]`) and Lyrics Mappings (`lyricsMapping: number[]`) are stored directly on the recording document in Cloud Firestore and embedded inline in `catalog.json`.
   - **`lyrics_markers.txt` Format**: A newline-separated list of integers (`0\n1\n2...`). Each line $i$ maps Verse $i$ (1-based) to its section index (`0` for track start, `1` for Marker 1, `2` for Marker 2, etc.).
   - **Dynamic Learn Mode**: The green indicator dot, playback controls, and section looping activate automatically based on the presence of markers (`markers.length > 0`).

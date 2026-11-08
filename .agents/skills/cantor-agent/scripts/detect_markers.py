@@ -121,9 +121,12 @@ def detect_phrase_valleys(
                         right += 1
 
                     pause_dur_sec = (right - left) * frame_sec
-                    # Position marker right before the vocal onset (or at valley center if brief)
-                    if pause_dur_sec >= 0.20:
-                        marker_frame = max(left, right - 3)  # ~75ms before vocal onset
+                    # Position marker in the quiet breath pause ~150-200ms before vocal onset (leaving comfortable breather)
+                    breather_frames = max(2, int(0.18 / frame_sec))  # ~180ms breather pre-roll
+                    if pause_dur_sec >= 0.25:
+                        marker_frame = max(left, right - breather_frames)
+                    elif pause_dur_sec >= 0.12:
+                        marker_frame = max(left, (left + right) // 2)
                     else:
                         marker_frame = i
 

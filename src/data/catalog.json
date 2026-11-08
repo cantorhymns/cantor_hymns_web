@@ -1,110 +1,110 @@
 {
-  "generatedAt": "2026-11-08T03:39:07.922Z",
+  "generatedAt": "2026-11-08T05:14:36.454Z",
   "genres": [
     {
       "id": "kiahk",
-      "rank": 1,
-      "name": "Kiahk",
-      "backgroundUrl": "genres/backgrounds/Kiahk1.jpeg",
       "active": true,
-      "cantorCloudActive": true,
-      "content": "subGenre:Liturgy\npsalm-150-kiahk\nje-efesmaroout-kiahk-weekdays\nti-parthenos-kiahk-weekdays\nje-efesmaroout-kiahk-weekends\nef-emepsha-ghar-kiahk-weekends\nsubGenre:Vespers\ndoxology-1-kiahk\nsubGenre:Vespers Praises\nalleluia-al-asr\nroumi-1\nmoaqab-1\nroumi-2\nmoaqab-2\nroumi-3\nmoaqab-3\nroumi-4\nmoaqab-4\nroumi-5\nmoaqab-5\nroumi-6\nmoaqab-6\nroumi-7\nmoaqab-7\nroumi-8\nmoaqab-8\nroumi-9\nmoaqab-9\ntarh\naretenthonti-kiahk\nsubGenre:Midnight Praises\ntenen",
-      "icon": "Cross",
-      "description": "",
       "updatedAt": {
-        "seconds": 1794108701,
-        "nanoseconds": 861000000
-      }
+        "seconds": 1794109435,
+        "nanoseconds": 939000000
+      },
+      "name": "Kiahk",
+      "description": "",
+      "cantorCloudActive": true,
+      "icon": "Cross",
+      "content": "subGenre:Liturgy\npsalm-150-kiahk\nje-efesmaroout-kiahk-weekdays\nti-parthenos-kiahk-weekdays\nje-efesmaroout-kiahk-weekends\nef-emepsha-ghar-kiahk-weekends\nsubGenre:Vespers\ndoxology-1-kiahk\nsubGenre:Vespers Praises\nalleluia-al-asr\nroumi-1\nmoaqab-1\nroumi-2\nmoaqab-2\nroumi-3\nmoaqab-3\nroumi-4\nmoaqab-4\nroumi-5\nmoaqab-5\nroumi-6\nmoaqab-6\nroumi-7\nmoaqab-7\nroumi-8\nmoaqab-8\nroumi-9\nmoaqab-9\ntarh\naretenthonti-kiahk\nsubGenre:Midnight Praises\ntenen",
+      "rank": 1,
+      "backgroundUrl": "genres/backgrounds/Kiahk1.jpeg"
     },
     {
       "id": "nativity",
+      "description": "",
+      "active": true,
       "name": "Nativity",
-      "content": "genethlion",
+      "cantorCloudActive": true,
       "backgroundUrl": "genres/backgrounds/Nativity2.jpeg",
+      "icon": "Cross",
+      "rank": 2,
       "updatedAt": {
         "seconds": 1794028875,
         "nanoseconds": 801000000
       },
-      "active": true,
-      "cantorCloudActive": true,
-      "icon": "Cross",
-      "description": "",
-      "rank": 2
+      "content": "genethlion"
     },
     {
       "id": "lent",
-      "name": "Lent",
-      "content": "subGenre:General\naspasmos-watos-lent-1\nsubGenre:Liturgy Weekdays\nkyrie-eleison-lent\nentho-te-ti-shouri\nshare-ephnouti\npsalm-150-lent-weekdays\nje-efesmaroout-lent-weekdays\npi-mairomi\nsomatos\nsubGenre:Liturgy Weekends\nmeghalo\nou-nishti\nsubGenre:Vespers Praises\nalleluia-al-asr\naretenthonti-lent\nsherat-lent\ntarh",
-      "cantorCloudActive": true,
-      "backgroundUrl": "genres/backgrounds/Lent2.jpeg",
-      "icon": "Cross",
       "updatedAt": {
         "seconds": 1794028875,
         "nanoseconds": 907000000
       },
-      "active": true,
       "description": "",
+      "name": "Lent",
+      "active": true,
+      "cantorCloudActive": true,
+      "backgroundUrl": "genres/backgrounds/Lent2.jpeg",
+      "icon": "Cross",
+      "content": "subGenre:General\naspasmos-watos-lent-1\nsubGenre:Liturgy Weekdays\nkyrie-eleison-lent\nentho-te-ti-shouri\nshare-ephnouti\npsalm-150-lent-weekdays\nje-efesmaroout-lent-weekdays\npi-mairomi\nsomatos\nsubGenre:Liturgy Weekends\nmeghalo\nou-nishti\nsubGenre:Vespers Praises\nalleluia-al-asr\naretenthonti-lent\nsherat-lent\ntarh",
       "rank": 3
     },
     {
       "id": "lazarus-saturday",
       "cantorCloudActive": true,
+      "active": true,
+      "rank": 4,
+      "description": "",
+      "icon": "Cross",
+      "content": "verses-of-cymbals-lazarus-saturday\ndoxology-lazarus-saturday\npraxis-response-lazarus-saturday\ngospel-response-matins-lazarus-saturday\ngospel-response-liturgy-lazarus-saturday\nlazaros-amou",
       "name": "Lazarus Saturday",
+      "backgroundUrl": "genres/backgrounds/LazarusSaturday1.jpeg",
       "updatedAt": {
         "seconds": 1794028876,
         "nanoseconds": 14000000
-      },
-      "content": "verses-of-cymbals-lazarus-saturday\ndoxology-lazarus-saturday\npraxis-response-lazarus-saturday\ngospel-response-matins-lazarus-saturday\ngospel-response-liturgy-lazarus-saturday\nlazaros-amou",
-      "rank": 4,
-      "active": true,
-      "backgroundUrl": "genres/backgrounds/LazarusSaturday1.jpeg",
-      "icon": "Cross",
-      "description": ""
+      }
     },
     {
       "id": "holy-week",
+      "content": "subGenre:General\nke-eperto\nethvetee-general-funeral\nmournful-agios\noukatee\nsubGenre:Covenant Thursday\npraxeon-ton\nyodas\navechnon\nsubGenre:Good Friday\nmournful-tai-shouri\nphai-etaf-enf\nti-epistolee\nomonogenees\nmournful-ti-shouri\nethvetee-good-friday\npek-ethronos\ngholghotha\nsubGenre:Bright Saturday\nanok-pe-pi-kouji\nere-pi-esmou\ntribes\nstones\npanouti",
       "updatedAt": {
         "seconds": 1794028876,
         "nanoseconds": 114000000
       },
-      "backgroundUrl": "genres/backgrounds/HolyWeek2.jpeg",
-      "active": true,
-      "name": "Holy Week",
       "rank": 5,
-      "cantorCloudActive": true,
       "icon": "Cross",
-      "content": "subGenre:General\nke-eperto\nethvetee-general-funeral\nmournful-agios\noukatee\nsubGenre:Covenant Thursday\npraxeon-ton\nyodas\navechnon\nsubGenre:Good Friday\nmournful-tai-shouri\nphai-etaf-enf\nti-epistolee\nomonogenees\nmournful-ti-shouri\nethvetee-good-friday\npek-ethronos\ngholghotha\nsubGenre:Bright Saturday\nanok-pe-pi-kouji\nere-pi-esmou\ntribes\nstones\npanouti",
-      "description": ""
+      "backgroundUrl": "genres/backgrounds/HolyWeek2.jpeg",
+      "description": "",
+      "name": "Holy Week",
+      "active": true,
+      "cantorCloudActive": true
     },
     {
       "id": "resurrection",
-      "name": "Resurrection",
-      "content": "khristos-anesti-major\nkhristos-anesti-minor\nton-seena\ntou-lithou\nteen-anastaseen\nkata-ni-khoros\nkata-ni-khoros-distribution",
       "cantorCloudActive": true,
-      "backgroundUrl": "genres/backgrounds/Resurrection1.jpeg",
+      "active": true,
       "icon": "Cross",
+      "rank": 6,
+      "content": "khristos-anesti-major\nkhristos-anesti-minor\nton-seena\ntou-lithou\nteen-anastaseen\nkata-ni-khoros\nkata-ni-khoros-distribution",
       "updatedAt": {
         "seconds": 1794028876,
         "nanoseconds": 184000000
       },
-      "active": true,
+      "name": "Resurrection",
       "description": "",
-      "rank": 6
+      "backgroundUrl": "genres/backgrounds/Resurrection1.jpeg"
     },
     {
       "id": "apostles-fast",
-      "content": "ondos\nenthoten-dhe\nniroumi",
-      "backgroundUrl": "genres/backgrounds/ApostlesFast.webp",
-      "name": "Apostles' Fast",
-      "description": "",
       "cantorCloudActive": true,
+      "active": true,
+      "name": "Apostles' Fast",
+      "icon": "Cross",
       "updatedAt": {
         "seconds": 1794028876,
         "nanoseconds": 315000000
       },
+      "backgroundUrl": "genres/backgrounds/ApostlesFast.webp",
       "rank": 7,
-      "active": true,
-      "icon": "Cross"
+      "description": "",
+      "content": "ondos\nenthoten-dhe\nniroumi"
     }
   ],
   "cantors": [
@@ -5864,7 +5864,7 @@
       },
       "name": "Roumi 4",
       "lyrics": {
-        "english": "",
+        "english": "O Lord, who is like You among the gods and the lords? Glory to You in the highest, and upon earth unto the end of ages.\n\nNot by supplication, nor by righteous deeds, did You reveal to us the secret manifestation of Your dominion.\n\nBut in Your mercies You gave us life when You came to us like a man; where then are the prudent rulers, that they may say together as is meet:\n\nTo You praise is continually due, and to Your Father who sent You, O You who took the form of a servant from the Virgin's womb.\n\nEvery speaking man in the living world said that you are indeed the race and the root of David.\n\nFor you have given birth to the King of all, our Master and our Savior Jesus Christ, the Only-Begotten according to the flesh, for the sake of our lowliness.\n\nWe glorify you, O blessed one, unto the last breath, for you have found favor before your God, the Son of God.",
         "coptic": "Ⲕⲩⲣⲓⲉ ⲧⲓⲥ ⲟ̀ⲙⲓⲟⲥ ⲥⲓ: ⲉⲛ ⲑⲉⲉ̀ⲓⲥ ⲛⲉⲙ ⲛⲓϭⲓⲥⲉⲩ: ⲇⲟⲝⲁ ⲥⲓ ϧⲉⲛ ⲛⲏⲉ̀ⲧϭⲟⲥⲓ: ⲕⲁⲓ ⲏ ⲅⲏ ϣⲁⲧ̀ϧⲁⲉ̀ ⲛ̀ⲛⲓⲥⲏⲟⲩ.\n\nⲘⲏ ⲁⲛ ϧⲉⲛ ϯⲡⲁⲣⲁⲕⲗⲏⲥⲓⲥ: ⲟⲩⲇⲉ ⲧⲁ ⲉ̀ⲣⲅⲁⲧⲁ ⲟ̀ⲥⲓⲁ: ⲁⲕⲟ̀ⲩⲱⲛϩ ⲛⲁⲛ ⲛ̀ⲉ̀ⲡⲓⲕ̀ⲗⲏⲥⲓⲥ: ⲙ̀ⲡⲓϭⲱⲣⲡ ⲛ̀ⲧⲉ ⲧⲉⲕⲉ̀ⲝⲟⲩⲥⲓⲁ.\n\nⲠ̀ⲗⲏⲛ ϧⲉⲛ ⲛⲉⲕⲛⲁⲓ ⲁⲕⲧⲁⲛϧⲟⲛ: ⲁⲕϣⲁⲛⲓ̀ ⲛⲁⲛ ⲙ̀ⲫ̀ⲣⲏϯ ⲛ̀ⲟⲩⲣⲱⲙⲓ: ⲁⲩⲑⲱⲛ ⲛⲓⲉ̀ⲡⲓⲥⲧⲓⲙⲏ̀ ⲁⲣⲭⲱⲛ: ⲉ̀ⲣⲟⲩ ⲥⲩⲛⲁⲙⲁ ⲕⲁⲧⲁ ⲫ̀ⲧⲱⲙⲓ.\n\nⲤⲓ ⲡ̀ⲣⲉⲡⲓ ⲩ̀ⲙⲛⲟⲥ ⲉⲕⲧⲉⲛⲟⲥ: ⲛⲉⲙ Ⲡⲉⲕⲓⲱⲧ ⲉⲧⲁϥⲧⲁⲟ̀ⲩⲟⲕ: ⲱ̀ ⲫⲏⲉ̀ⲧ ϧⲉⲛ ⲑ̀ⲛⲉϫⲓ ⲛ̀ϯⲠⲁⲣⲑⲉⲛⲟⲥ: ⲁϥϭⲓ ⲛ̀ⲟⲩⲙⲟⲣⲫⲏ ⲙ̀ⲃⲱⲕ.\n\nⲢⲱⲙⲓ ⲛⲓⲃⲉⲛ ⲫ̀ⲑⲟⲅⲅⲟⲙⲉⲛⲟⲥ: ⲉⲕ ⲧⲟⲛ ⲕⲟⲥⲙⲟⲛ ⲃⲓⲱⲧⲓⲕⲟⲛ: ⲁⲩϫⲟⲥ ϫⲉ ⲛ̀ⲑⲟ ⲅⲁⲣ ⲡⲉ ⲡⲓⲅⲉⲛⲟⲥ: ⲛⲉⲙ ϯⲛⲟⲩⲛⲓ ⲛ̀Ⲇⲁⲩⲓⲇⲓⲕⲟⲛ.\n\nϪⲉ ⲁⲣⲉⲙⲓⲥⲓ ⲙ̀ⲡⲁⲛⲧⲁⲛⲁⲝ: ⲡⲉⲛⲚⲏⲃ ⲡⲉⲛⲤⲱⲧⲏⲣ Ⲓⲏ̅ⲥ̅ Ⲡⲭ̅ⲥ̅: ⲡⲓⲙⲟⲛⲟⲅⲉⲛⲏⲥ ⲕⲁⲧⲁ ⲥⲁⲣⲝ: ⲉⲑⲃⲉ ⲧⲉⲛⲙⲉⲧⲉ̀ⲗⲁⲭⲓⲥⲧⲟⲥ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲥⲙⲁⲙⲁⲧ: ϣⲁ ⲡⲓⲛⲓϥⲓ ⲛ̀ⲧⲉ ⲗⲉⲩⲧⲉⲟⲥ: ϫⲉ ⲁⲣⲉϫⲓⲙⲓ ⲅⲁⲣ ⲛ̀ⲟⲩϩ̀ⲙⲟⲧ: ϧⲁⲧⲉⲛ ⲡⲉⲚⲟⲩϯ Ⲩⲓⲟⲥ Ⲑⲉⲟⲥ.",
         "arabic": "يا رب من يشبهك في الآلهة والأرباب. المجد لك في الأعالي وعلى الأرض إلى آخر الأزمان.\n\nليس بأبتهال ولا أعمال بارة. أظهرت لنا سر أعلان سلطانك.\n\nلكن بمراحمك أحيينا إذ أتيت إلينا مثل إنسان فأين هم الرؤساء ذوو الألباب، ليقولوا معاً كما يليق.\n\nلك ينبغي التسبيح دائماً. مع أبيك الذي أرسلك يا الذي من بطن العذراء أخذ شكل العبد.\n\nكل إنسان ناطق في العالم الحيوي قال أنك أنت هي الجنس والأصل الداوودي.\n\nلأنك ولدت ملك الكل سيدنا ومخلصنا يسوع المسيح الوحيد الجنس بالجسد من أجل مسكنتنا.\n\nنمجدك أيتها المباركة، إلى النفس الأخير، لأنك وجدت نعمة، عند إلهك ابن الله."
       },
@@ -5923,7 +5923,7 @@
       "lyricsEnglishUrl": "lyrics/english/roumi-5_english.md",
       "lyrics": {
         "coptic": "Ⲓⲥ ϩⲏⲡⲡⲉ Ⲡⲟ̅ⲥ̅ ⲫⲏⲉ̀ⲧⲁϥϣⲁⲛϣ: ⲛ̀ⲛⲉⲓⲟϯ ϧⲉⲛ ⲡⲓⲇ̀ⲣⲩⲙⲟⲥ: ⲁϥⲛⲁϩⲙⲟⲩ ⲉ̀ⲃⲟⲗϩⲁ ⲛⲓⲟ̀ⲩⲱⲛϣ: ⲉⲧϩⲱⲗⲉⲙ ⲛ̀ⲧⲉ ⲡⲓⲇⲟⲕⲓⲙⲟⲥ.\n\nⲀϥⲧⲉⲙⲙⲱⲟⲩ ⲙ̀ⲡⲓⲙⲁⲛⲛⲁ ⲧⲏⲣⲟⲩ: ⲁϥⲧ̀ⲥⲱⲟ̀ⲩ ⲙ̀ⲡⲓⲙⲱⲟ̀ⲩ ϧⲉⲛ ⲟⲩⲕⲟϩ ⲙ̀ⲡⲉⲧⲣⲁ: ⲟⲩⲟϩ ⲁϥϭⲱⲣⲡ ⲉ̀ⲛⲟⲩⲡ̀ⲣⲉⲥⲃⲩⲧⲉⲣⲟⲩ: ⲛⲉⲙ ⲛⲟⲩⲙⲓⲕⲣⲱⲛ ⲥⲓⲙⲓⲱⲛ ⲫⲉⲇⲣⲁ.\n\nⲀϥⲥⲱⲧⲡ ⲙ̀ⲙⲟ ⲛ̀ⲟ̀ⲩⲧⲟⲣⲟⲥ ⲛⲁϥ: Ⲁ̀ⲇⲁⲙ ⲧⲟⲩ ⲅⲏⲓⲛⲟⲩ ⲑⲩⲅⲁⲧⲏⲣ: ⲉⲑⲣⲉϥ ⲥⲱϯ ⲛ̀ⲛⲏⲉ̀ⲧⲁⲩⲣⲁⲛⲁϥ: ϫⲉ ⲭⲉⲣⲉ ⲛⲩⲙⲫⲏⲧⲟⲩ Ⲡⲁⲧⲏⲣ.\n\nⲀ̀ⲣⲉϣⲱⲡⲓ ⲛ̀ⲟⲩⲫⲉ ⲙ̀ⲙⲁϩⲥ̀ⲛⲟⲩϯ: ⲉⲧⲥⲟⲃϯ ⲉ̀ⲡⲓⲟ̀ⲩⲱⲓⲛⲓ ⲙ̀ⲙⲏⲓ: ⲁϥϣⲁⲓ ⲛ̀ϧⲏϯ ⲱ̀ ϯⲙⲁⲥⲛⲟⲩϯ: ⲛ̀ϫⲉ ⲡⲓⲣⲏ ⲛ̀ⲧⲉ ϯⲙⲉⲑⲙⲏⲓ.\n\nⲀ̀ⲣⲉϫ̀ⲫⲟϥ ϩⲓⲧⲉⲛ ⲟⲩⲡ̀ⲣⲟⲫⲏⲧⲓⲁ: ⲁϭⲛⲉ ϫ̀ⲣⲟϫ ⲟⲩⲇⲉ ⲫ̀ⲑⲁⲣⲥⲓⲁⲛ: ⲕⲉ ⲱⲥ ⲁⲩⲧⲱⲥ ⲧⲏⲥ ⲁ̀ⲗⲏⲑⲓⲁ: ⲭⲱⲣⲓⲥ ⲇⲓⲭ̀ⲟⲥⲧⲁⲥⲓⲁⲛ.\n\nϦⲉⲛ ⲕⲉⲛϥ ⲙ̀Ⲡⲉϥⲓⲱⲧ ⲫⲁ ⲡⲓⲱ̀ⲟⲩ: ⲙⲁⲣⲉⲛϩⲱⲥ ⲉ̀ⲣⲟϥ ϩⲱⲥ Ⲑⲉⲟⲥ: ⲟⲩⲟϩ ⲛ̀ⲧⲉⲛϫⲱ ⲛⲁϥ ⲛⲉⲙ ⲧⲉϥⲙⲁⲩ: ϩⲱⲥ ⲣⲱⲙⲓ ⲛ̀ⲕⲁⲗⲱⲥ ⲇⲓⲕⲉⲟⲥ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲥⲙⲁⲙⲁⲧ: ϣⲁ ⲡⲓⲛⲓϥⲓ ⲛ̀ⲧⲉ ⲗⲉⲩⲧⲉⲟⲥ: ϫⲉ ⲁⲣⲉϫⲓⲙⲓ ⲅⲁⲣ ⲛ̀ⲟⲩϩ̀ⲙⲟⲧ: ϧⲁⲧⲉⲛ ⲡⲉⲚⲟⲩϯ Ⲩⲓⲟⲥ Ⲑⲉⲟⲥ.",
-        "english": "",
+        "english": "Behold, the Lord who nourished your fathers in the wilderness and delivered them from the ravishing wolves of the tempter.\n\nHe fed them all with the manna and gave them water to drink from a hard rock, and He manifested bright signs to their elders and youth.\n\nHe chose you as an abode for Himself, O daughter of earthly Adam, to save those who pleased Him; rejoice, O bride of the Father.\n\nYou became a second heaven prepared for the true light, and from you shone forth the Sun of righteousness, O Mother of God.\n\nYou gave birth to Him according to the prophecy of the prophet Isaiah: \"Behold, a virgin shall conceive and bear a Son, and they shall call His name Emmanuel.\"\n\nEmmanuel whom you bore has preserved you; we praise Him and exalt Him above all, every day, morning and evening.\n\nWe glorify you, O blessed one, unto the last breath, for you have found favor before your God, the Son of God.",
         "arabic": "ها هوذا الرب الذي أعال آبائك في البرية وأنقذهم من ذائب المجرب الخاطفة.\n\nوأطعمهم المن جميعاً وسقاهم الماء من صخرة صماء. ثم أعلن لمشائخهم وشبانهم آيات بهية.\n\nإختارك مسكناً له يا إبنه آدم الأرضي ليخلص الذين أرضوه فأفرحي يا عروسة الآب.\n\nصرت سماء ثانية معدة للنور الحقيقي وأشرق منك يا والدة الإله شمس البر.\n\nولدته بالنبوة بغير زرع ولا فساد وهو بالحقيقية كما هو بغير افتراق.\n\nفي حضن أبيه الممجد فلنسبحه كإله ونمدحه مع أمه كإنسان صالح صديق.\n\nنمجدك أيتها المباركة، إلى النفس الأخير، لأنك وجدت نعمة، عند إلهك ابن الله."
       },
       "description": "",
@@ -5989,7 +5989,7 @@
     {
       "id": "roumi-6",
       "lyrics": {
-        "english": "",
+        "english": "Behold and meditate upon these hidden mysteries; you will find them in the Virgin, the Mother of Christ God our Master.\n\nWhy did the Mighty One say to His servant Moses: \"Make a tabernacle and an ark, and an altar overlaid with gold\"?\n\n\"Make a pot of manna as a pattern for earthly beings, and place it with the tablets in the midst of the tabernacles.\"\n\nAll these were a type of the all-holy and undefiled one, the human tabernacle, Mary; and the manna is Christ.\n\nThe King of glory, Jesus, born beyond barrier, came into the world from on high, being with the Father without separation.\n\nParadise rejoices because He came and joined with us, who are deficient in understanding; and He had compassion and saved us.\n\nWe glorify you, O blessed one, unto the last breath, for you have found favor before your God, the Son of God.",
         "arabic": "انظروا وتأملوا في هذه الأسرار الخفية. تجدونها على العذراء أم المسيح الإله سيدنا.\n\nلماذا قال القوى لعبده موسي أصنع قبة وتابوتاً وصفحة بالذهب.\n\nوأعمل قسطاً للمن مثالاً للأرضيين. وضعها مع الألواح في وسط المظال.\n\nهذه كلها كانت مثالاً لذات كل القدس القبة الناسوتية الطاهرة مريم والمن هو المسيح.\n\nملك المجد يسوع المولود من السرور المنيع أتي إلى العالم من العلاء وهو مع الآب بغير افتراق.\n\nالفردوس يتهلل لأنه قد جاء وأشترك معنا نحن الناقصين الفهم وتحنن وخلصنا.\n\nنمجدك أيتها المباركة، إلى النفس الأخير، لأنك وجدت نعمة، عند إلهك ابن الله.",
         "coptic": "Ⲥⲟⲙⲥ ⲟⲩⲟϩ ⲙⲁⲓⲁ̀ⲧⲉⲛ ⲑⲏⲛⲟⲩ: ϧⲉⲛ ⲛⲁⲓⲙⲩⲥⲧⲏⲣⲓⲟⲛ ⲉⲧϩⲏⲡ: ⲧⲉⲧⲉⲛϫⲉⲙⲟⲩ ⲉ̀ϯⲠⲁⲣⲑⲉⲛⲟⲥ: ⲟⲩⲙⲩⲧⲏⲣ Ⲭ̀ⲣⲓⲥⲧⲟⲩ Ⲑⲉⲟⲩ ⲡⲉⲛⲚⲏⲃ.\n\nⲈⲑⲃⲉⲟ̀ⲩ ⲡⲉϫⲉ ⲡⲓⲆⲩⲛⲁⲧⲟⲥ: ⲙ̀ⲡⲉϥⲃⲱⲕ Ⲙⲱⲩⲥⲏⲥ ⲡⲟⲓ̀ⲏⲥⲟⲛ: ⲛ̀ⲟⲩⲥ̀ⲕⲩⲛⲏ ⲛⲉⲙ ⲟⲩⲕⲓⲃⲱⲧⲟⲥ: ⲟⲩⲟϩ ⲗⲁⲗⲱⲥ ϧⲉⲛ ⲡⲓⲭ̀ⲣⲩⲥⲟⲛ.\n\nⲀⲣⲓϩⲱⲃ ⲙⲉⲛ ⲛ̀ⲟⲩⲕⲁⲡⲥⲁⲕⲏⲥ: ⲉ̀ⲡⲓⲙⲁⲛⲛⲁ ⲧⲩⲡⲟⲛ ⲧⲁ ⲉ̀ⲡⲓⲅⲉⲓⲁ: ⲭⲁⲧⲟⲩ ⲁⲩⲧⲟⲩⲥ ⲛⲉⲙ ⲛⲓⲡ̀ⲗⲁⲕⲏⲥ: ϧⲉⲛ ⲑ̀ⲙⲏϯ ⲛ̀ϯⲥ̀ⲕⲩⲛⲟⲡⲓⲅⲉⲓⲁ.\n\nⲚⲁⲓ ⲧⲏⲣⲟⲩ ⲁⲩϣⲱⲡⲓ ⲛ̀ⲧⲩⲡⲓⲕⲟⲛ: ⲉ̀ϯⲡⲁⲛⲁ̀ⲅⲓⲁ ⲁ̀ⲙⲟⲗⲩⲛⲧⲟⲥ: ⲏ̀ ⲥ̀ⲕⲩⲛⲟⲙⲁ ⲁⲛⲑ̀ⲣⲟⲡⲓⲕⲟⲛ: Ⲙⲁⲣⲓⲁ ⲡⲓⲘⲁⲛⲛⲁ ⲡⲉ Ⲡⲭ̅ⲥ̅.\n\nⲠ̀Ⲟⲩⲣⲟ ⲛⲧⲉ ⲡ̀ⲱ̀ⲟⲩ Ⲓⲏ̅ⲥ̅ ⲡⲓⲙⲓⲥⲓ: ⲉⲕ ⲧⲟⲛ ⲁⲣⲣⲏⲕⲧⲟⲥ ⲧⲟⲓ̀ⲭⲟⲥ: ⲁϥⲓ̀ ⲉ̀ⲡⲓⲕⲟⲥⲙⲟⲥ ⲉ̀ⲃⲟⲗϧⲉⲛ ⲡ̀ϭⲓⲥⲓ: ⲥⲩⲙ Ⲡⲁⲧⲣⲓ ⲁ̀ⲛⲉ̀ⲩⲧⲟⲓⲭⲟⲥ.\n\nⲠⲓⲡⲁⲣⲁⲇⲓⲥⲟⲥ ⲉϣⲗⲏⲗⲟⲩⲓ̀: ϫⲉ ⲁϥⲓ̀ ⲁϥⲉⲣϣ̀ⲫⲏⲣ ⲛⲉⲙⲁⲛ: ⲁ̀ⲛⲟⲛ ϧⲁ ⲛⲓⲁ̀ⲡⲟⲣⲟⲥ ⲛ̀ⲥ̀ⲃⲱⲟⲩⲓ̀: ⲟⲩⲟϩ ⲁϥϣⲉⲛϩⲏⲧ ⲁϥⲥⲱϯ ⲙ̀ⲙⲟⲛ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲥⲙⲁⲙⲁⲧ: ϣⲁ ⲡⲓⲛⲓϥⲓ ⲛ̀ⲧⲉ ⲗⲉⲩⲧⲉⲟⲥ: ϫⲉ ⲁⲣⲉϫⲓⲙⲓ ⲅⲁⲣ ⲛ̀ⲟⲩϩ̀ⲙⲟⲧ: ϧⲁⲧⲉⲛ ⲡⲉⲚⲟⲩϯ Ⲩⲓⲟⲥ Ⲑⲉⲟⲥ."
       },
@@ -6072,7 +6072,7 @@
       "lyrics": {
         "arabic": "ابتدإوا معي اليوم بالشكر لله. وقدموا مديحاً ومجداً لملكة الكمال.\n\nقولوا أن الرب قد سُر بك أيتها الملجاء نقول ما هو اسمك يا من ارتفعت على الأرضيين.\n\nسماء وكرسي على الأرض لأن الغير المحوي حويته وينبوعاً صالحاً غير موصوف أنبعته.\n\nشاروبيم ندعوك لن الغير الملموس حملته ثم نسبح بإجتهاد يفوق الطبيعة.\n\nدعيت أم الله الملك الحقيقي البار فاحص القلوب والكلي بأمر معجز.\n\nعمانوئيل الذي ولدته من أجل هذا حفظك نسبحه ونزيده علواً كل يوم باكراً وعشية.\n\nنمجدك أيتها المباركة، إلى النفس الأخير، لأنك وجدت نعمة، عند إلهك ابن الله.",
         "coptic": "Ⲁⲣⲓⲝⲁⲧⲉ ⲛⲉⲙⲏⲓ ⲙ̀ⲫⲟⲟⲩ: ⲧⲱ Ⲑⲉⲟⲩ ⲉⲛ ⲉⲩⲭⲁⲣⲓⲥⲧⲓⲁ: ⲁⲛⲓⲟⲩⲓ̀ ⲛ̀ⲉ̀ⲡⲉⲛⲟⲩⲥ ⲛⲉⲙ ⲡ̀ⲱ̀ⲟⲩ: ⲉ̀ϯⲟⲩⲣⲱ ⲛ̀ⲧⲉ ϯⲁ̀ⲣⲓⲥⲧⲓⲁ.\n\nⲀϫⲟⲥ ϫⲉ ⲁ̀Ⲡⲟ̅ⲥ̅ ⲉⲩⲇⲟⲕⲓⲥⲉⲛ: ⲛ̀ϧⲏϯ ⲕⲁⲧⲁⲫⲩⲅⲓⲟⲛ: ⲧⲓ ⲟ̀ⲛⲟⲙⲁ ⲥⲟⲩ ⲓ̀ⲡⲱⲙⲉⲛ: ⲱ̀ ⲑⲏⲉ̀ⲧϭⲟⲥⲓ ⲉ̀ⲛⲓⲅⲓⲟⲛ.\n\nⲞⲩⲣⲁⲛⲟⲛ ⲕⲉ ⲑ̀ⲣⲟⲛⲟⲛ ⲉ̀ⲡⲓⲅⲏ: ⲟ̀ⲧⲓ ⲧⲟⲛ ⲁ̀ⲭⲱⲣⲓⲧⲟⲛ: ⲉⲭⲱⲣⲉⲥⲁⲥ ⲕⲉ ⲕⲁⲗⲏ ⲡⲩⲅⲏ: ⲡ̀ⲗⲁⲥⲧⲏⲥⲁⲥ ⲧⲟⲛ ⲁ̀ⲣⲣⲏⲧⲟⲛ.\n\nⲬⲉⲣⲟⲩⲃⲓⲙ ⲥⲉ ⲕⲁⲗⲉⲥⲱⲙⲉⲛ: ⲟ̀ⲧⲓ ⲧⲟⲛ ⲁ̀ⲯ̀ⲏⲗⲁ ⲫⲏⲥⲓⲥ: ⲉ̀ⲃⲁⲥⲧⲁⲥ ⲕⲉ ⲁ̀ⲥⲱⲙⲉⲛ: ϧⲉⲛ ⲟⲩⲁ̀ⲑⲗⲏⲥⲓⲥ ⲡⲁⲣⲁⲫⲩⲥⲓⲥ.\n\nⲔ̀ⲗⲏⲑⲓⲥⲁ ⲙⲏⲧⲏⲣ Ⲑⲉⲟⲩ: ⲡⲓⲞⲩⲣⲟ ⲙ̀ⲙⲏⲓ ⲛ̀ⲉ̀ⲧⲁ̀ⲍⲟⲛ: ⲕⲁⲣⲇⲓⲁⲥ ⲕⲉ ⲛⲉⲫⲣⲟⲩⲥ ⲇⲓⲕⲉⲟⲩ: ϧⲉⲛ ⲟⲩϩⲱⲃ ⲙ̀ⲡⲁⲣⲁⲇⲟⲝⲟⲛ.\n\nⲈⲙⲙⲁⲛⲟⲩⲏⲗ ⲫⲏⲉ̀ⲧⲁⲣⲉⲙⲁⲥϥ: ⲉⲑⲃⲉ ⲫⲁⲓ ⲁϥⲁ̀ⲣⲉϩ ⲉ̀ⲣⲟ: ⲧⲉⲛϩⲱⲥ ⲉ̀ⲣⲟϥ ⲧⲉⲛⲉⲣϩⲟⲩⲟ̀ ϭⲁⲥϥ: ⲕⲁⲑⲉⲕⲁⲥⲧⲏⲛ ⲡ̀ⲣⲱⲓ̀ ⲕⲉ ⲉⲥⲡⲉⲣⲁ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲥⲙⲁⲙⲁⲧ: ϣⲁ ⲡⲓⲛⲓϥⲓ ⲛ̀ⲧⲉ ⲗⲉⲩⲧⲉⲟⲥ: ϫⲉ ⲁⲣⲉϫⲓⲙⲓ ⲅⲁⲣ ⲛ̀ⲟⲩϩ̀ⲙⲟⲧ: ϧⲁⲧⲉⲛ ⲡⲉⲚⲟⲩϯ Ⲩⲓⲟⲥ Ⲑⲉⲟⲥ.",
-        "english": ""
+        "english": "Begin with me today in thanksgiving to God, and offer praise and glory to the Queen of perfection.\n\nSay: \"The Lord has been pleased with you, O refuge; what shall we call your name, O you who are exalted above the earthly?\"\n\nA heaven and a throne upon earth, for you have contained the Incontainable, and have brought forth a good and indescribable fountain.\n\nWe call you Cherubim, for you have borne the Intangible; and we praise with zeal that transcends nature.\n\nYou were called Mother of God, the true and righteous King who searches the hearts and kidneys in a wondrous way.\n\nEmmanuel whom you bore has therefore preserved you; we praise Him and exalt Him above all, every day, morning and evening.\n\nWe glorify you, O blessed one, unto the last breath, for you have found favor before your God, the Son of God."
       },
       "lyricsCopticUrl": "lyrics/coptic/roumi-7_coptic.md",
       "name": "Roumi 7",
@@ -6132,7 +6132,7 @@
       "lyrics": {
         "arabic": "حسناً رآك يعقوب أبونا مثل سلم ذي نفس مرتفعة إلى السماء والرب القدوس جالس عليها أيتها اليمامة.\n\nالكلية السبح العالمي التي قبلت الغير المحوي في احشاءِها البتولي وحِجرها الفاخر.\n\nلأنه صنع أحشاك عرشاً وأيضاً بطنك المختوم جعله أوسع من السموات.\n\nفلنقل كلنا يا إناء طاهراً مغبوطاً تشبهت بالسلم الذي رآه يعقوب.\n\nالسلام لك من قبلنا لأن من كنزك المختوم ولدت المستريح في القديسين.\n\nكوني لنا شفيعة عنده لنكون بغير حزن ويجمعنا جميعاً في ملكوته السمائي.\n\nنمجدك أيتها المباركة، إلى النفس الأخير، لأنك وجدت نعمة، عند إلهك ابن الله.",
         "coptic": "Ⲕⲁⲗⲱⲥ ⲓ̀ⲇⲉⲛ ⲥⲉ Ⲓⲁⲕⲱⲃ: ⲡⲉⲛⲓⲱⲧ ⲕ̀ⲗⲓⲙⲁⲕⲁ ⲙ̀ⲯⲩⲭⲱⲛ: ⲉⲥϭⲟⲥⲓ ⲉ̀ⲧ̀ⲫⲉ ⲉ̀ⲣⲉ Ⲡⲟ̅ⲥ̅ ⲫⲏⲉ̅ⲑ̅ⲩ̅: ϩⲉⲙⲥⲓ ϩⲓϫⲱⲥ ⲱ̀ ϯⲧ̀ⲣⲩⲅⲱⲛ.\n\nⲠⲁⲛⲩⲙⲛⲓⲇⲟⲥ ⲛ̀ⲕⲟⲥⲙⲓⲕⲏ: ⲉⲧⲁⲥϣⲉⲡ ⲡⲓⲀ̀ⲭⲱⲣⲓⲧⲟⲥ: ϧⲉⲛ ⲧⲉⲥⲙⲏⲧⲣⲁ ⲙ̀ⲡⲁⲣⲑⲉⲛⲓⲕⲏ: ⲛⲉⲙ ⲡⲉⲥⲁ̀ⲙⲏⲣ ⲡⲁⲛⲁ̀ⲣⲉⲧⲟⲥ.\n\nϪⲉ ⲁϥⲓ̀ⲣⲓ ⲛ̀ⲛⲉⲥ̀ⲡⲗⲁⲅⲭⲛⲟⲛ ⲑ̀ⲣⲟⲛⲟⲛ: ⲕⲉ ⲡⲁⲗⲓⲛ ⲧⲏⲛ ⲥⲩⲛ ⲅⲁⲥⲧⲏⲣⲁ: ⲉ̀ⲫⲩⲗⲁⲧⲧⲟⲙⲉⲛⲏ ⲉⲝ ⲟ̀ⲩⲣⲁⲛⲟⲛ: ⲉ̀ⲡⲉⲣⲅⲁⲥⲧⲟ ⲡ̀ⲗⲁⲧⲓⲧⲉⲣⲁ.\n\nⲘⲁⲣⲉⲛϫⲟⲥ ⲧⲏⲣⲉⲛ ⲱ̀ ⲡⲓⲙⲟⲕⲓ: ⲁⲙⲟⲗⲩⲥⲙⲁⲧⲟⲥ ⲙⲁⲕⲁⲣⲓⲟⲥ: ⲁ̀ⲣⲉⲧⲉⲛⲑⲱⲛϯ ⲉ̀ϯⲙⲟⲩⲕⲓ: ⲑⲏⲉ̀ⲧⲁ Ⲓⲁⲕⲱⲃ ⲛⲁⲩ ⲉⲣⲟⲥ.\n\nⲬⲉⲣⲉ ⲛⲉ ⲉ̀ⲃⲟⲗϩⲓⲧⲟⲧⲉⲛ: ⲉⲕ ⲧⲟⲛ ⲑⲩⲥⲁⲩⲣⲟⲛ ⲥⲉ ⲅⲁⲣ ⲉⲧⲧⲟⲃ: ⲁⲣⲉⲙⲓⲥⲓ ⲙ̀ⲫⲏⲉ̀ⲑⲙⲟⲧⲉⲛ: ⲙ̀ⲙⲟϥ ϧⲉⲛ ⲛⲏⲉ̅ⲑ̅ⲩ̅.\n\nϢⲱⲡⲓ ⲛⲁⲛ ⲛ̀ⲟⲩⲡ̀ⲣⲟⲥⲧⲁⲥⲓⲁ: ϧⲁⲧⲟⲧϥ ⲉⲑⲣⲉⲛϣⲱⲡⲓ ⲛ̀ⲁ̀ⲧϩⲏⲃⲓ: ⲛ̀ⲧⲉϥⲑⲟⲩⲱ̀ⲧⲉⲛ ⲇⲏⲙⲟⲥⲓⲁ: ϧⲉⲛ ⲧⲉϥⲙⲉⲧⲟⲩⲣⲟ ⲉⲧ ϧⲉⲛ ⲛⲓⲫⲏⲟⲩⲓ̀.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲥⲙⲁⲙⲁⲧ: ϣⲁ ⲡⲓⲛⲓϥⲓ ⲛ̀ⲧⲉ ⲗⲉⲩⲧⲉⲟⲥ: ϫⲉ ⲁⲣⲉϫⲓⲙⲓ ⲅⲁⲣ ⲛ̀ⲟⲩϩ̀ⲙⲟⲧ: ϧⲁⲧⲉⲛ ⲡⲉⲚⲟⲩϯ Ⲩⲓⲟⲥ Ⲑⲉⲟⲥ.",
-        "english": ""
+        "english": "Well did Jacob our father see you as a spiritual ladder reaching unto heaven, and the holy Lord seated upon it, O dove.\n\nThe universally praised one, who received the Incontainable in her virginal womb and honorable bosom.\n\nFor He made your womb a throne, and made your sealed womb wider than the heavens.\n\nLet us all say, O pure and blessed vessel, you were likened to the ladder that Jacob saw.\n\nHail to you from us, for from your sealed treasure you gave birth to the One who rests in the saints.\n\nBe an intercessor for us before Him that we may be without sorrow, and that He may gather us all in His heavenly kingdom.\n\nWe glorify you, O blessed one, unto the last breath, for you have found favor before your God, the Son of God."
       },
       "subGenreId": {
         "kiahk": "Vespers Praises"
@@ -6202,7 +6202,7 @@
       "lyricsCopticUrl": "lyrics/coptic/roumi-9_coptic.md",
       "lyricsEnglishUrl": "lyrics/english/roumi-9_english.md",
       "lyrics": {
-        "english": "",
+        "english": "From the rising of the sun to its setting, and from the north unto the south, they offer you praise, saying with an awake mind.\n\nO you who received the fullness of the Holy Trinity, and became a dwelling place for the Son of David the psalmist.\n\nThe Father chose you, the Spirit overshadowed you, and the Son visited you, incarnating from you as He pleased.\n\nBehold, the Lord came forth from you, O blessed and perfect one, adorned with glory, honor, and grace.\n\nTo give salvation to the world which He created by His will, that they may be delivered from temptation through His abundant mercies.\n\nWe praise Him with a new song and exalt Him above all, and we continually praise before our Lady who bore Him.\n\nWe glorify you, O blessed one, unto the last breath, for you have found favor before your God, the Son of God.",
         "arabic": "من مشارق الشمس إلي مغاربها ومن الشمال إلى الجنوب يقدمون لك التسبيح قائلين بعقل مستيقظ.\n\nيا التي قبلت كمال الثالوث المقدس وصارت مسكناً لابن داود المرتل.\n\nالآب اختارك والروح ظللك والإبن تعهدك متجسداً منك كما أحب.\n\nهوذا الرب خرج منك أيتها المباركة الكاملة والمزينة بالمجد والإكرام والنعمة.\n\nليعطي الخلاص للعالم الذي خلقه بإرادته لينجوا من التجربة من أجل رأفاته الكثيرة.\n\nنسبحه تسبيحاً جديداً وأيضاً نزيده علواً ثم نسبح دائماً أمام سيدتنا التي ولدته.\n\nنمجدك أيتها المباركة، إلى النفس الأخير، لأنك وجدت نعمة، عند إلهك ابن الله.",
         "coptic": "Ⲓⲥ ⲁ̀ⲛⲁⲧⲟⲗⲏ ⲕⲉ ⲇⲩⲥⲓⲥ: ⲏ̀ⲗⲓⲟⲩ ⲛⲉⲙ ⲡⲉⲙϩⲓⲧ ϣⲁ ⲫ̀ⲣⲏⲥ: ⲥⲓ ⲡ̀ⲣⲟⲥⲫⲉⲣⲟⲩⲥⲓⲛ ⲉ̀ⲛⲉⲥⲓⲥ: ⲉⲩϫⲱ ⲙ̀ⲙⲟⲥ ϧⲉⲛ ⲟⲩⲛⲟⲩⲥ ⲉϥⲣⲏⲥ.\n\nⲰ̀ ⲑⲏⲉ̀ⲧⲁⲥϣⲱⲡ ⲉ̀ⲣⲟⲥ ⲡ̀ⲗⲏⲣⲱⲙⲁ: ⲧⲏⲥ ⲁ̀ⲅⲓⲁⲥ Ⲧ̀ⲣⲓⲁ̀ⲇⲟⲥ: ⲟⲩⲟϩ ⲁⲥϣⲱⲡ ⲛ̀ⲟⲩⲥ̀ⲕⲏⲛⲟⲙⲁ: ⲧⲟⲩ Ⲩ̀ⲓⲟⲩ Ⲇⲁⲩⲓⲇ ⲡⲓϩⲩⲙⲛⲟⲇⲟⲥ.\n\nⲞ̀ Ⲡⲁⲧⲏⲣ ⲉ̀ⲝⲁⲗⲉ̀ⲝⲁⲧⲟ ⲥⲟⲩ: ⲕⲉ Ⲡ̀ⲛⲉⲩⲙⲁ ⲉ̀ⲡⲓⲥⲕⲓ̀ⲁⲥⲉⲛ: Ⲩ̀ⲓⲟⲥ ⲙⲉⲛ ⲉ̀ⲡⲓⲥⲕⲉ̀ⲯⲁⲧⲟ ⲥⲟⲩ: ⲥⲁⲣⲕⲱⲑⲏ̀ⲥⲁⲥ ⲏ̀ ⲁ̀ⲅⲁⲡⲏⲥⲉⲛ.\n\nϨⲏⲡⲡⲉ ⲓⲥ Ⲡⲟ̅ⲥ̅ ⲁϥⲓ̀ ⲉ̀ⲃⲟⲗ ⲛ̀ϧⲏϯ: ⲱ̀ ⲑⲏⲉ̀ⲧⲥ̀ⲙⲁⲙⲁⲧ: ⲛ̀ⲧⲉⲗⲓ̀ⲁ̀ ⲟⲩⲟϩ ⲉⲧⲥⲉⲗⲥⲱⲗ: ϧⲉⲛ ⲡ̀ⲱ̀ⲟⲩ ⲛⲉⲙ ⲡ̀ⲧⲁⲓⲟ ⲛⲉⲙ ⲡⲓϩ̀ⲙⲟⲧ.\n\nⲚ̀ⲧⲉϥϯ ⲙ̀ⲫ̀ⲛⲟϩⲉⲙ ⲙ̀ⲡⲓⲕⲟⲥⲙⲟⲥ: ⲉⲧⲁϥⲑⲁⲙⲓⲟϥ ϧⲉⲛ ⲡⲉϥⲟ̀ⲩⲱϣ: ⲛ̀ⲧⲟⲩⲟ̀ⲩϫⲁⲓ ⲁⲡⲟ ⲡⲓⲣⲁⲥⲙⲟⲥ: ⲉⲑⲃⲉ ⲛⲉϥⲙⲉⲧϣⲉⲛϩⲏⲧ ⲉⲧⲟϣ.\n\nⲦⲉⲛϩⲱⲥ ⲉ̀ⲣⲟϥ ⲁ̀ⲥⲙⲁ ⲕⲉⲛⲟⲛ: ⲟⲩⲟϩ ⲟⲛ ⲧⲉⲛⲉⲣϩⲟⲩⲟ̀ ϭⲁⲥϥ: ⲕⲉ ⲉ̀ⲛⲟⲩⲙⲉⲛ ⲇⲓⲁⲙⲉⲛⲟⲛ: ⲛⲁϩⲣⲉⲛ ⲇⲉⲥⲡⲓⲛⲁ ⲑⲏⲉ̀ⲧⲁⲥⲙⲁⲥϥ.\n\nⲦⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲥⲙⲁⲙⲁⲧ: ϣⲁ ⲡⲓⲛⲓϥⲓ ⲛ̀ⲧⲉ ⲗⲉⲩⲧⲉⲟⲥ: ϫⲉ ⲁⲣⲉϫⲓⲙⲓ ⲅⲁⲣ ⲛ̀ⲟⲩϩ̀ⲙⲟⲧ: ϧⲁⲧⲉⲛ ⲡⲉⲚⲟⲩϯ Ⲩⲓⲟⲥ Ⲑⲉⲟⲥ."
       },
@@ -6478,133 +6478,12 @@
             "nanoseconds": 239000000
           },
           "active": true,
-          "markersUrl": "markers/cantor-gad/cantor-gad_tenen_markers.txt",
-          "markers": [
-            20.825,
-            30.225,
-            40.2,
-            53.725,
-            68.15,
-            78.75,
-            87.425,
-            99.4,
-            108.575,
-            121.925,
-            134.1,
-            145.25,
-            155.2,
-            170.4,
-            180.475,
-            188.775,
-            200.35,
-            209.875,
-            222.6,
-            233.425,
-            244.5,
-            255.1,
-            270.65,
-            281.175,
-            289.375,
-            301.05,
-            310,
-            322.875,
-            334.325,
-            345.15,
-            355.2,
-            370.1,
-            380.05,
-            391.85,
-            399.925,
-            408.1,
-            416.125,
-            424.125,
-            433.675,
-            442.675,
-            455,
-            466.9,
-            478.725,
-            488.65,
-            501.575,
-            513.725,
-            525.25,
-            535.525,
-            544.475,
-            553.825,
-            562.275,
-            570.4,
-            580.35,
-            590.9,
-            602.175,
-            615.9,
-            625.5,
-            634.875,
-            646,
-            656.7,
-            667.3,
-            679.125,
-            694.6,
-            706.325,
-            715.225,
-            726.625,
-            735.6,
-            747.15,
-            758.525,
-            768.5,
-            777.4,
-            786.675,
-            794.825,
-            803.05,
-            814.4,
-            822.875,
-            835.7,
-            846.975,
-            857.775,
-            868.3,
-            883.7,
-            894.65,
-            902.675,
-            914.275,
-            923.95,
-            936.725,
-            948.3,
-            959.425,
-            969.45,
-            984.85,
-            996.075,
-            1004.075,
-            1015.5,
-            1025.95,
-            1036.45,
-            1048.225,
-            1056.85,
-            1068.575,
-            1080.275,
-            1091.7,
-            1101.075,
-            1113.925,
-            1125.45,
-            1136.475,
-            1146.1,
-            1161.4,
-            1173.225,
-            1182.975,
-            1196.65,
-            1206.35,
-            1218.775,
-            1227.25,
-            1237.425
-          ],
-          "lyricsMapping": [
-            0,
-            51,
-            107,
-            -1
-          ],
+          "markers": [],
+          "lyricsMapping": [],
           "markersCount": 113,
           "hymnId": "tenen",
           "audioLength": 1252.3,
-          "mode": "learn",
-          "lyricsMappingUrl": "markers/cantor-gad/cantor-gad_tenen_lyrics_markers.txt",
+          "mode": "listen",
           "cantor": {
             "id": "cantor-gad",
             "cantorCloudActive": true,
