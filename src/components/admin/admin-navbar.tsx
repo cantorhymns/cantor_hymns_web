@@ -4,7 +4,6 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAdminAuth } from '@/context/admin-auth-context';
-import { PublishModal } from './publish-modal';
 import { PendingChangesModal } from './pending-changes-modal';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -32,7 +31,6 @@ const NAV_LINKS = [
 export function AdminNavbar() {
   const pathname = usePathname();
   const { user, role, isOwner, logout } = useAdminAuth();
-  const [publishOpen, setPublishOpen] = React.useState(false);
 
   const authorizedNavLinks = React.useMemo(() => {
     return NAV_LINKS.filter(link => {
@@ -103,8 +101,7 @@ export function AdminNavbar() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-2 shrink-0">
-          <PendingChangesModal onOpenPublish={() => setPublishOpen(true)} />
-          <PublishModal open={publishOpen} onOpenChange={setPublishOpen} />
+          <PendingChangesModal />
 
           <div className="h-6 w-px bg-border hidden sm:block" />
 

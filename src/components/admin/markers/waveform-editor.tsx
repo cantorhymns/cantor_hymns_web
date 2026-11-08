@@ -64,7 +64,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { formatTime, exportAudacityLabels, parseAudacityLabels, downloadTextFile } from './audacity-converter';
-import { formatCantorName } from '@/lib/utils';
+import { formatCantorName, cn } from '@/lib/utils';
 
 interface WaveformEditorProps {
   recording: FirestoreRecording;
@@ -235,6 +235,11 @@ export function WaveformEditor({
     [verses, lyricsMapping]
   );
 
+  // Total marker positions available, always counting the automatic Track Start marker at 00:00.00
+  const hasExplicitZero = useMemo(() => markers.length > 0 && markers[0] <= 0.05, [markers]);
+  const totalMarkerCount = hasExplicitZero ? markers.length : markers.length + 1;
+  const isMarkerCountEqual = totalMarkerCount === verses.length || markers.length === verses.length;
+
   // Get mapped marker for a verse (returns 0 for track start, > 0 for marker number, null for unmapped)
   const getMappedMarkerForVerse = useCallback(
     (verseIdx: number): { markerNum: number; time: number; label: string } | null => {
@@ -333,14 +338,14 @@ export function WaveformEditor({
       plugin.clearRegions();
     } catch (_) {}
 
-    // Only place markers that are genuinely verse transitions (> 0.1s from track start)
+    // Place each marker on the waveform track
     markerList.forEach((start, markerIdx) => {
-      if (typeof start !== 'number' || isNaN(start) || start <= 0.1) return;
+      if (typeof start !== 'number' || isNaN(start)) return;
 
       const nextValidMarker = markerList
         .slice(markerIdx + 1)
-        .find(m => typeof m === 'number' && !isNaN(m) && m > 0.1);
-      const end = nextValidMarker ?? Math.max(start + 1, totalDur);
+        .find(m => typeof m === 'number' && !isNaN(m));
+      const end = nextValidMarker ?? Math.max(start + 0.5, totalDur);
       const isSelected = selectedIdx === markerIdx;
       const mappedVerse = getMappedVerseForMarker(markerIdx);
       const vText = mappedVerse ? ` • ${mappedVerse.label.replace('Verse ', 'V')}` : '';
@@ -740,16 +745,23 @@ export function WaveformEditor({
   }, [duration, syncScrollToCenter]);
 
   useEffect(() => {
+    const handleGlobalPointerUp = () => {
+      isDraggingMarkerRef.current = false;
+    };
     window.addEventListener('mousemove', handleScrubMove);
     window.addEventListener('touchmove', handleScrubMove);
     window.addEventListener('mouseup', handleScrubEnd);
     window.addEventListener('touchend', handleScrubEnd);
+    window.addEventListener('pointerup', handleGlobalPointerUp);
+    window.addEventListener('pointercancel', handleGlobalPointerUp);
 
     return () => {
       window.removeEventListener('mousemove', handleScrubMove);
       window.removeEventListener('touchmove', handleScrubMove);
       window.removeEventListener('mouseup', handleScrubEnd);
       window.removeEventListener('touchend', handleScrubEnd);
+      window.removeEventListener('pointerup', handleGlobalPointerUp);
+      window.removeEventListener('pointercancel', handleGlobalPointerUp);
     };
   }, [handleScrubMove, handleScrubEnd]);
 
@@ -786,6 +798,7 @@ export function WaveformEditor({
       dragToSeek: false,
       interact: false,
       autoCenter: false,
+      backend: 'WebAudio',
     });
 
     wavesurferRef.current = ws;
@@ -916,6 +929,16 @@ export function WaveformEditor({
     const wasPlaying = isPlayingRef.current || wavesurferRef.current.isPlaying();
     const newTime = Math.max(0, Math.min(duration, currentTime + delta));
     wavesurferRef.current.setTime(newTime);
+    if (markers.length > 0) {
+      let matchedIdx: number | null = null;
+      for (let i = markers.length - 1; i >= 0; i--) {
+        if (newTime >= markers[i]) {
+          matchedIdx = i;
+          break;
+        }
+      }
+      setSelectedMarkerIdx(matchedIdx);
+    }
     if (wasPlaying) {
       isSeekingRef.current = true;
       wavesurferRef.current.play()
@@ -926,10 +949,11 @@ export function WaveformEditor({
           }, 150);
         });
     }
-  }, [currentTime, duration, isAudioReady]);
+  }, [currentTime, duration, isAudioReady, markers]);
 
   // Drop Marker at current playhead position
   const dropMarkerAtCurrentTime = useCallback(() => {
+    isDraggingMarkerRef.current = false;
     const rawTime = Math.round(currentTime * 1000) / 1000;
 
     // Don't add if a marker exists within 0.05 seconds
@@ -1009,28 +1033,8 @@ export function WaveformEditor({
     const REWIND_THRESHOLD = 2.0; // 2-second rule matching hymn-player
     const audioTime = currentTime;
 
-    // Helper to rewind cleanly to the beginning of the audio track
-    const rewindToStart = () => {
-      const ws = wavesurferRef.current;
-      if (!ws) return;
-      const zeroMarkerIdx = markers.findIndex(m => m <= 0.05);
-      setSelectedMarkerIdx(zeroMarkerIdx >= 0 ? zeroMarkerIdx : null);
-      const wasPlaying = isPlayingRef.current || ws.isPlaying();
-      ws.setTime(0);
-      if (wasPlaying) {
-        isSeekingRef.current = true;
-        ws.play()
-          .catch(() => {})
-          .finally(() => {
-            setTimeout(() => {
-              isSeekingRef.current = false;
-            }, 150);
-          });
-      }
-    };
-
     if (markers.length === 0) {
-      rewindToStart();
+      seekRelative(-10);
       return;
     }
 
@@ -1038,7 +1042,8 @@ export function WaveformEditor({
     const currentSectionStartMarker = reversedMarks.find(mark => mark <= audioTime);
 
     if (currentSectionStartMarker === undefined) {
-      rewindToStart();
+      // No marker before current position -> seek 10s backward
+      seekRelative(-10);
       return;
     }
 
@@ -1055,31 +1060,89 @@ export function WaveformEditor({
         const prevIdx = markers.indexOf(previousSectionStartMarker);
         jumpToMarker(prevIdx);
       } else {
-        // No previous marker exists -> rewind to beginning of track (0.0s)
-        rewindToStart();
+        // No previous marker exists -> seek 10s backward instead of jumping to 0.0s
+        seekRelative(-10);
       }
     }
-  }, [markers, currentTime, isAudioReady, jumpToMarker]);
+  }, [markers, currentTime, isAudioReady, jumpToMarker, seekRelative]);
 
   // Jump to Next Marker
   const jumpToNextMarker = useCallback(() => {
-    if (markers.length === 0 || !wavesurferRef.current || !isAudioReady) return;
+    if (!wavesurferRef.current || !isAudioReady) return;
+    if (markers.length === 0) {
+      seekRelative(10);
+      return;
+    }
     const audioTime = currentTime;
     const nextMark = markers.find(mark => mark > audioTime + 0.3);
     if (nextMark !== undefined) {
       const nextIdx = markers.indexOf(nextMark);
       jumpToMarker(nextIdx);
     } else {
-      wavesurferRef.current.setTime(duration);
+      // No next marker exists -> seek 10s forward instead of jumping to duration
+      seekRelative(10);
     }
-  }, [markers, currentTime, duration, isAudioReady, jumpToMarker]);
+  }, [markers, currentTime, isAudioReady, jumpToMarker, seekRelative]);
 
-  // Auto-map sequential verses: Verse 1 maps to Track Start (0), Verse 2+ map to Markers 1..N
+  // Handle Previous Hymn action matching web and mobile app:
+  // If > 3 seconds into current track -> rewind to beginning of track (0.0s).
+  // If <= 3 seconds -> navigate to previous hymn.
+  const handlePrevHymnAction = useCallback(() => {
+    const PREVIOUS_RESTART_THRESHOLD = 3.0;
+    const ws = wavesurferRef.current;
+    const audioTime = ws ? ws.getCurrentTime() : currentTime;
+
+    if (audioTime > PREVIOUS_RESTART_THRESHOLD) {
+      if (ws) {
+        const wasPlaying = isPlayingRef.current || ws.isPlaying();
+        ws.setTime(0);
+        setCurrentTime(0);
+        syncScrollToCenter(0);
+        const zeroMarkerIdx = markers.findIndex(m => m <= 0.05);
+        setSelectedMarkerIdx(zeroMarkerIdx >= 0 ? zeroMarkerIdx : null);
+        if (wasPlaying) {
+          isSeekingRef.current = true;
+          ws.play()
+            .catch(() => {})
+            .finally(() => {
+              setTimeout(() => {
+                isSeekingRef.current = false;
+              }, 150);
+            });
+        }
+      }
+    } else if (onPrevHymn) {
+      onPrevHymn();
+    } else if (ws) {
+      ws.setTime(0);
+      setCurrentTime(0);
+      syncScrollToCenter(0);
+    }
+  }, [currentTime, markers, onPrevHymn, syncScrollToCenter]);
+
+  // Auto-map sequential verses: Verse 1 maps to Track Start (0) or Marker 1, and subsequent verses map sequentially
   const autoMapSequentially = useCallback(() => {
-    const nextMapping = verses.map((_, i) => (i === 0 ? 0 : i <= markers.length ? i : -1));
+    if (verses.length === 0) return;
+
+    const hasZero = markers.length > 0 && markers[0] <= 0.05;
+    let nextMapping: number[];
+
+    if (hasZero) {
+      // Verse 1 -> Marker 1 (at 0:00.00), Verse 2 -> Marker 2, etc.
+      nextMapping = verses.map((_, i) => (i < markers.length ? i + 1 : -1));
+    } else if (markers.length + 1 === verses.length) {
+      // Verse 1 -> Track Start (0), Verse 2+ -> dropped Markers 1..N
+      nextMapping = verses.map((_, i) => (i === 0 ? 0 : i <= markers.length ? i : -1));
+    } else if (markers.length === verses.length) {
+      // 1:1 direct mapping to dropped markers
+      nextMapping = verses.map((_, i) => i + 1);
+    } else {
+      nextMapping = verses.map((_, i) => (i === 0 ? 0 : i <= markers.length ? i : -1));
+    }
+
     setLyricsMapping(nextMapping);
     setHasUnsavedChanges(true);
-  }, [verses.length, markers.length]);
+  }, [verses, markers]);
 
   /**
    * Binds a verse to a target marker (targetMarkerNum: 0 for Track Start, 1..N for markers 1..N).
@@ -1177,10 +1240,10 @@ export function WaveformEditor({
         }
       } else if (e.code === 'BracketLeft') {
         e.preventDefault();
-        jumpToPrevMarker();
+        handlePrevHymnAction();
       } else if (e.code === 'BracketRight') {
         e.preventDefault();
-        jumpToNextMarker();
+        onNextHymn?.();
       } else if (e.code === 'Delete' || e.code === 'Backspace') {
         if (selectedMarkerIdx !== null) {
           e.preventDefault();
@@ -1191,7 +1254,7 @@ export function WaveformEditor({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [togglePlay, dropMarkerAtCurrentTime, seekRelative, jumpToPrevMarker, jumpToNextMarker, deleteMarker, selectedMarkerIdx, markers.length]);
+  }, [togglePlay, dropMarkerAtCurrentTime, seekRelative, jumpToPrevMarker, jumpToNextMarker, handlePrevHymnAction, onNextHymn, deleteMarker, selectedMarkerIdx, markers.length]);
 
   // Audacity File Import
   const handleImportAudacity = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1731,11 +1794,13 @@ export function WaveformEditor({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={onPrevHymn}
-                disabled={!prevHymnTitle}
-                className="h-7 px-2.5 text-xs gap-1 border-muted-foreground/20 hover:text-primary hover:border-primary/40 shadow-none text-muted-foreground hover:bg-primary/5"
+                onClick={handlePrevHymnAction}
+                disabled={!prevHymnTitle && currentTime <= 3.0}
+                className="h-7 px-2.5 text-xs gap-1 border-muted-foreground/20 hover:text-primary hover:border-primary/40 shadow-none text-muted-foreground hover:bg-primary/5 disabled:opacity-40 disabled:cursor-not-allowed"
                 title={
-                  prevHymnTitle
+                  currentTime > 3.0
+                    ? 'Rewind to beginning of track (Press [)'
+                    : prevHymnTitle
                     ? `Previous Hymn: ${prevHymnTitle} (Press [)`
                     : 'First hymn in liturgical order'
                 }
@@ -1778,24 +1843,36 @@ export function WaveformEditor({
             <div>
               <CardTitle className="text-sm font-semibold flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-primary" />
-                <span>Waveform Markers ({markers.length})</span>
+                <span>Waveform Markers ({totalMarkerCount})</span>
               </CardTitle>
               <CardDescription className="text-[11px]">
                 Drag marker to lyric, or drop lyric here &bull; Reflects comment on marker
               </CardDescription>
             </div>
-            {markers.length > 0 && (
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={autoMapSequentially}
-                className="text-xs h-7 gap-1 text-primary hover:text-primary"
-                title="Map Verse 1 to Track Start, and subsequent verses to Markers 1, 2, 3..."
-              >
-                <Sparkles className="w-3 h-3" />
-                <span>Auto-Map Verses</span>
-              </Button>
-            )}
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={autoMapSequentially}
+              disabled={isReadOnly || verses.length === 0 || !isMarkerCountEqual}
+              className={cn(
+                'text-xs h-7 gap-1 transition-opacity',
+                isMarkerCountEqual && verses.length > 0 && !isReadOnly
+                  ? 'text-primary hover:text-primary cursor-pointer'
+                  : 'text-muted-foreground opacity-40 cursor-not-allowed hover:bg-transparent'
+              )}
+              title={
+                isReadOnly
+                  ? 'Editing locked'
+                  : verses.length === 0
+                  ? 'Add hymn lyrics before auto-mapping'
+                  : !isMarkerCountEqual
+                  ? `Cannot auto-map: ${totalMarkerCount} markers (Track Start + ${markers.length} dropped) vs ${verses.length} verses (counts must match)`
+                  : `Auto-map ${verses.length} verses to matching markers (including Track Start)`
+              }
+            >
+              <Sparkles className="w-3 h-3" />
+              <span>Auto-Map Verses</span>
+            </Button>
           </CardHeader>
           <CardContent className="p-0 flex-1 overflow-y-auto">
             {/* Track Start (00:00.00) Pin & Drop Target */}
