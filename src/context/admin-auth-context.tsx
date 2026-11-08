@@ -27,7 +27,12 @@ interface AdminAuthContextType {
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
 
-const ROOT_ADMIN_EMAILS = ['cantorhymns@gmail.com', 'andrewekladious@gmail.com'];
+export const ROOT_ADMIN_EMAILS = [
+  'cantorhymns@gmail.com',
+  'andrewekladious@gmail.com',
+  'pierrek3419@gmail.com',
+  'vmsazoom@gmail.com',
+];
 
 export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const { auth, firestore, user, isUserLoading } = useFirebase();

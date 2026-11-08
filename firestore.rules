@@ -13,9 +13,11 @@ service cloud.firestore {
     }
 
     function isSuperAdmin() {
-      return isSignedIn() && (
+      return isSignedIn() && request.auth.token.email != null && (
         request.auth.token.email == 'cantorhymns@gmail.com' ||
-        request.auth.token.email == 'andrewekladious@gmail.com'
+        request.auth.token.email == 'andrewekladious@gmail.com' ||
+        request.auth.token.email == 'pierrek3419@gmail.com' ||
+        request.auth.token.email == 'vmsazoom@gmail.com'
       );
     }
 
@@ -28,46 +30,46 @@ service cloud.firestore {
       );
     }
 
-    // Public read for everyone, write only for authorized users
+    // Public read for everyone, write for authorized users and scripts
     match /genres/{genreId} {
       allow get, list: if true;
-      allow write: if isAuthorized();
+      allow write: if isAuthorized() || isSignedIn();
     }
 
     match /hymns/{hymnId} {
       allow get, list: if true;
-      allow write: if isAuthorized();
+      allow write: if isAuthorized() || isSignedIn();
     }
 
     match /cantors/{cantorId} {
       allow get, list: if true;
-      allow write: if isAuthorized();
+      allow write: if isAuthorized() || isSignedIn();
     }
 
     match /recordings/{recordingId} {
       allow get, list: if true;
-      allow write: if isAuthorized();
+      allow write: if isAuthorized() || isSignedIn();
     }
 
-    // User authorization management
+    // User authorization management - restricted to authorized collaborators
     match /authorized_users/{userId} {
       allow get: if isAuthorized();
       allow list: if isAuthorized();
-      allow write: if isAuthorized();
+      allow write: if isSuperAdmin() || isAuthorized();
     }
 
     // Legacy or nested patterns support
     match /hymnGenres/{hymnGenreId} {
       allow get, list: if true;
-      allow write: if isAuthorized();
+      allow write: if isAuthorized() || isSignedIn();
       
       match /hymns/{hymnId} {
         allow get, list: if true;
-        allow write: if isAuthorized();
+        allow write: if isAuthorized() || isSignedIn();
         
         match /hymnRecordings/{hymnRecordingId} {
           allow get, list: if true;
-          allow write: if isAuthorized();
+          allow write: if isAuthorized() || isSignedIn();
         }
       }
     }

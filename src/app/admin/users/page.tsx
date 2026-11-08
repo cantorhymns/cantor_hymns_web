@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useFirebase } from '@/firebase';
-import { useAdminAuth } from '@/context/admin-auth-context';
+import { useAdminAuth, ROOT_ADMIN_EMAILS } from '@/context/admin-auth-context';
 import {
   collection,
   getDocs,
@@ -110,8 +110,6 @@ export default function AdminUsersPage() {
       setIsSubmitting(false);
     }
   };
-
-  const ROOT_ADMIN_EMAILS = ['cantorhymns@gmail.com', 'andrewekladious@gmail.com'];
 
   const handleRemoveUser = async (email: string) => {
     if (!firestore) return;
@@ -260,7 +258,12 @@ export default function AdminUsersPage() {
           </div>
           <div>
             <div className="text-xs font-semibold text-foreground">
-              Project Owners: <span className="font-mono">andrewekladious@gmail.com</span> &bull; <span className="font-mono">cantorhymns@gmail.com</span>
+              Project Owners: {ROOT_ADMIN_EMAILS.map((email, i) => (
+                <React.Fragment key={email}>
+                  <span className="font-mono">{email}</span>
+                  {i < ROOT_ADMIN_EMAILS.length - 1 && ' • '}
+                </React.Fragment>
+              ))}
             </div>
             <div className="text-[11px] text-muted-foreground">
               Repository owner accounts with permanent access across all collections and publishing controls.
