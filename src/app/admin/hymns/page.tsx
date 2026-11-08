@@ -50,6 +50,7 @@ import {
   FolderTree,
   Sparkles,
   X,
+  Lock,
 } from 'lucide-react';
 import { formatCantorName } from '@/lib/utils';
 import defaultCatalog from '@/data/catalog.json';
@@ -59,9 +60,13 @@ import {
   setHymnSubgenre,
   removeHymnFromGenre,
 } from '@/lib/subgenre-utils';
+import { useAdminAuth } from '@/context/admin-auth-context';
+import { recordPendingChange } from '@/lib/pending-changes';
+import { useHymnLock } from '@/lib/hooks/useHymnLock';
 
 function AdminHymnsContent() {
   const { firestore } = useFirebase();
+  const { user } = useAdminAuth();
   const searchParams = useSearchParams();
   const { toast } = useToast();
 
@@ -87,6 +92,15 @@ function AdminHymnsContent() {
   const [editEnglish, setEditEnglish] = useState('');
   const [editArabic, setEditArabic] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+
+  // Real-time collaborative concurrency lock
+  const {
+    isLockedByOther,
+    lockedBy,
+    isLockOwner,
+    overrideLock,
+    activeLocks,
+  } = useHymnLock(selectedHymnId, editName, !!selectedHymnId);
 
   // New hymn modal
   const [isNewHymnOpen, setIsNewHymnOpen] = useState(false);
@@ -131,7 +145,9 @@ function AdminHymnsContent() {
         ]);
 
         const fallbackGenresMap = new Map((defaultCatalog.genres as any[]).map(g => [g.id, g]));
-        const gList = genresSnap.docs.map(d => {
+        const gList = genresSnap.docs
+          .filter(d => d.id !== 'app_settings' && d.id !== '__app_settings__')
+          .map(d => {
           const data = d.data() as any;
           const fallback = fallbackGenresMap.get(d.id);
           return {
@@ -249,6 +265,7 @@ function AdminHymnsContent() {
 
     try {
       setIsSaving(true);
+      const prevHymn = hymns.find(h => h.id === selectedHymnId);
       const hymnRef = doc(firestore, 'hymns', selectedHymnId);
 
       const updatedPayload: FirestoreHymn = {
@@ -266,6 +283,34 @@ function AdminHymnsContent() {
       };
 
       await updateDoc(hymnRef, updatedPayload as any);
+
+      // Record pending change for staging review & 1-click undo
+      await recordPendingChange(firestore, {
+        entityType: 'hymn',
+        entityId: selectedHymnId,
+        entityName: editName || selectedHymnId,
+        action: 'update',
+        summary: `Updated hymn metadata, subgenres, and lyrics`,
+        previousSnapshot: prevHymn ? {
+          name: prevHymn.name,
+          description: prevHymn.description || '',
+          genreIds: prevHymn.genreIds || [],
+          subGenreId: prevHymn.subGenreId || {},
+          lyrics: prevHymn.lyrics || { coptic: '', english: '', arabic: '' },
+        } : null,
+        newSnapshot: {
+          name: editName,
+          description: editDescription,
+          genreIds: editGenreIds,
+          subGenreId: editSubgenres,
+          lyrics: {
+            coptic: editCoptic,
+            english: editEnglish,
+            arabic: editArabic,
+          },
+        },
+        userEmail: user?.email || 'admin',
+      });
 
       // Synchronize subgenre placement into each genre's content string
       const updatedGenres = [...genres];
@@ -557,9 +602,23 @@ function AdminHymnsContent() {
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-semibold text-xs text-foreground truncate">
-                        {h.name}
-                      </span>
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="font-semibold text-xs text-foreground truncate">
+                          {h.name}
+                        </span>
+                        {(() => {
+                          const lock = activeLocks.get(h.id);
+                          if (lock && lock.userEmail !== user?.email) {
+                            return (
+                              <span className="text-[9px] font-medium px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 flex items-center gap-1 shrink-0 whitespace-nowrap">
+                                <Lock className="w-2.5 h-2.5 text-amber-600" />
+                                <span>{lock.userName}</span>
+                              </span>
+                            );
+                          }
+                          return null;
+                        })()}
+                      </div>
                       <div className="flex items-center gap-1.5 shrink-0">
                         {totalMarkers > 0 && (
                           <Link
@@ -648,8 +707,9 @@ function AdminHymnsContent() {
                     <Button
                       size="sm"
                       onClick={handleSaveHymn}
-                      disabled={isSaving}
-                      className="h-8 gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs"
+                      disabled={isSaving || isLockedByOther}
+                      title={isLockedByOther ? (lockedBy ? `Currently locked by ${lockedBy.userName || lockedBy.userEmail}` : 'Editing locked') : 'Save to Cloud'}
+                      className="h-8 gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs disabled:opacity-50"
                     >
                       {isSaving ? (
                         <>
@@ -666,6 +726,33 @@ function AdminHymnsContent() {
                   </div>
                 </CardHeader>
                 <CardContent className="p-6 space-y-4">
+                  {/* Lock Warning Banner */}
+                  {isLockedByOther && (
+                    <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-amber-900 dark:text-amber-200">
+                      <div className="flex items-center gap-2.5">
+                        <Lock className="w-5 h-5 text-amber-600 shrink-0" />
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-xs">Read-Only Mode &bull; Active Editing Lock</span>
+                            <span className="text-[9px] uppercase font-mono px-1 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold">Locked</span>
+                          </div>
+                          <p className="text-[11px] text-amber-800/80 dark:text-amber-300/80 mt-0.5">
+                            <strong>{lockedBy?.userName || lockedBy?.userEmail}</strong> is currently editing this hymn. Changes cannot be saved until they finish.
+                          </p>
+                        </div>
+                      </div>
+                      {user && (user.email === 'cantorhymns@gmail.com' || user.email === 'andrewekladious@gmail.com') && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={overrideLock}
+                          className="border-amber-600 text-amber-800 hover:bg-amber-600 hover:text-white dark:border-amber-400 dark:text-amber-200 text-xs shrink-0 self-end sm:self-center font-medium"
+                        >
+                          Take Over Lock
+                        </Button>
+                      )}
+                    </div>
+                  )}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold">Hymn Title</label>

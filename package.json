@@ -11,6 +11,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "catalog:push": "tsx src/scripts/upload-catalog-to-storage.ts",
+    "db:backup": "tsx src/scripts/export-firestore-to-json.ts",
+    "db:export": "tsx src/scripts/export-firestore-to-json.ts",
     "db:seed": "tsx -r dotenv/config src/scripts/seed-db.ts",
     "db:clean": "tsx -r dotenv/config src/scripts/clean-db.ts",
     "db:migrate-ids": "tsx -r dotenv/config src/scripts/migrate-recording-ids.ts",

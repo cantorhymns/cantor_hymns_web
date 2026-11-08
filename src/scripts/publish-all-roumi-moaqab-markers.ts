@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getStorage, ref, uploadBytes } from 'firebase/storage';
+import { getFirestore, doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { getAuth, signInAnonymously } from 'firebase/auth';
 import { firebaseConfig } from '../firebase/config';
 import { uploadCatalogToStorage } from './upload-catalog-to-storage';
@@ -26,6 +27,7 @@ async function main() {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const storage = getStorage(app);
+  const db = getFirestore(app);
 
   console.log('Authenticating anonymously to Firebase Storage...');
   await signInAnonymously(auth);
@@ -77,7 +79,22 @@ async function main() {
       recordings[recIdx].mode = 'learn';
       recordings[recIdx].markersUrl = storageMarkersPath;
       recordings[recIdx].lyricsMappingUrl = storageLyricsMarkersPath;
-      console.log(`✅ Uploaded & updated ${recordingId} (${markers.length} markers for ${numVerses} verses)`);
+      // Sync to Cloud Firestore (Primary Source of Truth for Waveform Studio & Admin)
+      const recDocRef = doc(db, 'recordings', recordingId);
+      await setDoc(
+        recDocRef,
+        {
+          markers,
+          lyricsMapping,
+          mode: 'learn',
+          markersUrl: storageMarkersPath,
+          lyricsMappingUrl: storageLyricsMarkersPath,
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      );
+
+      console.log(`✅ Uploaded & updated ${recordingId} in Storage, JSON, and Cloud Firestore (${markers.length} markers for ${numVerses} verses)`);
     } else {
       console.warn(`⚠️ Recording ${recordingId} not found in recordings.json!`);
     }

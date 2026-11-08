@@ -1,37 +1,79 @@
 [
   {
-    "id": "cantor-bola",
-    "name": "Cantor Bola",
-    "cantorCloudActive": true
-  },
-  {
-    "id": "cantor-gad",
-    "name": "Cantor Gad",
-    "cantorCloudActive": true
-  },
-  {
     "id": "cantor-ibrahim",
+    "updatedAt": {
+      "seconds": 1794022243,
+      "nanoseconds": 804000000
+    },
+    "active": true,
+    "rank": 1,
     "name": "Cantor Ibrahim",
     "cantorCloudActive": true
   },
   {
+    "id": "cantor-gad",
+    "cantorCloudActive": true,
+    "name": "Cantor Gad",
+    "rank": 2,
+    "active": true,
+    "updatedAt": {
+      "seconds": 1794022243,
+      "nanoseconds": 851000000
+    }
+  },
+  {
     "id": "cantor-tharwat",
     "cantorCloudActive": true,
-    "name": "Cantor Tharwat"
+    "updatedAt": {
+      "seconds": 1794022243,
+      "nanoseconds": 893000000
+    },
+    "active": true,
+    "name": "Cantor Tharwat",
+    "rank": 3
+  },
+  {
+    "id": "cantor-bola",
+    "active": true,
+    "updatedAt": {
+      "seconds": 1794022243,
+      "nanoseconds": 941000000
+    },
+    "rank": 4,
+    "name": "Cantor Bola",
+    "cantorCloudActive": true
   },
   {
     "id": "cantor-zaher",
-    "cantorCloudActive": false,
-    "name": "Cantor Zaher"
+    "active": true,
+    "name": "Cantor Zaher",
+    "rank": 5,
+    "updatedAt": {
+      "seconds": 1794108701,
+      "nanoseconds": 952000000
+    },
+    "cantorCloudActive": true
   },
   {
     "id": "hics",
+    "name": "HICS",
+    "rank": 6,
     "cantorCloudActive": true,
-    "name": "HICS"
+    "updatedAt": {
+      "seconds": 1794022244,
+      "nanoseconds": 29000000
+    },
+    "active": true
   },
   {
     "id": "other",
-    "name": "Other",
-    "cantorCloudActive": false
+    "updatedAt": {
+      "seconds": 1794022244,
+      "nanoseconds": 60000000
+    },
+    "active": true,
+    "cantorCloudActive": false,
+    "rank": 7,
+    "name": "Other"
   }
 ]

@@ -28,8 +28,8 @@ export function useHymns(genreId?: string, hymnIdsFilter?: string[]) {
         ...hymn,
         recordings,
       };
-    }).filter(hymn => (hymn.recordings && hymn.recordings.length > 0) || !genreId);
-  }, [rawHymns, genreId]);
+    });
+  }, [rawHymns]);
 
   return {
     data: hymnsWithRecordings,

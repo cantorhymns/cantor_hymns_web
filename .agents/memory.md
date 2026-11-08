@@ -14,14 +14,20 @@ This agent session is strictly dedicated to **CantorAgent** data and media opera
    - `markers` array never includes `0.00` (length = $N-1$ for $N$ verses).
    - 1:1 `lyricsMapping` array (`[0, 1, 2, ..., N-1]`).
 5. **App Data Synchronization & CDN Publishing**:
+   - Cloud Firestore is the **LIVE SOURCE OF TRUTH for Admin Portal & Waveform Studio** (`/admin/markers`, `/admin/hymns`, `/admin/seasons`, `/admin/cantors`) as well as the source from which the CDN compiler builds the live catalog.
+   - **MANDATORY FIRESTORE WRITES**: NEVER write only to local `.json` files or manually upload storage files. When adding or updating hymns, seasons, cantors, or recordings, you MUST write directly to Cloud Firestore (`hymns/{hymnId}`, `genres/{genreId}`, `cantors/{cantorId}`, `recordings/{recordingId}`).
+   - **Hymns Awaiting Audio**: Hymns with complete lyrics awaiting audio recordings are fully supported and display under their liturgical subgenre with a `"No recordings"` badge. Never filter them out.
    - Local sync across Web (`src/data/`, `data/`, `public/data/`) and Mobile (`../cantor_hymns_mobile/src/data/`).
-   - Live edge CDN push directly to Firebase Storage (`data/catalog.json`) via `uploadCatalogToStorage()`.
-   - **Firestore is fully decommissioned** — do NOT read from or write to Firestore in any ingestion scripts.
+   - Live edge CDN push directly to Firebase Storage (`data/catalog.json`) compiled from Firestore.
+   - Bump `STORAGE_CACHE_KEY` in `src/lib/services/catalog.ts` if structural/schema changes occur to avoid stale client `localStorage` caching.
 
 ## System Architecture & Tech Stack
 - **Framework**: Next.js 15.5.9 (App Router, TypeScript)
 - **Styling**: Tailwind CSS & Shadcn UI
-- **Metadata Architecture**: Static JSON files (`src/data/`, `public/data/`, and `../cantor_hymns_mobile/src/data/`) synced live with Firebase Storage (`data/catalog.json`). **Firestore is fully decommissioned** — do NOT read from or write to Firestore in any scripts, services, or tools.
+- **Metadata Architecture**: Dual-tier architecture:
+  1. **Cloud Firestore (Live Admin DB)**: Powering Waveform Studio, Hymn Editor, Seasons Manager, and Users/Permissions. Queried live in admin.
+  2. **Static Edge CDN & JSON Catalog (`data/catalog.json`)**: High-speed edge cached copy serving public Web player and Mobile apps offline bundle.
+  - **CRITICAL - ZERO SPLIT-BRAIN LAW**: When modifying markers, lyrics, subgenres, or hymn metadata, **NEVER bypass Cloud Firestore**. Firestore is the primary source of truth; local files and the CDN `catalog.json` are downstream projections. If Cloud Firestore is not updated, Cantor Studio will display stale data and any subsequent admin publish will overwrite CDN changes!
 - **Media Storage**: Firebase Storage (audio tracks as `.mp3`, markers as `.txt`, lyrics as `.md`, catalog as `.json`)
 - **AI Integration**: Genkit (`@genkit-ai/googleai`) using Gemini-2.5-flash
 
@@ -48,7 +54,7 @@ This agent session is strictly dedicated to **CantorAgent** data and media opera
      - When the user says a verse *"started later"*, it means the audio started **later than it should have** (first syllable or attack was clipped/missed) -> the marker timestamp must be **advanced (moved earlier / decreased)**.
    - Trimming must leave **`0.5s`** quiet lead-in before the first vocal attack.
    - Lyrics fetched from Tasbeha.org must have leading alternating crosses (`+ `) stripped from stanzas.
-   - Subgenres are governed by `genres/content/<genre>_content.txt` in Firebase Storage and mapped via `subGenreId: { <genre>: '<Subgenre>' }`.
+   - Subgenres are governed by the `content` field in `genres/{genreId}` in Cloud Firestore (formatted as `subGenre:<Name>` blocks), mirrored to `genres/content/<genre>_content.txt` in Storage, and mapped via `subGenreId: { <genre>: '<Subgenre>' }` on hymn documents. Any subgenre reorganization MUST update `genres/{genreId}.content` in Cloud Firestore first.
 5. **Recitative & Doxology Marker Placement Protocol**:
    - **Never guess or randomly nudge markers**: If a user reports a marker is early/late, re-analyze with phonetic alignment rather than nudging timestamps.
    - **Beware 4th-Line Intra-Verse Pauses**: In Coptic doxologies and recitative hymns (e.g. Roumi, Mo'aqab), the 4th line of a stanza frequently has an internal breath pause before the final cadence phrase (e.g., Verse 1 line 4 *"ymnoumen se"* ... pause ... *"adikhostasia"*). Energy valley detectors often mistakenly latch onto this pause, setting markers 2-3 seconds early and catching the final word of the previous verse.
@@ -77,6 +83,7 @@ This agent session is strictly dedicated to **CantorAgent** data and media opera
 - [x] Implemented native iOS Lock Screen, Control Center, Dynamic Island, and CarPlay Now Playing controls in mobile app (`expo-audio` `setActiveForLockScreen` with track metadata & artwork)
 - [x] Added 18 Roumi and Mo'aqab hymns for Kiahk Vespers Praises (Cantor Tharwat) with clean titles, trimmed intros, original audio, and published to live CDN catalog
 - [x] Generated and verified precise verse markers for all 18 Roumi and Mo'aqab hymns (Roumi 1–9 and Mo'aqab 1–9) with 1:1 lyrics mapping, published to Firebase Storage and live edge CDN catalog
+- [x] Added 4 Kiahk distribution hymns (`Je Efesmaroout (Weekdays)`, `Ti Parthenos (Weekdays)`, `Je Efesmaroout (Weekends)`, `Ef-Emepsha Ghar (Weekends)`) with complete 3-language lyrics, organized directly under Kiahk `subGenre:Liturgy` following Psalm 150, and published live to edge CDN catalog
 
 ## Next Steps / Backlog
 1. **Test Lock Screen Controls**: Run local build / Expo to test Lock Screen player widget and car audio playback.

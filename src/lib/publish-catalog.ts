@@ -37,7 +37,9 @@ export async function compileAndPublishCatalog(
 
   onProgress?.('Fetching liturgical seasons & genres...');
   const genresSnap = await getDocs(collection(firestore, 'genres'));
-  const rawGenres = genresSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  const rawGenres = genresSnap.docs
+    .filter(d => d.id !== 'app_settings' && d.id !== '__app_settings__')
+    .map(d => ({ id: d.id, ...d.data() }));
   
   const genres = await Promise.all(
     rawGenres.map(async (genreData: any) => {

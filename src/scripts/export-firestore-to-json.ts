@@ -18,33 +18,49 @@ async function exportFirestore() {
     console.warn('Anonymous auth failed or skipped, proceeding with public read rules:', err);
   }
 
-  const collections = ['genres', 'cantors', 'hymns', 'recordings'];
+  const collections = ['genres', 'cantors', 'hymns', 'recordings', 'authorized_users'];
   const outputDir = path.resolve(process.cwd(), 'data');
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const backupDir = path.resolve(process.cwd(), `backups/firestore_${timestamp}`);
 
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
+  }
+  if (!fs.existsSync(backupDir)) {
+    fs.mkdirSync(backupDir, { recursive: true });
   }
 
   const exportData: Record<string, any[]> = {};
 
   for (const colName of collections) {
-    console.log(`Fetching collection: "${colName}"...`);
-    const colRef = collection(db, colName);
-    const snap = await getDocs(colRef);
-    
-    const docs = snap.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    try {
+      console.log(`Fetching collection: "${colName}"...`);
+      const colRef = collection(db, colName);
+      const snap = await getDocs(colRef);
+      
+      const docs = snap.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
 
-    exportData[colName] = docs;
-    const filePath = path.join(outputDir, `${colName}.json`);
-    fs.writeFileSync(filePath, JSON.stringify(docs, null, 2), 'utf-8');
-    console.log(`Saved ${docs.length} ${colName} to ${filePath}`);
+      exportData[colName] = docs;
+
+      // Save to primary data folder
+      const filePath = path.join(outputDir, `${colName}.json`);
+      fs.writeFileSync(filePath, JSON.stringify(docs, null, 2), 'utf-8');
+
+      // Also archive to timestamped backup directory
+      const archivePath = path.join(backupDir, `${colName}.json`);
+      fs.writeFileSync(archivePath, JSON.stringify(docs, null, 2), 'utf-8');
+
+      console.log(`Saved ${docs.length} ${colName} to ${filePath} & archived to ${archivePath}`);
+    } catch (err: any) {
+      console.warn(`Skipping collection "${colName}" due to read restrictions:`, err.message || err);
+    }
   }
 
   // Also build an all-in-one compiled catalog.json for super-fast offline bundle & zero-join reads
-  const { genres, cantors, hymns, recordings } = exportData;
+  const { genres = [], cantors = [], hymns = [], recordings = [] } = exportData;
 
   const cantorsMap = new Map(cantors.map(c => [c.id, c]));
 
@@ -67,9 +83,23 @@ async function exportFirestore() {
     }).sort((a, b) => a.name.localeCompare(b.name))
   };
 
-  const catalogPath = path.join(outputDir, 'catalog.json');
-  fs.writeFileSync(catalogPath, JSON.stringify(catalog, null, 2), 'utf-8');
-  console.log(`Compiled unified catalog (${catalog.hymns.length} hymns) to ${catalogPath}`);
+  const targetDirs = [
+    outputDir,
+    path.resolve(process.cwd(), 'src/data'),
+    path.resolve(process.cwd(), 'public/data'),
+  ];
+
+  for (const tDir of targetDirs) {
+    if (!fs.existsSync(tDir)) fs.mkdirSync(tDir, { recursive: true });
+    for (const colName of collections) {
+      if (exportData[colName]) {
+        fs.writeFileSync(path.join(tDir, `${colName}.json`), JSON.stringify(exportData[colName], null, 2), 'utf-8');
+      }
+    }
+    fs.writeFileSync(path.join(tDir, 'catalog.json'), JSON.stringify(catalog, null, 2), 'utf-8');
+    console.log(`Synced unified catalog (${catalog.hymns.length} hymns) to ${tDir}`);
+  }
+  fs.writeFileSync(path.join(backupDir, 'catalog.json'), JSON.stringify(catalog, null, 2), 'utf-8');
 
   console.log('\n✅ Firestore Export Complete!');
   console.log(`Summary:

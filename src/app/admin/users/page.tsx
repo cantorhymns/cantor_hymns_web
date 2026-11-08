@@ -42,7 +42,7 @@ const PRIMARY_OWNER_EMAILS = [
 ];
 
 const INITIAL_TEAM: AuthorizedUser[] = [
-  { email: 'pierrek3419@gmail.com', role: 'owner', addedBy: 'initial' },
+  { email: 'pierrek3419@gmail.com', role: 'editor', addedBy: 'initial' },
   { email: 'vmsazoom@gmail.com', role: 'editor', addedBy: 'initial' },
 ];
 
@@ -98,7 +98,7 @@ export default function AdminUsersPage() {
 
         // 2. Also load from synced app settings document
         try {
-          const settingsRef = doc(firestore, 'genres', '__app_settings__');
+          const settingsRef = doc(firestore, 'genres', 'app_settings');
           const snap = await getDoc(settingsRef);
           if (snap.exists()) {
             const data = snap.data();
@@ -113,7 +113,7 @@ export default function AdminUsersPage() {
             });
           }
         } catch (err) {
-          console.warn('Note: __app_settings__ check:', err);
+          console.warn('Note: app_settings check:', err);
         }
 
         // 3. Fallback baseline members if not yet in database
@@ -177,17 +177,12 @@ export default function AdminUsersPage() {
         addedBy: currentUser?.email || 'admin',
       };
 
-      // 1. Direct authorized_users doc
-      try {
-        const userRef = doc(firestore, 'authorized_users', email);
-        await setDoc(userRef, { ...payload, addedAt: serverTimestamp() }, { merge: true });
-      } catch (e) {
-        console.warn('authorized_users role update note:', e);
-      }
+      let writeSuccess = false;
+      let writeError: any = null;
 
-      // 2. Synced settings doc
+      // 1. Synced settings doc in genres (guaranteed permissions for all admins)
       try {
-        const settingsRef = doc(firestore, 'genres', '__app_settings__');
+        const settingsRef = doc(firestore, 'genres', 'app_settings');
         const snap = await getDoc(settingsRef);
         const existing: AuthorizedUser[] = snap.exists() ? snap.data()?.collaborators || [] : [];
         const updated = [
@@ -195,8 +190,24 @@ export default function AdminUsersPage() {
           { ...payload, addedAt: new Date().toISOString() },
         ];
         await setDoc(settingsRef, { collaborators: updated }, { merge: true });
-      } catch (e) {
-        console.warn('__app_settings__ role update note:', e);
+        writeSuccess = true;
+      } catch (e: any) {
+        console.warn('genres/app_settings role update error:', e);
+        writeError = e;
+      }
+
+      // 2. Direct authorized_users doc
+      try {
+        const userRef = doc(firestore, 'authorized_users', email);
+        await setDoc(userRef, { ...payload, addedAt: serverTimestamp() }, { merge: true });
+        writeSuccess = true;
+      } catch (e: any) {
+        console.warn('authorized_users role update note:', e);
+        if (!writeError) writeError = e;
+      }
+
+      if (!writeSuccess) {
+        throw new Error(writeError?.message || 'Failed to save updated role to database.');
       }
 
       toast({
@@ -241,7 +252,7 @@ export default function AdminUsersPage() {
 
       // 2. Also save to synced settings doc (guaranteed permissions under genres rules)
       try {
-        const settingsRef = doc(firestore, 'genres', '__app_settings__');
+        const settingsRef = doc(firestore, 'genres', 'app_settings');
         const snap = await getDoc(settingsRef);
         const existing: AuthorizedUser[] = snap.exists() ? snap.data()?.collaborators || [] : [];
         const updated = [
@@ -311,7 +322,7 @@ export default function AdminUsersPage() {
 
       // 2. Mark revoked in synced settings doc
       try {
-        const settingsRef = doc(firestore, 'genres', '__app_settings__');
+        const settingsRef = doc(firestore, 'genres', 'app_settings');
         const snap = await getDoc(settingsRef);
         const existing: AuthorizedUser[] = snap.exists() ? snap.data()?.collaborators || [] : [];
         const updated = [
@@ -320,7 +331,7 @@ export default function AdminUsersPage() {
         ];
         await setDoc(settingsRef, { collaborators: updated }, { merge: true });
       } catch (e) {
-        console.warn('__app_settings__ deletion note:', e);
+        console.warn('app_settings deletion note:', e);
       }
 
       setUsers(prev => prev.filter(u => u.email.toLowerCase() !== targetEmail));

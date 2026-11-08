@@ -38,13 +38,13 @@ export const PRIMARY_OWNER_EMAILS = [
 
 // Baseline initial team members (can be updated or revoked anytime on the Admin page)
 export const INITIAL_TEAM_ROLES: Record<string, UserRole> = {
-  'pierrek3419@gmail.com': 'owner',
+  'pierrek3419@gmail.com': 'editor',
   'vmsazoom@gmail.com': 'editor',
 };
 
 // Compatibility aliases
-export const ROOT_OWNER_EMAILS = [...PRIMARY_OWNER_EMAILS, 'pierrek3419@gmail.com'];
-export const ROOT_EDITOR_EMAILS = ['vmsazoom@gmail.com'];
+export const ROOT_OWNER_EMAILS = [...PRIMARY_OWNER_EMAILS];
+export const ROOT_EDITOR_EMAILS = ['vmsazoom@gmail.com', 'pierrek3419@gmail.com'];
 export const ROOT_ADMIN_EMAILS = ROOT_OWNER_EMAILS;
 
 export function AdminAuthProvider({ children }: { children: ReactNode }) {
@@ -99,8 +99,8 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
             }
           }
 
-          // Check synced __app_settings__ doc
-          const settingsRef = doc(firestore, 'genres', '__app_settings__');
+          // Check synced app_settings doc
+          const settingsRef = doc(firestore, 'genres', 'app_settings');
           const settingsSnap = await getDoc(settingsRef);
           if (settingsSnap.exists()) {
             const list: AuthorizedUser[] = settingsSnap.data()?.collaborators || [];

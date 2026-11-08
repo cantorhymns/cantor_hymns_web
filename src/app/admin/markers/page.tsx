@@ -13,7 +13,9 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL, uploadBytes } from 'firebase/storage';
-import { FirestoreRecording, FirestoreHymn, FirestoreCantor } from '@/types/admin';
+import { FirestoreRecording, FirestoreHymn, FirestoreCantor, FirestoreGenre } from '@/types/admin';
+import defaultCatalog from '@/data/catalog.json';
+import { parseGenreContent } from '@/lib/subgenre-utils';
 
 // Client-only dynamic import with SSR disabled to prevent wavesurfer.js 500 crash on server pre-render
 const WaveformEditor = dynamic(
@@ -50,18 +52,24 @@ import {
   HelpCircle,
   X,
   Users,
+  Lock,
 } from 'lucide-react';
 import { formatTime } from '@/components/admin/markers/audacity-converter';
 import { formatCantorName } from '@/lib/utils';
+import { useAdminAuth } from '@/context/admin-auth-context';
+import { recordPendingChange } from '@/lib/pending-changes';
+import { useHymnLock } from '@/lib/hooks/useHymnLock';
 
 function MarkerStudioContent() {
   const { firestore, firebaseApp } = useFirebase();
+  const { user } = useAdminAuth();
   const searchParams = useSearchParams();
   const { toast } = useToast();
 
   const [isLoading, setIsLoading] = useState(true);
   const [recordings, setRecordings] = useState<FirestoreRecording[]>([]);
   const [cantors, setCantors] = useState<FirestoreCantor[]>([]);
+  const [genres, setGenres] = useState<FirestoreGenre[]>([]);
   const [hymnsMap, setHymnsMap] = useState<Map<string, FirestoreHymn>>(new Map());
 
   // Selected state
@@ -101,15 +109,34 @@ function MarkerStudioContent() {
       try {
         setIsLoading(true);
 
-        const [cantorsSnap, hymnsSnap, recsSnap] = await Promise.all([
+        const [cantorsSnap, hymnsSnap, recsSnap, genresSnap] = await Promise.all([
           getDocs(collection(firestore, 'cantors')),
           getDocs(collection(firestore, 'hymns')),
           getDocs(collection(firestore, 'recordings')),
+          getDocs(collection(firestore, 'genres')),
         ]);
 
         const cList = cantorsSnap.docs.map(d => ({ id: d.id, ...d.data() } as FirestoreCantor));
         cList.sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99));
         setCantors(cList);
+
+        const fallbackGenresMap = new Map((defaultCatalog.genres as any[]).map(g => [g.id, g]));
+        const gList = genresSnap.docs
+          .filter(d => d.id !== 'app_settings' && d.id !== '__app_settings__')
+          .map(d => {
+          const data = d.data() as any;
+          const fallback = fallbackGenresMap.get(d.id);
+          return {
+            id: d.id,
+            ...data,
+            rank: data.rank ?? fallback?.rank ?? 99,
+            content: data.content || fallback?.content || '',
+          } as FirestoreGenre;
+        });
+
+        const finalGenres = gList.length > 0 ? gList : (defaultCatalog.genres as any[]);
+        finalGenres.sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99));
+        setGenres(finalGenres);
 
         const hMap = new Map<string, FirestoreHymn>();
         hymnsSnap.docs.forEach(d => {
@@ -174,6 +201,16 @@ function MarkerStudioContent() {
     if (!currentRecording) return undefined;
     return hymnsMap.get(currentRecording.hymnId);
   }, [currentRecording, hymnsMap]);
+
+  // Real-time collaborative edit lock
+  const activeHymn = resolvedHymn || currentHymn;
+  const {
+    isLockedByOther,
+    lockedBy,
+    isLockOwner,
+    overrideLock,
+    activeLocks,
+  } = useHymnLock(activeHymn?.id, activeHymn?.name);
 
   // Resolve audio download URL, markers, and lyrics mapping when current recording/hymn changes
   useEffect(() => {
@@ -386,6 +423,162 @@ function MarkerStudioContent() {
     });
   }, [recordings, selectedCantorId, markerFilter, searchQuery, hymnsMap, cantorsMap]);
 
+  // Construct ordered hymns list based on seasons rank, subgenres, and hymns within
+  const orderedHymns = useMemo(() => {
+    const list: {
+      hymnId: string;
+      hymnName: string;
+      seasonId: string;
+      seasonName: string;
+      subgenreName: string;
+      seasonRank: number;
+    }[] = [];
+
+    const seenHymnIds = new Set<string>();
+
+    // 1. Process each genre (season) in liturgical rank order (Kiahk #1, Nativity #2, Lent #3...)
+    const sortedGenres = [...genres].sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99));
+
+    sortedGenres.forEach(genre => {
+      const sections = parseGenreContent(genre.content);
+      sections.forEach(sec => {
+        const subgenreName = sec.name || 'General';
+        sec.hymnIds.forEach(hId => {
+          const trimmedId = hId.trim();
+          if (trimmedId && !seenHymnIds.has(trimmedId)) {
+            seenHymnIds.add(trimmedId);
+            const hymn = hymnsMap.get(trimmedId);
+            list.push({
+              hymnId: trimmedId,
+              hymnName: hymn?.name || trimmedId,
+              seasonId: genre.id,
+              seasonName: genre.name || genre.id,
+              subgenreName,
+              seasonRank: genre.rank ?? 99,
+            });
+          }
+        });
+      });
+    });
+
+    // 2. Append any remaining hymns in hymnsMap not found in any genre content
+    hymnsMap.forEach((hymn, hId) => {
+      if (!seenHymnIds.has(hId)) {
+        seenHymnIds.add(hId);
+        list.push({
+          hymnId: hId,
+          hymnName: hymn.name || hId,
+          seasonId: hymn.genreIds?.[0] || 'general',
+          seasonName: 'Other',
+          subgenreName: 'General',
+          seasonRank: 999,
+        });
+      }
+    });
+
+    return list;
+  }, [genres, hymnsMap]);
+
+  // Candidate hymns respecting active filters (cantor and marker filters)
+  const candidateHymns = useMemo(() => {
+    return orderedHymns.filter(item => {
+      return recordings.some(r => {
+        if (r.hymnId !== item.hymnId) return false;
+        if (selectedCantorId !== 'all' && r.cantorId !== selectedCantorId) return false;
+        if (markerFilter === 'with-markers' && (!r.markers || r.markers.length === 0)) return false;
+        if (markerFilter === 'no-markers' && r.markers && r.markers.length > 0) return false;
+        return true;
+      });
+    });
+  }, [orderedHymns, recordings, selectedCantorId, markerFilter]);
+
+  // Current index within candidate hymns
+  const currentHymnIndex = useMemo(() => {
+    if (!currentRecording) return -1;
+    return candidateHymns.findIndex(h => h.hymnId === currentRecording.hymnId);
+  }, [candidateHymns, currentRecording]);
+
+  const currentHymnContext = useMemo(() => {
+    if (currentHymnIndex < 0 || !candidateHymns[currentHymnIndex]) return null;
+    return {
+      ...candidateHymns[currentHymnIndex],
+      index: currentHymnIndex,
+      total: candidateHymns.length,
+    };
+  }, [candidateHymns, currentHymnIndex]);
+
+  const prevHymnInfo = currentHymnIndex > 0 ? candidateHymns[currentHymnIndex - 1] : null;
+  const nextHymnInfo =
+    currentHymnIndex >= 0 && currentHymnIndex < candidateHymns.length - 1
+      ? candidateHymns[currentHymnIndex + 1]
+      : null;
+
+  // Navigate to target hymn in liturgical order
+  const navigateToHymn = useCallback(
+    (targetHymnId: string) => {
+      const candidateRecs = recordings.filter(r => {
+        if (r.hymnId !== targetHymnId) return false;
+        if (selectedCantorId !== 'all' && r.cantorId !== selectedCantorId) return false;
+        if (markerFilter === 'with-markers' && (!r.markers || r.markers.length === 0)) return false;
+        if (markerFilter === 'no-markers' && r.markers && r.markers.length > 0) return false;
+        return true;
+      });
+
+      if (candidateRecs.length === 0) {
+        const fallbackRec = recordings.find(r => r.hymnId === targetHymnId);
+        if (fallbackRec) {
+          handleSelectRecording(fallbackRec.id);
+        }
+        return;
+      }
+
+      // Retain the current cantor if they have a recording for this hymn
+      const sameCantorRec = candidateRecs.find(r => r.cantorId === currentRecording?.cantorId);
+      const targetRec = sameCantorRec || candidateRecs[0];
+
+      handleSelectRecording(targetRec.id);
+    },
+    [recordings, selectedCantorId, markerFilter, currentRecording, handleSelectRecording]
+  );
+
+  const goToPrevHymn = useCallback(() => {
+    if (prevHymnInfo) {
+      navigateToHymn(prevHymnInfo.hymnId);
+    }
+  }, [prevHymnInfo, navigateToHymn]);
+
+  const goToNextHymn = useCallback(() => {
+    if (nextHymnInfo) {
+      navigateToHymn(nextHymnInfo.hymnId);
+    }
+  }, [nextHymnInfo, navigateToHymn]);
+
+  // Keyboard shortcut listener: [ for prev hymn, ] for next hymn
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      const target = e.target as HTMLElement;
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
+      if (e.key === '[' || (e.altKey && e.key === 'ArrowLeft')) {
+        e.preventDefault();
+        goToPrevHymn();
+      } else if (e.key === ']' || (e.altKey && e.key === 'ArrowRight')) {
+        e.preventDefault();
+        goToNextHymn();
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [goToPrevHymn, goToNextHymn]);
+
   // Reset highlight index when query or results change
   useEffect(() => {
     setHighlightedIndex(0);
@@ -467,6 +660,30 @@ function MarkerStudioContent() {
           : prev
       );
 
+      // Record pending change for staging review and 1-click undo
+      const cantorName = formatCantorName(currentRecording.cantorId, cantorsMap);
+      await recordPendingChange(firestore, {
+        entityType: 'markers',
+        entityId: currentRecording.id,
+        entityName: `${currentHymn?.name || currentRecording.id} (${cantorName})`,
+        action: 'update',
+        summary: `Updated waveform markers (${markers.length} markers, ${updatedMode} mode)`,
+        details: `Previous: ${currentRecording.markers?.length || 0} markers`,
+        previousSnapshot: {
+          markers: currentRecording.markers || [],
+          lyricsMapping: currentRecording.lyricsMapping || [],
+          mode: currentRecording.mode || 'learn',
+          audioLength: currentRecording.audioLength || 0,
+        },
+        newSnapshot: {
+          markers,
+          lyricsMapping,
+          mode: updatedMode,
+          audioLength: markers.length > 0 ? Math.max(markers[markers.length - 1], currentRecording.audioLength) : currentRecording.audioLength,
+        },
+        userEmail: user?.email || 'admin',
+      });
+
       toast({
         title: 'Markers Saved to Cloud',
         description: `Successfully updated ${markers.length} markers for ${currentHymn?.name || currentRecording.id} (Mode: Learn).`,
@@ -498,6 +715,7 @@ function MarkerStudioContent() {
       });
 
       // Update hymnsMap in local state so WaveformEditor immediately reflects new lyrics
+      const prevHymn = hymnsMap.get(hymnId) || currentHymn;
       setHymnsMap(prev => {
         const next = new Map(prev);
         const existing = next.get(hymnId);
@@ -510,6 +728,22 @@ function MarkerStudioContent() {
         return next;
       });
       setResolvedHymn(prev => (prev && prev.id === hymnId ? { ...prev, lyrics } : prev));
+
+      // Record pending change for staging review and 1-click undo
+      await recordPendingChange(firestore, {
+        entityType: 'lyrics',
+        entityId: hymnId,
+        entityName: prevHymn?.name || hymnId,
+        action: 'update',
+        summary: `Updated lyrics text (Coptic, English, Arabic)`,
+        previousSnapshot: {
+          lyrics: prevHymn?.lyrics || { coptic: '', english: '', arabic: '' },
+        },
+        newSnapshot: {
+          lyrics,
+        },
+        userEmail: user?.email || 'admin',
+      });
 
       toast({
         title: 'Lyrics Saved to Cloud',
@@ -555,6 +789,7 @@ function MarkerStudioContent() {
           <div><kbd className="px-1 py-0.5 rounded bg-background border font-mono">M</kbd> Drop Marker</div>
           <div><kbd className="px-1 py-0.5 rounded bg-background border font-mono">←/→</kbd> Nudge 50ms</div>
           <div><kbd className="px-1 py-0.5 rounded bg-background border font-mono">L</kbd> Loop Section</div>
+          <div><kbd className="px-1 py-0.5 rounded bg-background border font-mono">[/]</kbd> Prev/Next Hymn</div>
           <div><kbd className="px-1 py-0.5 rounded bg-background border font-mono">Del</kbd> Delete</div>
         </div>
       </div>
@@ -689,6 +924,18 @@ function MarkerStudioContent() {
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
+                            {(() => {
+                              const lock = activeLocks.get(rec.hymnId);
+                              if (lock && lock.userEmail !== user?.email) {
+                                return (
+                                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 flex items-center gap-1 whitespace-nowrap">
+                                    <Lock className="w-2.5 h-2.5 text-amber-600" />
+                                    <span>{lock.userName}</span>
+                                  </span>
+                                );
+                              }
+                              return null;
+                            })()}
                             {markerCount > 0 ? (
                               <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 whitespace-nowrap">
                                 {markerCount} mk
@@ -733,15 +980,29 @@ function MarkerStudioContent() {
                             ({cName})
                           </span>
                         </div>
-                        {markerCount > 0 ? (
-                          <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-                            {markerCount} markers
-                          </span>
-                        ) : (
-                          <span className="text-[10px] text-muted-foreground/60">
-                            No markers
-                          </span>
-                        )}
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          {(() => {
+                            const lock = activeLocks.get(rec.hymnId);
+                            if (lock && lock.userEmail !== user?.email) {
+                              return (
+                                <span className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 flex items-center gap-0.5 whitespace-nowrap">
+                                  <Lock className="w-2.5 h-2.5 text-amber-600" />
+                                  <span>{lock.userName}</span>
+                                </span>
+                              );
+                            }
+                            return null;
+                          })()}
+                          {markerCount > 0 ? (
+                            <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                              {markerCount} markers
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-muted-foreground/60">
+                              No markers
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </SelectItem>
                   );
@@ -751,6 +1012,36 @@ function MarkerStudioContent() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Collaborative Concurrency Lock Warning Banner */}
+      {isLockedByOther && (
+        <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-amber-900 dark:text-amber-200 shadow-sm animate-in fade-in duration-200">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
+              <Lock className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-sm">Read-Only Mode &bull; Active Editing Lock</span>
+                <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold">Locked</span>
+              </div>
+              <p className="text-xs text-amber-800/80 dark:text-amber-300/80 mt-0.5">
+                <strong>{lockedBy?.userName || lockedBy?.userEmail}</strong> is currently editing "{resolvedHymn?.name || currentHymn?.name}". To protect marker integrity and prevent overwriting, editing controls are locked.
+              </p>
+            </div>
+          </div>
+          {user && (user.email === 'cantorhymns@gmail.com' || user.email === 'andrewekladious@gmail.com') && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={overrideLock}
+              className="border-amber-600 text-amber-800 hover:bg-amber-600 hover:text-white dark:border-amber-400 dark:text-amber-200 text-xs shrink-0 self-end sm:self-center font-medium"
+            >
+              Take Over Lock (Owner Override)
+            </Button>
+          )}
+        </div>
+      )}
 
       {/* Editor View */}
       {isLoadingAudio ? (
@@ -776,6 +1067,17 @@ function MarkerStudioContent() {
           hymnRecordings={hymnRecordings}
           cantorsMap={cantorsMap}
           onSelectRecording={handleSelectRecording}
+          onPrevHymn={goToPrevHymn}
+          onNextHymn={goToNextHymn}
+          prevHymnTitle={prevHymnInfo ? `${prevHymnInfo.hymnName} (${prevHymnInfo.seasonName})` : null}
+          nextHymnTitle={nextHymnInfo ? `${nextHymnInfo.hymnName} (${nextHymnInfo.seasonName})` : null}
+          hymnPositionText={
+            currentHymnContext
+              ? `${currentHymnContext.seasonName} › ${currentHymnContext.subgenreName} (${currentHymnContext.index + 1} of ${currentHymnContext.total})`
+              : null
+          }
+          isReadOnly={isLockedByOther}
+          lockedByMessage={lockedBy ? `Currently locked by ${lockedBy.userName || lockedBy.userEmail}` : null}
         />
       ) : (
         <div className="p-12 text-center text-muted-foreground border rounded-xl bg-card">

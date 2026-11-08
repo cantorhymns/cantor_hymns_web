@@ -1150,6 +1150,23 @@ export function HymnPlayer({
                     )}
                     <p className="text-muted-foreground pt-4">No active recordings available for this hymn yet.</p>
                 </CardHeader>
+                {(onNext || onPrevious) && (
+                  <CardContent className="pt-0">
+                    <div className="flex justify-center items-center gap-4 border-t pt-4">
+                        <Button 
+                          variant="outline" 
+                          size="lg" 
+                          onClick={onPrevious} 
+                          disabled={!hasPrevious}
+                        >
+                            <ChevronLeft className="mr-2 h-5 w-5" /> Previous
+                        </Button>
+                        <Button variant="outline" size="lg" onClick={onNext} disabled={!hasNext}>
+                            Next <ChevronRight className="ml-2 h-5 w-5" />
+                        </Button>
+                    </div>
+                  </CardContent>
+                )}
             </Card>
             {lyricsVisible && hasAnyLyrics && (
               <div className="w-full max-w-3xl mx-auto mt-8">
@@ -1175,6 +1192,23 @@ export function HymnPlayer({
                     )}
                     <p className="text-muted-foreground pt-4">Please select a recording.</p>
                 </CardHeader>
+                {(onNext || onPrevious) && (
+                  <CardContent className="pt-0">
+                    <div className="flex justify-center items-center gap-4 border-t pt-4">
+                        <Button 
+                          variant="outline" 
+                          size="lg" 
+                          onClick={onPrevious} 
+                          disabled={!hasPrevious}
+                        >
+                            <ChevronLeft className="mr-2 h-5 w-5" /> Previous
+                        </Button>
+                        <Button variant="outline" size="lg" onClick={onNext} disabled={!hasNext}>
+                            Next <ChevronRight className="ml-2 h-5 w-5" />
+                        </Button>
+                    </div>
+                  </CardContent>
+                )}
             </Card>
             {lyricsVisible && hasAnyLyrics && (
               <div className="w-full max-w-3xl mx-auto mt-8">

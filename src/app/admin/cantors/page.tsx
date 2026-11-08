@@ -39,9 +39,12 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { formatDuration } from '@/lib/utils';
+import { useAdminAuth } from '@/context/admin-auth-context';
+import { recordPendingChange } from '@/lib/pending-changes';
 
 export default function AdminCantorsPage() {
   const { firestore } = useFirebase();
+  const { user } = useAdminAuth();
   const { toast } = useToast();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -208,6 +211,8 @@ export default function AdminCantorsPage() {
     if (!firestore) return;
     try {
       setIsSaving(true);
+      const prevOrder = cantors.map(c => ({ id: c.id, rank: c.rank }));
+
       await Promise.all(
         cantors.map((c, idx) => {
           const cRef = doc(firestore, 'cantors', c.id);
@@ -221,6 +226,19 @@ export default function AdminCantorsPage() {
 
       const withRanks = cantors.map((c, idx) => ({ ...c, rank: idx + 1 }));
       await syncLocalCatalog(withRanks);
+
+      // Record pending change for staging review & 1-click undo
+      await recordPendingChange(firestore, {
+        entityType: 'cantor',
+        entityId: 'all_cantors_order',
+        entityName: 'Cantors Order',
+        action: 'reorder',
+        summary: `Re-ranked ${cantors.length} cantors`,
+        previousSnapshot: prevOrder,
+        newSnapshot: withRanks.map(c => ({ id: c.id, rank: c.rank })),
+        userEmail: user?.email || 'admin',
+      });
+
       setHasUnsavedOrder(false);
 
       toast({
@@ -244,6 +262,7 @@ export default function AdminCantorsPage() {
     if (!firestore) return;
     try {
       setIsSaving(true);
+      const prevCantor = cantors.find(c => c.id === cantor.id);
       const cRef = doc(firestore, 'cantors', cantor.id);
       const payload: any = {
         name: cantor.name,
@@ -255,6 +274,23 @@ export default function AdminCantorsPage() {
 
       await updateDoc(cRef, payload);
       await syncLocalCatalog(cantors.map(c => (c.id === cantor.id ? { ...c, ...payload } : c)));
+
+      // Record pending change for staging review & 1-click undo
+      await recordPendingChange(firestore, {
+        entityType: 'cantor',
+        entityId: cantor.id,
+        entityName: cantor.name,
+        action: 'update',
+        summary: `Updated cantor profile & cloud status`,
+        previousSnapshot: prevCantor ? {
+          name: prevCantor.name,
+          rank: prevCantor.rank,
+          active: prevCantor.active,
+          cantorCloudActive: prevCantor.cantorCloudActive,
+        } : null,
+        newSnapshot: payload,
+        userEmail: user?.email || 'admin',
+      });
 
       toast({
         title: 'Cantor Updated',

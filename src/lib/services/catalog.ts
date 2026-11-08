@@ -9,7 +9,7 @@ export interface Catalog {
   hymns: Hymn[];
 }
 
-const STORAGE_CACHE_KEY = 'cantor_hymns_catalog_cache_v1';
+const STORAGE_CACHE_KEY = 'cantor_hymns_catalog_cache_v2';
 export const FIREBASE_STORAGE_CATALOG_URL =
   'https://firebasestorage.googleapis.com/v0/b/studio-127742305-c9528.firebasestorage.app/o/data%2Fcatalog.json?alt=media';
 
@@ -144,7 +144,12 @@ export function getHymns(genreId?: string, hymnIdsFilter?: string[]): Hymn[] {
   let hymns = activeCatalog.hymns;
 
   if (genreId) {
-    hymns = hymns.filter(h => Array.isArray(h.genreId) && h.genreId.includes(genreId));
+    hymns = hymns.filter(h => {
+      if (Array.isArray(h.genreId) && h.genreId.includes(genreId)) return true;
+      if (typeof h.genreId === 'string' && h.genreId === genreId) return true;
+      if (Array.isArray((h as any).genreIds) && (h as any).genreIds.includes(genreId)) return true;
+      return false;
+    });
   }
 
   if (hymnIdsFilter && hymnIdsFilter.length > 0) {

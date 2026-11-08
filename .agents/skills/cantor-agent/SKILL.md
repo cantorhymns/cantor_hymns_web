@@ -130,9 +130,10 @@ python3 .agents/skills/cantor-agent/scripts/detect_markers.py generate \
 ## Step 5: Cloud Firestore, Storage & Static CDN Catalog Publishing
 
 CantorAgent is responsible for maintaining all application data (lyrics, hymns, genres, recordings, and markers). The architecture uses a two-tier database system:
-1. **Cloud Firestore (Live Source of Truth for Admin Portal)**:
-   - Queried directly by the Admin Portal at `/admin/seasons`, `/admin/hymns`, and `/admin/cantors`.
+1. **Cloud Firestore (Live Source of Truth for Admin Portal & Waveform Studio)**:
+   - Queried directly by the Admin Portal at `/admin/seasons`, `/admin/hymns`, `/admin/markers`, and `/admin/cantors`.
    - Every hymn (`hymns/{hymnId}`), recording (`recordings/{cantorId}_{hymnId}`), and season (`genres/{genreId}`) must exist in Firestore so admins can view, edit, and rank them.
+   - **CRITICAL - ZERO SPLIT-BRAIN RULE**: When updating markers, lyrics, or metadata, you MUST ALWAYS update Cloud Firestore (`recordings/{recordingId}`). NEVER update only local JSON files (`recordings.json`) and Storage! If Cloud Firestore is bypassed, Waveform Studio will still load stale markers from Firestore, creating severe data inconsistencies between the player and Waveform Studio.
    - Always authenticate writes using `signInAnonymously(auth)` from Firebase Auth.
 2. **Static Edge CDN (`data/catalog.json` in Firebase Storage)**:
    - High-performance, zero-latency CDN edge cache serving both Web and Mobile apps.
@@ -195,7 +196,27 @@ npx tsx src/scripts/update-markers.ts \
 ```
 *Updates Firestore, updates `recordings.json`, rebuilds `catalog.json`, syncs all 4 directories, and deploys to CDN.*
 
-#### 4. Manually Compiling & Pushing the Edge CDN Snapshot
+#### 4. Managing Liturgical Subgenres & Season Organization
+- **Where Subgenres Live**: Subgenres do NOT have their own database collection. They are defined inside the `content` field of `genres/{genreId}` in Cloud Firestore as a formatted text block:
+  ```
+  subGenre:Liturgy
+  psalm-150-kiahk
+  je-efesmaroout-kiahk-weekdays
+  subGenre:Vespers
+  ...
+  ```
+- **Updating a Subgenre**:
+  Whenever moving a hymn between subgenres or renaming/deleting a subgenre:
+  1. Use `setHymnSubgenre` from `src/lib/subgenre-utils.ts` to calculate the updated content string.
+  2. Write the updated `content` directly to Cloud Firestore `genres/{genreId}`:
+     ```ts
+     await updateDoc(doc(db, 'genres', genreId), { content: newContent, updatedAt: serverTimestamp() });
+     ```
+  3. Write `subGenreId: { [genreId]: subgenreName }` to `hymns/{hymnId}` in Cloud Firestore.
+  4. Export to local JSON files (`genres.json`, `hymns.json`) across all 4 directories and deploy `catalog.json` to CDN.
+  5. **STRICT PROHIBITION**: NEVER edit local `genres.json` without updating Cloud Firestore `genres/{genreId}.content`! The Admin Portal (`/admin/seasons`) reads directly from Firestore; bypassing Firestore causes instant split-brain.
+
+#### 5. Manually Compiling & Pushing the Edge CDN Snapshot
 To re-push the live catalog snapshot to Firebase Storage CDN at any time:
 ```bash
 npm run catalog:push
@@ -205,10 +226,29 @@ npm run catalog:push
 
 ### Critical Data Integrity Rules
 
-1. **Zero "Other" Hymns Rule**:
+1. **Mandatory Firestore Write for ALL Entities (Zero Split-Brain)**:
+   - When creating or modifying a hymn, genre, cantor, or recording: writes to **Cloud Firestore are NON-OPTIONAL AND MANDATORY FIRST-CLASS STEPS**.
+   - NEVER write only to local JSON files (`src/data/hymns.json`) or upload a manual `catalog.json` to Storage!
+   - The Admin Portal (`/admin/hymns`, `/admin/markers`, `/admin/seasons`) and the "Publish to CDN" button compile **directly from Cloud Firestore**. If an entity is not in Firestore, it does not exist in the database, and the next CDN publish will overwrite it!
+   - Every script must follow:
+     - `hymns/{hymnId}`: Must be written to Firestore with `id`, `name`, `genreId`, `subGenreId`, `lyrics` (`coptic`, `english`, `arabic`), `lyricsCopticUrl`, etc.
+     - `genres/{genreId}`: Must be written to Firestore with updated `content` string containing `subGenre:<Name>` and the new hymn IDs.
+     - `cantors/{cantorId}`: Must be written to Firestore with `cantorCloudActive: true`.
+     - `recordings/{recordingId}`: Must be written to Firestore with `markers`, `lyricsMapping`, etc.
+   - Always authenticate writes using `signInAnonymously(auth)` from Firebase Auth.
+
+2. **Verification Before Declaring Complete**:
+   - Before telling the user that a hymn, cantor, or section is "currently available on the website", you MUST physically verify:
+     1. The documents exist in Cloud Firestore (`getDoc(doc(db, 'hymns', id))`, etc.).
+     2. The `genres/<genreId>` document in Firestore contains the hymn under `subGenre:<Name>`.
+     3. The client queries (`useHymns(genreId)`) actually return the hymn.
+     4. Note: Hymns with text/lyrics whose audio tracks are pending are fully supported and display in their liturgical subgenre with a `"No recordings"` badge.
+
+3. **Zero "Other" Hymns Rule**:
    - Every hymn assigned to a `genreId` MUST be explicitly listed under that genre's `content` string under a `subGenre:<Subgenre Name>` heading.
    - Never leave hymns unassigned in `genres.json` or `catalog.json`; unassigned hymns will drop into "Other Hymns".
-2. **Preserve Liturgical Season Ranks (Kiahk is #1)**:
+
+4. **Preserve Liturgical Season Ranks (Kiahk is #1)**:
    - All `genres.json` files have explicit `rank` values:
      - `#1: Kiahk`
      - `#2: Nativity`
@@ -218,11 +258,16 @@ npm run catalog:push
      - `#6: Resurrection`
      - `#7: Apostles' Fast`
    - **Never overwrite `rank` with `undefined` or default to 99**. When sorting genres, sort strictly by `(a.rank ?? 99) - (b.rank ?? 99)`. Never sort genres alphabetically with `localeCompare` without rank checks, as that will improperly push "Apostles' Fast" to the top.
-3. **Naming & Sequential Verses**:
+
+5. **Naming & Sequential Verses**:
    - For sequential liturgical series (e.g., Roumi 1–9, Mo'aqab 1–9): Titles must remain clean and strictly numbered (`"Roumi 1"`, `"Mo'aqab 1"`). Do not append lyrics or Arabic names to the title.
    - Omit descriptions for sequential liturgical verses unless specifically instructed.
-4. **Preserve Other Seasons & Hymns**:
+
+6. **Preserve Other Seasons & Hymns**:
    - Never replace or truncate `genres.json` or `catalog.json` with a single-season object. Any script modifying data must merge into the complete 7-season, 70-hymn library.
+
+7. **Browser Cache Invalidation**:
+   - When deploying structural catalog changes or new subgenres, bump `STORAGE_CACHE_KEY` in `src/lib/services/catalog.ts` (e.g. `v2`, `v3`) so clients' browser `localStorage` does not serve stale cached data.
 
 
 

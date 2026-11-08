@@ -72,3 +72,38 @@ export interface FirestoreGenre {
   subgenres?: FirestoreSubgenre[];
   updatedAt?: any;
 }
+
+export type ChangeEntityType = 'markers' | 'lyrics' | 'hymn' | 'season' | 'cantor';
+
+export interface PendingChange {
+  id: string;
+  entityType: ChangeEntityType;
+  entityId: string;
+  entityName: string;
+  action: 'update' | 'create' | 'reorder';
+  summary: string;
+  details?: string;
+  previousSnapshot: any;
+  newSnapshot: any;
+  userEmail: string;
+  timestamp: string;
+  published: boolean;
+  publishedAt?: string;
+  publishedBy?: string;
+  reverted?: boolean;
+  revertedAt?: string;
+  revertedBy?: string;
+}
+
+export interface HymnLockInfo {
+  hymnId: string;
+  hymnTitle: string;
+  userId: string;
+  userEmail: string;
+  userName: string;
+  acquiredAt: number;
+  lastHeartbeat: number;
+  leaseDurationMs: number;
+}
+
+

@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { useOrderedHymns } from '@/lib/hooks/useOrderedHymns';
+import { useCatalog } from '@/lib/services/catalog';
 import type { Recording } from '@/lib/types';
 import { useSearchParams } from 'next/navigation';
 import { useSearch } from '@/components/search-provider';
@@ -40,22 +41,47 @@ export function HymnClientPage({ hymnId: initialHymnId }: { hymnId: string }) {
     if (genreIdFromUrl) {
       return genreIdFromUrl;
     }
-    if (!hymn?.genreId) return undefined;
-    return Array.isArray(hymn.genreId) ? hymn.genreId[0] : hymn.genreId;
-  }, [hymn?.genreId, genreIdFromUrl]);
+    const rawGenreId = hymn?.genreId ?? (hymn as any)?.genreIds;
+    if (!rawGenreId) return undefined;
+    if (Array.isArray(rawGenreId) && rawGenreId.length > 0) return rawGenreId[0];
+    if (typeof rawGenreId === 'string') return rawGenreId;
+    return undefined;
+  }, [hymn?.genreId, (hymn as any)?.genreIds, genreIdFromUrl]);
 
   const { data: genre, isLoading: isGenreLoading } = useGenre(primaryGenreId);
   const { flatPlaylist: playlist, isLoading: isPlaylistLoading } = useOrderedHymns(primaryGenreId);
+  const catalog = useCatalog();
+
+  const effectivePlaylist = useMemo(() => {
+    if (playlist && playlist.length > 0 && playlist.some(p => p.id === hymn?.id)) {
+      return playlist;
+    }
+    if (hymn && catalog?.hymns && catalog.hymns.length > 0) {
+      if (primaryGenreId) {
+        const sameGenre = catalog.hymns.filter(h => {
+          if (Array.isArray(h.genreId) && h.genreId.includes(primaryGenreId)) return true;
+          if (typeof h.genreId === 'string' && h.genreId === primaryGenreId) return true;
+          if (Array.isArray((h as any).genreIds) && (h as any).genreIds.includes(primaryGenreId)) return true;
+          return false;
+        });
+        if (sameGenre.length > 0 && sameGenre.some(h => h.id === hymn.id)) {
+          return sameGenre;
+        }
+      }
+      return catalog.hymns;
+    }
+    return playlist || [];
+  }, [playlist, hymn, catalog?.hymns, primaryGenreId]);
 
   const currentIndex = useMemo(() => {
-    if (!playlist || !hymn) {
+    if (!effectivePlaylist || !hymn) {
         return -1;
     }
-    return playlist.findIndex((p) => p.id === hymn.id);
-  }, [playlist, hymn]);
+    return effectivePlaylist.findIndex((p) => p.id === hymn.id);
+  }, [effectivePlaylist, hymn]);
 
   const hasPrevious = currentIndex > 0;
-  const hasNext = currentIndex !== -1 && currentIndex < (playlist?.length ?? 0) - 1;
+  const hasNext = currentIndex !== -1 && currentIndex < (effectivePlaylist?.length ?? 0) - 1;
   
   const navigateToHymn = useCallback((hymnId: string) => {
     setCurrentHymnId(hymnId);
@@ -65,16 +91,16 @@ export function HymnClientPage({ hymnId: initialHymnId }: { hymnId: string }) {
   }, [primaryGenreId]);
 
   const handlePrevious = useCallback(() => {
-    if (hasPrevious && playlist) {
-        navigateToHymn(playlist[currentIndex - 1].id);
+    if (hasPrevious && effectivePlaylist) {
+        navigateToHymn(effectivePlaylist[currentIndex - 1].id);
     }
-  }, [hasPrevious, playlist, currentIndex, navigateToHymn]);
+  }, [hasPrevious, effectivePlaylist, currentIndex, navigateToHymn]);
 
   const handleNext = useCallback(() => {
-    if (hasNext && playlist) {
-        navigateToHymn(playlist[currentIndex + 1].id);
+    if (hasNext && effectivePlaylist) {
+        navigateToHymn(effectivePlaylist[currentIndex + 1].id);
     }
-  }, [hasNext, playlist, currentIndex, navigateToHymn]);
+  }, [hasNext, effectivePlaylist, currentIndex, navigateToHymn]);
 
   // Handle browser back/forward buttons
   useEffect(() => {

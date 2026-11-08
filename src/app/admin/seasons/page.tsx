@@ -14,6 +14,8 @@ import {
 } from 'firebase/firestore';
 import { FirestoreGenre, FirestoreHymn } from '@/types/admin';
 import defaultCatalog from '@/data/catalog.json';
+import { useAdminAuth } from '@/context/admin-auth-context';
+import { recordPendingChange } from '@/lib/pending-changes';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -63,6 +65,7 @@ import {
 
 export default function AdminSeasonsPage() {
   const { firestore, firebaseApp } = useFirebase();
+  const { user } = useAdminAuth();
   const { toast } = useToast();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -120,7 +123,9 @@ export default function AdminSeasonsPage() {
         ]);
 
         const fallbackGenresMap = new Map((defaultCatalog.genres as any[]).map(g => [g.id, g]));
-        const list = genresSnap.docs.map(d => {
+        const list = genresSnap.docs
+          .filter(d => d.id !== 'app_settings' && d.id !== '__app_settings__')
+          .map(d => {
           const data = d.data() as any;
           const fallback = fallbackGenresMap.get(d.id);
           return {
@@ -239,6 +244,8 @@ export default function AdminSeasonsPage() {
     if (!firestore) return;
     try {
       setIsSaving(true);
+      const prevOrder = genres.map(g => ({ id: g.id, rank: g.rank }));
+
       await Promise.all(
         genres.map((g, idx) => {
           const gRef = doc(firestore, 'genres', g.id);
@@ -252,21 +259,23 @@ export default function AdminSeasonsPage() {
       const withRanks = genres.map((g, idx) => ({ ...g, rank: idx + 1 }));
       await syncLocalCatalog(withRanks);
 
-      // Auto-publish to Firebase Storage CDN so mobile & web apps reflect the new season order immediately
-      if (firebaseApp) {
-        try {
-          const storage = getStorage(firebaseApp);
-          await compileAndPublishCatalog(firestore, storage);
-        } catch (cdnErr) {
-          console.warn('Could not auto-publish to CDN:', cdnErr);
-        }
-      }
+      // Record pending change for staging review & 1-click undo
+      await recordPendingChange(firestore, {
+        entityType: 'season',
+        entityId: 'all_seasons_order',
+        entityName: 'Liturgical Seasons Order',
+        action: 'reorder',
+        summary: `Re-ranked ${genres.length} liturgical seasons`,
+        previousSnapshot: prevOrder,
+        newSnapshot: withRanks.map(g => ({ id: g.id, rank: g.rank })),
+        userEmail: user?.email || 'admin',
+      });
 
       setHasUnsavedOrder(false);
 
       toast({
-        title: 'Season Order Saved & Published',
-        description: `Successfully ranked ${genres.length} liturgical seasons from #1 to #${genres.length} and published to CDN.`,
+        title: 'Season Order Saved',
+        description: `Successfully ranked ${genres.length} liturgical seasons from #1 to #${genres.length}. Ready to Publish to CDN.`,
       });
     } catch (err: any) {
       console.error('Failed to save season order:', err);
@@ -285,6 +294,7 @@ export default function AdminSeasonsPage() {
     if (!firestore) return;
     try {
       setIsSaving(true);
+      const prevGenre = genres.find(g => g.id === genre.id);
       const gRef = doc(firestore, 'genres', genre.id);
       const payload: any = {
         name: genre.name,
@@ -298,6 +308,25 @@ export default function AdminSeasonsPage() {
 
       await updateDoc(gRef, payload);
       await syncLocalCatalog(genres.map(g => (g.id === genre.id ? { ...g, ...payload } : g)));
+
+      // Record pending change for staging review & 1-click undo
+      await recordPendingChange(firestore, {
+        entityType: 'season',
+        entityId: genre.id,
+        entityName: genre.name,
+        action: 'update',
+        summary: `Updated season details & subgenres`,
+        previousSnapshot: prevGenre ? {
+          name: prevGenre.name,
+          rank: prevGenre.rank,
+          active: prevGenre.active,
+          cantorCloudActive: prevGenre.cantorCloudActive,
+          backgroundUrl: prevGenre.backgroundUrl || '',
+          content: prevGenre.content || '',
+        } : null,
+        newSnapshot: payload,
+        userEmail: user?.email || 'admin',
+      });
 
       toast({
         title: 'Season Updated',

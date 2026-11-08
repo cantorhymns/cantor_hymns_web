@@ -76,6 +76,13 @@ interface WaveformEditorProps {
   hymnRecordings?: FirestoreRecording[];
   cantorsMap?: Map<string, { id: string; name?: string }>;
   onSelectRecording?: (recordingId: string) => void;
+  onPrevHymn?: () => void;
+  onNextHymn?: () => void;
+  prevHymnTitle?: string | null;
+  nextHymnTitle?: string | null;
+  hymnPositionText?: string | null;
+  isReadOnly?: boolean;
+  lockedByMessage?: string | null;
 }
 
 const REGION_COLORS = [
@@ -97,9 +104,18 @@ export function WaveformEditor({
   hymnRecordings,
   cantorsMap,
   onSelectRecording,
+  onPrevHymn,
+  onNextHymn,
+  prevHymnTitle,
+  nextHymnTitle,
+  hymnPositionText,
+  isReadOnly = false,
+  lockedByMessage = null,
 }: WaveformEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
+  const playheadRef = useRef<HTMLDivElement>(null);
+  const isDraggingMarkerRef = useRef(false);
   const wavesurferRef = useRef<WaveSurfer | null>(null);
   const regionsPluginRef = useRef<any>(null);
 
@@ -274,149 +290,6 @@ export function WaveformEditor({
     [lyricsMapping, markers, verses.length]
   );
 
-  // Synchronize regions on wavesurfer
-  const syncRegions = useCallback((markerList: number[], selectedIdx: number | null) => {
-    const plugin = regionsPluginRef.current;
-    if (!plugin) return;
-
-    const existingRegions = plugin.getRegions ? plugin.getRegions() : [];
-    // Fast path: if regions already exist and match marker count, update visual selection without clearing DOM
-    if (existingRegions.length === markerList.length && existingRegions.length > 0) {
-      for (let i = 0; i < existingRegions.length; i++) {
-        const r = existingRegions[i];
-        const isSelected = selectedIdx === i;
-        if (r.element) {
-          r.element.style.pointerEvents = 'none';
-          r.element.style.borderLeft = isSelected
-            ? '3px solid #ef4444'
-            : '2px solid #f59e0b';
-          r.element.style.boxShadow = isSelected
-            ? '-2px 0 10px rgba(239, 68, 68, 0.8)'
-            : '-1px 0 6px rgba(245, 158, 11, 0.5)';
-          r.element.style.backgroundColor = isSelected
-            ? 'rgba(239, 68, 68, 0.12)'
-            : i % 2 === 0
-            ? 'rgba(245, 158, 11, 0.04)'
-            : 'rgba(99, 102, 241, 0.04)';
-
-          const mappedVerse = getMappedVerseForMarker(i);
-          const vText = mappedVerse ? ` • ${mappedVerse.label.replace('Verse ', 'V')}` : '';
-
-          const pill = r.element.querySelector('[data-marker-pill]') as HTMLElement | null;
-          if (pill) {
-            pill.style.background = isSelected ? '#ef4444' : '#f59e0b';
-            pill.style.color = isSelected ? '#ffffff' : '#0f172a';
-            pill.innerText = `#${i + 1}${vText}`;
-          }
-          const arrow = r.element.querySelector('[data-marker-arrow]') as HTMLElement | null;
-          if (arrow) {
-            arrow.style.borderTop = `4px solid ${isSelected ? '#ef4444' : '#f59e0b'}`;
-          }
-        }
-      }
-      return;
-    }
-
-    plugin.clearRegions();
-
-    if (markerList.length === 0) return;
-
-    for (let i = 0; i < markerList.length; i++) {
-      const start = markerList[i];
-      const end = i + 1 < markerList.length ? markerList[i + 1] : Math.max(start + 1, duration);
-      const isSelected = selectedIdx === i;
-      const mappedVerse = getMappedVerseForMarker(i);
-      const vText = mappedVerse ? ` • ${mappedVerse.label.replace('Verse ', 'V')}` : '';
-
-      // Create a prominent marker pin & flag
-      const flagContainer = document.createElement('div');
-      flagContainer.style.position = 'absolute';
-      flagContainer.style.top = '1px';
-      flagContainer.style.left = '0px';
-      flagContainer.style.transform = 'translateX(-50%)';
-      flagContainer.style.pointerEvents = 'auto';
-      flagContainer.style.cursor = 'pointer';
-      flagContainer.style.zIndex = '30';
-      flagContainer.style.display = 'flex';
-      flagContainer.style.flexDirection = 'column';
-      flagContainer.style.alignItems = 'center';
-      flagContainer.title = `Jump to Marker #${i + 1} (${formatTime(start)})${mappedVerse ? ` • ${mappedVerse.label}` : ''}`;
-
-      const pill = document.createElement('div');
-      pill.setAttribute('data-marker-pill', 'true');
-      pill.style.background = isSelected ? '#ef4444' : '#f59e0b';
-      pill.style.color = isSelected ? '#ffffff' : '#0f172a';
-      pill.style.fontSize = '10px';
-      pill.style.fontWeight = '800';
-      pill.style.padding = '1px 5px';
-      pill.style.borderRadius = '3px';
-      pill.style.boxShadow = '0 2px 5px rgba(0,0,0,0.7)';
-      pill.style.whiteSpace = 'nowrap';
-      pill.style.letterSpacing = '-0.02em';
-      pill.style.lineHeight = '1.2';
-      pill.innerText = `#${i + 1}${vText}`;
-
-      const arrow = document.createElement('div');
-      arrow.setAttribute('data-marker-arrow', 'true');
-      arrow.style.width = '0';
-      arrow.style.height = '0';
-      arrow.style.borderLeft = '3px solid transparent';
-      arrow.style.borderRight = '3px solid transparent';
-      arrow.style.borderTop = `4px solid ${isSelected ? '#ef4444' : '#f59e0b'}`;
-
-      flagContainer.appendChild(pill);
-      flagContainer.appendChild(arrow);
-
-      const markerIdx = i;
-      flagContainer.onclick = (e) => {
-        e.stopPropagation();
-        jumpToMarkerRef.current(markerIdx);
-      };
-
-      const r = plugin.addRegion({
-        id: `marker-${i}`,
-        start,
-        end,
-        content: flagContainer,
-        color: isSelected
-          ? 'rgba(239, 68, 68, 0.12)'
-          : i % 2 === 0
-          ? 'rgba(245, 158, 11, 0.04)'
-          : 'rgba(99, 102, 241, 0.04)',
-        drag: false, // Prevents dragging whole region when clicking track
-        resize: true, // Allows dragging the marker line to adjust its timestamp
-      });
-
-      if (r.element) {
-        // Shaded region body has pointer-events: none so clicks pass directly to WaveSurfer for seeking
-        r.element.style.pointerEvents = 'none';
-        // High-contrast, sharp vertical line directly on the marker timestamp
-        r.element.style.borderLeft = isSelected
-          ? '3px solid #ef4444'
-          : '2px solid #f59e0b';
-        r.element.style.boxShadow = isSelected
-          ? '-2px 0 10px rgba(239, 68, 68, 0.8)'
-          : '-1px 0 6px rgba(245, 158, 11, 0.5)';
-
-        // Left resize handle: enable dragging the marker line to nudge its timestamp
-        const leftHandle = r.element.querySelector('[part~="region-handle-left"]') as HTMLElement | null;
-        if (leftHandle) {
-          leftHandle.style.pointerEvents = 'auto';
-          leftHandle.style.width = '14px';
-          leftHandle.style.left = '-7px';
-          leftHandle.style.cursor = 'col-resize';
-          leftHandle.style.zIndex = '25';
-        }
-
-        // Right resize handle: hide so contiguous regions don't overlap resize handles
-        const rightHandle = r.element.querySelector('[part~="region-handle-right"]') as HTMLElement | null;
-        if (rightHandle) {
-          rightHandle.style.display = 'none';
-        }
-      }
-    }
-  }, [duration, getMappedVerseForMarker]);
-
   const getScrollContainer = (ws: WaveSurfer | null): HTMLElement | null => {
     if (!ws) return null;
     try {
@@ -436,6 +309,266 @@ export function WaveformEditor({
     }
   };
 
+  // Synchronize regions on wavesurfer
+  const syncRegions = useCallback((markerList: number[], selectedIdx: number | null) => {
+    const plugin = regionsPluginRef.current;
+    const ws = wavesurferRef.current;
+    if (!plugin || !ws) return;
+
+    const totalDur = ws.getDuration() || duration;
+    // CRITICAL: Never add regions before audio is decoded and total duration > 0,
+    // otherwise WaveSurfer calculates (start / 0) and collapses all markers to 00:00.00!
+    if (!totalDur || totalDur <= 0 || isNaN(totalDur)) return;
+
+    // Do not purge or recreate regions while the user is actively dragging a marker
+    if (isDraggingMarkerRef.current) return;
+
+    // Purge any existing DOM marker flags or orphaned elements before recreating (including Shadow DOM)
+    try {
+      const host = containerRef.current?.firstElementChild as HTMLElement | null;
+      host?.shadowRoot?.querySelectorAll('[data-marker-flag]').forEach(el => el.remove());
+      containerRef.current?.querySelectorAll('[data-marker-flag]').forEach(el => el.remove());
+      const wrapper = ws.getWrapper();
+      wrapper?.querySelectorAll('[data-marker-flag]').forEach(el => el.remove());
+      plugin.clearRegions();
+    } catch (_) {}
+
+    // Only place markers that are genuinely verse transitions (> 0.1s from track start)
+    markerList.forEach((start, markerIdx) => {
+      if (typeof start !== 'number' || isNaN(start) || start <= 0.1) return;
+
+      const nextValidMarker = markerList
+        .slice(markerIdx + 1)
+        .find(m => typeof m === 'number' && !isNaN(m) && m > 0.1);
+      const end = nextValidMarker ?? Math.max(start + 1, totalDur);
+      const isSelected = selectedIdx === markerIdx;
+      const mappedVerse = getMappedVerseForMarker(markerIdx);
+      const vText = mappedVerse ? ` • ${mappedVerse.label.replace('Verse ', 'V')}` : '';
+
+      // Create a prominent marker pin & flag
+      const flagContainer = document.createElement('div');
+      flagContainer.setAttribute('data-marker-flag', 'true');
+      flagContainer.style.position = 'absolute';
+      flagContainer.style.top = '1px';
+      flagContainer.style.left = isSelected ? '-1.5px' : '-1px';
+      flagContainer.style.transform = 'translateX(-50%)';
+      flagContainer.style.pointerEvents = 'auto';
+      flagContainer.style.cursor = 'pointer';
+      flagContainer.style.zIndex = '30';
+      flagContainer.style.display = 'flex';
+      flagContainer.style.flexDirection = 'column';
+      flagContainer.style.alignItems = 'center';
+      flagContainer.style.touchAction = 'none';
+      (flagContainer.style as any).webkitTouchCallout = 'none';
+      (flagContainer.style as any).webkitUserSelect = 'none';
+      flagContainer.style.userSelect = 'none';
+      flagContainer.title = `Jump to Marker #${markerIdx + 1} (${formatTime(start)})${mappedVerse ? ` • ${mappedVerse.label}` : ''}`;
+
+      const pill = document.createElement('div');
+      pill.setAttribute('data-marker-pill', 'true');
+      pill.style.background = isSelected ? '#ef4444' : '#f59e0b';
+      pill.style.color = isSelected ? '#ffffff' : '#0f172a';
+      pill.style.fontSize = '10px';
+      pill.style.fontWeight = '800';
+      pill.style.padding = '1px 5px';
+      pill.style.borderRadius = '3px';
+      pill.style.boxShadow = '0 2px 5px rgba(0,0,0,0.7)';
+      pill.style.whiteSpace = 'nowrap';
+      pill.style.letterSpacing = '-0.02em';
+      pill.style.lineHeight = '1.2';
+      pill.innerText = `#${markerIdx + 1}${vText}`;
+
+      const arrow = document.createElement('div');
+      arrow.setAttribute('data-marker-arrow', 'true');
+      arrow.style.width = '0';
+      arrow.style.height = '0';
+      arrow.style.borderLeft = '3px solid transparent';
+      arrow.style.borderRight = '3px solid transparent';
+      arrow.style.borderTop = `4px solid ${isSelected ? '#ef4444' : '#f59e0b'}`;
+
+      flagContainer.appendChild(pill);
+      flagContainer.appendChild(arrow);
+
+      const r = plugin.addRegion({
+        id: `marker-${markerIdx}`,
+        start,
+        end,
+        content: flagContainer,
+        color: isSelected
+          ? 'rgba(239, 68, 68, 0.12)'
+          : markerIdx % 2 === 0
+          ? 'rgba(245, 158, 11, 0.04)'
+          : 'rgba(99, 102, 241, 0.04)',
+        drag: false, // Prevents dragging whole region when clicking track
+        resize: true, // Creates left handle for dragging marker line
+        avoidOverlapping: false,
+      });
+
+      // Unified direct drag handling for mouse and touch (works on flag pin AND the vertical marker handle)
+      let isDragging = false;
+      let startClientX = 0;
+      let initialMarkerStart = start;
+
+      const setupDrag = (targetEl: HTMLElement) => {
+        // Prevent mousedown/touchstart from bubbling to the waveform container (which would trigger track scrubbing)
+        targetEl.addEventListener('mousedown', (e: MouseEvent) => {
+          e.stopPropagation();
+        });
+        targetEl.addEventListener('touchstart', (e: TouchEvent) => {
+          e.stopPropagation();
+        }, { passive: false });
+
+        targetEl.addEventListener('pointerdown', (e: PointerEvent) => {
+          if (e.button !== 0 || isReadOnly) return;
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          try {
+            targetEl.setPointerCapture(e.pointerId);
+          } catch (_) {}
+          isDragging = false;
+          startClientX = e.clientX;
+          initialMarkerStart = r.start;
+          isDraggingMarkerRef.current = true;
+          setSelectedMarkerIdx(markerIdx);
+          document.body.style.touchAction = 'none';
+          document.body.style.userSelect = 'none';
+        });
+
+        targetEl.addEventListener('pointermove', (e: PointerEvent) => {
+          if (!targetEl.hasPointerCapture(e.pointerId)) return;
+          const deltaX = e.clientX - startClientX;
+          if (!isDragging && Math.abs(deltaX) > 2) {
+            isDragging = true;
+          }
+
+          if (isDragging) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const ws = wavesurferRef.current;
+            if (!ws) return;
+
+            const sc = getScrollContainer(ws);
+            const wrapper = ws.getWrapper();
+            const fullWidth = wrapper ? wrapper.scrollWidth : Math.max(1, sc ? sc.scrollWidth : 1000);
+            const totalDuration = ws.getDuration() || duration || 1;
+            const pxPerSecond = fullWidth / totalDuration;
+
+            const deltaTime = deltaX / Math.max(0.001, pxPerSecond);
+            const newTime = Math.max(0.1, Math.min(totalDuration, initialMarkerStart + deltaTime));
+
+            // Nudge region visually in real time (smooth 60fps, does NOT trigger React re-renders)
+            r.setOptions({ start: newTime, end: Math.max(newTime + 0.1, r.end) });
+
+            // Display live timestamp in pill while dragging
+            pill.innerText = `#${markerIdx + 1}${vText} (${formatTime(newTime)})`;
+          }
+        });
+
+        const handlePointerEnd = (e: PointerEvent) => {
+          if (targetEl.hasPointerCapture(e.pointerId)) {
+            try {
+              targetEl.releasePointerCapture(e.pointerId);
+            } catch (_) {}
+          }
+          document.body.style.touchAction = '';
+          document.body.style.userSelect = '';
+          isDraggingMarkerRef.current = false;
+
+          // Restore normal pill text
+          pill.innerText = `#${markerIdx + 1}${vText}`;
+
+          if (!isDragging) {
+            jumpToMarkerRef.current(markerIdx);
+            setSelectedMarkerIdx(markerIdx);
+          } else {
+            // Commit final sorted position to markers state on release
+            const finalTime = Math.round(r.start * 1000) / 1000;
+
+            // When paused, ONLY the marker moves - the track stays at the same location without scrolling!
+            // When actively playing, audio continues naturally without jarring seeks.
+            const isAudioPlaying = isPlayingRef.current || (wavesurferRef.current?.isPlaying() ?? false);
+            if (isAudioPlaying) {
+              const ws = wavesurferRef.current;
+              if (ws) {
+                setCurrentTime(ws.getCurrentTime());
+              }
+            }
+
+            setMarkers(prev => {
+              const next = [...prev];
+              next[markerIdx] = finalTime;
+              next.sort((a, b) => a - b);
+              const updatedIdx = next.indexOf(finalTime);
+              if (updatedIdx !== -1) {
+                setSelectedMarkerIdx(updatedIdx);
+              }
+              return next;
+            });
+            setHasUnsavedChanges(true);
+          }
+          isDragging = false;
+        };
+
+        targetEl.addEventListener('pointerup', handlePointerEnd);
+        targetEl.addEventListener('pointercancel', handlePointerEnd);
+      };
+
+      setupDrag(flagContainer);
+
+      if (r.element) {
+        // Shaded region body has pointer-events: none so clicks pass directly to WaveSurfer for seeking
+        r.element.style.pointerEvents = 'none';
+        // High-contrast, sharp vertical line directly on the marker timestamp
+        r.element.style.borderLeft = isSelected
+          ? '3px solid #ef4444'
+          : '2px solid #f59e0b';
+        r.element.style.boxShadow = isSelected
+          ? '-2px 0 10px rgba(239, 68, 68, 0.8)'
+          : '-1px 0 6px rgba(245, 158, 11, 0.5)';
+        r.element.style.marginTop = '0px';
+        r.element.style.top = '0px';
+
+        // Left resize handle: enable dragging the marker line to nudge its timestamp
+        let leftHandle = r.element.querySelector('[part~="region-handle-left"]') as HTMLElement | null;
+        if (!leftHandle) {
+          leftHandle = document.createElement('div');
+          leftHandle.setAttribute('part', 'region-handle-left');
+          r.element.appendChild(leftHandle);
+        }
+
+        leftHandle.style.pointerEvents = 'auto';
+        leftHandle.style.touchAction = 'none';
+        (leftHandle.style as any).webkitTouchCallout = 'none';
+        (leftHandle.style as any).webkitUserSelect = 'none';
+        leftHandle.style.userSelect = 'none';
+        leftHandle.style.cursor = 'col-resize';
+        leftHandle.style.zIndex = '25';
+        // Ensure hover highlight is centered exactly on the solid marker border line
+        leftHandle.style.left = isSelected ? '-12.5px' : '-12px';
+        leftHandle.style.transform = 'none';
+        leftHandle.style.width = '22px';
+        leftHandle.style.borderLeft = 'none';
+        leftHandle.style.borderRadius = '3px';
+        leftHandle.onmouseenter = () => {
+          leftHandle.style.background = isSelected ? 'rgba(239, 68, 68, 0.35)' : 'rgba(245, 158, 11, 0.35)';
+        };
+        leftHandle.onmouseleave = () => {
+          leftHandle.style.background = 'transparent';
+        };
+
+        setupDrag(leftHandle);
+
+        // Right resize handle: hide so contiguous regions don't overlap resize handles
+        const rightHandle = r.element.querySelector('[part~="region-handle-right"]') as HTMLElement | null;
+        if (rightHandle) {
+          rightHandle.style.display = 'none';
+        }
+      }
+    });
+  }, [duration, isReadOnly, getMappedVerseForMarker]);
+
   const syncScrollToCenter = useCallback((time: number) => {
     const ws = wavesurferRef.current;
     if (!ws) return;
@@ -445,11 +578,43 @@ export function WaveformEditor({
     if (!sc) return;
 
     const wrapper = ws.getWrapper();
-    const canvasWidth = wrapper ? wrapper.scrollWidth : Math.max(1, sc.scrollWidth - sc.clientWidth);
-    const targetScrollLeft = (time / dur) * canvasWidth;
+    const fullWidth = wrapper ? wrapper.scrollWidth : Math.max(1, sc.scrollWidth);
+    const containerWidth = sc.clientWidth;
+
+    const playheadPixelPosition = (time / dur) * fullWidth;
+    const scrollThreshold = containerWidth / 2;
+    const maxScroll = Math.max(0, fullWidth - containerWidth);
+    const endThreshold = fullWidth - containerWidth / 2;
+
+    let targetScrollLeft = 0;
+    let playheadLeftPx = scrollThreshold;
+
+    if (fullWidth <= containerWidth) {
+      // Audio fits entirely within viewport
+      targetScrollLeft = 0;
+      playheadLeftPx = Math.max(0, Math.min(containerWidth, playheadPixelPosition));
+    } else if (playheadPixelPosition < scrollThreshold) {
+      // Case 1: Beginning of track. Keep waveform static at start, move playhead from 0 to center
+      targetScrollLeft = 0;
+      playheadLeftPx = playheadPixelPosition;
+    } else if (playheadPixelPosition >= endThreshold) {
+      // Case 3: End of track. Keep waveform static at end, move playhead towards the end of the track!
+      targetScrollLeft = maxScroll;
+      playheadLeftPx = playheadPixelPosition - maxScroll;
+    } else {
+      // Case 2: Middle of track. Keep playhead centered and scroll waveform
+      targetScrollLeft = playheadPixelPosition - scrollThreshold;
+      playheadLeftPx = scrollThreshold;
+    }
+
     sc.scrollLeft = targetScrollLeft;
     if (timelineRef.current) {
       timelineRef.current.scrollLeft = targetScrollLeft;
+    }
+
+    if (playheadRef.current) {
+      const containerLeft = containerRef.current ? containerRef.current.offsetLeft : 8;
+      playheadRef.current.style.left = `${containerLeft + playheadLeftPx}px`;
     }
   }, [duration]);
 
@@ -465,9 +630,13 @@ export function WaveformEditor({
     const ws = wavesurferRef.current;
     if (!ws || !isAudioReady || duration <= 0) return;
 
+    // Never scrub if user is currently dragging a marker
+    if (isDraggingMarkerRef.current) return;
+
     // If click originated on a marker pill or resize handle, let region handler handle it
     const target = e.target as HTMLElement;
     if (
+      target.closest('[data-marker-flag]') ||
       target.closest('[data-marker-pill]') ||
       target.closest('[data-marker-arrow]') ||
       target.closest('[part~="region-handle-left"]') ||
@@ -506,8 +675,8 @@ export function WaveformEditor({
 
     const sc = getScrollContainer(ws);
     const wrapper = ws.getWrapper();
-    const canvasWidth = wrapper ? wrapper.scrollWidth : (sc ? sc.scrollWidth - sc.clientWidth : 1000);
-    const pxPerSec = canvasWidth / Math.max(1, duration);
+    const fullWidth = wrapper ? wrapper.scrollWidth : Math.max(1, sc ? sc.scrollWidth : 1000);
+    const pxPerSec = fullWidth / Math.max(1, duration);
 
     // Scrubbing left (deltaX < 0) advances audio forward
     // Scrubbing right (deltaX > 0) rewinds audio backward
@@ -538,20 +707,19 @@ export function WaveformEditor({
 
     if (!ws || !scrubInfo) return;
 
-    // Single-click / tap jump directly to needle
+    // Single-click / tap jump directly to needle or clicked spot
     if (!scrubInfo.hasMoved && containerRef.current) {
       const clientX = 'changedTouches' in e ? e.changedTouches[0].clientX : e.clientX;
       const rect = containerRef.current.getBoundingClientRect();
-      const clickXInContainer = clientX - rect.left;
-      const centerOffset = clickXInContainer - rect.width / 2;
+      const clickXInContainer = Math.max(0, Math.min(rect.width, clientX - rect.left));
 
       const sc = getScrollContainer(ws);
       const wrapper = ws.getWrapper();
-      const canvasWidth = wrapper ? wrapper.scrollWidth : (sc ? sc.scrollWidth - sc.clientWidth : 1000);
-      const pxPerSec = canvasWidth / Math.max(1, duration);
+      const fullWidth = wrapper ? wrapper.scrollWidth : Math.max(1, sc ? sc.scrollWidth : 1000);
 
-      const timeOffset = centerOffset / Math.max(0.001, pxPerSec);
-      const targetTime = Math.max(0, Math.min(duration, scrubInfo.time + timeOffset));
+      const currentScroll = sc ? sc.scrollLeft : 0;
+      const audioPixel = currentScroll + clickXInContainer;
+      const targetTime = Math.max(0, Math.min(duration, (audioPixel / fullWidth) * duration));
 
       ws.setTime(targetTime);
       setCurrentTime(targetTime);
@@ -665,7 +833,12 @@ export function WaveformEditor({
       }
     });
 
+    regionsPlugin.on('region-update', () => {
+      document.body.style.touchAction = 'none';
+    });
+
     regionsPlugin.on('region-updated', (region: Region) => {
+      document.body.style.touchAction = '';
       const idx = parseInt(region.id.replace('marker-', ''), 10);
       if (!isNaN(idx)) {
         setMarkers(prev => {
@@ -679,6 +852,12 @@ export function WaveformEditor({
     });
 
     return () => {
+      try {
+        const host = containerRef.current?.firstElementChild as HTMLElement | null;
+        host?.shadowRoot?.querySelectorAll('[data-marker-flag]').forEach(el => el.remove());
+        containerRef.current?.querySelectorAll('[data-marker-flag]').forEach(el => el.remove());
+        regionsPlugin.clearRegions();
+      } catch (_) {}
       ws.destroy();
       wavesurferRef.current = null;
     };
@@ -686,8 +865,10 @@ export function WaveformEditor({
 
   // Sync regions when markers list or selection changes
   useEffect(() => {
-    syncRegions(markers, selectedMarkerIdx);
-  }, [markers, selectedMarkerIdx, syncRegions]);
+    if (isAudioReady && duration > 0) {
+      syncRegions(markers, selectedMarkerIdx);
+    }
+  }, [markers, selectedMarkerIdx, isAudioReady, duration, syncRegions]);
 
   // Handle zoom changes safely after audio is ready
   useEffect(() => {
@@ -893,9 +1074,9 @@ export function WaveformEditor({
     }
   }, [markers, currentTime, duration, isAudioReady, jumpToMarker]);
 
-  // Auto-map sequential verses
+  // Auto-map sequential verses: Verse 1 maps to Track Start (0), Verse 2+ map to Markers 1..N
   const autoMapSequentially = useCallback(() => {
-    const nextMapping = verses.map((_, i) => (i < markers.length ? i + 1 : -1));
+    const nextMapping = verses.map((_, i) => (i === 0 ? 0 : i <= markers.length ? i : -1));
     setLyricsMapping(nextMapping);
     setHasUnsavedChanges(true);
   }, [verses.length, markers.length]);
@@ -1023,7 +1204,8 @@ export function WaveformEditor({
       const { markers: parsed } = parseAudacityLabels(text);
       if (parsed.length > 0) {
         setMarkers(parsed);
-        setLyricsMapping(verses.map((_, i) => (i < parsed.length ? i + 1 : -1)));
+        // Map Verse 1 to Track Start (0), and subsequent verses to Markers 1..N
+        setLyricsMapping(verses.map((_, i) => (i === 0 ? 0 : i <= parsed.length ? i : -1)));
         setSelectedMarkerIdx(0);
         setHasUnsavedChanges(true);
       }
@@ -1224,7 +1406,13 @@ export function WaveformEditor({
               </div>
             )}
           </div>
-          <p className="text-xs text-muted-foreground flex items-center gap-2">
+          <p className="text-xs text-muted-foreground flex flex-wrap items-center gap-2">
+            {hymnPositionText && (
+              <>
+                <span className="font-medium text-foreground/85">{hymnPositionText}</span>
+                <span>&bull;</span>
+              </>
+            )}
             <span>Duration: {formatTime(duration)}</span>
             <span>&bull;</span>
             <span className="font-semibold text-primary">{markers.length} Markers</span>
@@ -1240,14 +1428,15 @@ export function WaveformEditor({
         {/* Cloud Save & Audacity Export / Import */}
         <div className="flex items-center gap-2">
           {/* Audacity Import */}
-          <label className="cursor-pointer">
+          <label className={isReadOnly ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}>
             <input
               type="file"
               accept=".txt"
               className="hidden"
+              disabled={isReadOnly}
               onChange={handleImportAudacity}
             />
-            <Button size="sm" variant="outline" asChild className="text-xs gap-1.5 cursor-pointer">
+            <Button size="sm" variant="outline" asChild disabled={isReadOnly} className="text-xs gap-1.5 cursor-pointer">
               <span>
                 <Upload className="w-3.5 h-3.5" />
                 Import Audacity (.txt)
@@ -1271,7 +1460,8 @@ export function WaveformEditor({
           <Button
             size="sm"
             onClick={() => onSave(markers, lyricsMapping)}
-            disabled={isSaving}
+            disabled={isSaving || isReadOnly}
+            title={isReadOnly ? (lockedByMessage || 'Editing locked by collaborator') : 'Save Markers to Cloud'}
             className="text-xs gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
           >
             {isSaving ? (
@@ -1292,14 +1482,18 @@ export function WaveformEditor({
       {/* Waveform & Timeline Canvas */}
       <Card className="shadow-md border-primary/20 overflow-hidden">
         <CardContent className="p-4 sm:p-6 space-y-4">
-          {/* Waveform Canvas with Stationary Center Playhead Line */}
+          {/* Waveform Canvas with Dynamic Responsive Playhead Line */}
           <div
-            className="relative rounded-lg bg-slate-950 p-2 border border-slate-800 overflow-hidden select-none cursor-grab active:cursor-grabbing"
+            className="relative rounded-lg bg-slate-950 p-2 border border-slate-800 overflow-hidden select-none cursor-grab active:cursor-grabbing touch-none overscroll-contain"
             onMouseDown={handleScrubStart}
             onTouchStart={handleScrubStart}
           >
-            {/* Stationary Center Playhead Line (Pinned at 50% viewport width) */}
-            <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-rose-500 z-30 pointer-events-none transform -translate-x-1/2 shadow-[0_0_8px_rgba(244,63,94,0.7)]">
+            {/* Dynamic Playhead Line (Moves continuously towards end of track) */}
+            <div
+              ref={playheadRef}
+              className="absolute top-0 bottom-0 w-0.5 bg-rose-500 z-30 pointer-events-none transform -translate-x-1/2 shadow-[0_0_8px_rgba(244,63,94,0.7)]"
+              style={{ left: '8px' }}
+            >
               <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-rose-500 rotate-45 rounded-[1px] shadow-sm" />
               <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-rose-500 rotate-45 rounded-[1px] shadow-sm" />
             </div>
@@ -1307,10 +1501,12 @@ export function WaveformEditor({
             <style>{`
               ::part(scroll),
               .scroll {
-                padding-left: 50% !important;
-                padding-right: 50% !important;
-                box-sizing: content-box !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                box-sizing: border-box !important;
                 scrollbar-width: none !important;
+                overscroll-behavior-x: contain !important;
+                touch-action: pan-x !important;
               }
               ::part(scroll)::-webkit-scrollbar,
               .scroll::-webkit-scrollbar {
@@ -1325,21 +1521,57 @@ export function WaveformEditor({
               .wavesurfer-handle-start,
               [part~="region-handle-left"],
               ::part(region-handle-left) {
-                width: 14px !important;
-                left: -7px !important;
                 cursor: col-resize !important;
                 z-index: 25 !important;
                 pointer-events: auto !important;
                 background: transparent !important;
+                border-left: none !important;
+                border-radius: 3px !important;
+                left: -12px !important;
+                transform: none !important;
+                width: 22px !important;
+                touch-action: none !important;
+                -webkit-touch-callout: none !important;
+                -webkit-user-select: none !important;
+                user-select: none !important;
+                transition: background 0.15s ease-in-out;
               }
               .wavesurfer-handle-start:hover,
               [part~="region-handle-left"]:hover,
               ::part(region-handle-left):hover {
-                background: rgba(245, 158, 11, 0.4) !important;
+                background: rgba(245, 158, 11, 0.35) !important;
               }
               [part~="region-handle-right"],
               ::part(region-handle-right) {
                 display: none !important;
+              }
+
+              /* Desktop / Fine Pointer (Mouse): keep precise 22px handle centered directly on marker line */
+              @media (pointer: fine) {
+                .wavesurfer-handle-start,
+                [part~="region-handle-left"],
+                ::part(region-handle-left) {
+                  width: 22px !important;
+                  left: -12px !important;
+                  transform: none !important;
+                }
+              }
+
+              /* Mobile & Touchscreen (Coarse Pointer): 44px hit target centered directly on marker line */
+              @media (pointer: coarse) {
+                .wavesurfer-handle-start,
+                [part~="region-handle-left"],
+                ::part(region-handle-left) {
+                  width: 44px !important;
+                  left: -23px !important;
+                  transform: none !important;
+                  touch-action: none !important;
+                }
+                [data-marker-flag="true"] {
+                  touch-action: none !important;
+                  -webkit-user-select: none !important;
+                  user-select: none !important;
+                }
               }
             `}</style>
             <div ref={containerRef} className="w-full" />
@@ -1347,9 +1579,7 @@ export function WaveformEditor({
               ref={timelineRef}
               className="w-full mt-1 border-t border-slate-800 text-[10px] text-slate-400 overflow-x-hidden"
               style={{
-                paddingLeft: '50%',
-                paddingRight: '50%',
-                boxSizing: 'content-box',
+                boxSizing: 'border-box',
               }}
             />
           </div>
@@ -1430,13 +1660,14 @@ export function WaveformEditor({
               </div>
             </div>
 
-            {/* Drop Marker Button & Selected Marker Info */}
+            {/* Center: Drop Marker Button & Selected Marker Controls */}
             <div className="flex items-center gap-2">
               <Button
                 size="sm"
                 onClick={dropMarkerAtCurrentTime}
-                className="h-9 text-xs gap-1.5 bg-amber-600 hover:bg-amber-700 text-white font-semibold shadow-sm"
-                title="Drop Marker at Current Time (M)"
+                disabled={isReadOnly}
+                className="h-9 text-xs gap-1.5 bg-amber-600 hover:bg-amber-700 text-white font-semibold shadow-sm disabled:opacity-50"
+                title={isReadOnly ? (lockedByMessage || 'Editing locked by collaborator') : 'Drop Marker at Current Time (M)'}
               >
                 <MapPin className="w-4 h-4" />
                 <span>Drop Marker (M)</span>
@@ -1451,8 +1682,9 @@ export function WaveformEditor({
                     size="sm"
                     variant="ghost"
                     onClick={() => deleteMarker(selectedMarkerIdx)}
-                    title="Delete Marker (Del)"
-                    className="h-8 px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 gap-1"
+                    disabled={isReadOnly}
+                    title={isReadOnly ? 'Editing locked' : 'Delete Marker (Del)'}
+                    className="h-8 px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 gap-1 disabled:opacity-50"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     <span>Delete</span>
@@ -1492,6 +1724,49 @@ export function WaveformEditor({
               </div>
             </div>
           </div>
+
+          {/* Prev / Next Hymn Centered Directly Underneath Control Bar */}
+          {(onPrevHymn || onNextHymn) && (
+            <div className="flex items-center justify-center gap-2 pt-2 border-t border-border/40">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onPrevHymn}
+                disabled={!prevHymnTitle}
+                className="h-7 px-2.5 text-xs gap-1 border-muted-foreground/20 hover:text-primary hover:border-primary/40 shadow-none text-muted-foreground hover:bg-primary/5"
+                title={
+                  prevHymnTitle
+                    ? `Previous Hymn: ${prevHymnTitle} (Press [)`
+                    : 'First hymn in liturgical order'
+                }
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+                <span>Prev Hymn</span>
+              </Button>
+
+              {hymnPositionText && (
+                <span className="text-[11px] text-muted-foreground font-medium px-2 whitespace-nowrap">
+                  {hymnPositionText}
+                </span>
+              )}
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onNextHymn}
+                disabled={!nextHymnTitle}
+                className="h-7 px-2.5 text-xs gap-1 border-muted-foreground/20 hover:text-primary hover:border-primary/40 shadow-none text-muted-foreground hover:bg-primary/5"
+                title={
+                  nextHymnTitle
+                    ? `Next Hymn: ${nextHymnTitle} (Press ])`
+                    : 'Last hymn in liturgical order'
+                }
+              >
+                <span>Next Hymn</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -1515,7 +1790,7 @@ export function WaveformEditor({
                 variant="ghost"
                 onClick={autoMapSequentially}
                 className="text-xs h-7 gap-1 text-primary hover:text-primary"
-                title="Map markers to verses 1, 2, 3..."
+                title="Map Verse 1 to Track Start, and subsequent verses to Markers 1, 2, 3..."
               >
                 <Sparkles className="w-3 h-3" />
                 <span>Auto-Map Verses</span>

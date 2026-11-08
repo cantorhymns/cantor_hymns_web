@@ -15,14 +15,14 @@ service cloud.firestore {
     function isSuperAdmin() {
       return isSignedIn() && request.auth.token.email != null && (
         request.auth.token.email == 'cantorhymns@gmail.com' ||
-        request.auth.token.email == 'andrewekladious@gmail.com' ||
-        request.auth.token.email == 'pierrek3419@gmail.com'
+        request.auth.token.email == 'andrewekladious@gmail.com'
       );
     }
 
     function isEditor() {
       return isSignedIn() && request.auth.token.email != null && (
-        request.auth.token.email == 'vmsazoom@gmail.com'
+        request.auth.token.email == 'vmsazoom@gmail.com' ||
+        request.auth.token.email == 'pierrek3419@gmail.com'
       );
     }
 
@@ -53,6 +53,18 @@ service cloud.firestore {
 
     match /recordings/{recordingId} {
       allow get, list: if true;
+      allow write: if isAuthorized() || isSignedIn();
+    }
+
+    // Pending unpublished changes & audit trail
+    match /pending_changes/{changeId} {
+      allow get, list: if isAuthorized() || isSignedIn();
+      allow write: if isAuthorized() || isSignedIn();
+    }
+
+    // Real-time active editing locks for collaborative concurrency control
+    match /active_locks/{lockId} {
+      allow get, list: if isAuthorized() || isSignedIn();
       allow write: if isAuthorized() || isSignedIn();
     }
 

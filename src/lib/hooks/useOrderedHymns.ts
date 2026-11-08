@@ -16,12 +16,12 @@ export function useOrderedHymns(genreId?: string) {
     const isLoading = isGenreLoading || areHymnsLoading || (!genre?.content && !!genre?.contentUrl && isContentLoading);
 
     const result = useMemo(() => {
-        if (!allHymnsForGenre || !genre) return { groupedHymns: null, flatPlaylist: [] };
+        if (!allHymnsForGenre) return { groupedHymns: null, flatPlaylist: [] };
 
         const hymnsMap = new Map(allHymnsForGenre.map(h => [h.id, h]));
         const orderedHymnIds = new Set<string>();
 
-        if (!fileContent) {
+        if (!genre || !fileContent) {
             const sorted = [...allHymnsForGenre].sort((a, b) => a.name.localeCompare(b.name));
             return { groupedHymns: [{ name: null, hymns: sorted }], flatPlaylist: sorted };
         }
