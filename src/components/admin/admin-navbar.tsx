@@ -30,7 +30,16 @@ const NAV_LINKS = [
 
 export function AdminNavbar() {
   const pathname = usePathname();
-  const { user, role, logout } = useAdminAuth();
+  const { user, role, isOwner, logout } = useAdminAuth();
+
+  const authorizedNavLinks = React.useMemo(() => {
+    return NAV_LINKS.filter(link => {
+      if (link.href === '/admin/users') {
+        return isOwner;
+      }
+      return true;
+    });
+  }, [isOwner]);
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/75">
@@ -46,10 +55,16 @@ export function AdminNavbar() {
                 Cantor Studio
               </span>
               <Badge
-                variant={role === 'admin' ? 'default' : 'secondary'}
+                variant={
+                  role === 'owner' || role === 'admin'
+                    ? 'default'
+                    : role === 'editor'
+                    ? 'secondary'
+                    : 'outline'
+                }
                 className="text-[10px] px-1.5 py-0 h-4 uppercase font-semibold tracking-wider shrink-0"
               >
-                {role || 'Editor'}
+                {role === 'admin' ? 'Owner' : role || 'Viewer'}
               </Badge>
             </div>
             <p className="text-[10px] text-muted-foreground leading-none hidden sm:block whitespace-nowrap">
@@ -60,7 +75,7 @@ export function AdminNavbar() {
 
         {/* Navigation Links - Centered & Balanced */}
         <nav className="hidden md:flex items-center justify-center gap-1 flex-1 mx-2 lg:mx-4">
-          {NAV_LINKS.map(link => {
+          {authorizedNavLinks.map(link => {
             const Icon = link.icon;
             const isActive =
               link.href === '/admin'
@@ -124,7 +139,7 @@ export function AdminNavbar() {
 
       {/* Mobile Secondary Nav */}
       <div className="md:hidden flex items-center gap-1 overflow-x-auto px-4 py-2 border-t bg-muted/30 scrollbar-none">
-        {NAV_LINKS.map(link => {
+        {authorizedNavLinks.map(link => {
           const Icon = link.icon;
           const isActive =
             link.href === '/admin'

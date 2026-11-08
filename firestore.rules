@@ -16,13 +16,18 @@ service cloud.firestore {
       return isSignedIn() && request.auth.token.email != null && (
         request.auth.token.email == 'cantorhymns@gmail.com' ||
         request.auth.token.email == 'andrewekladious@gmail.com' ||
-        request.auth.token.email == 'pierrek3419@gmail.com' ||
+        request.auth.token.email == 'pierrek3419@gmail.com'
+      );
+    }
+
+    function isEditor() {
+      return isSignedIn() && request.auth.token.email != null && (
         request.auth.token.email == 'vmsazoom@gmail.com'
       );
     }
 
     function isAuthorized() {
-      return isSuperAdmin() || (
+      return isSuperAdmin() || isEditor() || (
         isSignedIn() && (
           exists(/databases/$(database)/documents/authorized_users/$(request.auth.uid)) ||
           (request.auth.token.email != null && exists(/databases/$(database)/documents/authorized_users/$(request.auth.token.email)))
@@ -51,11 +56,10 @@ service cloud.firestore {
       allow write: if isAuthorized() || isSignedIn();
     }
 
-    // User authorization management - restricted to authorized collaborators
+    // User authorization management - only project owners can add/remove users
     match /authorized_users/{userId} {
-      allow get: if isAuthorized();
-      allow list: if isAuthorized();
-      allow write: if isSuperAdmin() || isAuthorized();
+      allow get, list: if isAuthorized();
+      allow write: if isSuperAdmin();
     }
 
     // Legacy or nested patterns support

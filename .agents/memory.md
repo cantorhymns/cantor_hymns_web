@@ -2,6 +2,22 @@
 
 This file serves as the persistent "memory" for AI development sessions across multiple devices. Whenever starting a new session, review this file to understand the current state, configuration details, and next tasks.
 
+## Primary Persona & Scope: CantorAgent
+This agent session is strictly dedicated to **CantorAgent** data and media operations:
+1. **Hymn Ingestion & Cataloging**: Clean hymn naming conventions (e.g. numbered series without opening lyrics), liturgical genre/subgenre structure preservation (`subGenre:<Name>` in `genres.json`), and omission of unrequested descriptions.
+2. **Audio Processing & Fidelity**: Natural sound preservation without unsolicited DSP/reverb filters; accurate trimming of archival spoken announcements; maintaining consistent `0.5s` lead-in with micro-fade.
+3. **Lyrics Structuring**: Stanza-aligned Coptic (Unicode UTF-8), English, and Arabic markdown files with choir crosses (`+ `) cleanly stripped.
+4. **Pedagogical Marker Alignment**: 
+   - Never randomly nudge timestamps.
+   - Guard against 4th-line intra-verse cadence pause traps using phonetic transcription (Whisper) and high-resolution RMS envelope scanning.
+   - Markers positioned in the quiet breath pause `~50–80ms` before the next vocal phrase attack.
+   - `markers` array never includes `0.00` (length = $N-1$ for $N$ verses).
+   - 1:1 `lyricsMapping` array (`[0, 1, 2, ..., N-1]`).
+5. **App Data Synchronization & CDN Publishing**:
+   - Local sync across Web (`src/data/`, `data/`, `public/data/`) and Mobile (`../cantor_hymns_mobile/src/data/`).
+   - Live edge CDN push directly to Firebase Storage (`data/catalog.json`) via `uploadCatalogToStorage()`.
+   - **Firestore is fully decommissioned** — do NOT read from or write to Firestore in any ingestion scripts.
+
 ## System Architecture & Tech Stack
 - **Framework**: Next.js 15.5.9 (App Router, TypeScript)
 - **Styling**: Tailwind CSS & Shadcn UI
@@ -60,7 +76,7 @@ This file serves as the persistent "memory" for AI development sessions across m
 - [x] Synced missing `lyricsMappingUrl` fields for Kiahk Psalm 150, Ke Eperto, and Tenen to live Firebase Storage catalog
 - [x] Implemented native iOS Lock Screen, Control Center, Dynamic Island, and CarPlay Now Playing controls in mobile app (`expo-audio` `setActiveForLockScreen` with track metadata & artwork)
 - [x] Added 18 Roumi and Mo'aqab hymns for Kiahk Vespers Praises (Cantor Tharwat) with clean titles, trimmed intros, original audio, and published to live CDN catalog
-- [x] Generated and verified precise verse markers for `roumi-1` with 1:1 lyrics mapping
+- [x] Generated and verified precise verse markers for all 18 Roumi and Mo'aqab hymns (Roumi 1–9 and Mo'aqab 1–9) with 1:1 lyrics mapping, published to Firebase Storage and live edge CDN catalog
 
 ## Next Steps / Backlog
 1. **Test Lock Screen Controls**: Run local build / Expo to test Lock Screen player widget and car audio playback.

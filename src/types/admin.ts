@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'editor';
+export type UserRole = 'owner' | 'editor' | 'viewer' | 'admin' | 'revoked';
 
 export interface AuthorizedUser {
   email: string;

@@ -18,7 +18,10 @@ interface AdminAuthContextType {
   role: UserRole | null;
   isAuthorized: boolean;
   isAdmin: boolean;
+  isOwner: boolean;
   isEditor: boolean;
+  isViewer: boolean;
+  canEdit: boolean;
   isLoading: boolean;
   loginWithGoogle: () => Promise<void>;
   loginWithRedirect: () => Promise<void>;
@@ -27,12 +30,22 @@ interface AdminAuthContextType {
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
 
-export const ROOT_ADMIN_EMAILS = [
+// 👑 Primary immutable project creators (cannot be locked out)
+export const PRIMARY_OWNER_EMAILS = [
   'cantorhymns@gmail.com',
   'andrewekladious@gmail.com',
-  'pierrek3419@gmail.com',
-  'vmsazoom@gmail.com',
 ];
+
+// Baseline initial team members (can be updated or revoked anytime on the Admin page)
+export const INITIAL_TEAM_ROLES: Record<string, UserRole> = {
+  'pierrek3419@gmail.com': 'owner',
+  'vmsazoom@gmail.com': 'editor',
+};
+
+// Compatibility aliases
+export const ROOT_OWNER_EMAILS = [...PRIMARY_OWNER_EMAILS, 'pierrek3419@gmail.com'];
+export const ROOT_EDITOR_EMAILS = ['vmsazoom@gmail.com'];
+export const ROOT_ADMIN_EMAILS = ROOT_OWNER_EMAILS;
 
 export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const { auth, firestore, user, isUserLoading } = useFirebase();
@@ -57,61 +70,67 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
       const email = user.email.toLowerCase();
 
-      // Owner accounts have full admin permissions
-      if (ROOT_ADMIN_EMAILS.some(e => e.toLowerCase() === email)) {
+      // 1. Primary repository owners can NEVER be locked out
+      if (PRIMARY_OWNER_EMAILS.some(e => e.toLowerCase() === email)) {
         if (!isCancelled) {
-          setRole('admin');
+          setRole('owner');
           setIsCheckingAuthDoc(false);
         }
         return;
       }
 
-      // Check authorized_users collection for collaborators
-      if (!firestore) {
+      // 2. Check live Firestore records (any change made on the Admin page takes priority!)
+      if (firestore) {
+        try {
+          setIsCheckingAuthDoc(true);
+
+          // Check direct authorized_users collection
+          const emailDocRef = doc(firestore, 'authorized_users', email);
+          const emailSnap = await getDoc(emailDocRef);
+
+          if (emailSnap.exists()) {
+            const data = emailSnap.data() as AuthorizedUser;
+            if (data.role) {
+              if (!isCancelled) {
+                setRole(data.role === 'revoked' ? null : (data.role as UserRole));
+                setIsCheckingAuthDoc(false);
+              }
+              return;
+            }
+          }
+
+          // Check synced __app_settings__ doc
+          const settingsRef = doc(firestore, 'genres', '__app_settings__');
+          const settingsSnap = await getDoc(settingsRef);
+          if (settingsSnap.exists()) {
+            const list: AuthorizedUser[] = settingsSnap.data()?.collaborators || [];
+            const match = list.find(u => u.email && u.email.toLowerCase() === email);
+            if (match && match.role) {
+              if (!isCancelled) {
+                setRole(match.role === 'revoked' ? null : (match.role as UserRole));
+                setIsCheckingAuthDoc(false);
+              }
+              return;
+            }
+          }
+        } catch (err) {
+          console.warn('Note checking live firestore roles:', err);
+        }
+      }
+
+      // 3. Fallback to baseline initial team roles if not yet customized in Firestore
+      if (INITIAL_TEAM_ROLES[email]) {
         if (!isCancelled) {
-          setRole(null);
+          setRole(INITIAL_TEAM_ROLES[email]);
           setIsCheckingAuthDoc(false);
         }
         return;
       }
 
-      try {
-        setIsCheckingAuthDoc(true);
-        const emailDocRef = doc(firestore, 'authorized_users', email);
-        const emailSnap = await getDoc(emailDocRef);
-
-        if (emailSnap.exists()) {
-          const data = emailSnap.data() as AuthorizedUser;
-          if (!isCancelled) {
-            setRole(data.role || 'editor');
-            setIsCheckingAuthDoc(false);
-          }
-          return;
-        }
-
-        const uidDocRef = doc(firestore, 'authorized_users', user.uid);
-        const uidSnap = await getDoc(uidDocRef);
-
-        if (uidSnap.exists()) {
-          const data = uidSnap.data() as AuthorizedUser;
-          if (!isCancelled) {
-            setRole(data.role || 'editor');
-            setIsCheckingAuthDoc(false);
-          }
-          return;
-        }
-
-        // Not authorized
-        if (!isCancelled) {
-          setRole(null);
-          setIsCheckingAuthDoc(false);
-        }
-      } catch (err) {
-        console.error('Error verifying admin authorization:', err);
-        if (!isCancelled) {
-          setRole(null);
-          setIsCheckingAuthDoc(false);
-        }
+      // Not authorized
+      if (!isCancelled) {
+        setRole(null);
+        setIsCheckingAuthDoc(false);
       }
     }
 
@@ -155,17 +174,27 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const isAuthorized = useMemo(() => {
-    return role === 'admin' || role === 'editor';
+  const isOwner = useMemo(() => {
+    return role === 'owner' || role === 'admin';
   }, [role]);
 
-  const isAdmin = useMemo(() => {
-    return role === 'admin';
-  }, [role]);
+  const isAdmin = isOwner;
 
   const isEditor = useMemo(() => {
     return role === 'editor';
   }, [role]);
+
+  const isViewer = useMemo(() => {
+    return role === 'viewer';
+  }, [role]);
+
+  const canEdit = useMemo(() => {
+    return isOwner || isEditor;
+  }, [isOwner, isEditor]);
+
+  const isAuthorized = useMemo(() => {
+    return isOwner || isEditor || isViewer;
+  }, [isOwner, isEditor, isViewer]);
 
   const isLoading = isUserLoading || isCheckingAuthDoc;
 
@@ -175,13 +204,16 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       role,
       isAuthorized,
       isAdmin,
+      isOwner,
       isEditor,
+      isViewer,
+      canEdit,
       isLoading,
       loginWithGoogle,
       loginWithRedirect,
       logout,
     }),
-    [user, role, isAuthorized, isAdmin, isEditor, isLoading]
+    [user, role, isAuthorized, isAdmin, isOwner, isEditor, isViewer, canEdit, isLoading]
   );
 
   return <AdminAuthContext.Provider value={value}>{children}</AdminAuthContext.Provider>;

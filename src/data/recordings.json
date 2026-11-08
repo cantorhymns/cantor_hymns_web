@@ -722,8 +722,27 @@
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-1_markers.txt",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-1_lyrics_markers.txt",
     "audioLength": 212.9,
-    "markers": [],
-    "lyricsMapping": [],
+    "markers": [
+      26.45,
+      51.35,
+      74.97,
+      98.94,
+      122.83,
+      145.9,
+      166.76,
+      193.58
+    ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
     "active": true,
     "mode": "learn"
   },
@@ -735,8 +754,23 @@
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-2_markers.txt",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-2_lyrics_markers.txt",
     "audioLength": 153,
-    "markers": [],
-    "lyricsMapping": [],
+    "markers": [
+      23.2,
+      45.9,
+      69.31,
+      88.16,
+      112.02,
+      135.08
+    ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
     "active": true,
     "mode": "learn"
   },
@@ -748,8 +782,29 @@
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-2_markers.txt",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-2_lyrics_markers.txt",
     "audioLength": 219.8,
-    "markers": [],
-    "lyricsMapping": [],
+    "markers": [
+      24.5,
+      48.06,
+      70.1,
+      91.93,
+      112.8,
+      136.38,
+      156.27,
+      178.81,
+      199.25
+    ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
     "active": true,
     "mode": "learn"
   },
@@ -761,8 +816,23 @@
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-3_markers.txt",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-3_lyrics_markers.txt",
     "audioLength": 147.2,
-    "markers": [],
-    "lyricsMapping": [],
+    "markers": [
+      25.1,
+      46.06,
+      63.64,
+      85.3,
+      109.32,
+      129.73
+    ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
     "active": true,
     "mode": "learn"
   },
@@ -774,8 +844,25 @@
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-3_markers.txt",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-3_lyrics_markers.txt",
     "audioLength": 152.5,
-    "markers": [],
-    "lyricsMapping": [],
+    "markers": [
+      23.09,
+      41.91,
+      59.22,
+      77.28,
+      100.14,
+      118.37,
+      136.64
+    ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
     "active": true,
     "mode": "learn"
   },
@@ -787,8 +874,23 @@
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-4_markers.txt",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-4_lyrics_markers.txt",
     "audioLength": 147.4,
-    "markers": [],
-    "lyricsMapping": [],
+    "markers": [
+      23,
+      44.84,
+      66.09,
+      83.34,
+      109.86,
+      130.06
+    ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
     "active": true,
     "mode": "learn"
   },
@@ -800,8 +902,27 @@
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-4_markers.txt",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-4_lyrics_markers.txt",
     "audioLength": 156.1,
-    "markers": [],
-    "lyricsMapping": [],
+    "markers": [
+      19.61,
+      37.98,
+      55.23,
+      72.21,
+      91.18,
+      107.99,
+      124.63,
+      141.44
+    ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
     "active": true,
     "mode": "learn"
   },
@@ -813,8 +934,23 @@
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-5_markers.txt",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-5_lyrics_markers.txt",
     "audioLength": 154.4,
-    "markers": [],
-    "lyricsMapping": [],
+    "markers": [
+      24.4,
+      48.41,
+      70.27,
+      91.89,
+      112.91,
+      136.74
+    ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
     "active": true,
     "mode": "learn"
   },
@@ -826,8 +962,25 @@
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-5_markers.txt",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-5_lyrics_markers.txt",
     "audioLength": 166.8,
-    "markers": [],
-    "lyricsMapping": [],
+    "markers": [
+      23.36,
+      46.21,
+      63.2,
+      84.6,
+      104.76,
+      125.06,
+      150.32
+    ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
     "active": true,
     "mode": "learn"
   },
@@ -839,8 +992,23 @@
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-6_markers.txt",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-6_lyrics_markers.txt",
     "audioLength": 149.1,
-    "markers": [],
-    "lyricsMapping": [],
+    "markers": [
+      25,
+      46.14,
+      64.17,
+      87.68,
+      111.16,
+      131.27
+    ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
     "active": true,
     "mode": "learn"
   },
@@ -852,8 +1020,25 @@
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-6_markers.txt",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-6_lyrics_markers.txt",
     "audioLength": 163.9,
-    "markers": [],
-    "lyricsMapping": [],
+    "markers": [
+      23.89,
+      45.85,
+      65.52,
+      84.87,
+      103.82,
+      126.71,
+      146.55
+    ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
     "active": true,
     "mode": "learn"
   },
@@ -865,8 +1050,23 @@
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-7_markers.txt",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-7_lyrics_markers.txt",
     "audioLength": 140.8,
-    "markers": [],
-    "lyricsMapping": [],
+    "markers": [
+      20.32,
+      41.63,
+      62.83,
+      84.9,
+      105.05,
+      124.41
+    ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
     "active": true,
     "mode": "learn"
   },
@@ -878,8 +1078,25 @@
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-7_markers.txt",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-7_lyrics_markers.txt",
     "audioLength": 166,
-    "markers": [],
-    "lyricsMapping": [],
+    "markers": [
+      25.27,
+      46.2,
+      66.62,
+      87.63,
+      107.59,
+      128.25,
+      148.7
+    ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
     "active": true,
     "mode": "learn"
   },
@@ -891,8 +1108,23 @@
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-8_markers.txt",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-8_lyrics_markers.txt",
     "audioLength": 142.8,
-    "markers": [],
-    "lyricsMapping": [],
+    "markers": [
+      24.02,
+      42.16,
+      64.24,
+      86.38,
+      106.1,
+      125.71
+    ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
     "active": true,
     "mode": "learn"
   },
@@ -904,8 +1136,27 @@
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-8_markers.txt",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-8_lyrics_markers.txt",
     "audioLength": 176.9,
-    "markers": [],
-    "lyricsMapping": [],
+    "markers": [
+      24.34,
+      40.12,
+      62.44,
+      82.84,
+      101.49,
+      120.03,
+      142.4,
+      160.51
+    ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
     "active": true,
     "mode": "learn"
   },
@@ -917,8 +1168,23 @@
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-9_markers.txt",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-9_lyrics_markers.txt",
     "audioLength": 143.85,
-    "markers": [],
-    "lyricsMapping": [],
+    "markers": [
+      21.29,
+      41.39,
+      64.47,
+      86.77,
+      107.24,
+      126.49
+    ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
     "active": true,
     "mode": "learn"
   },
@@ -930,8 +1196,23 @@
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-9_markers.txt",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-9_lyrics_markers.txt",
     "audioLength": 147.2,
-    "markers": [],
-    "lyricsMapping": [],
+    "markers": [
+      21.18,
+      44.24,
+      67.31,
+      87.8,
+      109.35,
+      129.37
+    ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
     "active": true,
     "mode": "learn"
   }
