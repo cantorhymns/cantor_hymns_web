@@ -9,7 +9,7 @@ export interface Catalog {
   hymns: Hymn[];
 }
 
-const STORAGE_CACHE_KEY = 'cantor_hymns_catalog_cache_v2';
+const STORAGE_CACHE_KEY = 'cantor_hymns_catalog_cache_v7';
 export const FIREBASE_STORAGE_CATALOG_URL =
   'https://firebasestorage.googleapis.com/v0/b/studio-127742305-c9528.firebasestorage.app/o/data%2Fcatalog.json?alt=media';
 

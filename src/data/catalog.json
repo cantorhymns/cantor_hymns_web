@@ -1,110 +1,110 @@
 {
-  "generatedAt": "2026-11-08T05:14:36.454Z",
+  "generatedAt": "2026-11-08T18:59:39.110Z",
   "genres": [
     {
       "id": "kiahk",
+      "icon": "Cross",
       "active": true,
+      "description": "",
+      "backgroundUrl": "genres/backgrounds/Kiahk1.jpeg",
       "updatedAt": {
         "seconds": 1794109435,
         "nanoseconds": 939000000
       },
-      "name": "Kiahk",
-      "description": "",
-      "cantorCloudActive": true,
-      "icon": "Cross",
-      "content": "subGenre:Liturgy\npsalm-150-kiahk\nje-efesmaroout-kiahk-weekdays\nti-parthenos-kiahk-weekdays\nje-efesmaroout-kiahk-weekends\nef-emepsha-ghar-kiahk-weekends\nsubGenre:Vespers\ndoxology-1-kiahk\nsubGenre:Vespers Praises\nalleluia-al-asr\nroumi-1\nmoaqab-1\nroumi-2\nmoaqab-2\nroumi-3\nmoaqab-3\nroumi-4\nmoaqab-4\nroumi-5\nmoaqab-5\nroumi-6\nmoaqab-6\nroumi-7\nmoaqab-7\nroumi-8\nmoaqab-8\nroumi-9\nmoaqab-9\ntarh\naretenthonti-kiahk\nsubGenre:Midnight Praises\ntenen",
       "rank": 1,
-      "backgroundUrl": "genres/backgrounds/Kiahk1.jpeg"
+      "cantorCloudActive": true,
+      "content": "subGenre:Liturgy\npsalm-150-kiahk\nje-efesmaroout-kiahk-weekdays\nti-parthenos-kiahk-weekdays\nje-efesmaroout-kiahk-weekends\nef-emepsha-ghar-kiahk-weekends\nsubGenre:Vespers\ndoxology-1-kiahk\nsubGenre:Vespers Praises\nalleluia-al-asr\nroumi-1\nmoaqab-1\nroumi-2\nmoaqab-2\nroumi-3\nmoaqab-3\nroumi-4\nmoaqab-4\nroumi-5\nmoaqab-5\nroumi-6\nmoaqab-6\nroumi-7\nmoaqab-7\nroumi-8\nmoaqab-8\nroumi-9\nmoaqab-9\ntarh\naretenthonti-kiahk\nsubGenre:Midnight Praises\ntenen",
+      "name": "Kiahk"
     },
     {
       "id": "nativity",
-      "description": "",
-      "active": true,
-      "name": "Nativity",
-      "cantorCloudActive": true,
-      "backgroundUrl": "genres/backgrounds/Nativity2.jpeg",
       "icon": "Cross",
+      "active": true,
+      "content": "genethlion",
+      "description": "",
       "rank": 2,
       "updatedAt": {
         "seconds": 1794028875,
         "nanoseconds": 801000000
       },
-      "content": "genethlion"
+      "backgroundUrl": "genres/backgrounds/Nativity2.jpeg",
+      "name": "Nativity",
+      "cantorCloudActive": true
     },
     {
       "id": "lent",
+      "icon": "Cross",
+      "content": "subGenre:General\naspasmos-watos-lent-1\nsubGenre:Liturgy Weekdays\nkyrie-eleison-lent\nentho-te-ti-shouri\nshare-ephnouti\npsalm-150-lent-weekdays\nje-efesmaroout-lent-weekdays\npi-mairomi\nsomatos\nsubGenre:Liturgy Weekends\nmeghalo\nou-nishti\nsubGenre:Vespers Praises\nalleluia-al-asr\naretenthonti-lent\nsherat-lent\ntarh",
+      "cantorCloudActive": true,
       "updatedAt": {
         "seconds": 1794028875,
         "nanoseconds": 907000000
       },
-      "description": "",
-      "name": "Lent",
-      "active": true,
-      "cantorCloudActive": true,
       "backgroundUrl": "genres/backgrounds/Lent2.jpeg",
-      "icon": "Cross",
-      "content": "subGenre:General\naspasmos-watos-lent-1\nsubGenre:Liturgy Weekdays\nkyrie-eleison-lent\nentho-te-ti-shouri\nshare-ephnouti\npsalm-150-lent-weekdays\nje-efesmaroout-lent-weekdays\npi-mairomi\nsomatos\nsubGenre:Liturgy Weekends\nmeghalo\nou-nishti\nsubGenre:Vespers Praises\nalleluia-al-asr\naretenthonti-lent\nsherat-lent\ntarh",
-      "rank": 3
+      "rank": 3,
+      "active": true,
+      "description": "",
+      "name": "Lent"
     },
     {
       "id": "lazarus-saturday",
-      "cantorCloudActive": true,
-      "active": true,
-      "rank": 4,
+      "backgroundUrl": "genres/backgrounds/LazarusSaturday1.jpeg",
       "description": "",
       "icon": "Cross",
-      "content": "verses-of-cymbals-lazarus-saturday\ndoxology-lazarus-saturday\npraxis-response-lazarus-saturday\ngospel-response-matins-lazarus-saturday\ngospel-response-liturgy-lazarus-saturday\nlazaros-amou",
       "name": "Lazarus Saturday",
-      "backgroundUrl": "genres/backgrounds/LazarusSaturday1.jpeg",
+      "content": "verses-of-cymbals-lazarus-saturday\ndoxology-lazarus-saturday\npraxis-response-lazarus-saturday\ngospel-response-matins-lazarus-saturday\ngospel-response-liturgy-lazarus-saturday\nlazaros-amou",
       "updatedAt": {
         "seconds": 1794028876,
         "nanoseconds": 14000000
-      }
+      },
+      "rank": 4,
+      "cantorCloudActive": true,
+      "active": true
     },
     {
       "id": "holy-week",
-      "content": "subGenre:General\nke-eperto\nethvetee-general-funeral\nmournful-agios\noukatee\nsubGenre:Covenant Thursday\npraxeon-ton\nyodas\navechnon\nsubGenre:Good Friday\nmournful-tai-shouri\nphai-etaf-enf\nti-epistolee\nomonogenees\nmournful-ti-shouri\nethvetee-good-friday\npek-ethronos\ngholghotha\nsubGenre:Bright Saturday\nanok-pe-pi-kouji\nere-pi-esmou\ntribes\nstones\npanouti",
+      "icon": "Cross",
       "updatedAt": {
         "seconds": 1794028876,
         "nanoseconds": 114000000
       },
-      "rank": 5,
-      "icon": "Cross",
-      "backgroundUrl": "genres/backgrounds/HolyWeek2.jpeg",
-      "description": "",
-      "name": "Holy Week",
       "active": true,
+      "content": "subGenre:General\nke-eperto\nethvetee-general-funeral\nmournful-agios\noukatee\nsubGenre:Covenant Thursday\npraxeon-ton\nyodas\navechnon\nsubGenre:Good Friday\nmournful-tai-shouri\nphai-etaf-enf\nti-epistolee\nomonogenees\nmournful-ti-shouri\nethvetee-good-friday\npek-ethronos\ngholghotha\nsubGenre:Bright Saturday\nanok-pe-pi-kouji\nere-pi-esmou\ntribes\nstones\npanouti",
+      "rank": 5,
+      "description": "",
+      "backgroundUrl": "genres/backgrounds/HolyWeek2.jpeg",
+      "name": "Holy Week",
       "cantorCloudActive": true
     },
     {
       "id": "resurrection",
-      "cantorCloudActive": true,
-      "active": true,
       "icon": "Cross",
-      "rank": 6,
-      "content": "khristos-anesti-major\nkhristos-anesti-minor\nton-seena\ntou-lithou\nteen-anastaseen\nkata-ni-khoros\nkata-ni-khoros-distribution",
+      "active": true,
+      "description": "",
+      "backgroundUrl": "genres/backgrounds/Resurrection1.jpeg",
       "updatedAt": {
         "seconds": 1794028876,
         "nanoseconds": 184000000
       },
-      "name": "Resurrection",
-      "description": "",
-      "backgroundUrl": "genres/backgrounds/Resurrection1.jpeg"
+      "rank": 6,
+      "cantorCloudActive": true,
+      "content": "khristos-anesti-major\nkhristos-anesti-minor\nton-seena\ntou-lithou\nteen-anastaseen\nkata-ni-khoros\nkata-ni-khoros-distribution",
+      "name": "Resurrection"
     },
     {
       "id": "apostles-fast",
-      "cantorCloudActive": true,
       "active": true,
-      "name": "Apostles' Fast",
       "icon": "Cross",
+      "backgroundUrl": "genres/backgrounds/ApostlesFast.webp",
+      "content": "ondos\nenthoten-dhe\nniroumi",
+      "description": "",
+      "rank": 7,
       "updatedAt": {
         "seconds": 1794028876,
         "nanoseconds": 315000000
       },
-      "backgroundUrl": "genres/backgrounds/ApostlesFast.webp",
-      "rank": 7,
-      "description": "",
-      "content": "ondos\nenthoten-dhe\nniroumi"
+      "name": "Apostles' Fast",
+      "cantorCloudActive": true
     }
   ],
   "cantors": [
@@ -1079,7 +1079,104 @@
         "seconds": 1794108701,
         "nanoseconds": 742000000
       },
-      "recordings": []
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_ef-emepsha-ghar-kiahk-weekends",
+          "cantorId": "cantor-ibrahim",
+          "hymnId": "ef-emepsha-ghar-kiahk-weekends",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ef-emepsha-ghar-kiahk-weekends.mp3",
+          "audioLength": 1167.32,
+          "markers": [
+            62.25,
+            117.9,
+            173.3,
+            221.1,
+            247.35,
+            273.2,
+            299.15,
+            322.9,
+            348.7,
+            377.5,
+            402.6,
+            428.3,
+            453.45,
+            476.4,
+            500.2,
+            524.5,
+            549.4,
+            575.05,
+            599.1,
+            626.85,
+            650.55,
+            675.7,
+            704.2,
+            729.25,
+            756.15,
+            781.25,
+            806.45,
+            831.35,
+            853.57,
+            880.9,
+            910.05,
+            944.05,
+            965.17,
+            983.02,
+            1037.4
+          ],
+          "mode": "learn",
+          "lyricsMapping": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35
+          ],
+          "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ef-emepsha-ghar-kiahk-weekends_markers.txt",
+          "lyricsMappingUrl": "markers/cantor-ibrahim/cantor-ibrahim_ef-emepsha-ghar-kiahk-weekends_lyrics_markers.txt",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "updatedAt": {
+              "seconds": 1794022243,
+              "nanoseconds": 804000000
+            },
+            "active": true,
+            "rank": 1,
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
     },
     {
       "id": "entho-te-ti-shouri",
@@ -1880,7 +1977,28 @@
         "arabic": "مبارك الآب والابن والروح القدس، الثالوث الكامل، نسجد له ونمجده."
       },
       "name": "Je Efesmaroout (Weekdays)",
-      "recordings": []
+      "recordings": [
+        {
+          "id": "cantor-zaher_je-efesmaroout-kiahk-weekdays",
+          "cantorId": "cantor-zaher",
+          "hymnId": "je-efesmaroout-kiahk-weekdays",
+          "audioUrl": "tracks/cantor-zaher/cantor-zaher_je-efesmaroout-kiahk-weekdays.mp3",
+          "audioLength": 114.15,
+          "markers": [],
+          "mode": "listen",
+          "cantor": {
+            "id": "cantor-zaher",
+            "active": true,
+            "name": "Cantor Zaher",
+            "rank": 5,
+            "updatedAt": {
+              "seconds": 1794108701,
+              "nanoseconds": 952000000
+            },
+            "cantorCloudActive": true
+          }
+        }
+      ]
     },
     {
       "id": "je-efesmaroout-kiahk-weekends",
@@ -1904,7 +2022,28 @@
         "coptic": "Ϫⲉ ϥ̀ⲥ̀ⲙⲁⲣⲱⲟⲩⲧ ⲛ̀ϫⲉ Ⲫⲓⲱⲧ ⲛⲉⲙ ⲡ̀Ϣⲏⲣⲓ: ⲛⲉⲙ ⲡⲓⲠ̀ⲛⲉⲩⲙⲁ ⲉ̅ⲑ̅ⲩ̅: ϯⲦ̀ⲣⲓⲁⲥ ⲉⲧϫⲏⲕ ⲉ̀ⲃⲟⲗ: ⲧⲉⲛⲟⲩⲱϣⲧ ⲙ̀ⲙⲟⲥ ⲧⲉⲛϯⲱ̀ⲟⲩ ⲛⲁⲥ."
       },
       "lyricsEnglishUrl": "lyrics/english/je-efesmaroout-kiahk-weekends_english.md",
-      "recordings": []
+      "recordings": [
+        {
+          "id": "cantor-ibrahim_je-efesmaroout-kiahk-weekends",
+          "cantorId": "cantor-ibrahim",
+          "hymnId": "je-efesmaroout-kiahk-weekends",
+          "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_je-efesmaroout-kiahk-weekends.mp3",
+          "audioLength": 141.9,
+          "markers": [],
+          "mode": "listen",
+          "cantor": {
+            "id": "cantor-ibrahim",
+            "updatedAt": {
+              "seconds": 1794022243,
+              "nanoseconds": 804000000
+            },
+            "active": true,
+            "rank": 1,
+            "name": "Cantor Ibrahim",
+            "cantorCloudActive": true
+          }
+        }
+      ]
     },
     {
       "id": "yodas",
@@ -6589,7 +6728,50 @@
         "kiahk"
       ],
       "lyricsCopticUrl": "lyrics/coptic/ti-parthenos-kiahk-weekdays_coptic.md",
-      "recordings": []
+      "recordings": [
+        {
+          "id": "cantor-zaher_ti-parthenos-kiahk-weekdays",
+          "cantorId": "cantor-zaher",
+          "hymnId": "ti-parthenos-kiahk-weekdays",
+          "audioUrl": "tracks/cantor-zaher/cantor-zaher_ti-parthenos-kiahk-weekdays.mp3",
+          "audioLength": 911.34,
+          "markers": [
+            118,
+            235.15,
+            355.15,
+            462.6,
+            575.35,
+            664,
+            797.4,
+            840.6
+          ],
+          "mode": "learn",
+          "lyricsMapping": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "markersUrl": "markers/cantor-zaher/cantor-zaher_ti-parthenos-kiahk-weekdays_markers.txt",
+          "lyricsMappingUrl": "markers/cantor-zaher/cantor-zaher_ti-parthenos-kiahk-weekdays_lyrics_markers.txt",
+          "cantor": {
+            "id": "cantor-zaher",
+            "active": true,
+            "name": "Cantor Zaher",
+            "rank": 5,
+            "updatedAt": {
+              "seconds": 1794108701,
+              "nanoseconds": 952000000
+            },
+            "cantorCloudActive": true
+          }
+        }
+      ]
     },
     {
       "id": "ti-epistolee",

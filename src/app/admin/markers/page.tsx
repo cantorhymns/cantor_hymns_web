@@ -212,41 +212,54 @@ function MarkerStudioContent() {
     activeLocks,
   } = useHymnLock(activeHymn?.id, activeHymn?.name);
 
-  // Resolve audio download URL, markers, and lyrics mapping when current recording/hymn changes
+  // Track the currently resolved and loaded recording ID to prevent unnecessary re-downloads and unmounting
+  const loadedRecordingIdRef = useRef<string | null>(null);
+
+  // Resolve audio download URL, markers, and lyrics mapping when current recording changes
   useEffect(() => {
     let isCancelled = false;
 
-    async function resolveAssets() {
-      if (!currentRecording || !firebaseApp) {
-        setAudioUrl(null);
-        setResolvedRecording(null);
-        setResolvedHymn(undefined);
-        return;
-      }
+    if (!currentRecording || !firebaseApp) {
+      loadedRecordingIdRef.current = null;
+      setAudioUrl(null);
+      setResolvedRecording(null);
+      setResolvedHymn(undefined);
+      setIsLoadingAudio(false);
+      return;
+    }
 
+    // If this recording has already been resolved and loaded, do NOT re-resolve or reload audio!
+    // This prevents re-downloading audio and unmounting WaveformEditor when lyrics or metadata are updated.
+    if (loadedRecordingIdRef.current === currentRecording.id) {
+      return;
+    }
+
+    const activeRec = currentRecording;
+
+    async function resolveAssets() {
       try {
         setIsLoadingAudio(true);
         setAudioError(null);
 
-        const storage = getStorage(firebaseApp);
+        const storage = getStorage(firebaseApp!);
 
         // 1. Resolve Audio URL
-        const fileRef = ref(storage, currentRecording.audioUrl);
+        const fileRef = ref(storage, activeRec.audioUrl);
         const downloadUrl = await getDownloadURL(fileRef);
         if (isCancelled) return;
         setAudioUrl(downloadUrl);
 
         // 2. Resolve Markers if missing from doc
         let finalMarkers: number[] =
-          currentRecording.markers && currentRecording.markers.length > 0
-            ? currentRecording.markers
-            : (currentRecording as any).marks && (currentRecording as any).marks.length > 0
-            ? (currentRecording as any).marks
+          activeRec.markers && activeRec.markers.length > 0
+            ? activeRec.markers
+            : (activeRec as any).marks && (activeRec as any).marks.length > 0
+            ? (activeRec as any).marks
             : [];
 
-        if (finalMarkers.length === 0 && currentRecording.markersUrl) {
+        if (finalMarkers.length === 0 && activeRec.markersUrl) {
           try {
-            const mRef = ref(storage, currentRecording.markersUrl);
+            const mRef = ref(storage, activeRec.markersUrl);
             const mUrl = await getDownloadURL(mRef);
             const mRes = await fetch(mUrl);
             if (mRes.ok) {
@@ -264,14 +277,14 @@ function MarkerStudioContent() {
 
         // 3. Resolve Lyrics Mapping if missing from doc
         let finalLyricsMapping: number[] =
-          currentRecording.lyricsMapping && currentRecording.lyricsMapping.length > 0
-            ? currentRecording.lyricsMapping
+          activeRec.lyricsMapping && activeRec.lyricsMapping.length > 0
+            ? activeRec.lyricsMapping
             : [];
 
         const mappingPath =
-          currentRecording.lyricsMappingUrl ||
-          (currentRecording.markersUrl
-            ? currentRecording.markersUrl.replace('_markers.txt', '_lyrics_markers.txt')
+          activeRec.lyricsMappingUrl ||
+          (activeRec.markersUrl
+            ? activeRec.markersUrl.replace('_markers.txt', '_lyrics_markers.txt')
             : undefined);
 
         if (finalLyricsMapping.length === 0 && mappingPath) {
@@ -295,7 +308,7 @@ function MarkerStudioContent() {
         }
 
         const mergedRec: FirestoreRecording = {
-          ...currentRecording,
+          ...activeRec,
           markers: finalMarkers,
           lyricsMapping: finalLyricsMapping,
         };
@@ -351,6 +364,10 @@ function MarkerStudioContent() {
             setResolvedHymn(undefined);
           }
         }
+
+        if (!isCancelled) {
+          loadedRecordingIdRef.current = activeRec.id;
+        }
       } catch (err: any) {
         console.error('Failed to resolve audio/marker assets:', err);
         if (!isCancelled) {
@@ -368,7 +385,7 @@ function MarkerStudioContent() {
     return () => {
       isCancelled = true;
     };
-  }, [currentRecording, currentHymn, firebaseApp]);
+  }, [currentRecording?.id, firebaseApp]);
 
   // Map of cantors for display name lookups
   const cantorsMap = useMemo(() => new Map(cantors.map(c => [c.id, c])), [cantors]);

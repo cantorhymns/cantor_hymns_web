@@ -134,11 +134,28 @@ export function WaveformEditor({
   const [selectedMarkerIdx, setSelectedMarkerIdx] = useState<number | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  // Sync state if recording changes or gets enriched
+  // Sync state ONLY when switching to a different recording ID so unsaved markers are never wiped
+  const prevRecordingIdRef = useRef(recording.id);
   useEffect(() => {
-    setMarkers(recording.markers || []);
-    setLyricsMapping(recording.lyricsMapping || []);
-  }, [recording.id, recording.markers, recording.lyricsMapping]);
+    if (prevRecordingIdRef.current !== recording.id) {
+      prevRecordingIdRef.current = recording.id;
+      setMarkers(recording.markers || []);
+      setLyricsMapping(recording.lyricsMapping || []);
+      setHasUnsavedChanges(false);
+    }
+  }, [recording.id]);
+
+  // Warn user if navigating away or closing window with unsaved marker changes
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [hasUnsavedChanges]);
 
   // Drag-and-drop state for bidirectional marker <-> verse binding
   const [draggedItem, setDraggedItem] = useState<{
@@ -798,7 +815,6 @@ export function WaveformEditor({
       dragToSeek: false,
       interact: false,
       autoCenter: false,
-      backend: 'WebAudio',
     });
 
     wavesurferRef.current = ws;
@@ -809,6 +825,17 @@ export function WaveformEditor({
       setIsAudioReady(true);
       const audioDur = ws.getDuration();
       setDuration(audioDur);
+      try {
+        ws.setPlaybackRate(playbackRate, true);
+        const media = ws.getMediaElement();
+        if (media) {
+          media.preservesPitch = true;
+          (media as any).mozPreservesPitch = true;
+          (media as any).webkitPreservesPitch = true;
+        }
+      } catch (err) {
+        // Ignore
+      }
       syncRegions(markersRef.current, selectedMarkerIdx);
       setTimeout(() => {
         syncScrollToCenter(ws.getCurrentTime() || 0);
@@ -895,11 +922,17 @@ export function WaveformEditor({
     }
   }, [zoomLevel, isAudioReady, currentTime, syncScrollToCenter]);
 
-  // Handle playback rate changes safely after audio is ready
+  // Handle playback rate changes safely after audio is ready with pitch preservation
   useEffect(() => {
     if (wavesurferRef.current && isAudioReady) {
       try {
-        wavesurferRef.current.setPlaybackRate(playbackRate);
+        wavesurferRef.current.setPlaybackRate(playbackRate, true);
+        const media = wavesurferRef.current.getMediaElement();
+        if (media) {
+          media.preservesPitch = true;
+          (media as any).mozPreservesPitch = true;
+          (media as any).webkitPreservesPitch = true;
+        }
       } catch (err) {
         // Ignore
       }
@@ -1522,7 +1555,15 @@ export function WaveformEditor({
           {/* Save to Cloud */}
           <Button
             size="sm"
-            onClick={() => onSave(markers, lyricsMapping)}
+            onClick={async () => {
+              if (isSaving || isReadOnly) return;
+              try {
+                await onSave(markers, lyricsMapping);
+                setHasUnsavedChanges(false);
+              } catch (err) {
+                // Handled in parent
+              }
+            }}
             disabled={isSaving || isReadOnly}
             title={isReadOnly ? (lockedByMessage || 'Editing locked by collaborator') : 'Save Markers to Cloud'}
             className="text-xs gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
