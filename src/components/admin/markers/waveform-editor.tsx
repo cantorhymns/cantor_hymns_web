@@ -253,14 +253,13 @@ export function WaveformEditor({
   );
 
   // Total marker positions available, always counting the automatic Track Start marker at 00:00.00
-  const hasExplicitZero = useMemo(() => markers.length > 0 && markers[0] <= 0.05, [markers]);
-  const totalMarkerCount = hasExplicitZero ? markers.length : markers.length + 1;
-  const isMarkerCountEqual = totalMarkerCount === verses.length || markers.length === verses.length;
+  const totalMarkerCount = markers.length + 1;
+  const isMarkerCountEqual = totalMarkerCount === verses.length;
 
   // Get mapped marker for a verse (returns 0 for track start, > 0 for marker number, null for unmapped)
   const getMappedMarkerForVerse = useCallback(
     (verseIdx: number): { markerNum: number; time: number; label: string } | null => {
-      // 1. CantorHymns standard format: lyricsMapping[verseIdx] = markerNum (0: track start 0.0s, 1..N: marker 1..N)
+      // CantorHymns standard format: lyricsMapping[verseIdx] = markerNum (0: track start 0.0s, 1..N: marker 1..N)
       if (lyricsMapping[verseIdx] !== undefined && lyricsMapping[verseIdx] >= 0) {
         const mNum = lyricsMapping[verseIdx];
         if (mNum === 0) {
@@ -274,15 +273,6 @@ export function WaveformEditor({
           };
         }
       }
-      // 2. Fallback marker-indexed format: lyricsMapping[markerIdx] === verseIdx
-      const mIdx = lyricsMapping.indexOf(verseIdx);
-      if (mIdx >= 0 && mIdx < markers.length) {
-        return {
-          markerNum: mIdx + 1,
-          time: markers[mIdx],
-          label: `Marker #${mIdx + 1} (${formatTime(markers[mIdx])})`,
-        };
-      }
       return null;
     },
     [lyricsMapping, markers]
@@ -293,23 +283,13 @@ export function WaveformEditor({
     (markerIdx: number): { verseIdx: number; label: string } | null => {
       const markerNum = markerIdx + 1;
       for (let v = 0; v < verses.length; v++) {
-        const val = lyricsMapping[v];
-        if (val === markerNum || (markerIdx === 0 && markers[0] <= 0.05 && val === 0)) {
+        if (lyricsMapping[v] === markerNum) {
           return { verseIdx: v, label: `Verse #${v + 1}` };
         }
       }
-      // Fallback marker-indexed format: lyricsMapping[markerIdx] === verseIdx
-      if (
-        lyricsMapping[markerIdx] !== undefined &&
-        lyricsMapping[markerIdx] >= 0 &&
-        lyricsMapping[markerIdx] < verses.length
-      ) {
-        const v = lyricsMapping[markerIdx];
-        return { verseIdx: v, label: `Verse #${v + 1}` };
-      }
       return null;
     },
-    [lyricsMapping, markers, verses.length]
+    [lyricsMapping, verses.length]
   );
 
   const getScrollContainer = (ws: WaveSurfer | null): HTMLElement | null => {
@@ -591,10 +571,23 @@ export function WaveformEditor({
     });
   }, [duration, isReadOnly, getMappedVerseForMarker]);
 
+  const durationRef = useRef(duration);
+  useEffect(() => {
+    durationRef.current = duration;
+  }, [duration]);
+
+  const syncRegionsRef = useRef(syncRegions);
+  useEffect(() => {
+    syncRegionsRef.current = syncRegions;
+  }, [syncRegions]);
+
+  const [audioLoadError, setAudioLoadError] = useState<string | null>(null);
+  const [audioRetryTick, setAudioRetryTick] = useState(0);
+
   const syncScrollToCenter = useCallback((time: number) => {
     const ws = wavesurferRef.current;
     if (!ws) return;
-    const dur = ws.getDuration() || duration;
+    const dur = ws.getDuration() || durationRef.current;
     if (dur <= 0) return;
     const sc = getScrollContainer(ws);
     if (!sc) return;
@@ -638,7 +631,7 @@ export function WaveformEditor({
       const containerLeft = containerRef.current ? containerRef.current.offsetLeft : 8;
       playheadRef.current.style.left = `${containerLeft + playheadLeftPx}px`;
     }
-  }, [duration]);
+  }, []);
 
   const isScrubbingRef = useRef(false);
   const scrubStartRef = useRef<{
@@ -786,6 +779,9 @@ export function WaveformEditor({
   useEffect(() => {
     if (!containerRef.current || !audioSrc) return;
 
+    let isDisposed = false;
+    const abortCtrl = new AbortController();
+
     // Destroy existing instance if any
     if (wavesurferRef.current) {
       wavesurferRef.current.destroy();
@@ -811,7 +807,6 @@ export function WaveformEditor({
       height: 130,
       minPxPerSec: zoomLevel,
       plugins: [regionsPlugin, timelinePlugin],
-      url: audioSrc,
       dragToSeek: false,
       interact: false,
       autoCenter: false,
@@ -820,11 +815,20 @@ export function WaveformEditor({
     wavesurferRef.current = ws;
 
     setIsAudioReady(false);
+    setAudioLoadError(null);
+    setCurrentTime(0);
+    setIsPlaying(false);
+    isPlayingRef.current = false;
 
     ws.on('ready', () => {
+      if (isDisposed) return;
       setIsAudioReady(true);
+      setAudioLoadError(null);
       const audioDur = ws.getDuration();
-      setDuration(audioDur);
+      if (audioDur > 0) {
+        durationRef.current = audioDur;
+        setDuration(audioDur);
+      }
       try {
         ws.setPlaybackRate(playbackRate, true);
         const media = ws.getMediaElement();
@@ -836,13 +840,22 @@ export function WaveformEditor({
       } catch (err) {
         // Ignore
       }
-      syncRegions(markersRef.current, selectedMarkerIdx);
+      syncRegionsRef.current(markersRef.current, selectedMarkerIdx);
       setTimeout(() => {
-        syncScrollToCenter(ws.getCurrentTime() || 0);
+        if (!isDisposed) {
+          syncScrollToCenter(ws.getCurrentTime() || 0);
+        }
       }, 50);
     });
 
+    ws.on('error', (err: any) => {
+      if (isDisposed || abortCtrl.signal.aborted) return;
+      console.error('WaveSurfer error:', err);
+      setAudioLoadError(err?.message || 'Could not decode audio waveform.');
+    });
+
     ws.on('timeupdate', (time) => {
+      if (isDisposed) return;
       setCurrentTime(time);
       syncScrollToCenter(time);
     });
@@ -891,17 +904,39 @@ export function WaveformEditor({
       }
     });
 
+    // Fetch audio blob cleanly with AbortController and pass directly to ws.loadBlob()
+    // (Avoids WaveSurfer v7's internal d.fetchBlob double-response-clone stream leak on large tracks)
+    (async () => {
+      try {
+        const res = await fetch(audioSrc, { signal: abortCtrl.signal });
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: Failed to fetch audio stream`);
+        }
+        const blob = await res.blob();
+        if (isDisposed || abortCtrl.signal.aborted) return;
+        await ws.loadBlob(blob, undefined, durationRef.current > 0 ? durationRef.current : undefined);
+      } catch (err: any) {
+        if (isDisposed || abortCtrl.signal.aborted || err?.name === 'AbortError') return;
+        console.error('Failed to load audio blob into WaveSurfer:', err);
+        setAudioLoadError(err?.message || 'Failed to load hymn audio.');
+      }
+    })();
+
     return () => {
+      isDisposed = true;
+      abortCtrl.abort();
       try {
         const host = containerRef.current?.firstElementChild as HTMLElement | null;
         host?.shadowRoot?.querySelectorAll('[data-marker-flag]').forEach(el => el.remove());
         containerRef.current?.querySelectorAll('[data-marker-flag]').forEach(el => el.remove());
         regionsPlugin.clearRegions();
       } catch (_) {}
-      ws.destroy();
+      try {
+        ws.destroy();
+      } catch (_) {}
       wavesurferRef.current = null;
     };
-  }, [audioSrc, syncScrollToCenter]);
+  }, [audioSrc, audioRetryTick, syncScrollToCenter]);
 
   // Sync regions when markers list or selection changes
   useEffect(() => {
@@ -1153,25 +1188,12 @@ export function WaveformEditor({
     }
   }, [currentTime, markers, onPrevHymn, syncScrollToCenter]);
 
-  // Auto-map sequential verses: Verse 1 maps to Track Start (0) or Marker 1, and subsequent verses map sequentially
+  // Auto-map sequential verses: Verse 1 maps to Track Start (0), Verse 2 maps to Marker #1 (1), Verse 3 maps to Marker #2 (2), etc.
   const autoMapSequentially = useCallback(() => {
     if (verses.length === 0) return;
 
-    const hasZero = markers.length > 0 && markers[0] <= 0.05;
-    let nextMapping: number[];
-
-    if (hasZero) {
-      // Verse 1 -> Marker 1 (at 0:00.00), Verse 2 -> Marker 2, etc.
-      nextMapping = verses.map((_, i) => (i < markers.length ? i + 1 : -1));
-    } else if (markers.length + 1 === verses.length) {
-      // Verse 1 -> Track Start (0), Verse 2+ -> dropped Markers 1..N
-      nextMapping = verses.map((_, i) => (i === 0 ? 0 : i <= markers.length ? i : -1));
-    } else if (markers.length === verses.length) {
-      // 1:1 direct mapping to dropped markers
-      nextMapping = verses.map((_, i) => i + 1);
-    } else {
-      nextMapping = verses.map((_, i) => (i === 0 ? 0 : i <= markers.length ? i : -1));
-    }
+    // Always map Verse #1 (index 0) -> Track Start (0), Verse #2 (index 1) -> Marker #1 (1), Verse #(k+1) -> Marker #k (k)
+    const nextMapping = verses.map((_, i) => (i === 0 ? 0 : i <= markers.length ? i : -1));
 
     setLyricsMapping(nextMapping);
     setHasUnsavedChanges(true);
@@ -1186,6 +1208,12 @@ export function WaveformEditor({
       const next = [...prev];
       while (next.length <= verseIdx) {
         next.push(-1);
+      }
+      // Unbind any other verse currently bound to targetMarkerNum so markers & verses stay 1:1
+      for (let i = 0; i < next.length; i++) {
+        if (i !== verseIdx && next[i] === targetMarkerNum) {
+          next[i] = -1;
+        }
       }
       next[verseIdx] = targetMarkerNum;
       return next;
@@ -1678,7 +1706,34 @@ export function WaveformEditor({
                 }
               }
             `}</style>
-            <div ref={containerRef} className="w-full" />
+            {!isAudioReady && (
+              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/85 backdrop-blur-[1px] text-slate-300 gap-2 px-4 text-center">
+                {audioLoadError ? (
+                  <>
+                    <p className="text-xs font-medium text-rose-400">{audioLoadError}</p>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setAudioRetryTick(t => t + 1);
+                      }}
+                      className="h-7 text-xs border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-200"
+                    >
+                      Retry Audio Load
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin text-amber-400" />
+                    <span className="text-xs font-medium text-slate-300">
+                      Loading &amp; decoding hymn audio waveform...
+                    </span>
+                  </>
+                )}
+              </div>
+            )}
+            <div ref={containerRef} className="w-full min-h-[130px]" />
             <div
               ref={timelineRef}
               className="w-full mt-1 border-t border-slate-800 text-[10px] text-slate-400 overflow-x-hidden"
@@ -1894,10 +1949,10 @@ export function WaveformEditor({
               size="sm"
               variant="ghost"
               onClick={autoMapSequentially}
-              disabled={isReadOnly || verses.length === 0 || !isMarkerCountEqual}
+              disabled={isReadOnly || verses.length === 0}
               className={cn(
                 'text-xs h-7 gap-1 transition-opacity',
-                isMarkerCountEqual && verses.length > 0 && !isReadOnly
+                verses.length > 0 && !isReadOnly
                   ? 'text-primary hover:text-primary cursor-pointer'
                   : 'text-muted-foreground opacity-40 cursor-not-allowed hover:bg-transparent'
               )}
@@ -1906,9 +1961,7 @@ export function WaveformEditor({
                   ? 'Editing locked'
                   : verses.length === 0
                   ? 'Add hymn lyrics before auto-mapping'
-                  : !isMarkerCountEqual
-                  ? `Cannot auto-map: ${totalMarkerCount} markers (Track Start + ${markers.length} dropped) vs ${verses.length} verses (counts must match)`
-                  : `Auto-map ${verses.length} verses to matching markers (including Track Start)`
+                  : `Auto-map Verse #1 to Track Start (00:00.00), Verse #2 to Marker #1, Verse #3 to Marker #2, etc.`
               }
             >
               <Sparkles className="w-3 h-3" />

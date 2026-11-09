@@ -4,7 +4,7 @@ This file serves as the persistent "memory" for AI development sessions across m
 
 ## Primary Persona & Scope: CantorAgent
 This agent session is strictly dedicated to **CantorAgent** data and media operations:
-1. **Hymn Ingestion & Cataloging**: Clean hymn naming conventions (e.g. numbered series without opening lyrics), liturgical genre/subgenre structure preservation (`subGenre:<Name>` in `genres.json`), and omission of unrequested descriptions.
+1. **Hymn Ingestion & Cataloging**: Clean hymn naming conventions (e.g. numbered series without opening lyrics), liturgical genre/subgenre structure preservation (`subGenre:<Name>` in `genres.json`), and strict prohibition against auto-generating or fabricating descriptions for any season, cantor, or hymn (descriptions must always be empty `""` unless explicitly supplied by the user).
 2. **Audio Processing & Fidelity**: Natural sound preservation without unsolicited DSP/reverb filters; accurate trimming of archival spoken announcements; maintaining consistent `0.5s` lead-in with micro-fade.
 3. **Lyrics Structuring**: Stanza-aligned Coptic (Unicode UTF-8), English, and Arabic markdown files with choir crosses (`+ `) cleanly stripped.
 4. **Pedagogical Marker Alignment**: 
@@ -65,7 +65,7 @@ This agent session is strictly dedicated to **CantorAgent** data and media opera
 6. **Archival Track Audio & Metadata Policies**:
    - **Audio Fidelity**: Do not apply DSP, reverb, convolution, or heavy remastering filters by default. Preserve original recordings unaltered unless explicitly requested by the user.
    - **Spoken Intros**: Trim spoken Arabic announcements (e.g. *"الرومي الأول: يقال بعد..."*) from archival recordings, maintaining a clean `0.5s` lead-in before chanting.
-   - **Titles & Descriptions**: For sequential series (e.g. Roumi 1–9, Mo'aqab 1–9), keep titles concise (e.g. `"Roumi 1"`) without opening lyrics, and omit descriptions unless specifically asked.
+   - **Titles & Descriptions (Strict Rule)**: Never auto-generate or invent descriptions for seasons, cantors, or hymns. All descriptions must remain empty (`""`) unless the user explicitly provides the exact description text. For sequential series (e.g. Roumi 1–9, Mo'aqab 1–9), keep titles concise (e.g. `"Roumi 1"`) without opening lyrics.
 
 ## Current Project Status
 - [x] Web app migrated from Firebase Studio export

@@ -177,9 +177,9 @@ npx tsx src/scripts/publish-hymn.ts \
   --audio-length 1252.3 \
   --markers-file "staging/markers/cantor-gad/cantor-gad_tenen_markers.txt" \
   --lyrics-mapping-file "staging/markers/cantor-gad/cantor-gad_tenen_lyrics_markers.txt" \
-  --description "Psali Watos for the Three Saintly Children..." \
   --mode "learn"
 ```
+> **STRICT RULE ON DESCRIPTIONS**: Never pass `--description` or auto-generate/fabricate descriptions for any hymn, season, or cantor unless the exact description text was explicitly supplied by the user. Always leave `description` empty (`""`) by default.
 *This script automatically:*
 - Uploads audio track and marker text files to Firebase Storage.
 - Reads and inlines lyrics from `staging/lyrics/{coptic,english,arabic}/<hymnId>_*.md`.
@@ -274,9 +274,9 @@ npm run catalog:push
      - `#7: Apostles' Fast`
    - **Never overwrite `rank` with `undefined` or default to 99**. When sorting genres, sort strictly by `(a.rank ?? 99) - (b.rank ?? 99)`. Never sort genres alphabetically with `localeCompare` without rank checks, as that will improperly push "Apostles' Fast" to the top.
 
-5. **Naming & Sequential Verses**:
+5. **Naming, Sequential Verses & Strict No-Fabricated-Descriptions Rule**:
    - For sequential liturgical series (e.g., Roumi 1–9, Mo'aqab 1–9): Titles must remain clean and strictly numbered (`"Roumi 1"`, `"Mo'aqab 1"`). Do not append lyrics or Arabic names to the title.
-   - Omit descriptions for sequential liturgical verses unless specifically instructed.
+   - **NEVER auto-generate, invent, or populate `description` for any season, cantor, or hymn**. Descriptions must strictly be left empty (`""`) unless the user explicitly provides the exact description text to use.
 
 6. **Preserve Other Seasons & Hymns**:
    - Never replace or truncate `genres.json` or `catalog.json` with a single-season object. Any script modifying data must merge into the complete 7-season, 70-hymn library.

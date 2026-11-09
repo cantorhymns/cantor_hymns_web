@@ -102,7 +102,8 @@ function MarkerStudioContent() {
   const [audioError, setAudioError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Load recordings, cantors, and hymns
+  // Load recordings, cantors, and hymns once on mount
+  const initialSearchParamsRef = useRef(searchParams);
   useEffect(() => {
     async function loadData() {
       if (!firestore) return;
@@ -148,9 +149,9 @@ function MarkerStudioContent() {
         rList.sort((a, b) => a.id.localeCompare(b.id));
         setRecordings(rList);
 
-        // Pre-select from URL param (recordingId or hymnId) or first recording
-        const paramRecId = searchParams.get('recordingId');
-        const paramHymnId = searchParams.get('hymnId');
+        // Pre-select from URL param (recordingId or hymnId) or first liturgical hymn recording
+        const paramRecId = initialSearchParamsRef.current.get('recordingId');
+        const paramHymnId = initialSearchParamsRef.current.get('hymnId');
 
         if (paramRecId && rList.some(r => r.id === paramRecId)) {
           setSelectedRecordingId(paramRecId);
@@ -163,7 +164,24 @@ function MarkerStudioContent() {
             setSelectedRecordingId(rList[0].id);
           }
         } else if (rList.length > 0) {
-          setSelectedRecordingId(rList[0].id);
+          // Default to first hymn in liturgical order (e.g. Kiahk Psalm 150) if available
+          let firstLiturgicalRec: FirestoreRecording | undefined;
+          for (const g of finalGenres) {
+            const sections = parseGenreContent(g.content);
+            for (const sec of sections) {
+              for (const hId of sec.hymnIds) {
+                const trimmed = hId.trim();
+                const found = rList.find(r => r.hymnId === trimmed);
+                if (found) {
+                  firstLiturgicalRec = found;
+                  break;
+                }
+              }
+              if (firstLiturgicalRec) break;
+            }
+            if (firstLiturgicalRec) break;
+          }
+          setSelectedRecordingId((firstLiturgicalRec || rList[0]).id);
         }
       } catch (err) {
         console.error('Failed to load marker studio data:', err);
@@ -173,21 +191,21 @@ function MarkerStudioContent() {
     }
 
     loadData();
-  }, [firestore, searchParams]);
+  }, [firestore]);
 
-  // React to URL search params changing dynamically
+  // React to external URL search params changing dynamically without re-fetching Firestore
   useEffect(() => {
     if (recordings.length === 0) return;
     const recId = searchParams.get('recordingId');
     const hymnId = searchParams.get('hymnId');
 
     if (recId && recordings.some(r => r.id === recId)) {
-      setSelectedRecordingId(recId);
+      setSelectedRecordingId(prev => (prev === recId ? prev : recId));
     } else if (hymnId) {
       const rec = recordings.find(r => r.hymnId === hymnId && (r.markers?.length || 0) > 0) ||
                   recordings.find(r => r.hymnId === hymnId);
       if (rec) {
-        setSelectedRecordingId(rec.id);
+        setSelectedRecordingId(prev => (prev === rec.id ? prev : rec.id));
       }
     }
   }, [searchParams, recordings]);
@@ -235,6 +253,7 @@ function MarkerStudioContent() {
     }
 
     const activeRec = currentRecording;
+    const targetHymn = hymnsMap.get(activeRec.hymnId);
 
     async function resolveAssets() {
       try {
@@ -247,7 +266,6 @@ function MarkerStudioContent() {
         const fileRef = ref(storage, activeRec.audioUrl);
         const downloadUrl = await getDownloadURL(fileRef);
         if (isCancelled) return;
-        setAudioUrl(downloadUrl);
 
         // 2. Resolve Markers if missing from doc
         let finalMarkers: number[] =
@@ -313,19 +331,16 @@ function MarkerStudioContent() {
           lyricsMapping: finalLyricsMapping,
         };
 
-        if (!isCancelled) {
-          setResolvedRecording(mergedRec);
-        }
-
         // 4. Resolve Hymn Lyrics if missing from doc
-        if (currentHymn) {
-          let coptic = currentHymn.lyrics?.coptic || '';
-          let english = currentHymn.lyrics?.english || '';
-          let arabic = currentHymn.lyrics?.arabic || '';
+        let mergedHymn: FirestoreHymn | undefined = undefined;
+        if (targetHymn) {
+          let coptic = targetHymn.lyrics?.coptic || '';
+          let english = targetHymn.lyrics?.english || '';
+          let arabic = targetHymn.lyrics?.arabic || '';
 
-          const cPath = (currentHymn as any).lyricsCoptic;
-          const ePath = (currentHymn as any).lyricsEnglish;
-          const aPath = (currentHymn as any).lyricsArabic;
+          const cPath = (targetHymn as any).lyricsCoptic;
+          const ePath = (targetHymn as any).lyricsEnglish;
+          const aPath = (targetHymn as any).lyricsArabic;
 
           if (!coptic && cPath) {
             try {
@@ -352,20 +367,16 @@ function MarkerStudioContent() {
             } catch (_) {}
           }
 
-          const mergedHymn: FirestoreHymn = {
-            ...currentHymn,
+          mergedHymn = {
+            ...targetHymn,
             lyrics: { coptic, english, arabic },
           };
-          if (!isCancelled) {
-            setResolvedHymn(mergedHymn);
-          }
-        } else {
-          if (!isCancelled) {
-            setResolvedHymn(undefined);
-          }
         }
 
         if (!isCancelled) {
+          setAudioUrl(downloadUrl);
+          setResolvedRecording(mergedRec);
+          setResolvedHymn(mergedHymn);
           loadedRecordingIdRef.current = activeRec.id;
         }
       } catch (err: any) {
@@ -385,7 +396,7 @@ function MarkerStudioContent() {
     return () => {
       isCancelled = true;
     };
-  }, [currentRecording?.id, firebaseApp]);
+  }, [currentRecording?.id, firebaseApp, hymnsMap]);
 
   // Map of cantors for display name lookups
   const cantorsMap = useMemo(() => new Map(cantors.map(c => [c.id, c])), [cantors]);
@@ -407,38 +418,6 @@ function MarkerStudioContent() {
     url.searchParams.delete('hymnId');
     window.history.replaceState(null, '', url.toString());
   }, []);
-
-  // Filtered recordings list for selector & interactive search
-  const filteredRecordings = useMemo(() => {
-    return recordings.filter(r => {
-      if (selectedCantorId !== 'all' && r.cantorId !== selectedCantorId) {
-        return false;
-      }
-      if (markerFilter === 'with-markers' && (!r.markers || r.markers.length === 0)) {
-        return false;
-      }
-      if (markerFilter === 'no-markers' && r.markers && r.markers.length > 0) {
-        return false;
-      }
-      if (searchQuery.trim()) {
-        const query = searchQuery.toLowerCase();
-        const hymn = hymnsMap.get(r.hymnId);
-        const hymnName = (hymn?.name || '').toLowerCase();
-        const cantorName = formatCantorName(r.cantorId, cantorsMap).toLowerCase();
-        const recId = r.id.toLowerCase();
-        const hymnId = r.hymnId.toLowerCase();
-        if (
-          !hymnName.includes(query) &&
-          !cantorName.includes(query) &&
-          !recId.includes(query) &&
-          !hymnId.includes(query)
-        ) {
-          return false;
-        }
-      }
-      return true;
-    });
-  }, [recordings, selectedCantorId, markerFilter, searchQuery, hymnsMap, cantorsMap]);
 
   // Construct ordered hymns list based on seasons rank, subgenres, and hymns within
   const orderedHymns = useMemo(() => {
@@ -495,6 +474,144 @@ function MarkerStudioContent() {
 
     return list;
   }, [genres, hymnsMap]);
+
+  // Metadata map for each hymn (liturgical index, season name, subgenre name, all matching seasons)
+  const hymnMetaMap = useMemo(() => {
+    const genreNameMap = new Map(genres.map(g => [g.id, g.name || g.id]));
+    const map = new Map<
+      string,
+      {
+        orderIndex: number;
+        seasonId: string;
+        seasonName: string;
+        subgenreName: string;
+        allSeasonsText: string;
+      }
+    >();
+
+    orderedHymns.forEach((item, idx) => {
+      const hymn = hymnsMap.get(item.hymnId);
+      const extraSeasons = (hymn?.genreIds || [])
+        .map(gid => `${gid} ${genreNameMap.get(gid) || ''}`)
+        .join(' ');
+      map.set(item.hymnId, {
+        orderIndex: idx,
+        seasonId: item.seasonId,
+        seasonName: item.seasonName,
+        subgenreName: item.subgenreName,
+        allSeasonsText: `${item.seasonId} ${item.seasonName} ${item.subgenreName} ${extraSeasons}`.toLowerCase(),
+      });
+    });
+
+    return map;
+  }, [orderedHymns, genres, hymnsMap]);
+
+  // Filtered recordings list for selector & flexible multi-token search
+  const filteredRecordings = useMemo(() => {
+    const normalizeSearch = (str: string) =>
+      str
+        .toLowerCase()
+        .replace(/['’`]/g, '')
+        .replace(/[-_(),.:;/\\]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    const queryNorm = normalizeSearch(searchQuery);
+    const queryTokens = queryNorm ? queryNorm.split(' ').filter(Boolean) : [];
+
+    const matchesToken = (token: string, primaryText: string, primaryWords: string[], fullText: string) => {
+      if (fullText.includes(token)) return true;
+      // Allow 1-character omission or typo on tokens >= 4 chars against primary words
+      if (token.length >= 4) {
+        return primaryWords.some(word => {
+          if (Math.abs(word.length - token.length) > 1) return false;
+          let mismatches = 0;
+          let i = 0;
+          let j = 0;
+          while (i < token.length && j < word.length) {
+            if (token[i] === word[j]) {
+              i++;
+              j++;
+            } else {
+              mismatches++;
+              if (mismatches > 1) return false;
+              if (token.length > word.length) i++;
+              else if (word.length > token.length) j++;
+              else {
+                i++;
+                j++;
+              }
+            }
+          }
+          return mismatches + (token.length - i) + (word.length - j) <= 1;
+        });
+      }
+      return false;
+    };
+
+    const scored: { rec: FirestoreRecording; score: number; orderIndex: number }[] = [];
+
+    for (const r of recordings) {
+      if (selectedCantorId !== 'all' && r.cantorId !== selectedCantorId) {
+        continue;
+      }
+      if (markerFilter === 'with-markers' && (!r.markers || r.markers.length === 0)) {
+        continue;
+      }
+      if (markerFilter === 'no-markers' && r.markers && r.markers.length > 0) {
+        continue;
+      }
+
+      const meta = hymnMetaMap.get(r.hymnId);
+      const orderIndex = meta?.orderIndex ?? 9999;
+
+      if (queryTokens.length === 0) {
+        scored.push({ rec: r, score: 0, orderIndex });
+        continue;
+      }
+
+      const hymn = hymnsMap.get(r.hymnId);
+      const hymnNameNorm = normalizeSearch(hymn?.name || '');
+      const hymnIdNorm = normalizeSearch(r.hymnId);
+      const recIdNorm = normalizeSearch(r.id);
+      const cantorNameNorm = normalizeSearch(formatCantorName(r.cantorId, cantorsMap));
+      const seasonNorm = normalizeSearch(meta?.allSeasonsText || '');
+      const primaryText = `${hymnNameNorm} ${hymnIdNorm} ${seasonNorm} ${cantorNameNorm} ${recIdNorm}`;
+      const primaryWords = primaryText.split(' ').filter(Boolean);
+
+      const lyricsNorm = normalizeSearch(
+        `${hymn?.lyrics?.english || ''} ${hymn?.lyrics?.coptic || ''}`
+      );
+      const fullText = `${primaryText} ${lyricsNorm}`;
+
+      const allMatch = queryTokens.every(t =>
+        matchesToken(t, primaryText, primaryWords, fullText)
+      );
+      if (!allMatch) continue;
+
+      // Score higher when tokens match hymn name, ID, or season directly
+      let score = 0;
+      if (hymnNameNorm.includes(queryNorm)) score += 100;
+      for (const t of queryTokens) {
+        if (hymnNameNorm.includes(t)) score += 25;
+        else if (hymnIdNorm.includes(t)) score += 20;
+        else if (seasonNorm.includes(t)) score += 15;
+        else if (cantorNameNorm.includes(t)) score += 10;
+        else score += 2;
+      }
+
+      scored.push({ rec: r, score, orderIndex });
+    }
+
+    scored.sort((a, b) => {
+      if (queryTokens.length > 0 && b.score !== a.score) {
+        return b.score - a.score;
+      }
+      return a.orderIndex - b.orderIndex;
+    });
+
+    return scored.map(s => s.rec);
+  }, [recordings, selectedCantorId, markerFilter, searchQuery, hymnsMap, cantorsMap, hymnMetaMap]);
 
   // Candidate hymns respecting active filters (cantor and marker filters)
   const candidateHymns = useMemo(() => {
@@ -900,6 +1017,7 @@ function MarkerStudioContent() {
                   ) : (
                     filteredRecordings.map((rec, idx) => {
                       const h = hymnsMap.get(rec.hymnId);
+                      const meta = hymnMetaMap.get(rec.hymnId);
                       const markerCount = rec.markers?.length || 0;
                       const isSelected = rec.id === selectedRecordingId;
                       const isHighlighted = idx === highlightedIndex;
@@ -931,6 +1049,11 @@ function MarkerStudioContent() {
                               />
                             </div>
                             <div className="flex flex-wrap items-center gap-x-2 text-[11px] text-muted-foreground">
+                              {meta ? (
+                                <span className="text-[10px] font-medium text-primary/90">
+                                  {meta.seasonName} &rsaquo; {meta.subgenreName} &bull;
+                                </span>
+                              ) : null}
                               <span className="font-medium text-foreground/80">{cName}</span>
                               {rec.audioLength ? (
                                 <span className="font-mono text-[10px]">
