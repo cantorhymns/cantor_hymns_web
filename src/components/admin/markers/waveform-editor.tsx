@@ -2046,10 +2046,10 @@ export function WaveformEditor({
               size="sm"
               variant="ghost"
               onClick={autoMapSequentially}
-              disabled={isReadOnly || verses.length === 0}
+              disabled={isReadOnly || verses.length === 0 || !isMarkerCountEqual}
               className={cn(
                 'text-xs h-7 gap-1 transition-opacity',
-                verses.length > 0 && !isReadOnly
+                verses.length > 0 && !isReadOnly && isMarkerCountEqual
                   ? 'text-primary hover:text-primary cursor-pointer'
                   : 'text-muted-foreground opacity-40 cursor-not-allowed hover:bg-transparent'
               )}
@@ -2058,6 +2058,8 @@ export function WaveformEditor({
                   ? 'Editing locked'
                   : verses.length === 0
                   ? 'Add hymn lyrics before auto-mapping'
+                  : !isMarkerCountEqual
+                  ? `Markers (${totalMarkerCount} including 0:00) must match verses (${verses.length}) to auto-map`
                   : `Auto-map Verse #1 to Track Start (00:00.00), Verse #2 to Marker #1, Verse #3 to Marker #2, etc.`
               }
             >
