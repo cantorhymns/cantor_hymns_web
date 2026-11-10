@@ -104,8 +104,10 @@ python3 .agents/skills/cantor-agent/scripts/fetch_lyrics.py fetch \
     - **Whisper / Phonetic Verification**: Always transcribe the boundary region (using Whisper word timestamps or waveform phoneme inspection) to identify the true end of the previous stanza and the onset of the new stanza's first word.
 
 ### Critical Recitative Marker Rules (Learned from Roumi & Mo'aqab Ground Truth):
-1. **The Breather Pre-Roll (~100–250ms)**:
-   - Never place the marker flush against the first vocal consonant attack. Always position it `~150–250ms` (approx `0.15–0.25s`) before the vocal attack in the breath silence. This ensures section looping in Learn Mode begins with a comfortable, natural breath intake rather than an abrupt attack.
+1. **The Breather Pre-Roll (~150–300ms)**:
+   - Never place the marker flush against the first vocal consonant or vowel attack. Always position it `~150–300ms` (approx `0.15–0.30s`) before the vocal attack in the breath silence. This ensures section looping in Learn Mode begins with a comfortable, natural breath intake rather than an abrupt attack.
+   - When replicating markers across recordings or cantors via DTW / alignment, the raw attack onset is often detected within ~50ms of singing. **Always shift the marker earlier by ~0.05–0.10s (50–100ms)** into the breath valley so the user hears that gentle pre-roll breath.
+   - **Safety Margin**: Always verify that the marker remains at least `~40–50ms` after the decay of the preceding note (`t_marker >= t_prev_end + 0.04s`) so trailing syllables from the prior phrase are never clipped into the beginning of the looped section.
 2. **The "Mid-Stanza / 2nd-Line Pause" Trap**:
    - In 4-line recitative verses, the cantor frequently takes a pronounced breath after Line 1 before singing Line 2, while the transition between verses (from the previous verse into Line 1) may have little to no silence.
    - **Crucial**: Simple RMS valley finders mistakenly latch onto the pause after Line 1, placing the marker 2 to 4 seconds *after* the verse has already started!
@@ -252,7 +254,11 @@ npm run catalog:push
      - `recordings/{recordingId}`: Must be written to Firestore with `markers`, `lyricsMapping`, etc.
    - Always authenticate writes using `signInAnonymously(auth)` from Firebase Auth.
 
-2. **Verification Before Declaring Complete**:
+2. **Never Read Stale Static Disk JSON When Publishing to CDN**:
+   - Any script that compiles or publishes `catalog.json` must query live Cloud Firestore directly or call `exportFirestore()` from `src/scripts/export-firestore-to-json.ts` before pushing to Firebase Storage CDN (`data/catalog.json`).
+   - Never build `catalog.json` from `fs.readFileSync('src/data/recordings.json')`, as local files on disk may lag behind live cloud edits made by admins in Cantor Studio.
+
+3. **Verification Before Declaring Complete**:
    - Before telling the user that a hymn, cantor, or section is "currently available on the website", you MUST physically verify:
      1. The documents exist in Cloud Firestore (`getDoc(doc(db, 'hymns', id))`, etc.).
      2. The `genres/<genreId>` document in Firestore contains the hymn under `subGenre:<Name>`.

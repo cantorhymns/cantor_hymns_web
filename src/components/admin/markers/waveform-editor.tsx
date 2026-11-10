@@ -116,6 +116,8 @@ export function WaveformEditor({
   const timelineRef = useRef<HTMLDivElement>(null);
   const playheadRef = useRef<HTMLDivElement>(null);
   const isDraggingMarkerRef = useRef(false);
+  const startScrollLeftRef = useRef(0);
+  const prevSelectedMarkerIdxRef = useRef<number | null>(null);
   const wavesurferRef = useRef<WaveSurfer | null>(null);
   const regionsPluginRef = useRef<any>(null);
 
@@ -311,6 +313,51 @@ export function WaveformEditor({
     }
   };
 
+  // Updates visual highlighting on waveform region flags in-place without destroying and recreating regions
+  const updateSelectedRegionVisual = useCallback((prevIdx: number | null, newIdx: number | null) => {
+    const plugin = regionsPluginRef.current;
+    if (!plugin) return;
+
+    try {
+      const regions = plugin.getRegions?.() || [];
+      if (!regions || regions.length === 0) return;
+
+      if (prevIdx !== null) {
+        const prevR = regions.find((r: Region) => r.id === `marker-${prevIdx}`);
+        if (prevR?.element) {
+          prevR.element.style.borderLeft = '2px solid #f59e0b';
+          prevR.element.style.boxShadow = '-1px 0 6px rgba(245, 158, 11, 0.5)';
+          const pill = prevR.element.querySelector('[data-marker-pill]') as HTMLElement | null;
+          if (pill) {
+            pill.style.background = '#f59e0b';
+            pill.style.color = '#0f172a';
+          }
+          const arrow = prevR.element.querySelector('[data-marker-arrow]') as HTMLElement | null;
+          if (arrow) {
+            arrow.style.borderTop = '4px solid #f59e0b';
+          }
+        }
+      }
+
+      if (newIdx !== null) {
+        const newR = regions.find((r: Region) => r.id === `marker-${newIdx}`);
+        if (newR?.element) {
+          newR.element.style.borderLeft = '3px solid #ef4444';
+          newR.element.style.boxShadow = '-2px 0 10px rgba(239, 68, 68, 0.8)';
+          const pill = newR.element.querySelector('[data-marker-pill]') as HTMLElement | null;
+          if (pill) {
+            pill.style.background = '#ef4444';
+            pill.style.color = '#ffffff';
+          }
+          const arrow = newR.element.querySelector('[data-marker-arrow]') as HTMLElement | null;
+          if (arrow) {
+            arrow.style.borderTop = '4px solid #ef4444';
+          }
+        }
+      }
+    } catch (_) {}
+  }, []);
+
   // Synchronize regions on wavesurfer
   const syncRegions = useCallback((markerList: number[], selectedIdx: number | null) => {
     const plugin = regionsPluginRef.current;
@@ -324,6 +371,10 @@ export function WaveformEditor({
 
     // Do not purge or recreate regions while the user is actively dragging a marker
     if (isDraggingMarkerRef.current) return;
+
+    // Preserve scroll position so recreating regions never shifts the track
+    const sc = getScrollContainer(ws);
+    const savedScrollLeft = sc ? sc.scrollLeft : 0;
 
     // Purge any existing DOM marker flags or orphaned elements before recreating (including Shadow DOM)
     try {
@@ -402,7 +453,7 @@ export function WaveformEditor({
           ? 'rgba(245, 158, 11, 0.04)'
           : 'rgba(99, 102, 241, 0.04)',
         drag: false, // Prevents dragging whole region when clicking track
-        resize: true, // Creates left handle for dragging marker line
+        resize: false, // Managed custom handle to avoid WaveSurfer auto-scroll track shifts
         avoidOverlapping: false,
       });
 
@@ -432,6 +483,10 @@ export function WaveformEditor({
           startClientX = e.clientX;
           initialMarkerStart = r.start;
           isDraggingMarkerRef.current = true;
+
+          const scrollContainer = getScrollContainer(wavesurferRef.current);
+          startScrollLeftRef.current = scrollContainer ? scrollContainer.scrollLeft : 0;
+
           setSelectedMarkerIdx(markerIdx);
           document.body.style.touchAction = 'none';
           document.body.style.userSelect = 'none';
@@ -452,6 +507,14 @@ export function WaveformEditor({
             if (!ws) return;
 
             const sc = getScrollContainer(ws);
+            // Strictly lock scroll position during drag so track never shifts
+            if (sc && sc.scrollLeft !== startScrollLeftRef.current) {
+              sc.scrollLeft = startScrollLeftRef.current;
+            }
+            if (timelineRef.current && timelineRef.current.scrollLeft !== startScrollLeftRef.current) {
+              timelineRef.current.scrollLeft = startScrollLeftRef.current;
+            }
+
             const wrapper = ws.getWrapper();
             const fullWidth = wrapper ? wrapper.scrollWidth : Math.max(1, sc ? sc.scrollWidth : 1000);
             const totalDuration = ws.getDuration() || duration || 1;
@@ -480,6 +543,14 @@ export function WaveformEditor({
 
           // Restore normal pill text
           pill.innerText = `#${markerIdx + 1}${vText}`;
+
+          const scrollContainer = getScrollContainer(wavesurferRef.current);
+          if (scrollContainer && scrollContainer.scrollLeft !== startScrollLeftRef.current) {
+            scrollContainer.scrollLeft = startScrollLeftRef.current;
+          }
+          if (timelineRef.current && timelineRef.current.scrollLeft !== startScrollLeftRef.current) {
+            timelineRef.current.scrollLeft = startScrollLeftRef.current;
+          }
 
           if (!isDragging) {
             jumpToMarkerRef.current(markerIdx);
@@ -569,6 +640,14 @@ export function WaveformEditor({
         }
       }
     });
+
+    // Restore and lock scroll position so clearing and recreating regions never shifts the track
+    if (sc && sc.scrollLeft !== savedScrollLeft) {
+      sc.scrollLeft = savedScrollLeft;
+    }
+    if (timelineRef.current && timelineRef.current.scrollLeft !== savedScrollLeft) {
+      timelineRef.current.scrollLeft = savedScrollLeft;
+    }
   }, [duration, isReadOnly, getMappedVerseForMarker]);
 
   const durationRef = useRef(duration);
@@ -892,6 +971,7 @@ export function WaveformEditor({
 
     regionsPlugin.on('region-updated', (region: Region) => {
       document.body.style.touchAction = '';
+      if (isDraggingMarkerRef.current) return;
       const idx = parseInt(region.id.replace('marker-', ''), 10);
       if (!isNaN(idx)) {
         setMarkers(prev => {
@@ -938,12 +1018,21 @@ export function WaveformEditor({
     };
   }, [audioSrc, audioRetryTick, syncScrollToCenter]);
 
-  // Sync regions when markers list or selection changes
+  // Sync regions when markers list changes
   useEffect(() => {
     if (isAudioReady && duration > 0) {
       syncRegions(markers, selectedMarkerIdx);
     }
-  }, [markers, selectedMarkerIdx, isAudioReady, duration, syncRegions]);
+  }, [markers, isAudioReady, duration, syncRegions]);
+
+  // Update visual selection in-place without destroying and recreating regions
+  useEffect(() => {
+    const prev = prevSelectedMarkerIdxRef.current;
+    if (prev !== selectedMarkerIdx) {
+      updateSelectedRegionVisual(prev, selectedMarkerIdx);
+      prevSelectedMarkerIdxRef.current = selectedMarkerIdx;
+    }
+  }, [selectedMarkerIdx, updateSelectedRegionVisual]);
 
   // Handle zoom changes safely after audio is ready
   useEffect(() => {
@@ -1190,14 +1279,14 @@ export function WaveformEditor({
 
   // Auto-map sequential verses: Verse 1 maps to Track Start (0), Verse 2 maps to Marker #1 (1), Verse 3 maps to Marker #2 (2), etc.
   const autoMapSequentially = useCallback(() => {
-    if (verses.length === 0) return;
+    if (verses.length === 0 || !isMarkerCountEqual) return;
 
     // Always map Verse #1 (index 0) -> Track Start (0), Verse #2 (index 1) -> Marker #1 (1), Verse #(k+1) -> Marker #k (k)
     const nextMapping = verses.map((_, i) => (i === 0 ? 0 : i <= markers.length ? i : -1));
 
     setLyricsMapping(nextMapping);
     setHasUnsavedChanges(true);
-  }, [verses, markers]);
+  }, [verses, markers, isMarkerCountEqual]);
 
   /**
    * Binds a verse to a target marker (targetMarkerNum: 0 for Track Start, 1..N for markers 1..N).
@@ -1357,7 +1446,7 @@ export function WaveformEditor({
   const activeMarkerIdx = useMemo(() => {
     if (markers.length === 0) return null;
     for (let i = markers.length - 1; i >= 0; i--) {
-      if (currentTime >= markers[i]) {
+      if (currentTime >= markers[i] - 0.05) {
         return i;
       }
     }
@@ -1377,7 +1466,7 @@ export function WaveformEditor({
 
       const startTime = mappedValue === 0 ? 0 : (markers[mappedValue - 1] ?? -1);
 
-      if (startTime !== -1 && currentTime >= startTime) {
+      if (startTime !== -1 && currentTime >= startTime - 0.05) {
         if (startTime >= maxStartTime) {
           maxStartTime = startTime;
           bestVerseIndex = v;
@@ -1386,6 +1475,14 @@ export function WaveformEditor({
     }
     return bestVerseIndex >= 0 ? bestVerseIndex : null;
   }, [verses.length, lyricsMapping, markers, currentTime]);
+
+  // Automatically update the selected marker to be the closest one before where we are currently at
+  useEffect(() => {
+    if (isDraggingMarkerRef.current) return;
+    if (activeMarkerIdx !== selectedMarkerIdx) {
+      setSelectedMarkerIdx(activeMarkerIdx);
+    }
+  }, [activeMarkerIdx, selectedMarkerIdx]);
 
   return (
     <div className="space-y-6">

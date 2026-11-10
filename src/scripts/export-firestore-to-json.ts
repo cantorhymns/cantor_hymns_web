@@ -5,7 +5,7 @@ import { firebaseConfig } from '../firebase/config';
 import * as fs from 'fs';
 import * as path from 'path';
 
-async function exportFirestore() {
+export async function exportFirestore() {
   console.log('Connecting to Firebase...');
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
@@ -38,10 +38,20 @@ async function exportFirestore() {
       const colRef = collection(db, colName);
       const snap = await getDocs(colRef);
       
-      const docs = snap.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      const docs = snap.docs
+        .map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+        .filter(doc => {
+          if (colName === 'genres') {
+            const g = doc as any;
+            if (g.id === 'app_settings' || g.id === '__app_settings__' || !g.name) {
+              return false;
+            }
+          }
+          return true;
+        });
 
       exportData[colName] = docs;
 
@@ -66,7 +76,7 @@ async function exportFirestore() {
 
   const catalog = {
     generatedAt: new Date().toISOString(),
-    genres: genres.sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999) || a.name.localeCompare(b.name)),
+    genres: genres.sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999) || (a.name || '').localeCompare(b.name || '')),
     cantors: cantors.sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999) || a.name.localeCompare(b.name)),
     hymns: hymns.map(h => {
       const hymnRecordings = recordings
@@ -87,10 +97,11 @@ async function exportFirestore() {
     outputDir,
     path.resolve(process.cwd(), 'src/data'),
     path.resolve(process.cwd(), 'public/data'),
+    path.resolve(process.cwd(), '../cantor_hymns_mobile/src/data'),
   ];
 
   for (const tDir of targetDirs) {
-    if (!fs.existsSync(tDir)) fs.mkdirSync(tDir, { recursive: true });
+    if (!fs.existsSync(tDir)) continue;
     for (const colName of collections) {
       if (exportData[colName]) {
         fs.writeFileSync(path.join(tDir, `${colName}.json`), JSON.stringify(exportData[colName], null, 2), 'utf-8');
@@ -110,7 +121,9 @@ async function exportFirestore() {
 Output directory: ${outputDir}`);
 }
 
-exportFirestore().catch(err => {
-  console.error('Export failed:', err);
-  process.exit(1);
-});
+if (require.main === module) {
+  exportFirestore().catch(err => {
+    console.error('Export failed:', err);
+    process.exit(1);
+  });
+}

@@ -2,11 +2,15 @@ import { initializeApp } from 'firebase/app';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getAuth, signInAnonymously } from 'firebase/auth';
 import { firebaseConfig } from '../firebase/config';
+import { exportFirestore } from './export-firestore-to-json';
 import * as fs from 'fs';
 import * as path from 'path';
 
 export async function uploadCatalogToStorage() {
-  console.log('Connecting to Firebase...');
+  console.log('🔄 Syncing fresh catalog directly from Cloud Firestore first...');
+  await exportFirestore();
+
+  console.log('Connecting to Firebase Storage...');
   const app = initializeApp(firebaseConfig);
   const storage = getStorage(app);
   const auth = getAuth(app);

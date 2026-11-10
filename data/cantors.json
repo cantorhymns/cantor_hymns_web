@@ -1,79 +1,79 @@
 [
   {
     "id": "cantor-ibrahim",
+    "rank": 1,
+    "name": "Cantor Ibrahim",
+    "cantorCloudActive": true,
     "updatedAt": {
       "seconds": 1794022243,
       "nanoseconds": 804000000
     },
-    "active": true,
-    "rank": 1,
-    "name": "Cantor Ibrahim",
-    "cantorCloudActive": true
+    "active": true
   },
   {
     "id": "cantor-gad",
-    "cantorCloudActive": true,
     "name": "Cantor Gad",
-    "rank": 2,
-    "active": true,
     "updatedAt": {
       "seconds": 1794022243,
       "nanoseconds": 851000000
-    }
+    },
+    "rank": 2,
+    "active": true,
+    "cantorCloudActive": true
   },
   {
     "id": "cantor-tharwat",
-    "cantorCloudActive": true,
+    "name": "Cantor Tharwat",
+    "active": true,
+    "rank": 3,
     "updatedAt": {
       "seconds": 1794022243,
       "nanoseconds": 893000000
     },
-    "active": true,
-    "name": "Cantor Tharwat",
-    "rank": 3
+    "cantorCloudActive": true
   },
   {
     "id": "cantor-bola",
     "active": true,
+    "name": "Cantor Bola",
+    "cantorCloudActive": true,
+    "rank": 4,
     "updatedAt": {
       "seconds": 1794022243,
       "nanoseconds": 941000000
-    },
-    "rank": 4,
-    "name": "Cantor Bola",
-    "cantorCloudActive": true
+    }
   },
   {
     "id": "cantor-zaher",
+    "cantorCloudActive": true,
+    "rank": 5,
     "active": true,
     "name": "Cantor Zaher",
-    "rank": 5,
     "updatedAt": {
-      "seconds": 1794108701,
-      "nanoseconds": 952000000
-    },
-    "cantorCloudActive": true
+      "seconds": 1794109436,
+      "nanoseconds": 35000000
+    }
   },
   {
     "id": "hics",
-    "name": "HICS",
+    "active": true,
     "rank": 6,
+    "name": "HICS",
     "cantorCloudActive": true,
     "updatedAt": {
       "seconds": 1794022244,
       "nanoseconds": 29000000
-    },
-    "active": true
+    }
   },
   {
     "id": "other",
+    "active": true,
+    "rank": 7,
     "updatedAt": {
       "seconds": 1794022244,
       "nanoseconds": 60000000
     },
-    "active": true,
     "cantorCloudActive": false,
-    "rank": 7,
     "name": "Other"
   }
 ]
