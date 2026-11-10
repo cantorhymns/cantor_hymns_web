@@ -1,20 +1,11 @@
 [
   {
     "id": "cantor-bola_alleluia-al-asr",
-    "markersCount": 32,
-    "active": true,
-    "mode": "learn",
-    "lyricsMappingUrl": "",
-    "audioLength": 647.079175,
-    "audioUrl": "tracks/cantor-bola/cantor-bola_alleluia-al-asr.mp3",
-    "markersUrl": "markers/cantor-bola/cantor-bola_alleluia-al-asr_markers.txt",
     "cantorId": "cantor-bola",
+    "markersUrl": "markers/cantor-bola/cantor-bola_alleluia-al-asr_markers.txt",
+    "markersCount": 32,
     "lyricsMapping": [],
-    "hymnId": "alleluia-al-asr",
-    "updatedAt": {
-      "seconds": 1793561316,
-      "nanoseconds": 273000000
-    },
+    "mode": "learn",
     "markers": [
       28.526077,
       42.494331,
@@ -48,14 +39,26 @@
       596.853448,
       606.105148,
       625.470228
-    ]
+    ],
+    "hymnId": "alleluia-al-asr",
+    "audioUrl": "tracks/cantor-bola/cantor-bola_alleluia-al-asr.mp3",
+    "updatedAt": {
+      "seconds": 1793561316,
+      "nanoseconds": 273000000
+    },
+    "audioLength": 647.079175,
+    "active": true,
+    "lyricsMappingUrl": ""
   },
   {
     "id": "cantor-bola_entho-te-ti-shouri",
-    "updatedAt": {
-      "seconds": 1793561323,
-      "nanoseconds": 938000000
-    },
+    "active": true,
+    "cantorId": "cantor-bola",
+    "markersUrl": "markers/cantor-bola/cantor-bola_entho-te-ti-shouri_markers.txt",
+    "hymnId": "entho-te-ti-shouri",
+    "audioUrl": "tracks/cantor-bola/cantor-bola_entho-te-ti-shouri.mp3",
+    "mode": "learn",
+    "markersCount": 19,
     "markers": [
       9.325755,
       25,
@@ -78,23 +81,20 @@
       237.5
     ],
     "lyricsMapping": [],
-    "mode": "learn",
-    "hymnId": "entho-te-ti-shouri",
-    "markersUrl": "markers/cantor-bola/cantor-bola_entho-te-ti-shouri_markers.txt",
     "lyricsMappingUrl": "",
-    "active": true,
-    "cantorId": "cantor-bola",
-    "audioUrl": "tracks/cantor-bola/cantor-bola_entho-te-ti-shouri.mp3",
-    "audioLength": 278.386925,
-    "markersCount": 19
+    "updatedAt": {
+      "seconds": 1793561323,
+      "nanoseconds": 938000000
+    },
+    "audioLength": 278.386925
   },
   {
     "id": "cantor-bola_kyrie-eleison-lent",
-    "hymnId": "kyrie-eleison-lent",
+    "cantorId": "cantor-bola",
     "markersUrl": "markers/cantor-bola/cantor-bola_kyrie-eleison-lent_markers.txt",
-    "markersCount": 21,
-    "lyricsMappingUrl": "",
+    "hymnId": "kyrie-eleison-lent",
     "audioLength": 361.978775,
+    "active": true,
     "markers": [
       17.324263,
       29.977324,
@@ -119,19 +119,37 @@
       336.285714
     ],
     "mode": "learn",
-    "lyricsMapping": [],
+    "markersCount": 21,
+    "audioUrl": "tracks/cantor-bola/cantor-bola_kyrie-eleison-lent.mp3",
     "updatedAt": {
       "seconds": 1793561342,
       "nanoseconds": 737000000
     },
-    "audioUrl": "tracks/cantor-bola/cantor-bola_kyrie-eleison-lent.mp3",
-    "cantorId": "cantor-bola",
-    "active": true
+    "lyricsMapping": [],
+    "lyricsMappingUrl": ""
   },
   {
     "id": "cantor-bola_meghalo",
-    "markersCount": 0,
+    "audioUrl": "tracks/cantor-bola/cantor-bola_meghalo.mp3",
+    "updatedAt": {
+      "seconds": 1794016468,
+      "nanoseconds": 711000000
+    },
+    "lyricsMapping": [
+      0,
+      40,
+      42,
+      44,
+      46,
+      48,
+      50
+    ],
+    "mode": "listen",
+    "markersUrl": "markers/cantor-bola/cantor-bola_meghalo_markers.txt",
     "lyricsMappingUrl": "",
+    "audioLength": 1149.28325,
+    "markersCount": 0,
+    "hymnId": "meghalo",
     "markers": [
       11.6,
       29.156,
@@ -185,38 +203,14 @@
       1082.676,
       1114.573
     ],
-    "mode": "listen",
-    "updatedAt": {
-      "seconds": 1794016468,
-      "nanoseconds": 711000000
-    },
-    "hymnId": "meghalo",
-    "audioUrl": "tracks/cantor-bola/cantor-bola_meghalo.mp3",
     "cantorId": "cantor-bola",
-    "active": true,
-    "markersUrl": "markers/cantor-bola/cantor-bola_meghalo_markers.txt",
-    "lyricsMapping": [
-      0,
-      40,
-      42,
-      44,
-      46,
-      48,
-      50
-    ],
-    "audioLength": 1149.28325
+    "active": true
   },
   {
     "id": "cantor-bola_mournful-tai-shouri",
-    "lyricsMapping": [],
+    "lyricsMappingUrl": "",
+    "active": true,
     "markersUrl": "markers/cantor-bola/cantor-bola_mournful-tai-shouri_markers.txt",
-    "mode": "learn",
-    "audioLength": 701.49225,
-    "hymnId": "mournful-tai-shouri",
-    "updatedAt": {
-      "seconds": 1793561347,
-      "nanoseconds": 985000000
-    },
     "markers": [
       19,
       37.995524,
@@ -251,26 +245,28 @@
       507.717959,
       520.416372
     ],
-    "markersCount": 32,
-    "lyricsMappingUrl": "",
-    "active": true,
     "audioUrl": "tracks/cantor-bola/cantor-bola_mournful-tai-shouri.mp3",
-    "cantorId": "cantor-bola"
+    "hymnId": "mournful-tai-shouri",
+    "markersCount": 32,
+    "cantorId": "cantor-bola",
+    "mode": "learn",
+    "updatedAt": {
+      "seconds": 1793561347,
+      "nanoseconds": 985000000
+    },
+    "audioLength": 701.49225,
+    "lyricsMapping": []
   },
   {
     "id": "cantor-bola_omonogenees",
-    "active": true,
-    "updatedAt": {
-      "seconds": 1793561350,
-      "nanoseconds": 460000000
-    },
-    "markersUrl": "markers/cantor-bola/cantor-bola_omonogenees_markers.txt",
-    "mode": "learn",
-    "audioLength": 967.4971666666667,
-    "cantorId": "cantor-bola",
-    "audioUrl": "tracks/cantor-bola/cantor-bola_omonogenees.mp3",
     "markersCount": 52,
+    "cantorId": "cantor-bola",
+    "hymnId": "omonogenees",
+    "lyricsMappingUrl": "",
     "lyricsMapping": [],
+    "active": true,
+    "audioLength": 967.4971666666667,
+    "markersUrl": "markers/cantor-bola/cantor-bola_omonogenees_markers.txt",
     "markers": [
       13.154195,
       24.172336,
@@ -325,20 +321,18 @@
       919.841917,
       935.216067
     ],
-    "lyricsMappingUrl": "",
-    "hymnId": "omonogenees"
+    "updatedAt": {
+      "seconds": 1793561350,
+      "nanoseconds": 460000000
+    },
+    "audioUrl": "tracks/cantor-bola/cantor-bola_omonogenees.mp3",
+    "mode": "learn"
   },
   {
     "id": "cantor-bola_psalm-150-lent-weekdays",
-    "markersUrl": "markers/cantor-bola/cantor-bola_psalm-150-lent-weekdays_markers.txt",
-    "markersCount": 32,
     "hymnId": "psalm-150-lent-weekdays",
-    "updatedAt": {
-      "seconds": 1793561343,
-      "nanoseconds": 594000000
-    },
-    "active": true,
-    "lyricsMapping": [],
+    "audioUrl": "tracks/cantor-bola/cantor-bola_psalm-150-lent-weekdays.mp3",
+    "audioLength": 722.311825,
     "markers": [
       15.92517,
       28.637188,
@@ -373,28 +367,33 @@
       651.920635,
       685.770975
     ],
-    "audioLength": 722.311825,
+    "active": true,
     "mode": "learn",
+    "markersCount": 32,
+    "lyricsMappingUrl": "",
+    "updatedAt": {
+      "seconds": 1793561343,
+      "nanoseconds": 594000000
+    },
+    "markersUrl": "markers/cantor-bola/cantor-bola_psalm-150-lent-weekdays_markers.txt",
     "cantorId": "cantor-bola",
-    "audioUrl": "tracks/cantor-bola/cantor-bola_psalm-150-lent-weekdays.mp3",
-    "lyricsMappingUrl": ""
+    "lyricsMapping": []
   },
   {
     "id": "cantor-bola_share-ephnouti",
+    "lyricsMappingUrl": "",
+    "mode": "learn",
+    "markersCount": 16,
+    "markersUrl": "markers/cantor-bola/cantor-bola_share-ephnouti_markers.txt",
+    "hymnId": "share-ephnouti",
     "lyricsMapping": [],
+    "cantorId": "cantor-bola",
     "updatedAt": {
       "seconds": 1793561361,
       "nanoseconds": 95000000
     },
     "active": true,
-    "markersUrl": "markers/cantor-bola/cantor-bola_share-ephnouti_markers.txt",
-    "audioLength": 210.546925,
-    "cantorId": "cantor-bola",
     "audioUrl": "tracks/cantor-bola/cantor-bola_share-ephnouti.mp3",
-    "markersCount": 16,
-    "hymnId": "share-ephnouti",
-    "lyricsMappingUrl": "",
-    "mode": "learn",
     "markers": [
       17.469388,
       25.54195,
@@ -412,20 +411,12 @@
       143.773243,
       156.517007,
       170.213152
-    ]
+    ],
+    "audioLength": 210.546925
   },
   {
     "id": "cantor-bola_somatos",
     "audioUrl": "tracks/cantor-bola/cantor-bola_somatos.mp3",
-    "markersUrl": "markers/cantor-bola/cantor-bola_somatos_markers.txt",
-    "cantorId": "cantor-bola",
-    "markersCount": 8,
-    "active": true,
-    "audioLength": 121.417125,
-    "updatedAt": {
-      "seconds": 1793561362,
-      "nanoseconds": 165000000
-    },
     "markers": [
       21.978853,
       42.73849,
@@ -436,16 +427,32 @@
       89.640985,
       96.625112
     ],
-    "mode": "learn",
-    "lyricsMapping": [],
+    "updatedAt": {
+      "seconds": 1793561362,
+      "nanoseconds": 165000000
+    },
+    "markersCount": 8,
     "hymnId": "somatos",
-    "lyricsMappingUrl": ""
+    "lyricsMapping": [],
+    "lyricsMappingUrl": "",
+    "mode": "learn",
+    "audioLength": 121.417125,
+    "markersUrl": "markers/cantor-bola/cantor-bola_somatos_markers.txt",
+    "cantorId": "cantor-bola",
+    "active": true
   },
   {
     "id": "cantor-gad_genethlion",
-    "cantorId": "cantor-gad",
+    "updatedAt": {
+      "seconds": 1793561330,
+      "nanoseconds": 576000000
+    },
+    "lyricsMappingUrl": "",
     "audioUrl": "tracks/cantor-gad/cantor-gad_genethlion.mp3",
-    "markersCount": 41,
+    "active": true,
+    "lyricsMapping": [],
+    "markersUrl": "markers/cantor-gad/cantor-gad_genethlion_markers.txt",
+    "hymnId": "genethlion",
     "markers": [
       15.698413,
       31.882086,
@@ -490,16 +497,9 @@
       692.873184
     ],
     "mode": "learn",
+    "markersCount": 41,
     "audioLength": 705.854675,
-    "hymnId": "genethlion",
-    "markersUrl": "markers/cantor-gad/cantor-gad_genethlion_markers.txt",
-    "active": true,
-    "lyricsMapping": [],
-    "updatedAt": {
-      "seconds": 1793561330,
-      "nanoseconds": 576000000
-    },
-    "lyricsMappingUrl": ""
+    "cantorId": "cantor-gad"
   },
   {
     "id": "cantor-gad_tarh",
@@ -507,8 +507,8 @@
       "seconds": 1794201134,
       "nanoseconds": 416000000
     },
-    "audioUrl": "tracks/cantor-gad/cantor-gad_tarh.mp3",
-    "lyricsMappingUrl": "",
+    "lyricsMapping": [],
+    "audioLength": 1350.948583333334,
     "markers": [
       16.22,
       22.69,
@@ -607,16 +607,34 @@
       1324.06
     ],
     "cantorId": "cantor-gad",
+    "audioUrl": "tracks/cantor-gad/cantor-gad_tarh.mp3",
     "active": true,
-    "hymnId": "tarh",
-    "mode": "learn",
-    "audioLength": 1350.948583333334,
-    "markersUrl": "markers/cantor-gad/cantor-gad_tarh_markers.txt",
     "markersCount": 95,
-    "lyricsMapping": []
+    "mode": "learn",
+    "hymnId": "tarh",
+    "lyricsMappingUrl": "",
+    "markersUrl": "markers/cantor-gad/cantor-gad_tarh_markers.txt"
   },
   {
     "id": "cantor-gad_tenen",
+    "hymnId": "tenen",
+    "markersUrl": null,
+    "markersCount": 113,
+    "active": true,
+    "updatedAt": {
+      "seconds": 1794116448,
+      "nanoseconds": 24000000
+    },
+    "mode": "learn",
+    "lyricsMapping": [
+      0,
+      39,
+      74
+    ],
+    "audioUrl": "tracks/cantor-gad/cantor-gad_tenen.mp3",
+    "audioLength": 1252.3,
+    "cantorId": "cantor-gad",
+    "lyricsMappingUrl": null,
     "markers": [
       39.89,
       53.596,
@@ -695,38 +713,23 @@
       1188.405,
       1205.985,
       1233.79
-    ],
-    "hymnId": "tenen",
-    "cantorId": "cantor-gad",
-    "audioUrl": "tracks/cantor-gad/cantor-gad_tenen.mp3",
-    "markersCount": 113,
-    "audioLength": 1252.3,
-    "lyricsMappingUrl": null,
-    "updatedAt": {
-      "seconds": 1794116448,
-      "nanoseconds": 24000000
-    },
-    "active": true,
-    "markersUrl": null,
-    "mode": "learn",
-    "lyricsMapping": [
-      0,
-      39,
-      74
     ]
   },
   {
     "id": "cantor-ibrahim-aspasmos-watos-lent-1",
     "active": true,
     "lyricsMapping": [],
-    "lyricsMappingUrl": "",
+    "hymnId": "aspasmos-watos-lent-1",
     "markersCount": 22,
     "updatedAt": {
       "seconds": 1793561320,
       "nanoseconds": 563000000
     },
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_aspasmos-watos-lent-1.mp3",
     "mode": "learn",
     "audioLength": 532.7934583333333,
+    "lyricsMappingUrl": "",
+    "cantorId": "cantor-ibrahim",
     "markers": [
       20.31746,
       40.181406,
@@ -751,21 +754,16 @@
       439.863946,
       461.995465
     ],
-    "cantorId": "cantor-ibrahim",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_aspasmos-watos-lent-1.mp3",
-    "hymnId": "aspasmos-watos-lent-1",
     "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_aspasmos-watos-lent-1_markers.txt"
   },
   {
     "id": "cantor-ibrahim_anok-pe-pi-kouji",
-    "updatedAt": {
-      "seconds": 1793561317,
-      "nanoseconds": 591000000
-    },
-    "active": true,
     "cantorId": "cantor-ibrahim",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_anok-pe-pi-kouji.mp3",
+    "markersCount": 63,
+    "lyricsMapping": [],
+    "mode": "learn",
     "lyricsMappingUrl": "",
+    "active": true,
     "markers": [
       22.811791,
       43.174603,
@@ -831,19 +829,18 @@
       890.710116,
       915.653427
     ],
-    "mode": "learn",
-    "hymnId": "anok-pe-pi-kouji",
-    "lyricsMapping": [],
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_anok-pe-pi-kouji_markers.txt",
     "audioLength": 916.349375,
-    "markersCount": 63
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_anok-pe-pi-kouji_markers.txt",
+    "updatedAt": {
+      "seconds": 1793561317,
+      "nanoseconds": 591000000
+    },
+    "hymnId": "anok-pe-pi-kouji",
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_anok-pe-pi-kouji.mp3"
   },
   {
     "id": "cantor-ibrahim_aretenthonti-kiahk",
-    "markersCount": 78,
-    "active": true,
-    "audioLength": 822.816,
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_aretenthonti-kiahk_markers.txt",
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_aretenthonti-kiahk.mp3",
     "markers": [
       13.465352,
       25.120681,
@@ -924,26 +921,22 @@
       797.934601,
       813.501996
     ],
+    "audioLength": 822.816,
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_aretenthonti-kiahk_markers.txt",
+    "markersCount": 78,
+    "active": true,
+    "lyricsMappingUrl": "",
+    "hymnId": "aretenthonti-kiahk",
     "lyricsMapping": [],
+    "cantorId": "cantor-ibrahim",
     "updatedAt": {
       "seconds": 1793561318,
       "nanoseconds": 642000000
     },
-    "lyricsMappingUrl": "",
-    "cantorId": "cantor-ibrahim",
-    "mode": "learn",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_aretenthonti-kiahk.mp3",
-    "hymnId": "aretenthonti-kiahk"
+    "mode": "learn"
   },
   {
     "id": "cantor-ibrahim_aretenthonti-lent",
-    "lyricsMappingUrl": "",
-    "markersCount": 78,
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_aretenthonti-lent_markers.txt",
-    "hymnId": "aretenthonti-lent",
-    "cantorId": "cantor-ibrahim",
-    "lyricsMapping": [],
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_aretenthonti-lent.mp3",
     "markers": [
       13.465352,
       25.120681,
@@ -1024,19 +1017,27 @@
       797.934601,
       813.501996
     ],
-    "audioLength": 823.04,
     "mode": "learn",
+    "hymnId": "aretenthonti-lent",
+    "audioLength": 823.04,
     "active": true,
     "updatedAt": {
       "seconds": 1793561319,
       "nanoseconds": 273000000
-    }
+    },
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_aretenthonti-lent.mp3",
+    "lyricsMappingUrl": "",
+    "cantorId": "cantor-ibrahim",
+    "lyricsMapping": [],
+    "markersCount": 78,
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_aretenthonti-lent_markers.txt"
   },
   {
     "id": "cantor-ibrahim_avechnon",
-    "lyricsMapping": [],
-    "hymnId": "avechnon",
-    "audioLength": 1186.1159,
+    "updatedAt": {
+      "seconds": 1793561321,
+      "nanoseconds": 621000000
+    },
     "markers": [
       18.957626,
       117.573507,
@@ -1047,31 +1048,67 @@
       235.691288,
       459.437988
     ],
-    "mode": "learn",
-    "cantorId": "cantor-ibrahim",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_avechnon.mp3",
     "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_avechnon_markers.txt",
-    "lyricsMappingUrl": "",
-    "updatedAt": {
-      "seconds": 1793561321,
-      "nanoseconds": 621000000
-    },
+    "audioLength": 1186.1159,
+    "cantorId": "cantor-ibrahim",
+    "mode": "learn",
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_avechnon.mp3",
     "active": true,
+    "lyricsMappingUrl": "",
+    "hymnId": "avechnon",
+    "lyricsMapping": [],
     "markersCount": 8
   },
   {
     "id": "cantor-ibrahim_ef-emepsha-ghar-kiahk-weekends",
-    "updatedAt": {
-      "seconds": 1794164379,
-      "nanoseconds": 1000000
-    },
-    "lyricsMappingUrl": "markers/cantor-ibrahim/cantor-ibrahim_ef-emepsha-ghar-kiahk-weekends_lyrics_markers.txt",
     "mode": "learn",
-    "hymnId": "ef-emepsha-ghar-kiahk-weekends",
-    "cantorId": "cantor-ibrahim",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ef-emepsha-ghar-kiahk-weekends.mp3",
     "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ef-emepsha-ghar-kiahk-weekends_markers.txt",
-    "audioLength": 1167.32,
+    "lyricsMappingUrl": "markers/cantor-ibrahim/cantor-ibrahim_ef-emepsha-ghar-kiahk-weekends_lyrics_markers.txt",
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ef-emepsha-ghar-kiahk-weekends.mp3",
+    "updatedAt": {
+      "seconds": 1794286383,
+      "nanoseconds": 737000000
+    },
+    "hymnId": "ef-emepsha-ghar-kiahk-weekends",
+    "markers": [
+      62.25,
+      117.9,
+      173.3,
+      221.1,
+      247.35,
+      273.2,
+      299.15,
+      322.9,
+      348.7,
+      377.5,
+      402.6,
+      428.3,
+      453.45,
+      476.4,
+      500.2,
+      524.5,
+      549.4,
+      575.05,
+      599.1,
+      626.85,
+      650.55,
+      675.7,
+      704.2,
+      729.25,
+      756.15,
+      781.25,
+      806.45,
+      831.35,
+      853.57,
+      880.9,
+      910.05,
+      944.05,
+      965.17,
+      983.02,
+      1008.95
+    ],
+    "audioLength": 1037,
+    "cantorId": "cantor-ibrahim",
     "lyricsMapping": [
       0,
       1,
@@ -1109,60 +1146,10 @@
       33,
       34,
       35
-    ],
-    "markers": [
-      62.25,
-      117.9,
-      173.3,
-      221.1,
-      247.35,
-      273.2,
-      299.15,
-      322.9,
-      348.7,
-      377.5,
-      402.6,
-      428.3,
-      453.45,
-      476.4,
-      500.2,
-      524.5,
-      549.4,
-      575.05,
-      599.1,
-      626.85,
-      650.55,
-      675.7,
-      704.2,
-      729.25,
-      756.15,
-      781.25,
-      806.45,
-      831.35,
-      853.57,
-      880.9,
-      910.05,
-      944.05,
-      965.17,
-      983.02,
-      1037.4
     ]
   },
   {
     "id": "cantor-ibrahim_ere-pi-esmou",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ere-pi-esmou.mp3",
-    "cantorId": "cantor-ibrahim",
-    "lyricsMapping": [],
-    "lyricsMappingUrl": "",
-    "active": true,
-    "audioLength": 252.0032653061225,
-    "updatedAt": {
-      "seconds": 1793561325,
-      "nanoseconds": 970000000
-    },
-    "hymnId": "ere-pi-esmou",
-    "markersCount": 13,
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ere-pi-esmou_markers.txt",
     "markers": [
       17.513832,
       28.797052,
@@ -1178,22 +1165,25 @@
       204.263039,
       219.229025
     ],
-    "mode": "learn"
+    "lyricsMapping": [],
+    "lyricsMappingUrl": "",
+    "cantorId": "cantor-ibrahim",
+    "mode": "learn",
+    "updatedAt": {
+      "seconds": 1793561325,
+      "nanoseconds": 970000000
+    },
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ere-pi-esmou_markers.txt",
+    "hymnId": "ere-pi-esmou",
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ere-pi-esmou.mp3",
+    "active": true,
+    "audioLength": 252.0032653061225,
+    "markersCount": 13
   },
   {
     "id": "cantor-ibrahim_ethvetee-general-funeral",
-    "hymnId": "ethvetee-general-funeral",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ethvetee-general-funeral.mp3",
     "cantorId": "cantor-ibrahim",
-    "audioLength": 613.30285,
-    "lyricsMapping": [],
-    "updatedAt": {
-      "seconds": 1793561327,
-      "nanoseconds": 18000000
-    },
-    "lyricsMappingUrl": "",
     "mode": "learn",
-    "markersCount": 47,
     "markers": [
       21.268745,
       34.478327,
@@ -1243,22 +1233,21 @@
       573.056104,
       587.320402
     ],
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ethvetee-general-funeral_markers.txt",
     "active": true,
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ethvetee-general-funeral_markers.txt"
+    "updatedAt": {
+      "seconds": 1793561327,
+      "nanoseconds": 18000000
+    },
+    "lyricsMappingUrl": "",
+    "markersCount": 47,
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ethvetee-general-funeral.mp3",
+    "lyricsMapping": [],
+    "hymnId": "ethvetee-general-funeral",
+    "audioLength": 613.30285
   },
   {
     "id": "cantor-ibrahim_ethvetee-good-friday",
-    "active": true,
-    "cantorId": "cantor-ibrahim",
-    "lyricsMappingUrl": "",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ethvetee-good-friday.mp3",
-    "lyricsMapping": [],
-    "updatedAt": {
-      "seconds": 1793561328,
-      "nanoseconds": 429000000
-    },
-    "audioLength": 561.606525,
-    "mode": "learn",
     "markers": [
       21.268745,
       34.478327,
@@ -1299,26 +1288,37 @@
       526.436282,
       535.969666
     ],
+    "mode": "learn",
     "hymnId": "ethvetee-good-friday",
+    "audioLength": 561.606525,
+    "active": true,
+    "updatedAt": {
+      "seconds": 1793561328,
+      "nanoseconds": 429000000
+    },
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ethvetee-good-friday.mp3",
+    "lyricsMappingUrl": "",
+    "cantorId": "cantor-ibrahim",
+    "lyricsMapping": [],
     "markersCount": 38,
     "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ethvetee-good-friday_markers.txt"
   },
   {
     "id": "cantor-ibrahim_gholghotha",
-    "cantorId": "cantor-ibrahim",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_gholghotha.mp3",
-    "markersCount": 38,
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_gholghotha_markers.txt",
-    "audioLength": 716.9305833333333,
-    "hymnId": "gholghotha",
-    "active": true,
-    "lyricsMapping": [],
-    "lyricsMappingUrl": "",
     "updatedAt": {
       "seconds": 1793561331,
       "nanoseconds": 735000000
     },
+    "lyricsMappingUrl": "",
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_gholghotha_markers.txt",
+    "audioLength": 716.9305833333333,
+    "cantorId": "cantor-ibrahim",
     "mode": "learn",
+    "markersCount": 38,
+    "active": true,
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_gholghotha.mp3",
+    "lyricsMapping": [],
+    "hymnId": "gholghotha",
     "markers": [
       17.024943,
       33.818594,
@@ -1362,16 +1362,6 @@
   },
   {
     "id": "cantor-ibrahim_je-efesmaroout-kiahk-weekends",
-    "hymnId": "je-efesmaroout-kiahk-weekends",
-    "mode": "learn",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_je-efesmaroout-kiahk-weekends.mp3",
-    "cantorId": "cantor-ibrahim",
-    "lyricsMapping": [],
-    "audioLength": 141.9,
-    "updatedAt": {
-      "seconds": 1794200938,
-      "nanoseconds": 796000000
-    },
     "markers": [
       19.812,
       35.634,
@@ -1380,19 +1370,21 @@
       91.48,
       106.16,
       125.213
-    ]
+    ],
+    "audioLength": 141.9,
+    "hymnId": "je-efesmaroout-kiahk-weekends",
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_je-efesmaroout-kiahk-weekends.mp3",
+    "updatedAt": {
+      "seconds": 1794200938,
+      "nanoseconds": 796000000
+    },
+    "lyricsMapping": [],
+    "cantorId": "cantor-ibrahim",
+    "mode": "learn"
   },
   {
     "id": "cantor-ibrahim_je-efesmaroout-lent-weekdays",
-    "lyricsMappingUrl": "",
     "hymnId": "je-efesmaroout-lent-weekdays",
-    "updatedAt": {
-      "seconds": 1793561341,
-      "nanoseconds": 440000000
-    },
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_je-efesmaroout-lent-weekdays_markers.txt",
-    "audioLength": 185.573875,
-    "mode": "learn",
     "markers": [
       13.514739,
       35.283447,
@@ -1403,26 +1395,32 @@
       134.303855,
       163.646259
     ],
+    "lyricsMappingUrl": "",
+    "updatedAt": {
+      "seconds": 1793561341,
+      "nanoseconds": 440000000
+    },
     "cantorId": "cantor-ibrahim",
+    "active": true,
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_je-efesmaroout-lent-weekdays_markers.txt",
     "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_je-efesmaroout-lent-weekdays.mp3",
-    "lyricsMapping": [],
     "markersCount": 8,
-    "active": true
+    "mode": "learn",
+    "lyricsMapping": [],
+    "audioLength": 185.573875
   },
   {
     "id": "cantor-ibrahim_kata-ni-khoros",
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_kata-ni-khoros_markers.txt",
-    "active": true,
     "updatedAt": {
       "seconds": 1793561333,
       "nanoseconds": 647000000
     },
-    "lyricsMappingUrl": "",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_kata-ni-khoros.mp3",
-    "cantorId": "cantor-ibrahim",
+    "mode": "learn",
     "lyricsMapping": [],
-    "markersCount": 42,
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_kata-ni-khoros_markers.txt",
     "audioLength": 746.1094,
+    "markersCount": 42,
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_kata-ni-khoros.mp3",
     "markers": [
       19.727891,
       33.786848,
@@ -1467,22 +1465,23 @@
       706.900227,
       724.496599
     ],
-    "mode": "learn",
+    "active": true,
+    "cantorId": "cantor-ibrahim",
+    "lyricsMappingUrl": "",
     "hymnId": "kata-ni-khoros"
   },
   {
     "id": "cantor-ibrahim_kata-ni-khoros-distribution",
-    "active": true,
-    "lyricsMappingUrl": "",
-    "cantorId": "cantor-ibrahim",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_kata-ni-khoros-distribution.mp3",
-    "audioLength": 532.8718333333334,
-    "lyricsMapping": [],
     "updatedAt": {
       "seconds": 1793561334,
       "nanoseconds": 881000000
     },
     "mode": "learn",
+    "lyricsMapping": [],
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_kata-ni-khoros-distribution_markers.txt",
+    "audioLength": 532.8718333333334,
+    "markersCount": 29,
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_kata-ni-khoros-distribution.mp3",
     "markers": [
       21.088435,
       42.76644,
@@ -1514,30 +1513,32 @@
       503.389975,
       517.352666
     ],
-    "hymnId": "kata-ni-khoros-distribution",
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_kata-ni-khoros-distribution_markers.txt",
-    "markersCount": 29
+    "active": true,
+    "cantorId": "cantor-ibrahim",
+    "lyricsMappingUrl": "",
+    "hymnId": "kata-ni-khoros-distribution"
   },
   {
     "id": "cantor-ibrahim_ke-eperto",
-    "mode": "learn",
-    "audioLength": 637.62285,
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ke-eperto.mp3",
     "hymnId": "ke-eperto",
+    "markersCount": 42,
+    "lyricsMappingUrl": "markers/cantor-ibrahim/cantor-ibrahim_ke-eperto_lyrics_markers.txt",
+    "mode": "learn",
+    "active": true,
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ke-eperto_markers.txt",
     "cantorId": "cantor-ibrahim",
+    "updatedAt": {
+      "seconds": 1793561335,
+      "nanoseconds": 931000000
+    },
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ke-eperto.mp3",
     "lyricsMapping": [
       0,
       13,
       26,
       33
     ],
-    "updatedAt": {
-      "seconds": 1793561335,
-      "nanoseconds": 931000000
-    },
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ke-eperto_markers.txt",
-    "markersCount": 42,
-    "active": true,
+    "audioLength": 637.62285,
     "markers": [
       13.151927,
       25.442177,
@@ -1581,23 +1582,23 @@
       581.046992,
       596.839118,
       617.016947
-    ],
-    "lyricsMappingUrl": "markers/cantor-ibrahim/cantor-ibrahim_ke-eperto_lyrics_markers.txt"
+    ]
   },
   {
     "id": "cantor-ibrahim_khristos-anesti-major",
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_khristos-anesti-major_markers.txt",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_khristos-anesti-major.mp3",
-    "hymnId": "khristos-anesti-major",
-    "cantorId": "cantor-ibrahim",
     "markersCount": 17,
+    "lyricsMapping": [],
+    "audioLength": 289.5412083333333,
+    "lyricsMappingUrl": "",
+    "cantorId": "cantor-ibrahim",
+    "mode": "learn",
     "updatedAt": {
       "seconds": 1793561336,
       "nanoseconds": 976000000
     },
-    "lyricsMapping": [],
-    "audioLength": 289.5412083333333,
-    "lyricsMappingUrl": "",
+    "active": true,
+    "hymnId": "khristos-anesti-major",
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_khristos-anesti-major_markers.txt",
     "markers": [
       19.319728,
       37.006803,
@@ -1617,24 +1618,11 @@
       263.810998,
       277.325737
     ],
-    "mode": "learn",
-    "active": true
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_khristos-anesti-major.mp3"
   },
   {
     "id": "cantor-ibrahim_khristos-anesti-minor",
-    "mode": "learn",
-    "audioLength": 116.9240833333333,
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_khristos-anesti-minor.mp3",
-    "cantorId": "cantor-ibrahim",
     "hymnId": "khristos-anesti-minor",
-    "lyricsMapping": [],
-    "updatedAt": {
-      "seconds": 1793561337,
-      "nanoseconds": 759000000
-    },
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_khristos-anesti-minor_markers.txt",
-    "markersCount": 5,
-    "active": true,
     "markers": [
       16.643991,
       35.555556,
@@ -1642,23 +1630,23 @@
       85.759637,
       108.2858
     ],
-    "lyricsMappingUrl": ""
+    "lyricsMappingUrl": "",
+    "active": true,
+    "cantorId": "cantor-ibrahim",
+    "markersCount": 5,
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_khristos-anesti-minor.mp3",
+    "lyricsMapping": [],
+    "audioLength": 116.9240833333333,
+    "updatedAt": {
+      "seconds": 1793561337,
+      "nanoseconds": 759000000
+    },
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_khristos-anesti-minor_markers.txt",
+    "mode": "learn"
   },
   {
     "id": "cantor-ibrahim_meghalo",
-    "updatedAt": {
-      "seconds": 1793561345,
-      "nanoseconds": 900000000
-    },
-    "cantorId": "cantor-ibrahim",
-    "hymnId": "meghalo",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_meghalo.mp3",
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_meghalo_markers.txt",
     "active": true,
-    "mode": "learn",
-    "lyricsMapping": [],
-    "markersCount": 41,
-    "lyricsMappingUrl": "",
     "markers": [
       11.519274,
       28.208617,
@@ -1702,10 +1690,26 @@
       909.954475,
       968.169895
     ],
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_meghalo_markers.txt",
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_meghalo.mp3",
+    "markersCount": 41,
+    "lyricsMappingUrl": "",
+    "updatedAt": {
+      "seconds": 1793561345,
+      "nanoseconds": 900000000
+    },
+    "hymnId": "meghalo",
+    "mode": "learn",
+    "cantorId": "cantor-ibrahim",
+    "lyricsMapping": [],
     "audioLength": 1028.49305
   },
   {
     "id": "cantor-ibrahim_mournful-agios",
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_mournful-agios_markers.txt",
+    "markersCount": 34,
+    "cantorId": "cantor-ibrahim",
+    "lyricsMapping": [],
     "active": true,
     "markers": [
       18.049887,
@@ -1743,30 +1747,28 @@
       1199.401064,
       1250.181109
     ],
-    "audioLength": 1308.5257,
-    "cantorId": "cantor-ibrahim",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_mournful-agios.mp3",
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_mournful-agios_markers.txt",
     "lyricsMappingUrl": "",
-    "markersCount": 34,
-    "mode": "learn",
     "updatedAt": {
       "seconds": 1793561346,
       "nanoseconds": 838000000
     },
-    "lyricsMapping": [],
-    "hymnId": "mournful-agios"
+    "hymnId": "mournful-agios",
+    "mode": "learn",
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_mournful-agios.mp3",
+    "audioLength": 1308.5257
   },
   {
     "id": "cantor-ibrahim_mournful-ti-shouri",
+    "audioLength": 293.9559,
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_mournful-ti-shouri_markers.txt",
+    "active": true,
+    "hymnId": "mournful-ti-shouri",
     "updatedAt": {
       "seconds": 1793561349,
       "nanoseconds": 355000000
     },
-    "active": true,
     "cantorId": "cantor-ibrahim",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_mournful-ti-shouri.mp3",
-    "lyricsMappingUrl": "",
+    "mode": "learn",
     "markers": [
       20.907029,
       41.22449,
@@ -1783,24 +1785,22 @@
       262.422643,
       282.082652
     ],
-    "mode": "learn",
-    "hymnId": "mournful-ti-shouri",
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_mournful-ti-shouri.mp3",
     "lyricsMapping": [],
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_mournful-ti-shouri_markers.txt",
-    "audioLength": 293.9559,
+    "lyricsMappingUrl": "",
     "markersCount": 14
   },
   {
     "id": "cantor-ibrahim_ou-nishti",
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ou-nishti_markers.txt",
     "hymnId": "ou-nishti",
+    "cantorId": "cantor-ibrahim",
     "updatedAt": {
       "seconds": 1793561352,
       "nanoseconds": 912000000
     },
-    "cantorId": "cantor-ibrahim",
-    "lyricsMapping": [],
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ou-nishti.mp3",
+    "mode": "learn",
+    "active": true,
+    "audioLength": 1297.031833333333,
     "markers": [
       16.75,
       38.5,
@@ -1866,28 +1866,20 @@
       1258.478458,
       1279
     ],
-    "active": true,
+    "lyricsMapping": [],
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ou-nishti_markers.txt",
     "lyricsMappingUrl": "",
-    "mode": "learn",
-    "audioLength": 1297.031833333333,
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ou-nishti.mp3",
     "markersCount": 63
   },
   {
     "id": "cantor-ibrahim_oukatee",
-    "mode": "learn",
-    "lyricsMapping": [],
     "updatedAt": {
       "seconds": 1793561353,
       "nanoseconds": 865000000
     },
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_oukatee_markers.txt",
-    "hymnId": "oukatee",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_oukatee.mp3",
-    "cantorId": "cantor-ibrahim",
+    "lyricsMapping": [],
     "lyricsMappingUrl": "",
-    "markersCount": 36,
-    "active": true,
-    "audioLength": 651.964075,
     "markers": [
       18.271826,
       27.160715,
@@ -1925,10 +1917,28 @@
       550.499653,
       557.257023,
       611.331853
-    ]
+    ],
+    "audioLength": 651.964075,
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_oukatee.mp3",
+    "mode": "learn",
+    "cantorId": "cantor-ibrahim",
+    "hymnId": "oukatee",
+    "markersCount": 36,
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_oukatee_markers.txt",
+    "active": true
   },
   {
     "id": "cantor-ibrahim_panouti",
+    "lyricsMappingUrl": "",
+    "updatedAt": {
+      "seconds": 1793561354,
+      "nanoseconds": 800000000
+    },
+    "lyricsMapping": [],
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_panouti.mp3",
+    "mode": "learn",
+    "active": true,
+    "cantorId": "cantor-ibrahim",
     "markers": [
       20.816327,
       38.276644,
@@ -1984,25 +1994,16 @@
       871.312925,
       888.546485
     ],
-    "markersCount": 53,
-    "cantorId": "cantor-ibrahim",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_panouti.mp3",
-    "hymnId": "panouti",
-    "lyricsMapping": [],
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_panouti_markers.txt",
-    "mode": "learn",
     "audioLength": 912.248125,
-    "updatedAt": {
-      "seconds": 1793561354,
-      "nanoseconds": 800000000
-    },
-    "active": true,
-    "lyricsMappingUrl": ""
+    "hymnId": "panouti",
+    "markersCount": 53,
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_panouti_markers.txt"
   },
   {
     "id": "cantor-ibrahim_pek-ethronos",
-    "active": true,
-    "lyricsMappingUrl": "",
+    "cantorId": "cantor-ibrahim",
+    "markersCount": 155,
+    "audioLength": 1210.331425,
     "markers": [
       21.482375,
       35.123351,
@@ -2160,27 +2161,31 @@
       1196.681825,
       1201.534433
     ],
-    "lyricsMapping": [],
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_pek-ethronos.mp3",
-    "cantorId": "cantor-ibrahim",
+    "lyricsMappingUrl": "",
+    "active": true,
     "mode": "learn",
-    "hymnId": "pek-ethronos",
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_pek-ethronos.mp3",
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_pek-ethronos_markers.txt",
     "updatedAt": {
       "seconds": 1793561355,
       "nanoseconds": 856000000
     },
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_pek-ethronos_markers.txt",
-    "audioLength": 1210.331425,
-    "markersCount": 155
+    "lyricsMapping": [],
+    "hymnId": "pek-ethronos"
   },
   {
     "id": "cantor-ibrahim_phai-etaf-enf",
+    "hymnId": "phai-etaf-enf",
+    "lyricsMappingUrl": "",
     "updatedAt": {
       "seconds": 1793561356,
       "nanoseconds": 988000000
     },
-    "hymnId": "phai-etaf-enf",
-    "lyricsMappingUrl": "",
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_phai-etaf-enf.mp3",
+    "active": true,
+    "lyricsMapping": [],
+    "audioLength": 459.493875,
+    "markersCount": 46,
     "markers": [
       13.197279,
       28.027211,
@@ -2229,21 +2234,16 @@
       397.571508,
       413.788622
     ],
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_phai-etaf-enf_markers.txt",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_phai-etaf-enf.mp3",
     "cantorId": "cantor-ibrahim",
-    "audioLength": 459.493875,
-    "markersCount": 46,
-    "lyricsMapping": [],
-    "mode": "learn",
-    "active": true
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_phai-etaf-enf_markers.txt",
+    "mode": "learn"
   },
   {
     "id": "cantor-ibrahim_pi-mairomi",
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_pi-mairomi_markers.txt",
-    "mode": "learn",
-    "hymnId": "pi-mairomi",
-    "lyricsMappingUrl": "markers/cantor-ibrahim/cantor-ibrahim_pi-mairomi_lyrics_markers.txt",
+    "updatedAt": {
+      "seconds": 1793561358,
+      "nanoseconds": 156000000
+    },
     "lyricsMapping": [
       0,
       5,
@@ -2254,7 +2254,12 @@
       27,
       31
     ],
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_pi-mairomi.mp3",
+    "mode": "learn",
     "audioLength": 597.420375,
+    "cantorId": "cantor-ibrahim",
+    "markersCount": 34,
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_pi-mairomi_markers.txt",
     "active": true,
     "markers": [
       15.736961,
@@ -2292,16 +2297,40 @@
       547.684832,
       566.09753
     ],
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_pi-mairomi.mp3",
-    "markersCount": 34,
-    "updatedAt": {
-      "seconds": 1793561358,
-      "nanoseconds": 156000000
-    },
-    "cantorId": "cantor-ibrahim"
+    "lyricsMappingUrl": "markers/cantor-ibrahim/cantor-ibrahim_pi-mairomi_lyrics_markers.txt",
+    "hymnId": "pi-mairomi"
   },
   {
     "id": "cantor-ibrahim_praxeon-ton",
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_praxeon-ton.mp3",
+    "updatedAt": {
+      "seconds": 1793561359,
+      "nanoseconds": 528000000
+    },
+    "markersCount": 245,
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_praxeon-ton_markers.txt",
+    "lyricsMapping": [
+      0,
+      45,
+      109,
+      114,
+      127,
+      131,
+      146,
+      166,
+      171,
+      176,
+      177,
+      205,
+      207,
+      225,
+      237,
+      241,
+      -1
+    ],
+    "lyricsMappingUrl": "markers/cantor-ibrahim/cantor-ibrahim_praxeon-ton_lyrics_markers.txt",
+    "active": true,
+    "mode": "learn",
     "markers": [
       12.768321,
       22.019899,
@@ -2549,48 +2578,34 @@
       2541.426275,
       2549.044932
     ],
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_praxeon-ton_markers.txt",
-    "updatedAt": {
-      "seconds": 1793561359,
-      "nanoseconds": 528000000
-    },
-    "active": true,
-    "markersCount": 245,
-    "lyricsMappingUrl": "markers/cantor-ibrahim/cantor-ibrahim_praxeon-ton_lyrics_markers.txt",
-    "mode": "learn",
     "cantorId": "cantor-ibrahim",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_praxeon-ton.mp3",
-    "hymnId": "praxeon-ton",
     "audioLength": 2560.0261,
-    "lyricsMapping": [
-      0,
-      45,
-      109,
-      114,
-      127,
-      131,
-      146,
-      166,
-      171,
-      176,
-      177,
-      205,
-      207,
-      225,
-      237,
-      241,
-      -1
-    ]
+    "hymnId": "praxeon-ton"
   },
   {
     "id": "cantor-ibrahim_psalm-150-kiahk",
-    "hymnId": "psalm-150-kiahk",
+    "active": true,
     "cantorId": "cantor-ibrahim",
-    "updatedAt": {
-      "seconds": 1793683716,
-      "nanoseconds": 385000000
-    },
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_psalm-150-kiahk.mp3",
+    "hymnId": "psalm-150-kiahk",
+    "lyricsMapping": [
+      0,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      38,
+      46
+    ],
     "markers": [
       16.143336,
       24.306601,
@@ -2639,48 +2654,21 @@
       945.890386,
       976.502631
     ],
-    "lyricsMapping": [
-      0,
-      17,
-      18,
-      19,
-      20,
-      21,
-      22,
-      23,
-      24,
-      25,
-      26,
-      27,
-      28,
-      29,
-      30,
-      38,
-      46
-    ],
     "markersCount": 46,
-    "mode": "learn",
-    "audioLength": 1013.23755,
-    "active": true,
     "lyricsMappingUrl": "markers/cantor-ibrahim/cantor-ibrahim_psalm-150-kiahk_lyrics_markers.txt",
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_psalm-150-kiahk_markers.txt"
+    "audioLength": 1013.23755,
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_psalm-150-kiahk_markers.txt",
+    "updatedAt": {
+      "seconds": 1793683716,
+      "nanoseconds": 385000000
+    },
+    "mode": "learn",
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_psalm-150-kiahk.mp3"
   },
   {
     "id": "cantor-ibrahim_sherat-lent",
-    "cantorId": "cantor-ibrahim",
     "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_sherat-lent.mp3",
-    "markersCount": 152,
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_sherat-lent_markers.txt",
-    "updatedAt": {
-      "seconds": 1793561344,
-      "nanoseconds": 689000000
-    },
-    "hymnId": "sherat-lent",
     "active": true,
-    "lyricsMappingUrl": "",
-    "mode": "learn",
-    "audioLength": 1678.915916666667,
-    "lyricsMapping": [],
     "markers": [
       7.217,
       18.373462,
@@ -2834,18 +2822,23 @@
       1648.366389,
       1655.773182,
       1664.163204
-    ]
+    ],
+    "hymnId": "sherat-lent",
+    "mode": "learn",
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_sherat-lent_markers.txt",
+    "markersCount": 152,
+    "lyricsMapping": [],
+    "cantorId": "cantor-ibrahim",
+    "updatedAt": {
+      "seconds": 1793561344,
+      "nanoseconds": 689000000
+    },
+    "lyricsMappingUrl": "",
+    "audioLength": 1678.915916666667
   },
   {
     "id": "cantor-ibrahim_stones",
-    "hymnId": "stones",
-    "updatedAt": {
-      "seconds": 1793561365,
-      "nanoseconds": 53000000
-    },
     "lyricsMappingUrl": "",
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_stones_markers.txt",
-    "mode": "learn",
     "markers": [
       55.927356,
       82.114639,
@@ -2865,28 +2858,23 @@
       357.545824,
       366.822024
     ],
-    "audioLength": 401.4759,
-    "markersCount": 17,
     "active": true,
+    "mode": "learn",
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_stones_markers.txt",
+    "cantorId": "cantor-ibrahim",
+    "updatedAt": {
+      "seconds": 1793561365,
+      "nanoseconds": 53000000
+    },
+    "hymnId": "stones",
+    "markersCount": 17,
     "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_stones.mp3",
-    "lyricsMapping": [],
-    "cantorId": "cantor-ibrahim"
+    "audioLength": 401.4759,
+    "lyricsMapping": []
   },
   {
     "id": "cantor-ibrahim_tarh",
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_tarh_markers.txt",
-    "active": true,
-    "audioLength": 1609.012291666667,
-    "mode": "learn",
-    "cantorId": "cantor-ibrahim",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_tarh.mp3",
-    "updatedAt": {
-      "seconds": 1793561315,
-      "nanoseconds": 35000000
-    },
-    "markersCount": 95,
     "lyricsMappingUrl": "",
-    "lyricsMapping": [],
     "markers": [
       18.548753,
       26.266653,
@@ -2984,10 +2972,26 @@
       1578.961099,
       1592.038196
     ],
-    "hymnId": "tarh"
+    "active": true,
+    "mode": "learn",
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_tarh_markers.txt",
+    "cantorId": "cantor-ibrahim",
+    "updatedAt": {
+      "seconds": 1793561315,
+      "nanoseconds": 35000000
+    },
+    "hymnId": "tarh",
+    "markersCount": 95,
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_tarh.mp3",
+    "audioLength": 1609.012291666667,
+    "lyricsMapping": []
   },
   {
     "id": "cantor-ibrahim_teen-anastaseen",
+    "audioLength": 212.401625,
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_teen-anastaseen_markers.txt",
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_teen-anastaseen.mp3",
+    "mode": "learn",
     "markers": [
       15.69161,
       38.321995,
@@ -3001,50 +3005,48 @@
       168.410668,
       189.453752
     ],
-    "lyricsMapping": [],
-    "lyricsMappingUrl": "",
-    "mode": "learn",
     "updatedAt": {
       "seconds": 1793561363,
       "nanoseconds": 256000000
     },
-    "cantorId": "cantor-ibrahim",
-    "active": true,
     "markersCount": 11,
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_teen-anastaseen.mp3",
+    "lyricsMappingUrl": "",
+    "active": true,
     "hymnId": "teen-anastaseen",
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_teen-anastaseen_markers.txt",
-    "audioLength": 212.401625
+    "cantorId": "cantor-ibrahim",
+    "lyricsMapping": []
   },
   {
     "id": "cantor-ibrahim_ton-seena",
-    "updatedAt": {
-      "seconds": 1793561366,
-      "nanoseconds": 957000000
-    },
-    "audioLength": 81.711,
-    "mode": "learn",
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ton-seena_markers.txt",
-    "active": true,
+    "hymnId": "ton-seena",
     "markers": [
       11.428161,
       25.124717,
       37.278501,
       58.820451
     ],
-    "markersCount": 4,
-    "hymnId": "ton-seena",
-    "lyricsMapping": [],
-    "cantorId": "cantor-ibrahim",
     "lyricsMappingUrl": "",
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ton-seena.mp3"
+    "updatedAt": {
+      "seconds": 1793561366,
+      "nanoseconds": 957000000
+    },
+    "cantorId": "cantor-ibrahim",
+    "active": true,
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_ton-seena_markers.txt",
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_ton-seena.mp3",
+    "markersCount": 4,
+    "mode": "learn",
+    "lyricsMapping": [],
+    "audioLength": 81.711
   },
   {
     "id": "cantor-ibrahim_tou-lithou",
+    "updatedAt": {
+      "seconds": 1793561367,
+      "nanoseconds": 920000000
+    },
+    "cantorId": "cantor-ibrahim",
     "markersCount": 6,
-    "hymnId": "tou-lithou",
-    "lyricsMapping": [],
-    "active": true,
     "markers": [
       18.503401,
       36.870748,
@@ -3053,20 +3055,21 @@
       90.847701,
       121.180626
     ],
-    "updatedAt": {
-      "seconds": 1793561367,
-      "nanoseconds": 920000000
-    },
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_tou-lithou_markers.txt",
+    "lyricsMapping": [],
     "mode": "learn",
+    "active": true,
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_tou-lithou_markers.txt",
+    "hymnId": "tou-lithou",
+    "audioLength": 150.857125,
     "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_tou-lithou.mp3",
-    "lyricsMappingUrl": "",
-    "cantorId": "cantor-ibrahim",
-    "audioLength": 150.857125
+    "lyricsMappingUrl": ""
   },
   {
     "id": "cantor-ibrahim_tribes",
-    "audioLength": 421.694675,
+    "active": true,
+    "lyricsMapping": [],
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_tribes_markers.txt",
+    "hymnId": "tribes",
     "markers": [
       30.281824,
       48.568309,
@@ -3084,27 +3087,32 @@
       363.531897,
       381.035651
     ],
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_tribes.mp3",
     "lyricsMappingUrl": "",
-    "hymnId": "tribes",
+    "audioLength": 421.694675,
+    "mode": "learn",
+    "cantorId": "cantor-ibrahim",
+    "markersCount": 15,
     "updatedAt": {
       "seconds": 1793561368,
       "nanoseconds": 749000000
-    },
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_tribes_markers.txt",
-    "markersCount": 15,
-    "lyricsMapping": [],
-    "cantorId": "cantor-ibrahim",
-    "active": true,
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_tribes.mp3",
-    "mode": "learn"
+    }
   },
   {
     "id": "cantor-ibrahim_yodas",
-    "mode": "learn",
-    "active": true,
-    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_yodas_markers.txt",
     "lyricsMapping": [],
+    "cantorId": "cantor-ibrahim",
+    "updatedAt": {
+      "seconds": 1793561332,
+      "nanoseconds": 681000000
+    },
+    "audioLength": 469.94285,
+    "lyricsMappingUrl": "",
+    "mode": "learn",
     "markersCount": 32,
+    "hymnId": "yodas",
+    "markersUrl": "markers/cantor-ibrahim/cantor-ibrahim_yodas_markers.txt",
+    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_yodas.mp3",
     "markers": [
       12.970522,
       26.303855,
@@ -3139,39 +3147,31 @@
       442.140896,
       454.703254
     ],
-    "hymnId": "yodas",
-    "audioLength": 469.94285,
-    "audioUrl": "tracks/cantor-ibrahim/cantor-ibrahim_yodas.mp3",
-    "cantorId": "cantor-ibrahim",
-    "lyricsMappingUrl": "",
-    "updatedAt": {
-      "seconds": 1793561332,
-      "nanoseconds": 681000000
-    }
+    "active": true
   },
   {
     "id": "cantor-tharwat_avechnon",
-    "cantorId": "cantor-tharwat",
     "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_avechnon.mp3",
-    "audioLength": 1146.801625,
-    "markersCount": 0,
-    "lyricsMapping": [],
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_avechnon_markers.txt",
     "updatedAt": {
       "seconds": 1793561321,
       "nanoseconds": 871000000
     },
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_avechnon_markers.txt",
     "hymnId": "avechnon",
     "active": true,
-    "markers": [],
     "lyricsMappingUrl": "",
-    "mode": "listen"
+    "mode": "listen",
+    "markers": [],
+    "lyricsMapping": [],
+    "markersCount": 0,
+    "cantorId": "cantor-tharwat",
+    "audioLength": 1146.801625
   },
   {
     "id": "cantor-tharwat_doxology-lazarus-saturday",
     "cantorId": "cantor-tharwat",
+    "markersCount": 0,
     "audioLength": 112.1175,
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_doxology-lazarus-saturday.mp3",
     "markers": [
       19.905,
       37.705,
@@ -3179,11 +3179,10 @@
       75.099,
       94.291
     ],
-    "markersCount": 0,
-    "updatedAt": {
-      "seconds": 1794019064,
-      "nanoseconds": 249000000
-    },
+    "lyricsMappingUrl": "",
+    "active": true,
+    "mode": "learn",
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_doxology-lazarus-saturday.mp3",
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_doxology-lazarus-saturday_markers.txt",
     "lyricsMapping": [
       0,
@@ -3193,49 +3192,75 @@
       4,
       5
     ],
-    "hymnId": "doxology-lazarus-saturday",
-    "active": true,
-    "lyricsMappingUrl": "",
-    "mode": "learn"
+    "updatedAt": {
+      "seconds": 1794019064,
+      "nanoseconds": 249000000
+    },
+    "hymnId": "doxology-lazarus-saturday"
   },
   {
     "id": "cantor-tharwat_ethvetee-general-funeral",
+    "markers": [],
+    "cantorId": "cantor-tharwat",
+    "lyricsMappingUrl": "",
+    "markersCount": 0,
+    "mode": "listen",
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_ethvetee-general-funeral.mp3",
+    "hymnId": "ethvetee-general-funeral",
+    "audioLength": 564.6105625,
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_ethvetee-general-funeral_markers.txt",
     "updatedAt": {
       "seconds": 1793561327,
       "nanoseconds": 228000000
     },
-    "hymnId": "ethvetee-general-funeral",
-    "mode": "listen",
-    "audioLength": 564.6105625,
-    "lyricsMappingUrl": "",
-    "markers": [],
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_ethvetee-general-funeral_markers.txt",
-    "active": true,
-    "cantorId": "cantor-tharwat",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_ethvetee-general-funeral.mp3",
     "lyricsMapping": [],
-    "markersCount": 0
+    "active": true
   },
   {
     "id": "cantor-tharwat_ethvetee-good-friday",
-    "cantorId": "cantor-tharwat",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_ethvetee-good-friday.mp3",
-    "audioLength": 522.3183125,
+    "lyricsMappingUrl": "",
+    "markers": [],
     "markersCount": 0,
-    "lyricsMapping": [],
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_ethvetee-good-friday_markers.txt",
+    "cantorId": "cantor-tharwat",
+    "hymnId": "ethvetee-good-friday",
     "updatedAt": {
       "seconds": 1793561328,
       "nanoseconds": 694000000
     },
-    "hymnId": "ethvetee-good-friday",
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_ethvetee-good-friday.mp3",
+    "audioLength": 522.3183125,
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_ethvetee-good-friday_markers.txt",
+    "lyricsMapping": [],
     "active": true,
-    "markers": [],
-    "lyricsMappingUrl": "",
     "mode": "listen"
   },
   {
     "id": "cantor-tharwat_lazaros-amou",
+    "markers": [
+      48.55,
+      93.35,
+      139.55,
+      184.75,
+      230.05,
+      272.8,
+      319.95,
+      363.15,
+      408.6,
+      450.45,
+      494.6,
+      536.45,
+      579.3
+    ],
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_lazaros-amou.mp3",
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_lazaros-amou_markers.txt",
+    "audioLength": 624.195875,
+    "markersCount": 13,
+    "updatedAt": {
+      "seconds": 1793561340,
+      "nanoseconds": 230000000
+    },
+    "lyricsMappingUrl": "",
+    "hymnId": "lazaros-amou",
     "lyricsMapping": [
       0,
       1,
@@ -3253,53 +3278,14 @@
       13,
       -1
     ],
-    "active": true,
-    "mode": "listen",
-    "markersCount": 13,
-    "lyricsMappingUrl": "",
-    "audioLength": 624.195875,
-    "hymnId": "lazaros-amou",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_lazaros-amou.mp3",
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_lazaros-amou_markers.txt",
     "cantorId": "cantor-tharwat",
-    "markers": [
-      48.55,
-      93.35,
-      139.55,
-      184.75,
-      230.05,
-      272.8,
-      319.95,
-      363.15,
-      408.6,
-      450.45,
-      494.6,
-      536.45,
-      579.3
-    ],
-    "updatedAt": {
-      "seconds": 1793561340,
-      "nanoseconds": 230000000
-    }
+    "active": true,
+    "mode": "listen"
   },
   {
     "id": "cantor-tharwat_moaqab-1",
-    "active": true,
-    "markers": [
-      26.183,
-      51.124,
-      74.621,
-      98.673,
-      121.087,
-      143.618,
-      166.534,
-      187.836
-    ],
     "audioLength": 212.9,
-    "updatedAt": {
-      "seconds": 1794108739,
-      "nanoseconds": 723000000
-    },
+    "hymnId": "moaqab-1",
     "lyricsMapping": [
       0,
       1,
@@ -3311,37 +3297,38 @@
       7,
       8
     ],
-    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-1_lyrics_markers.txt",
     "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_moaqab-1.mp3",
-    "cantorId": "cantor-tharwat",
-    "mode": "learn",
+    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-1_lyrics_markers.txt",
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-1_markers.txt",
-    "hymnId": "moaqab-1"
+    "updatedAt": {
+      "seconds": 1794108739,
+      "nanoseconds": 723000000
+    },
+    "markers": [
+      26.183,
+      51.124,
+      74.621,
+      98.673,
+      121.087,
+      143.618,
+      166.534,
+      187.836
+    ],
+    "mode": "learn",
+    "cantorId": "cantor-tharwat",
+    "active": true
   },
   {
     "id": "cantor-tharwat_moaqab-2",
-    "hymnId": "moaqab-2",
     "mode": "learn",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_moaqab-2.mp3",
-    "lyricsMapping": [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9
-    ],
-    "cantorId": "cantor-tharwat",
-    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-2_lyrics_markers.txt",
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-2_markers.txt",
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_moaqab-2.mp3",
+    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-2_lyrics_markers.txt",
     "updatedAt": {
       "seconds": 1794203878,
       "nanoseconds": 671000000
     },
+    "hymnId": "moaqab-2",
     "markers": [
       24.5,
       48.06,
@@ -3353,22 +3340,9 @@
       176.616,
       196.622
     ],
+    "audioLength": 219.8,
     "active": true,
-    "audioLength": 219.8
-  },
-  {
-    "id": "cantor-tharwat_moaqab-3",
-    "audioLength": 152.5,
-    "active": true,
-    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-3_lyrics_markers.txt",
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-3_markers.txt",
     "cantorId": "cantor-tharwat",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_moaqab-3.mp3",
-    "updatedAt": {
-      "seconds": 1794111211,
-      "nanoseconds": 63000000
-    },
-    "mode": "learn",
     "lyricsMapping": [
       0,
       1,
@@ -3377,8 +3351,24 @@
       4,
       5,
       6,
-      7
-    ],
+      7,
+      8,
+      9
+    ]
+  },
+  {
+    "id": "cantor-tharwat_moaqab-3",
+    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-3_lyrics_markers.txt",
+    "mode": "learn",
+    "hymnId": "moaqab-3",
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_moaqab-3.mp3",
+    "audioLength": 152.5,
+    "updatedAt": {
+      "seconds": 1794111211,
+      "nanoseconds": 63000000
+    },
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-3_markers.txt",
+    "cantorId": "cantor-tharwat",
     "markers": [
       19.912,
       39.577,
@@ -3388,10 +3378,22 @@
       114.084,
       131.917
     ],
-    "hymnId": "moaqab-3"
+    "active": true,
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ]
   },
   {
     "id": "cantor-tharwat_moaqab-4",
+    "cantorId": "cantor-tharwat",
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-4_markers.txt",
     "markers": [
       18.031,
       35.602,
@@ -3402,18 +3404,11 @@
       120.373,
       137.099
     ],
-    "mode": "learn",
-    "updatedAt": {
-      "seconds": 1794111424,
-      "nanoseconds": 866000000
-    },
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-4_markers.txt",
-    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-4_lyrics_markers.txt",
     "hymnId": "moaqab-4",
     "audioLength": 156.1,
-    "cantorId": "cantor-tharwat",
+    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-4_lyrics_markers.txt",
     "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_moaqab-4.mp3",
-    "active": true,
+    "mode": "learn",
     "lyricsMapping": [
       0,
       1,
@@ -3424,15 +3419,16 @@
       6,
       7,
       8
-    ]
+    ],
+    "active": true,
+    "updatedAt": {
+      "seconds": 1794111424,
+      "nanoseconds": 866000000
+    }
   },
   {
     "id": "cantor-tharwat_moaqab-5",
     "mode": "learn",
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-5_markers.txt",
-    "active": true,
-    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-5_lyrics_markers.txt",
-    "audioLength": 166.8,
     "lyricsMapping": [
       0,
       1,
@@ -3443,9 +3439,9 @@
       6,
       7
     ],
-    "cantorId": "cantor-tharwat",
     "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_moaqab-5.mp3",
-    "hymnId": "moaqab-5",
+    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-5_lyrics_markers.txt",
+    "active": true,
     "markers": [
       21.883,
       43.134,
@@ -3455,30 +3451,20 @@
       125.06,
       144.939
     ],
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-5_markers.txt",
     "updatedAt": {
       "seconds": 1794111623,
       "nanoseconds": 988000000
-    }
+    },
+    "audioLength": 166.8,
+    "cantorId": "cantor-tharwat",
+    "hymnId": "moaqab-5"
   },
   {
     "id": "cantor-tharwat_moaqab-6",
-    "active": true,
     "audioLength": 163.9,
-    "mode": "learn",
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-6_lyrics_markers.txt",
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-6_markers.txt",
-    "cantorId": "cantor-tharwat",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_moaqab-6.mp3",
-    "lyricsMapping": [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7
-    ],
     "markers": [
       21.204,
       41.946,
@@ -3488,14 +3474,8 @@
       122.343,
       141.583
     ],
-    "hymnId": "moaqab-6",
-    "updatedAt": {
-      "seconds": 1794111901,
-      "nanoseconds": 745000000
-    }
-  },
-  {
-    "id": "cantor-tharwat_moaqab-7",
+    "cantorId": "cantor-tharwat",
+    "mode": "learn",
     "lyricsMapping": [
       0,
       1,
@@ -3506,14 +3486,19 @@
       6,
       7
     ],
+    "hymnId": "moaqab-6",
     "active": true,
     "updatedAt": {
-      "seconds": 1794112222,
-      "nanoseconds": 266000000
+      "seconds": 1794111901,
+      "nanoseconds": 745000000
     },
-    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-7_lyrics_markers.txt",
-    "mode": "learn",
-    "cantorId": "cantor-tharwat",
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_moaqab-6.mp3"
+  },
+  {
+    "id": "cantor-tharwat_moaqab-7",
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_moaqab-7.mp3",
+    "audioLength": 166,
+    "active": true,
     "markers": [
       20.838,
       40.448,
@@ -3523,13 +3508,50 @@
       122.24,
       143.166
     ],
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_moaqab-7.mp3",
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-7_markers.txt",
+    "updatedAt": {
+      "seconds": 1794112222,
+      "nanoseconds": 266000000
+    },
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "cantorId": "cantor-tharwat",
+    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-7_lyrics_markers.txt",
     "hymnId": "moaqab-7",
-    "audioLength": 166
+    "mode": "learn",
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-7_markers.txt"
   },
   {
     "id": "cantor-tharwat_moaqab-8",
+    "audioLength": 176.9,
+    "active": true,
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-8_markers.txt",
+    "mode": "learn",
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "cantorId": "cantor-tharwat",
+    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-8_lyrics_markers.txt",
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_moaqab-8.mp3",
+    "updatedAt": {
+      "seconds": 1794204181,
+      "nanoseconds": 729000000
+    },
     "hymnId": "moaqab-8",
     "markers": [
       19.454,
@@ -3540,45 +3562,16 @@
       115.016,
       134.874,
       155.075
-    ],
-    "cantorId": "cantor-tharwat",
-    "mode": "learn",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_moaqab-8.mp3",
-    "updatedAt": {
-      "seconds": 1794204181,
-      "nanoseconds": 729000000
-    },
-    "audioLength": 176.9,
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-8_markers.txt",
-    "lyricsMapping": [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8
-    ],
-    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-8_lyrics_markers.txt",
-    "active": true
+    ]
   },
   {
     "id": "cantor-tharwat_moaqab-9",
-    "lyricsMapping": [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6
-    ],
-    "mode": "learn",
+    "updatedAt": {
+      "seconds": 1794114311,
+      "nanoseconds": 948000000
+    },
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-9_markers.txt",
-    "active": true,
-    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-9_lyrics_markers.txt",
+    "mode": "learn",
     "markers": [
       21.18,
       42.231,
@@ -3587,127 +3580,10 @@
       104.002,
       123.991
     ],
-    "hymnId": "moaqab-9",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_moaqab-9.mp3",
     "audioLength": 147.2,
-    "cantorId": "cantor-tharwat",
-    "updatedAt": {
-      "seconds": 1794114311,
-      "nanoseconds": 948000000
-    }
-  },
-  {
-    "id": "cantor-tharwat_mournful-tai-shouri",
-    "cantorId": "cantor-tharwat",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_mournful-tai-shouri.mp3",
-    "active": true,
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_mournful-tai-shouri_markers.txt",
-    "lyricsMapping": [],
-    "markers": [],
-    "audioLength": 661.524875,
-    "mode": "listen",
-    "updatedAt": {
-      "seconds": 1793561348,
-      "nanoseconds": 157000000
-    },
-    "markersCount": 0,
-    "hymnId": "mournful-tai-shouri",
-    "lyricsMappingUrl": ""
-  },
-  {
-    "id": "cantor-tharwat_mournful-ti-shouri",
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_mournful-ti-shouri_markers.txt",
-    "active": true,
-    "lyricsMappingUrl": "",
-    "audioLength": 374.46525,
-    "markers": [],
-    "mode": "listen",
-    "updatedAt": {
-      "seconds": 1793561349,
-      "nanoseconds": 642000000
-    },
-    "lyricsMapping": [],
-    "cantorId": "cantor-tharwat",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_mournful-ti-shouri.mp3",
-    "markersCount": 0,
-    "hymnId": "mournful-ti-shouri"
-  },
-  {
-    "id": "cantor-tharwat_omonogenees",
-    "mode": "listen",
-    "markersCount": 0,
-    "active": true,
-    "audioLength": 858.72325,
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_omonogenees.mp3",
-    "hymnId": "omonogenees",
-    "cantorId": "cantor-tharwat",
-    "markers": [],
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_omonogenees_markers.txt",
-    "updatedAt": {
-      "seconds": 1793561350,
-      "nanoseconds": 724000000
-    },
-    "lyricsMappingUrl": "",
-    "lyricsMapping": []
-  },
-  {
-    "id": "cantor-tharwat_pek-ethronos",
-    "audioLength": 1132.9305625,
-    "updatedAt": {
-      "seconds": 1793561356,
-      "nanoseconds": 64000000
-    },
-    "active": true,
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_pek-ethronos.mp3",
-    "cantorId": "cantor-tharwat",
-    "lyricsMapping": [],
-    "markers": [],
-    "lyricsMappingUrl": "",
-    "hymnId": "pek-ethronos",
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_pek-ethronos_markers.txt",
-    "markersCount": 0,
-    "mode": "listen"
-  },
-  {
-    "id": "cantor-tharwat_phai-etaf-enf",
-    "hymnId": "phai-etaf-enf",
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_phai-etaf-enf_markers.txt",
-    "lyricsMapping": [],
-    "mode": "listen",
-    "lyricsMappingUrl": "",
-    "updatedAt": {
-      "seconds": 1793561357,
-      "nanoseconds": 158000000
-    },
-    "markersCount": 0,
-    "markers": [],
-    "audioLength": 399.3860625,
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_phai-etaf-enf.mp3",
-    "cantorId": "cantor-tharwat",
-    "active": true
-  },
-  {
-    "id": "cantor-tharwat_praxis-response-lazarus-saturday",
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_praxis-response-lazarus-saturday_markers.txt",
-    "active": true,
-    "markersCount": 0,
-    "updatedAt": {
-      "seconds": 1793561360,
-      "nanoseconds": 223000000
-    },
-    "cantorId": "cantor-tharwat",
-    "lyricsMapping": [],
-    "hymnId": "praxis-response-lazarus-saturday",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_praxis-response-lazarus-saturday.mp3",
-    "audioLength": 119.5363125,
-    "markers": [],
-    "mode": "listen",
-    "lyricsMappingUrl": ""
-  },
-  {
-    "id": "cantor-tharwat_roumi-1",
-    "active": true,
-    "mode": "learn",
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_moaqab-9.mp3",
+    "hymnId": "moaqab-9",
+    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_moaqab-9_lyrics_markers.txt",
     "lyricsMapping": [
       0,
       1,
@@ -3718,9 +3594,135 @@
       6
     ],
     "cantorId": "cantor-tharwat",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_roumi-1.mp3",
-    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-1_lyrics_markers.txt",
+    "active": true
+  },
+  {
+    "id": "cantor-tharwat_mournful-tai-shouri",
+    "markers": [],
+    "mode": "listen",
+    "markersCount": 0,
+    "updatedAt": {
+      "seconds": 1793561348,
+      "nanoseconds": 157000000
+    },
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_mournful-tai-shouri.mp3",
+    "audioLength": 661.524875,
+    "cantorId": "cantor-tharwat",
+    "hymnId": "mournful-tai-shouri",
+    "active": true,
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_mournful-tai-shouri_markers.txt",
+    "lyricsMapping": [],
+    "lyricsMappingUrl": ""
+  },
+  {
+    "id": "cantor-tharwat_mournful-ti-shouri",
+    "markers": [],
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_mournful-ti-shouri.mp3",
+    "lyricsMapping": [],
+    "lyricsMappingUrl": "",
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_mournful-ti-shouri_markers.txt",
+    "updatedAt": {
+      "seconds": 1793561349,
+      "nanoseconds": 642000000
+    },
+    "hymnId": "mournful-ti-shouri",
+    "markersCount": 0,
+    "cantorId": "cantor-tharwat",
+    "audioLength": 374.46525,
+    "mode": "listen",
+    "active": true
+  },
+  {
+    "id": "cantor-tharwat_omonogenees",
+    "active": true,
+    "lyricsMapping": [],
+    "lyricsMappingUrl": "",
+    "mode": "listen",
+    "audioLength": 858.72325,
+    "hymnId": "omonogenees",
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_omonogenees_markers.txt",
+    "cantorId": "cantor-tharwat",
+    "updatedAt": {
+      "seconds": 1793561350,
+      "nanoseconds": 724000000
+    },
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_omonogenees.mp3",
+    "markersCount": 0,
+    "markers": []
+  },
+  {
+    "id": "cantor-tharwat_pek-ethronos",
+    "audioLength": 1132.9305625,
+    "markers": [],
+    "cantorId": "cantor-tharwat",
+    "updatedAt": {
+      "seconds": 1793561356,
+      "nanoseconds": 64000000
+    },
+    "mode": "listen",
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_pek-ethronos_markers.txt",
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_pek-ethronos.mp3",
+    "hymnId": "pek-ethronos",
+    "lyricsMapping": [],
+    "markersCount": 0,
+    "active": true,
+    "lyricsMappingUrl": ""
+  },
+  {
+    "id": "cantor-tharwat_phai-etaf-enf",
+    "markersCount": 0,
+    "updatedAt": {
+      "seconds": 1793561357,
+      "nanoseconds": 158000000
+    },
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_phai-etaf-enf.mp3",
+    "audioLength": 399.3860625,
+    "lyricsMappingUrl": "",
+    "active": true,
+    "cantorId": "cantor-tharwat",
+    "markers": [],
+    "hymnId": "phai-etaf-enf",
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_phai-etaf-enf_markers.txt",
+    "lyricsMapping": [],
+    "mode": "listen"
+  },
+  {
+    "id": "cantor-tharwat_praxis-response-lazarus-saturday",
+    "updatedAt": {
+      "seconds": 1793561360,
+      "nanoseconds": 223000000
+    },
+    "active": true,
+    "lyricsMapping": [],
+    "markers": [],
+    "hymnId": "praxis-response-lazarus-saturday",
+    "cantorId": "cantor-tharwat",
+    "lyricsMappingUrl": "",
+    "markersCount": 0,
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_praxis-response-lazarus-saturday.mp3",
+    "audioLength": 119.5363125,
+    "mode": "listen",
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_praxis-response-lazarus-saturday_markers.txt"
+  },
+  {
+    "id": "cantor-tharwat_roumi-1",
+    "hymnId": "roumi-1",
+    "updatedAt": {
+      "seconds": 1794106974,
+      "nanoseconds": 48000000
+    },
+    "cantorId": "cantor-tharwat",
     "audioLength": 168.3,
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-1_lyrics_markers.txt",
     "markers": [
       25.48,
       50.25,
@@ -3729,22 +3731,15 @@
       122.02,
       144.277
     ],
-    "hymnId": "roumi-1",
+    "mode": "learn",
+    "active": true,
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-1_markers.txt",
-    "updatedAt": {
-      "seconds": 1794106974,
-      "nanoseconds": 48000000
-    }
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_roumi-1.mp3"
   },
   {
     "id": "cantor-tharwat_roumi-2",
-    "active": true,
-    "updatedAt": {
-      "seconds": 1794110775,
-      "nanoseconds": 641000000
-    },
+    "hymnId": "roumi-2",
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-2_markers.txt",
-    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-2_lyrics_markers.txt",
     "cantorId": "cantor-tharwat",
     "markers": [
       23.2,
@@ -3754,8 +3749,6 @@
       109.067,
       130.015
     ],
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_roumi-2.mp3",
-    "mode": "learn",
     "lyricsMapping": [
       0,
       1,
@@ -3765,14 +3758,27 @@
       5,
       6
     ],
-    "audioLength": 153,
-    "hymnId": "roumi-2"
+    "updatedAt": {
+      "seconds": 1794110775,
+      "nanoseconds": 641000000
+    },
+    "active": true,
+    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-2_lyrics_markers.txt",
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_roumi-2.mp3",
+    "mode": "learn",
+    "audioLength": 153
   },
   {
     "id": "cantor-tharwat_roumi-3",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_roumi-3.mp3",
-    "cantorId": "cantor-tharwat",
+    "updatedAt": {
+      "seconds": 1794110957,
+      "nanoseconds": 647000000
+    },
+    "active": true,
     "audioLength": 147.2,
+    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-3_lyrics_markers.txt",
+    "cantorId": "cantor-tharwat",
+    "hymnId": "roumi-3",
     "lyricsMapping": [
       0,
       1,
@@ -3782,7 +3788,6 @@
       5,
       6
     ],
-    "active": true,
     "markers": [
       21.881,
       43.927,
@@ -3791,19 +3796,12 @@
       104.039,
       124.449
     ],
-    "updatedAt": {
-      "seconds": 1794110957,
-      "nanoseconds": 647000000
-    },
-    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-3_lyrics_markers.txt",
-    "hymnId": "roumi-3",
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-3_markers.txt",
-    "mode": "learn"
+    "mode": "learn",
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_roumi-3.mp3"
   },
   {
     "id": "cantor-tharwat_roumi-4",
-    "hymnId": "roumi-4",
-    "audioLength": 147.4,
     "markers": [
       21.462,
       42.834,
@@ -3812,6 +3810,15 @@
       104.632,
       124.766
     ],
+    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-4_lyrics_markers.txt",
+    "audioLength": 147.4,
+    "hymnId": "roumi-4",
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_roumi-4.mp3",
+    "updatedAt": {
+      "seconds": 1794111297,
+      "nanoseconds": 603000000
+    },
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-4_markers.txt",
     "lyricsMapping": [
       0,
       1,
@@ -3821,25 +3828,14 @@
       5,
       6
     ],
-    "mode": "learn",
-    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-4_lyrics_markers.txt",
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-4_markers.txt",
+    "cantorId": "cantor-tharwat",
     "active": true,
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_roumi-4.mp3",
-    "updatedAt": {
-      "seconds": 1794111297,
-      "nanoseconds": 603000000
-    },
-    "cantorId": "cantor-tharwat"
+    "mode": "learn"
   },
   {
     "id": "cantor-tharwat_roumi-5",
+    "audioLength": 154.4,
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-5_markers.txt",
-    "active": true,
-    "updatedAt": {
-      "seconds": 1794111532,
-      "nanoseconds": 321000000
-    },
     "markers": [
       23.333,
       45.273,
@@ -3848,9 +3844,14 @@
       110.059,
       131.441
     ],
-    "cantorId": "cantor-tharwat",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_roumi-5.mp3",
+    "hymnId": "roumi-5",
     "mode": "learn",
+    "updatedAt": {
+      "seconds": 1794111532,
+      "nanoseconds": 321000000
+    },
+    "cantorId": "cantor-tharwat",
+    "active": true,
     "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-5_lyrics_markers.txt",
     "lyricsMapping": [
       0,
@@ -3861,28 +3862,14 @@
       5,
       6
     ],
-    "hymnId": "roumi-5",
-    "audioLength": 154.4
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_roumi-5.mp3"
   },
   {
     "id": "cantor-tharwat_roumi-6",
-    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-6_lyrics_markers.txt",
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-6_markers.txt",
     "hymnId": "roumi-6",
-    "updatedAt": {
-      "seconds": 1794111712,
-      "nanoseconds": 78000000
-    },
-    "mode": "learn",
-    "lyricsMapping": [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6
-    ],
+    "audioLength": 149.1,
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_roumi-6.mp3",
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-6_markers.txt",
     "markers": [
       21.862,
       43.33,
@@ -3891,19 +3878,37 @@
       105.807,
       126.029
     ],
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-6_lyrics_markers.txt",
     "active": true,
     "cantorId": "cantor-tharwat",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_roumi-6.mp3",
-    "audioLength": 149.1
+    "mode": "learn",
+    "updatedAt": {
+      "seconds": 1794111712,
+      "nanoseconds": 78000000
+    }
   },
   {
     "id": "cantor-tharwat_roumi-7",
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
     "active": true,
-    "updatedAt": {
-      "seconds": 1794112031,
-      "nanoseconds": 163000000
-    },
-    "mode": "learn",
+    "cantorId": "cantor-tharwat",
     "markers": [
       20.135,
       40.151,
@@ -3912,36 +3917,23 @@
       99.856,
       119.376
     ],
-    "lyricsMapping": [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6
-    ],
-    "cantorId": "cantor-tharwat",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_roumi-7.mp3",
-    "audioLength": 140.8,
-    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-7_lyrics_markers.txt",
+    "updatedAt": {
+      "seconds": 1794112031,
+      "nanoseconds": 163000000
+    },
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-7_markers.txt",
     "hymnId": "roumi-7",
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-7_markers.txt"
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_roumi-7.mp3",
+    "mode": "learn",
+    "audioLength": 140.8,
+    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-7_lyrics_markers.txt"
   },
   {
     "id": "cantor-tharwat_roumi-8",
-    "lyricsMapping": [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6
-    ],
-    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-8_lyrics_markers.txt",
-    "mode": "learn",
-    "active": true,
+    "updatedAt": {
+      "seconds": 1794112307,
+      "nanoseconds": 712000000
+    },
     "markers": [
       22.072,
       42.16,
@@ -3950,32 +3942,13 @@
       101.013,
       120.891
     ],
-    "hymnId": "roumi-8",
     "audioLength": 142.8,
-    "updatedAt": {
-      "seconds": 1794112307,
-      "nanoseconds": 712000000
-    },
+    "mode": "learn",
     "cantorId": "cantor-tharwat",
+    "hymnId": "roumi-8",
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-8_markers.txt",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_roumi-8.mp3"
-  },
-  {
-    "id": "cantor-tharwat_roumi-9",
-    "updatedAt": {
-      "seconds": 1794114073,
-      "nanoseconds": 662000000
-    },
-    "markers": [
-      21.29,
-      41.39,
-      61.845,
-      81.765,
-      101.641,
-      121.608
-    ],
-    "hymnId": "roumi-9",
-    "audioLength": 143.85,
+    "active": true,
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_roumi-8.mp3",
     "lyricsMapping": [
       0,
       1,
@@ -3985,26 +3958,55 @@
       5,
       6
     ],
-    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-9_lyrics_markers.txt",
+    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-8_lyrics_markers.txt"
+  },
+  {
+    "id": "cantor-tharwat_roumi-9",
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-9_markers.txt",
+    "lyricsMappingUrl": "markers/cantor-tharwat/cantor-tharwat_roumi-9_lyrics_markers.txt",
+    "active": true,
+    "lyricsMapping": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
     "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_roumi-9.mp3",
-    "cantorId": "cantor-tharwat",
+    "audioLength": 143.85,
+    "hymnId": "roumi-9",
+    "updatedAt": {
+      "seconds": 1794114073,
+      "nanoseconds": 662000000
+    },
     "mode": "learn",
-    "active": true
+    "markers": [
+      21.29,
+      41.39,
+      61.845,
+      81.765,
+      101.641,
+      121.608
+    ],
+    "cantorId": "cantor-tharwat"
   },
   {
     "id": "cantor-tharwat_ti-epistolee",
     "hymnId": "ti-epistolee",
-    "mode": "learn",
     "markersUrl": "markers/cantor-tharwat/cantor-tharwat_ti-epistolee_markers.txt",
-    "markersCount": 45,
-    "lyricsMappingUrl": "",
-    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_ti-epistolee.mp3",
     "cantorId": "cantor-tharwat",
+    "markersCount": 45,
+    "audioLength": 572.76,
+    "active": true,
+    "lyricsMappingUrl": "",
+    "mode": "learn",
     "updatedAt": {
       "seconds": 1793561366,
       "nanoseconds": 98000000
     },
+    "lyricsMapping": [],
     "markers": [
       13.995947,
       23.519756,
@@ -4052,49 +4054,55 @@
       527.767449,
       540.465862
     ],
-    "active": true,
-    "lyricsMapping": [],
-    "audioLength": 572.76
+    "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_ti-epistolee.mp3"
   },
   {
     "id": "cantor-tharwat_verses-of-cymbals-lazarus-saturday",
-    "hymnId": "verses-of-cymbals-lazarus-saturday",
-    "mode": "listen",
-    "markersCount": 0,
-    "lyricsMappingUrl": "",
+    "cantorId": "cantor-tharwat",
     "lyricsMapping": [],
     "audioLength": 20.8979375,
+    "mode": "listen",
     "markers": [],
-    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_verses-of-cymbals-lazarus-saturday_markers.txt",
+    "hymnId": "verses-of-cymbals-lazarus-saturday",
+    "markersCount": 0,
     "audioUrl": "tracks/cantor-tharwat/cantor-tharwat_verses-of-cymbals-lazarus-saturday.mp3",
-    "cantorId": "cantor-tharwat",
-    "active": true,
     "updatedAt": {
       "seconds": 1793561369,
       "nanoseconds": 60000000
-    }
+    },
+    "active": true,
+    "lyricsMappingUrl": "",
+    "markersUrl": "markers/cantor-tharwat/cantor-tharwat_verses-of-cymbals-lazarus-saturday_markers.txt"
   },
   {
     "id": "cantor-zaher_je-efesmaroout-kiahk-weekdays",
-    "updatedAt": {
-      "seconds": 1794198877,
-      "nanoseconds": 775000000
-    },
+    "mode": "learn",
+    "lyricsMapping": [],
+    "audioUrl": "tracks/cantor-zaher/cantor-zaher_je-efesmaroout-kiahk-weekdays.mp3",
     "markers": [
       22.446,
       52.408,
       80.68
     ],
-    "cantorId": "cantor-zaher",
-    "audioUrl": "tracks/cantor-zaher/cantor-zaher_je-efesmaroout-kiahk-weekdays.mp3",
-    "mode": "learn",
-    "lyricsMapping": [],
+    "updatedAt": {
+      "seconds": 1794198877,
+      "nanoseconds": 775000000
+    },
+    "audioLength": 114.15,
     "hymnId": "je-efesmaroout-kiahk-weekdays",
-    "audioLength": 114.15
+    "cantorId": "cantor-zaher"
   },
   {
     "id": "cantor-zaher_ti-parthenos-kiahk-weekdays",
+    "audioLength": 911.34,
+    "updatedAt": {
+      "seconds": 1794181197,
+      "nanoseconds": 69000000
+    },
     "markersUrl": "markers/cantor-zaher/cantor-zaher_ti-parthenos-kiahk-weekdays_markers.txt",
+    "lyricsMappingUrl": "markers/cantor-zaher/cantor-zaher_ti-parthenos-kiahk-weekdays_lyrics_markers.txt",
+    "hymnId": "ti-parthenos-kiahk-weekdays",
+    "audioUrl": "tracks/cantor-zaher/cantor-zaher_ti-parthenos-kiahk-weekdays.mp3",
     "markers": [
       118,
       235.15,
@@ -4106,12 +4114,6 @@
       840.6
     ],
     "cantorId": "cantor-zaher",
-    "updatedAt": {
-      "seconds": 1794181197,
-      "nanoseconds": 69000000
-    },
-    "audioUrl": "tracks/cantor-zaher/cantor-zaher_ti-parthenos-kiahk-weekdays.mp3",
-    "mode": "learn",
     "lyricsMapping": [
       0,
       1,
@@ -4122,14 +4124,14 @@
       6,
       7
     ],
-    "hymnId": "ti-parthenos-kiahk-weekdays",
-    "audioLength": 911.34,
-    "lyricsMappingUrl": "markers/cantor-zaher/cantor-zaher_ti-parthenos-kiahk-weekdays_lyrics_markers.txt"
+    "mode": "learn"
   },
   {
     "id": "hics_doxology-1-kiahk",
-    "audioLength": 226.25,
-    "active": true,
+    "updatedAt": {
+      "seconds": 1793561329,
+      "nanoseconds": 638000000
+    },
     "markers": [
       21.85,
       42.3,
@@ -4143,9 +4145,9 @@
       191.6,
       209.18
     ],
-    "markersUrl": "markers/hics/hics_doxology-1-kiahk_markers.txt",
-    "mode": "learn",
+    "markersCount": 11,
     "lyricsMappingUrl": "markers/hics/hics_doxology-1-kiahk_lyrics_markers.txt",
+    "cantorId": "hics",
     "lyricsMapping": [
       0,
       1,
@@ -4161,31 +4163,17 @@
       11,
       -1
     ],
-    "markersCount": 11,
-    "updatedAt": {
-      "seconds": 1793561329,
-      "nanoseconds": 638000000
-    },
-    "cantorId": "hics",
+    "mode": "learn",
     "audioUrl": "tracks/hics/hics_doxology-1-kiahk.mp3",
+    "active": true,
+    "markersUrl": "markers/hics/hics_doxology-1-kiahk_markers.txt",
+    "audioLength": 226.25,
     "hymnId": "doxology-1-kiahk"
   },
   {
     "id": "hics_enthoten-dhe",
-    "lyricsMappingUrl": "",
-    "active": true,
-    "lyricsMapping": [],
-    "audioUrl": "tracks/hics/hics_enthoten-dhe.mp3",
     "cantorId": "hics",
-    "updatedAt": {
-      "seconds": 1793561324,
-      "nanoseconds": 931000000
-    },
-    "markersUrl": "markers/hics/hics_enthoten-dhe_markers.txt",
-    "mode": "learn",
-    "markersCount": 53,
-    "audioLength": 924.504,
-    "hymnId": "enthoten-dhe",
+    "lyricsMapping": [],
     "markers": [
       20.344847,
       33.768884,
@@ -4240,119 +4228,116 @@
       866.534698,
       874.545196,
       911.876587
-    ]
+    ],
+    "mode": "learn",
+    "lyricsMappingUrl": "",
+    "markersCount": 53,
+    "audioLength": 924.504,
+    "updatedAt": {
+      "seconds": 1793561324,
+      "nanoseconds": 931000000
+    },
+    "hymnId": "enthoten-dhe",
+    "audioUrl": "tracks/hics/hics_enthoten-dhe.mp3",
+    "active": true,
+    "markersUrl": "markers/hics/hics_enthoten-dhe_markers.txt"
   },
   {
     "id": "hics_genethlion",
-    "cantorId": "hics",
+    "hymnId": "genethlion",
     "audioUrl": "tracks/hics/hics_genethlion.mp3",
+    "markersUrl": "markers/hics/hics_genethlion_markers.txt",
+    "active": true,
     "lyricsMappingUrl": "",
-    "markers": [],
+    "audioLength": 602.749375,
     "mode": "listen",
     "markersCount": 0,
-    "markersUrl": "markers/hics/hics_genethlion_markers.txt",
-    "hymnId": "genethlion",
-    "active": true,
     "updatedAt": {
       "seconds": 1793561330,
       "nanoseconds": 796000000
     },
-    "audioLength": 602.749375,
+    "markers": [],
+    "cantorId": "hics",
     "lyricsMapping": []
   },
   {
     "id": "hics_je-efesmaroout-lent-weekdays",
-    "hymnId": "je-efesmaroout-lent-weekdays",
     "mode": "listen",
-    "markersCount": 0,
+    "lyricsMapping": [],
+    "audioLength": 143.5950833333333,
+    "audioUrl": "tracks/hics/hics_je-efesmaroout-lent-weekdays.mp3",
+    "markersUrl": "markers/hics/hics_je-efesmaroout-lent-weekdays_markers.txt",
+    "markers": [],
     "updatedAt": {
       "seconds": 1793561341,
       "nanoseconds": 706000000
     },
-    "markers": [],
-    "lyricsMappingUrl": "",
-    "lyricsMapping": [],
-    "audioUrl": "tracks/hics/hics_je-efesmaroout-lent-weekdays.mp3",
-    "audioLength": 143.5950833333333,
+    "active": true,
     "cantorId": "hics",
-    "markersUrl": "markers/hics/hics_je-efesmaroout-lent-weekdays_markers.txt",
-    "active": true
+    "hymnId": "je-efesmaroout-lent-weekdays",
+    "markersCount": 0,
+    "lyricsMappingUrl": ""
   },
   {
     "id": "hics_kata-ni-khoros",
-    "lyricsMappingUrl": "",
-    "markers": [],
-    "markersCount": 0,
-    "active": true,
-    "mode": "listen",
-    "markersUrl": "markers/hics/hics_kata-ni-khoros_markers.txt",
-    "hymnId": "kata-ni-khoros",
+    "audioLength": 1289.3257,
     "updatedAt": {
       "seconds": 1793561333,
       "nanoseconds": 917000000
     },
-    "audioLength": 1289.3257,
+    "lyricsMappingUrl": "",
+    "audioUrl": "tracks/hics/hics_kata-ni-khoros.mp3",
+    "active": true,
     "lyricsMapping": [],
-    "cantorId": "hics",
-    "audioUrl": "tracks/hics/hics_kata-ni-khoros.mp3"
+    "mode": "listen",
+    "hymnId": "kata-ni-khoros",
+    "markers": [],
+    "markersCount": 0,
+    "markersUrl": "markers/hics/hics_kata-ni-khoros_markers.txt",
+    "cantorId": "hics"
   },
   {
     "id": "hics_mournful-tai-shouri",
-    "markers": [],
-    "lyricsMapping": [],
-    "audioLength": 564.55835,
-    "active": true,
-    "markersCount": 0,
-    "cantorId": "hics",
-    "audioUrl": "tracks/hics/hics_mournful-tai-shouri.mp3",
     "mode": "listen",
-    "hymnId": "mournful-tai-shouri",
     "updatedAt": {
       "seconds": 1793561348,
       "nanoseconds": 342000000
     },
+    "audioLength": 564.55835,
+    "lyricsMappingUrl": "",
     "markersUrl": "markers/hics/hics_mournful-tai-shouri_markers.txt",
-    "lyricsMappingUrl": ""
+    "audioUrl": "tracks/hics/hics_mournful-tai-shouri.mp3",
+    "markers": [],
+    "active": true,
+    "cantorId": "hics",
+    "lyricsMapping": [],
+    "markersCount": 0,
+    "hymnId": "mournful-tai-shouri"
   },
   {
     "id": "hics_omonogenees",
-    "hymnId": "omonogenees",
-    "markersCount": 0,
     "audioUrl": "tracks/hics/hics_omonogenees.mp3",
-    "cantorId": "hics",
-    "mode": "listen",
     "audioLength": 672.104475,
+    "lyricsMappingUrl": "",
+    "lyricsMapping": [],
     "updatedAt": {
       "seconds": 1793561350,
       "nanoseconds": 913000000
     },
-    "lyricsMappingUrl": "",
     "markers": [],
-    "lyricsMapping": [],
-    "markersUrl": "markers/hics/hics_omonogenees_markers.txt",
-    "active": true
+    "mode": "listen",
+    "hymnId": "omonogenees",
+    "cantorId": "hics",
+    "markersCount": 0,
+    "active": true,
+    "markersUrl": "markers/hics/hics_omonogenees_markers.txt"
   },
   {
     "id": "hics_ondos",
-    "hymnId": "ondos",
-    "markersCount": 52,
-    "updatedAt": {
-      "seconds": 1793561351,
-      "nanoseconds": 915000000
-    },
     "audioUrl": "tracks/hics/hics_ondos.mp3",
-    "lyricsMapping": [
-      0,
-      9,
-      18,
-      23,
-      28,
-      33,
-      38,
-      43,
-      48
-    ],
-    "cantorId": "hics",
+    "markersCount": 52,
+    "active": true,
+    "markersUrl": "markers/hics/hics_ondos_markers.txt",
     "markers": [
       11.020408,
       22.179138,
@@ -4407,28 +4392,43 @@
       1246.036281,
       1269.716553
     ],
-    "markersUrl": "markers/hics/hics_ondos_markers.txt",
+    "lyricsMapping": [
+      0,
+      9,
+      18,
+      23,
+      28,
+      33,
+      38,
+      43,
+      48
+    ],
     "lyricsMappingUrl": "markers/hics/hics_ondos_lyrics_markers.txt",
+    "hymnId": "ondos",
+    "updatedAt": {
+      "seconds": 1793561351,
+      "nanoseconds": 915000000
+    },
     "audioLength": 1689.44325,
     "mode": "learn",
-    "active": true
+    "cantorId": "hics"
   },
   {
     "id": "hics_pi-mairomi",
     "hymnId": "pi-mairomi",
-    "lyricsMappingUrl": "",
-    "audioLength": 390.4783333333334,
-    "audioUrl": "tracks/hics/hics_pi-mairomi.mp3",
-    "markersUrl": "markers/hics/hics_pi-mairomi_markers.txt",
-    "lyricsMapping": [],
+    "markers": [],
     "cantorId": "hics",
-    "mode": "listen",
+    "active": true,
+    "audioLength": 390.4783333333334,
+    "lyricsMapping": [],
+    "markersUrl": "markers/hics/hics_pi-mairomi_markers.txt",
+    "audioUrl": "tracks/hics/hics_pi-mairomi.mp3",
     "updatedAt": {
       "seconds": 1793561358,
       "nanoseconds": 325000000
     },
-    "markers": [],
-    "active": true,
-    "markersCount": 0
+    "markersCount": 0,
+    "lyricsMappingUrl": "",
+    "mode": "listen"
   }
 ]

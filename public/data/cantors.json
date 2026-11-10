@@ -1,9 +1,9 @@
 [
   {
     "id": "cantor-ibrahim",
+    "cantorCloudActive": true,
     "rank": 1,
     "name": "Cantor Ibrahim",
-    "cantorCloudActive": true,
     "updatedAt": {
       "seconds": 1794022243,
       "nanoseconds": 804000000
@@ -13,31 +13,31 @@
   {
     "id": "cantor-gad",
     "name": "Cantor Gad",
+    "rank": 2,
     "updatedAt": {
       "seconds": 1794022243,
       "nanoseconds": 851000000
     },
-    "rank": 2,
-    "active": true,
-    "cantorCloudActive": true
+    "cantorCloudActive": true,
+    "active": true
   },
   {
     "id": "cantor-tharwat",
-    "name": "Cantor Tharwat",
-    "active": true,
     "rank": 3,
+    "name": "Cantor Tharwat",
+    "cantorCloudActive": true,
     "updatedAt": {
       "seconds": 1794022243,
       "nanoseconds": 893000000
     },
-    "cantorCloudActive": true
+    "active": true
   },
   {
     "id": "cantor-bola",
-    "active": true,
-    "name": "Cantor Bola",
-    "cantorCloudActive": true,
     "rank": 4,
+    "name": "Cantor Bola",
+    "active": true,
+    "cantorCloudActive": true,
     "updatedAt": {
       "seconds": 1794022243,
       "nanoseconds": 941000000
@@ -45,35 +45,35 @@
   },
   {
     "id": "cantor-zaher",
-    "cantorCloudActive": true,
-    "rank": 5,
-    "active": true,
-    "name": "Cantor Zaher",
     "updatedAt": {
       "seconds": 1794109436,
       "nanoseconds": 35000000
-    }
+    },
+    "cantorCloudActive": true,
+    "active": true,
+    "rank": 5,
+    "name": "Cantor Zaher"
   },
   {
     "id": "hics",
-    "active": true,
-    "rank": 6,
-    "name": "HICS",
-    "cantorCloudActive": true,
     "updatedAt": {
       "seconds": 1794022244,
       "nanoseconds": 29000000
-    }
+    },
+    "cantorCloudActive": true,
+    "name": "HICS",
+    "rank": 6,
+    "active": true
   },
   {
     "id": "other",
     "active": true,
-    "rank": 7,
     "updatedAt": {
       "seconds": 1794022244,
       "nanoseconds": 60000000
     },
+    "name": "Other",
     "cantorCloudActive": false,
-    "name": "Other"
+    "rank": 7
   }
 ]

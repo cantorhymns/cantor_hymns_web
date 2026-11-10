@@ -55,6 +55,8 @@ import {
   GripVertical,
   MessageSquare,
   Unlink,
+  Undo2,
+  Redo2,
 } from 'lucide-react';
 import {
   Select,
@@ -136,6 +138,15 @@ export function WaveformEditor({
   const [selectedMarkerIdx, setSelectedMarkerIdx] = useState<number | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
+  // Undo / Redo history state
+  interface StudioSnapshot {
+    markers: number[];
+    lyricsMapping: number[];
+    selectedMarkerIdx: number | null;
+  }
+  const [undoStack, setUndoStack] = useState<StudioSnapshot[]>([]);
+  const [redoStack, setRedoStack] = useState<StudioSnapshot[]>([]);
+
   // Sync state ONLY when switching to a different recording ID so unsaved markers are never wiped
   const prevRecordingIdRef = useRef(recording.id);
   useEffect(() => {
@@ -143,6 +154,8 @@ export function WaveformEditor({
       prevRecordingIdRef.current = recording.id;
       setMarkers(recording.markers || []);
       setLyricsMapping(recording.lyricsMapping || []);
+      setUndoStack([]);
+      setRedoStack([]);
       setHasUnsavedChanges(false);
     }
   }, [recording.id]);
@@ -218,6 +231,10 @@ export function WaveformEditor({
   const isPlayingRef = useRef(false);
   const isSeekingRef = useRef(false);
   const markersRef = useRef(markers);
+  const lyricsMappingRef = useRef(lyricsMapping);
+  const selectedMarkerIdxRef = useRef(selectedMarkerIdx);
+  const initialMarkersRef = useRef(recording.markers || []);
+  const initialLyricsMappingRef = useRef(recording.lyricsMapping || []);
   const jumpToMarkerRef = useRef<(idx: number, forcePlay?: boolean) => void>(() => {});
 
   useEffect(() => {
@@ -227,6 +244,78 @@ export function WaveformEditor({
   useEffect(() => {
     markersRef.current = markers;
   }, [markers]);
+
+  useEffect(() => {
+    lyricsMappingRef.current = lyricsMapping;
+  }, [lyricsMapping]);
+
+  useEffect(() => {
+    selectedMarkerIdxRef.current = selectedMarkerIdx;
+  }, [selectedMarkerIdx]);
+
+  // Capture a snapshot of current studio state into undo history before mutations
+  const recordSnapshot = useCallback(() => {
+    const currentSnapshot: StudioSnapshot = {
+      markers: [...markersRef.current],
+      lyricsMapping: [...lyricsMappingRef.current],
+      selectedMarkerIdx: selectedMarkerIdxRef.current,
+    };
+    setUndoStack(prev => [...prev.slice(-49), currentSnapshot]);
+    setRedoStack([]); // Clear redo stack on new action
+  }, []);
+
+  // Undo last change
+  const handleUndo = useCallback(() => {
+    setUndoStack(prevUndo => {
+      if (prevUndo.length === 0) return prevUndo;
+      const lastSnapshot = prevUndo[prevUndo.length - 1];
+      const newUndo = prevUndo.slice(0, prevUndo.length - 1);
+
+      // Save current state to redo stack
+      const currentSnapshot: StudioSnapshot = {
+        markers: [...markersRef.current],
+        lyricsMapping: [...lyricsMappingRef.current],
+        selectedMarkerIdx: selectedMarkerIdxRef.current,
+      };
+      setRedoStack(prevRedo => [...prevRedo, currentSnapshot]);
+
+      // Restore state from snapshot
+      setMarkers(lastSnapshot.markers);
+      setLyricsMapping(lastSnapshot.lyricsMapping);
+      setSelectedMarkerIdx(lastSnapshot.selectedMarkerIdx);
+
+      const markersChanged = JSON.stringify(lastSnapshot.markers) !== JSON.stringify(initialMarkersRef.current);
+      const mappingChanged = JSON.stringify(lastSnapshot.lyricsMapping) !== JSON.stringify(initialLyricsMappingRef.current);
+      setHasUnsavedChanges(markersChanged || mappingChanged);
+
+      return newUndo;
+    });
+  }, []);
+
+  // Redo previously undone change
+  const handleRedo = useCallback(() => {
+    setRedoStack(prevRedo => {
+      if (prevRedo.length === 0) return prevRedo;
+      const nextSnapshot = prevRedo[prevRedo.length - 1];
+      const newRedo = prevRedo.slice(0, prevRedo.length - 1);
+
+      // Save current state to undo stack
+      const currentSnapshot: StudioSnapshot = {
+        markers: [...markersRef.current],
+        lyricsMapping: [...lyricsMappingRef.current],
+        selectedMarkerIdx: selectedMarkerIdxRef.current,
+      };
+      setUndoStack(prevUndo => [...prevUndo, currentSnapshot]);
+
+      // Restore state from redo snapshot
+      setMarkers(nextSnapshot.markers);
+      setLyricsMapping(nextSnapshot.lyricsMapping);
+      setSelectedMarkerIdx(nextSnapshot.selectedMarkerIdx);
+
+      setHasUnsavedChanges(true);
+      return newRedo;
+    });
+  }, []);
 
   // Parse hymn lyrics into verses
   const verses = useMemo(() => {
@@ -406,7 +495,7 @@ export function WaveformEditor({
       flagContainer.style.left = isSelected ? '-1.5px' : '-1px';
       flagContainer.style.transform = 'translateX(-50%)';
       flagContainer.style.pointerEvents = 'auto';
-      flagContainer.style.cursor = 'pointer';
+      flagContainer.style.cursor = 'grab';
       flagContainer.style.zIndex = '30';
       flagContainer.style.display = 'flex';
       flagContainer.style.flexDirection = 'column';
@@ -458,10 +547,6 @@ export function WaveformEditor({
       });
 
       // Unified direct drag handling for mouse and touch (works on flag pin AND the vertical marker handle)
-      let isDragging = false;
-      let startClientX = 0;
-      let initialMarkerStart = start;
-
       const setupDrag = (targetEl: HTMLElement) => {
         // Prevent mousedown/touchstart from bubbling to the waveform container (which would trigger track scrubbing)
         targetEl.addEventListener('mousedown', (e: MouseEvent) => {
@@ -475,13 +560,10 @@ export function WaveformEditor({
           if (e.button !== 0 || isReadOnly) return;
           e.preventDefault();
           e.stopPropagation();
-          e.stopImmediatePropagation();
-          try {
-            targetEl.setPointerCapture(e.pointerId);
-          } catch (_) {}
-          isDragging = false;
-          startClientX = e.clientX;
-          initialMarkerStart = r.start;
+
+          let hasDragged = false;
+          const startClientX = e.clientX;
+          const initialMarkerStart = r.start;
           isDraggingMarkerRef.current = true;
 
           const scrollContainer = getScrollContainer(wavesurferRef.current);
@@ -490,102 +572,102 @@ export function WaveformEditor({
           setSelectedMarkerIdx(markerIdx);
           document.body.style.touchAction = 'none';
           document.body.style.userSelect = 'none';
-        });
 
-        targetEl.addEventListener('pointermove', (e: PointerEvent) => {
-          if (!targetEl.hasPointerCapture(e.pointerId)) return;
-          const deltaX = e.clientX - startClientX;
-          if (!isDragging && Math.abs(deltaX) > 2) {
-            isDragging = true;
-          }
+          const onPointerMove = (moveEv: PointerEvent) => {
+            const deltaX = moveEv.clientX - startClientX;
+            if (!hasDragged && Math.abs(deltaX) > 2) {
+              hasDragged = true;
+            }
 
-          if (isDragging) {
-            e.preventDefault();
-            e.stopPropagation();
+            if (hasDragged) {
+              moveEv.preventDefault();
+              moveEv.stopPropagation();
 
-            const ws = wavesurferRef.current;
-            if (!ws) return;
+              const ws = wavesurferRef.current;
+              if (!ws) return;
 
-            const sc = getScrollContainer(ws);
-            // Strictly lock scroll position during drag so track never shifts
-            if (sc && sc.scrollLeft !== startScrollLeftRef.current) {
-              sc.scrollLeft = startScrollLeftRef.current;
+              const sc = getScrollContainer(ws);
+              // Strictly lock scroll position during drag so track never shifts
+              if (sc && sc.scrollLeft !== startScrollLeftRef.current) {
+                sc.scrollLeft = startScrollLeftRef.current;
+              }
+              if (timelineRef.current && timelineRef.current.scrollLeft !== startScrollLeftRef.current) {
+                timelineRef.current.scrollLeft = startScrollLeftRef.current;
+              }
+
+              const wrapper = ws.getWrapper();
+              const fullWidth = wrapper ? wrapper.scrollWidth : Math.max(1, sc ? sc.scrollWidth : 1000);
+              const totalDuration = ws.getDuration() || duration || 1;
+              const pxPerSecond = fullWidth / totalDuration;
+
+              const deltaTime = deltaX / Math.max(0.001, pxPerSecond);
+              const newTime = Math.max(0.05, Math.min(totalDuration, initialMarkerStart + deltaTime));
+
+              // Nudge region visually in real time (smooth 60fps, does NOT trigger React re-renders)
+              r.setOptions({ start: newTime, end: Math.max(newTime + 0.1, r.end) });
+
+              // Display live timestamp in pill while dragging
+              pill.innerText = `#${markerIdx + 1}${vText} (${formatTime(newTime)})`;
+            }
+          };
+
+          const onPointerUp = (upEv: PointerEvent) => {
+            window.removeEventListener('pointermove', onPointerMove, true);
+            window.removeEventListener('pointerup', onPointerUp, true);
+            window.removeEventListener('pointercancel', onPointerUp, true);
+
+            document.body.style.touchAction = '';
+            document.body.style.userSelect = '';
+            isDraggingMarkerRef.current = false;
+
+            // Restore normal pill text
+            pill.innerText = `#${markerIdx + 1}${vText}`;
+
+            const scrollContainer = getScrollContainer(wavesurferRef.current);
+            if (scrollContainer && scrollContainer.scrollLeft !== startScrollLeftRef.current) {
+              scrollContainer.scrollLeft = startScrollLeftRef.current;
             }
             if (timelineRef.current && timelineRef.current.scrollLeft !== startScrollLeftRef.current) {
               timelineRef.current.scrollLeft = startScrollLeftRef.current;
             }
 
-            const wrapper = ws.getWrapper();
-            const fullWidth = wrapper ? wrapper.scrollWidth : Math.max(1, sc ? sc.scrollWidth : 1000);
-            const totalDuration = ws.getDuration() || duration || 1;
-            const pxPerSecond = fullWidth / totalDuration;
+            if (!hasDragged) {
+              jumpToMarkerRef.current(markerIdx);
+              setSelectedMarkerIdx(markerIdx);
+            } else {
+              // Record snapshot into undo history before committing drag
+              recordSnapshot();
 
-            const deltaTime = deltaX / Math.max(0.001, pxPerSecond);
-            const newTime = Math.max(0.1, Math.min(totalDuration, initialMarkerStart + deltaTime));
+              const finalTime = Math.round(r.start * 1000) / 1000;
 
-            // Nudge region visually in real time (smooth 60fps, does NOT trigger React re-renders)
-            r.setOptions({ start: newTime, end: Math.max(newTime + 0.1, r.end) });
-
-            // Display live timestamp in pill while dragging
-            pill.innerText = `#${markerIdx + 1}${vText} (${formatTime(newTime)})`;
-          }
-        });
-
-        const handlePointerEnd = (e: PointerEvent) => {
-          if (targetEl.hasPointerCapture(e.pointerId)) {
-            try {
-              targetEl.releasePointerCapture(e.pointerId);
-            } catch (_) {}
-          }
-          document.body.style.touchAction = '';
-          document.body.style.userSelect = '';
-          isDraggingMarkerRef.current = false;
-
-          // Restore normal pill text
-          pill.innerText = `#${markerIdx + 1}${vText}`;
-
-          const scrollContainer = getScrollContainer(wavesurferRef.current);
-          if (scrollContainer && scrollContainer.scrollLeft !== startScrollLeftRef.current) {
-            scrollContainer.scrollLeft = startScrollLeftRef.current;
-          }
-          if (timelineRef.current && timelineRef.current.scrollLeft !== startScrollLeftRef.current) {
-            timelineRef.current.scrollLeft = startScrollLeftRef.current;
-          }
-
-          if (!isDragging) {
-            jumpToMarkerRef.current(markerIdx);
-            setSelectedMarkerIdx(markerIdx);
-          } else {
-            // Commit final sorted position to markers state on release
-            const finalTime = Math.round(r.start * 1000) / 1000;
-
-            // When paused, ONLY the marker moves - the track stays at the same location without scrolling!
-            // When actively playing, audio continues naturally without jarring seeks.
-            const isAudioPlaying = isPlayingRef.current || (wavesurferRef.current?.isPlaying() ?? false);
-            if (isAudioPlaying) {
-              const ws = wavesurferRef.current;
-              if (ws) {
-                setCurrentTime(ws.getCurrentTime());
+              // When paused, ONLY the marker moves - the track stays at the same location without scrolling!
+              // When actively playing, audio continues naturally without jarring seeks.
+              const isAudioPlaying = isPlayingRef.current || (wavesurferRef.current?.isPlaying() ?? false);
+              if (isAudioPlaying) {
+                const ws = wavesurferRef.current;
+                if (ws) {
+                  setCurrentTime(ws.getCurrentTime());
+                }
               }
+
+              setMarkers(prev => {
+                const next = [...prev];
+                next[markerIdx] = finalTime;
+                next.sort((a, b) => a - b);
+                const updatedIdx = next.indexOf(finalTime);
+                if (updatedIdx !== -1) {
+                  setSelectedMarkerIdx(updatedIdx);
+                }
+                return next;
+              });
+              setHasUnsavedChanges(true);
             }
+          };
 
-            setMarkers(prev => {
-              const next = [...prev];
-              next[markerIdx] = finalTime;
-              next.sort((a, b) => a - b);
-              const updatedIdx = next.indexOf(finalTime);
-              if (updatedIdx !== -1) {
-                setSelectedMarkerIdx(updatedIdx);
-              }
-              return next;
-            });
-            setHasUnsavedChanges(true);
-          }
-          isDragging = false;
-        };
-
-        targetEl.addEventListener('pointerup', handlePointerEnd);
-        targetEl.addEventListener('pointercancel', handlePointerEnd);
+          window.addEventListener('pointermove', onPointerMove, true);
+          window.addEventListener('pointerup', onPointerUp, true);
+          window.addEventListener('pointercancel', onPointerUp, true);
+        });
       };
 
       setupDrag(flagContainer);
@@ -611,17 +693,21 @@ export function WaveformEditor({
           r.element.appendChild(leftHandle);
         }
 
+        leftHandle.style.position = 'absolute';
+        leftHandle.style.top = '0';
+        leftHandle.style.bottom = '0';
+        leftHandle.style.height = '100%';
         leftHandle.style.pointerEvents = 'auto';
         leftHandle.style.touchAction = 'none';
         (leftHandle.style as any).webkitTouchCallout = 'none';
         (leftHandle.style as any).webkitUserSelect = 'none';
         leftHandle.style.userSelect = 'none';
         leftHandle.style.cursor = 'col-resize';
-        leftHandle.style.zIndex = '25';
+        leftHandle.style.zIndex = '35';
         // Ensure hover highlight is centered exactly on the solid marker border line
-        leftHandle.style.left = isSelected ? '-12.5px' : '-12px';
+        leftHandle.style.left = isSelected ? '-13.5px' : '-13px';
         leftHandle.style.transform = 'none';
-        leftHandle.style.width = '22px';
+        leftHandle.style.width = '24px';
         leftHandle.style.borderLeft = 'none';
         leftHandle.style.borderRadius = '3px';
         leftHandle.onmouseenter = () => {
@@ -648,7 +734,7 @@ export function WaveformEditor({
     if (timelineRef.current && timelineRef.current.scrollLeft !== savedScrollLeft) {
       timelineRef.current.scrollLeft = savedScrollLeft;
     }
-  }, [duration, isReadOnly, getMappedVerseForMarker]);
+  }, [duration, isReadOnly, getMappedVerseForMarker, recordSnapshot]);
 
   const durationRef = useRef(duration);
   useEffect(() => {
@@ -1117,6 +1203,7 @@ export function WaveformEditor({
     const exists = markers.some(m => Math.abs(m - rawTime) < 0.05);
     if (exists) return;
 
+    recordSnapshot();
     const nextMarkers = [...markers, rawTime].sort((a, b) => a - b);
     const newIdx = nextMarkers.indexOf(rawTime);
 
@@ -1126,25 +1213,30 @@ export function WaveformEditor({
     setMarkers(nextMarkers);
     setSelectedMarkerIdx(newIdx);
     setHasUnsavedChanges(true);
-  }, [currentTime, markers]);
+  }, [currentTime, markers, recordSnapshot]);
 
   // Nudge selected marker by milliseconds
   const nudgeMarker = useCallback((deltaMs: number) => {
-    if (selectedMarkerIdx === null) return;
+    if (selectedMarkerIdx === null || selectedMarkerIdx < 0 || selectedMarkerIdx >= markers.length) return;
+    recordSnapshot();
     setMarkers(prev => {
       const next = [...prev];
       const newTime = Math.max(0, Math.min(duration, next[selectedMarkerIdx] + deltaMs / 1000));
-      next[selectedMarkerIdx] = Math.round(newTime * 1000) / 1000;
+      const roundedTime = Math.round(newTime * 1000) / 1000;
+      next[selectedMarkerIdx] = roundedTime;
       next.sort((a, b) => a - b);
-      const updatedIdx = next.indexOf(next[selectedMarkerIdx]);
-      setSelectedMarkerIdx(updatedIdx);
+      const updatedIdx = next.indexOf(roundedTime);
+      if (updatedIdx !== -1) {
+        setSelectedMarkerIdx(updatedIdx);
+      }
       setHasUnsavedChanges(true);
       return next;
     });
-  }, [selectedMarkerIdx, duration]);
+  }, [selectedMarkerIdx, duration, markers.length, recordSnapshot]);
 
   // Delete selected marker
   const deleteMarker = useCallback((idx: number) => {
+    recordSnapshot();
     setMarkers(prev => {
       const next = prev.filter((_, i) => i !== idx);
       setHasUnsavedChanges(true);
@@ -1159,7 +1251,7 @@ export function WaveformEditor({
       })
     );
     setSelectedMarkerIdx(null);
-  }, []);
+  }, [recordSnapshot]);
 
   // Jump to specific marker (keeps current play/pause state unless forcePlay is true)
   const jumpToMarker = useCallback((idx: number, forcePlay = false) => {
@@ -1281,18 +1373,20 @@ export function WaveformEditor({
   const autoMapSequentially = useCallback(() => {
     if (verses.length === 0 || !isMarkerCountEqual) return;
 
+    recordSnapshot();
     // Always map Verse #1 (index 0) -> Track Start (0), Verse #2 (index 1) -> Marker #1 (1), Verse #(k+1) -> Marker #k (k)
     const nextMapping = verses.map((_, i) => (i === 0 ? 0 : i <= markers.length ? i : -1));
 
     setLyricsMapping(nextMapping);
     setHasUnsavedChanges(true);
-  }, [verses, markers, isMarkerCountEqual]);
+  }, [verses, markers, isMarkerCountEqual, recordSnapshot]);
 
   /**
    * Binds a verse to a target marker (targetMarkerNum: 0 for Track Start, 1..N for markers 1..N).
    * Reflects this binding with a comment on the marker and marks unsaved changes.
    */
   const bindVerseToMarker = useCallback((verseIdx: number, targetMarkerNum: number) => {
+    recordSnapshot();
     setLyricsMapping(prev => {
       const next = [...prev];
       while (next.length <= verseIdx) {
@@ -1308,12 +1402,13 @@ export function WaveformEditor({
       return next;
     });
     setHasUnsavedChanges(true);
-  }, []);
+  }, [recordSnapshot]);
 
   /**
    * Unbinds a single verse so it becomes unmapped.
    */
   const unbindVerse = useCallback((verseIdx: number) => {
+    recordSnapshot();
     setLyricsMapping(prev => {
       if (verseIdx >= prev.length) return prev;
       const next = [...prev];
@@ -1321,18 +1416,19 @@ export function WaveformEditor({
       return next;
     });
     setHasUnsavedChanges(true);
-  }, []);
+  }, [recordSnapshot]);
 
   /**
    * Unbinds all verses associated with a marker (or Track Start).
    */
   const unbindMarker = useCallback((targetMarkerNum: number) => {
+    recordSnapshot();
     setLyricsMapping(prev => {
       const next = prev.map(mNum => (mNum === targetMarkerNum ? -1 : mNum));
       return next;
     });
     setHasUnsavedChanges(true);
-  }, []);
+  }, [recordSnapshot]);
 
   /**
    * Clicking a verse in the lyrics panel moves the track to that verse's mapped marker.
@@ -1359,6 +1455,36 @@ export function WaveformEditor({
       // Don't trigger if typing in an input
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) {
         return;
+      }
+
+      // Undo (Ctrl+Z / Cmd+Z)
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        handleUndo();
+        return;
+      }
+
+      // Redo (Ctrl+Y / Cmd+Shift+Z)
+      if (
+        ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z' && e.shiftKey) ||
+        ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'y')
+      ) {
+        e.preventDefault();
+        handleRedo();
+        return;
+      }
+
+      // Marker Nudge shortcuts (Alt + Left/Right arrow)
+      if (e.altKey && selectedMarkerIdx !== null) {
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          nudgeMarker(e.shiftKey ? -50 : -10);
+          return;
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          nudgeMarker(e.shiftKey ? 50 : 10);
+          return;
+        }
       }
 
       if (e.code === 'Space') {
@@ -1404,7 +1530,21 @@ export function WaveformEditor({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [togglePlay, dropMarkerAtCurrentTime, seekRelative, jumpToPrevMarker, jumpToNextMarker, handlePrevHymnAction, onNextHymn, deleteMarker, selectedMarkerIdx, markers.length]);
+  }, [
+    togglePlay,
+    dropMarkerAtCurrentTime,
+    seekRelative,
+    jumpToPrevMarker,
+    jumpToNextMarker,
+    handlePrevHymnAction,
+    onNextHymn,
+    deleteMarker,
+    selectedMarkerIdx,
+    markers.length,
+    handleUndo,
+    handleRedo,
+    nudgeMarker,
+  ]);
 
   // Audacity File Import
   const handleImportAudacity = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1416,6 +1556,7 @@ export function WaveformEditor({
       const text = event.target?.result as string;
       const { markers: parsed } = parseAudacityLabels(text);
       if (parsed.length > 0) {
+        recordSnapshot();
         setMarkers(parsed);
         // Map Verse 1 to Track Start (0), and subsequent verses to Markers 1..N
         setLyricsMapping(verses.map((_, i) => (i === 0 ? 0 : i <= parsed.length ? i : -1)));
@@ -1646,8 +1787,40 @@ export function WaveformEditor({
           </p>
         </div>
 
-        {/* Cloud Save & Audacity Export / Import */}
+        {/* Undo / Redo & Cloud Save & Audacity Export / Import */}
         <div className="flex items-center gap-2">
+          {/* Undo / Redo */}
+          <div className="flex items-center gap-1 border-r pr-2 mr-0.5">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleUndo}
+              disabled={undoStack.length === 0 || isReadOnly}
+              title="Undo last change (Ctrl+Z / ⌘Z)"
+              className="text-xs gap-1.5 h-8 px-2.5"
+            >
+              <Undo2 className="w-3.5 h-3.5" />
+              <span>Undo</span>
+              {undoStack.length > 0 && (
+                <span className="text-[10px] text-muted-foreground font-mono">({undoStack.length})</span>
+              )}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleRedo}
+              disabled={redoStack.length === 0 || isReadOnly}
+              title="Redo change (Ctrl+Y / ⌘⇧Z)"
+              className="text-xs gap-1.5 h-8 px-2.5"
+            >
+              <Redo2 className="w-3.5 h-3.5" />
+              <span>Redo</span>
+              {redoStack.length > 0 && (
+                <span className="text-[10px] text-muted-foreground font-mono">({redoStack.length})</span>
+              )}
+            </Button>
+          </div>
+
           {/* Audacity Import */}
           <label className={isReadOnly ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}>
             <input
@@ -1934,6 +2107,50 @@ export function WaveformEditor({
                   <span className="text-xs text-muted-foreground font-mono mr-1">
                     Marker #{selectedMarkerIdx + 1}
                   </span>
+                  {/* Nudge Buttons */}
+                  <div className="flex items-center gap-1 bg-muted/40 rounded px-1 py-0.5 border">
+                    <span className="text-[10px] text-muted-foreground font-medium px-0.5">Nudge:</span>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => nudgeMarker(-50)}
+                      disabled={isReadOnly}
+                      title="Nudge back 50ms (Alt+Shift+Left)"
+                      className="h-6 px-1.5 text-[10px] font-mono hover:bg-muted"
+                    >
+                      -50ms
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => nudgeMarker(-10)}
+                      disabled={isReadOnly}
+                      title="Nudge back 10ms (Alt+Left)"
+                      className="h-6 px-1.5 text-[10px] font-mono hover:bg-muted"
+                    >
+                      -10ms
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => nudgeMarker(10)}
+                      disabled={isReadOnly}
+                      title="Nudge forward 10ms (Alt+Right)"
+                      className="h-6 px-1.5 text-[10px] font-mono hover:bg-muted"
+                    >
+                      +10ms
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => nudgeMarker(50)}
+                      disabled={isReadOnly}
+                      title="Nudge forward 50ms (Alt+Shift+Right)"
+                      className="h-6 px-1.5 text-[10px] font-mono hover:bg-muted"
+                    >
+                      +50ms
+                    </Button>
+                  </div>
                   <Button
                     size="sm"
                     variant="ghost"
