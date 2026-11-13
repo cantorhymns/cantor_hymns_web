@@ -1,114 +1,114 @@
 [
   {
     "id": "kiahk",
-    "content": "subGenre:Liturgy\npsalm-150-kiahk\nje-efesmaroout-kiahk-weekdays\nti-parthenos-kiahk-weekdays\nje-efesmaroout-kiahk-weekends\nef-emepsha-ghar-kiahk-weekends\nsubGenre:Vespers\ndoxology-1-kiahk\nsubGenre:Vespers Praises\nalleluia-al-asr\nroumi-1\nmoaqab-1\nroumi-2\nmoaqab-2\nroumi-3\nmoaqab-3\nroumi-4\nmoaqab-4\nroumi-5\nmoaqab-5\nroumi-6\nmoaqab-6\nroumi-7\nmoaqab-7\naretenthonti-kiahk\nroumi-8\nmoaqab-8\nroumi-9\nmoaqab-9\ntarh\nsubGenre:Midnight Praises\ntenen",
-    "backgroundUrl": "genres/backgrounds/Kiahk1.jpeg",
-    "rank": 1,
+    "active": true,
+    "icon": "Cross",
     "updatedAt": {
       "seconds": 1794250255,
       "nanoseconds": 434000000
     },
-    "description": "",
-    "cantorCloudActive": true,
     "contentUrl": "genres/content/kiahk_content.txt",
-    "icon": "Cross",
+    "rank": 1,
+    "content": "subGenre:Liturgy\npsalm-150-kiahk\nje-efesmaroout-kiahk-weekdays\nti-parthenos-kiahk-weekdays\nje-efesmaroout-kiahk-weekends\nef-emepsha-ghar-kiahk-weekends\nsubGenre:Vespers\ndoxology-1-kiahk\nsubGenre:Vespers Praises\nalleluia-al-asr\nroumi-1\nmoaqab-1\nroumi-2\nmoaqab-2\nroumi-3\nmoaqab-3\nroumi-4\nmoaqab-4\nroumi-5\nmoaqab-5\nroumi-6\nmoaqab-6\nroumi-7\nmoaqab-7\naretenthonti-kiahk\nroumi-8\nmoaqab-8\nroumi-9\nmoaqab-9\ntarh\nsubGenre:Midnight Praises\ntenen",
+    "cantorCloudActive": true,
     "name": "Kiahk",
-    "active": true
+    "description": "",
+    "backgroundUrl": "genres/backgrounds/Kiahk1.jpeg"
   },
   {
     "id": "nativity",
-    "cantorCloudActive": true,
+    "active": true,
+    "contentUrl": "genres/content/nativity_content.txt",
+    "icon": "Cross",
     "rank": 2,
-    "content": "genethlion",
+    "name": "Nativity",
     "backgroundUrl": "genres/backgrounds/Nativity2.jpeg",
+    "cantorCloudActive": true,
     "updatedAt": {
       "seconds": 1794028875,
       "nanoseconds": 801000000
     },
     "description": "",
-    "active": true,
-    "contentUrl": "genres/content/nativity_content.txt",
-    "name": "Nativity",
-    "icon": "Cross"
+    "content": "genethlion"
   },
   {
     "id": "lent",
-    "cantorCloudActive": true,
-    "rank": 3,
-    "content": "subGenre:General\naspasmos-watos-lent-1\nsubGenre:Liturgy Weekdays\nkyrie-eleison-lent\nentho-te-ti-shouri\nshare-ephnouti\npsalm-150-lent-weekdays\nje-efesmaroout-lent-weekdays\npi-mairomi\nsomatos\nsubGenre:Liturgy Weekends\nmeghalo\nou-nishti\nsubGenre:Vespers Praises\nalleluia-al-asr\naretenthonti-lent\nsherat-lent\ntarh",
-    "backgroundUrl": "genres/backgrounds/Lent2.jpeg",
     "active": true,
+    "name": "Lent",
+    "contentUrl": "genres/content/lent_content.txt",
+    "rank": 3,
+    "description": "",
+    "icon": "Cross",
     "updatedAt": {
       "seconds": 1794028875,
       "nanoseconds": 907000000
     },
-    "description": "",
-    "contentUrl": "genres/content/lent_content.txt",
-    "icon": "Cross",
-    "name": "Lent"
+    "backgroundUrl": "genres/backgrounds/Lent2.jpeg",
+    "content": "subGenre:General\naspasmos-watos-lent-1\nsubGenre:Liturgy Weekdays\nkyrie-eleison-lent\nentho-te-ti-shouri\nshare-ephnouti\npsalm-150-lent-weekdays\nje-efesmaroout-lent-weekdays\npi-mairomi\nsomatos\nsubGenre:Liturgy Weekends\nmeghalo\nou-nishti\nsubGenre:Vespers Praises\nalleluia-al-asr\naretenthonti-lent\nsherat-lent\ntarh",
+    "cantorCloudActive": true
   },
   {
     "id": "lazarus-saturday",
     "cantorCloudActive": true,
+    "rank": 4,
+    "contentUrl": "genres/content/lazarus-saturday_content.txt",
     "updatedAt": {
       "seconds": 1794028876,
       "nanoseconds": 14000000
     },
-    "backgroundUrl": "genres/backgrounds/LazarusSaturday1.jpeg",
-    "active": true,
-    "rank": 4,
-    "contentUrl": "genres/content/lazarus-saturday_content.txt",
-    "name": "Lazarus Saturday",
     "icon": "Cross",
+    "description": "",
+    "backgroundUrl": "genres/backgrounds/LazarusSaturday1.jpeg",
     "content": "verses-of-cymbals-lazarus-saturday\ndoxology-lazarus-saturday\npraxis-response-lazarus-saturday\ngospel-response-matins-lazarus-saturday\ngospel-response-liturgy-lazarus-saturday\nlazaros-amou",
-    "description": ""
+    "active": true,
+    "name": "Lazarus Saturday"
   },
   {
     "id": "holy-week",
-    "cantorCloudActive": true,
-    "icon": "Cross",
-    "name": "Holy Week",
-    "active": true,
     "description": "",
+    "content": "subGenre:General\nke-eperto\nethvetee-general-funeral\nmournful-agios\noukatee\nsubGenre:Covenant Thursday\npraxeon-ton\nyodas\navechnon\nsubGenre:Good Friday\nmournful-tai-shouri\nphai-etaf-enf\nti-epistolee\nomonogenees\nmournful-ti-shouri\nethvetee-good-friday\npek-ethronos\ngholghotha\nsubGenre:Bright Saturday\nanok-pe-pi-kouji\nere-pi-esmou\ntribes\nstones\npanouti",
     "contentUrl": "genres/content/holy-week_content.txt",
+    "name": "Holy Week",
+    "backgroundUrl": "genres/backgrounds/HolyWeek2.jpeg",
+    "rank": 5,
+    "cantorCloudActive": true,
+    "active": true,
+    "icon": "Cross",
     "updatedAt": {
       "seconds": 1794028876,
       "nanoseconds": 114000000
-    },
-    "rank": 5,
-    "content": "subGenre:General\nke-eperto\nethvetee-general-funeral\nmournful-agios\noukatee\nsubGenre:Covenant Thursday\npraxeon-ton\nyodas\navechnon\nsubGenre:Good Friday\nmournful-tai-shouri\nphai-etaf-enf\nti-epistolee\nomonogenees\nmournful-ti-shouri\nethvetee-good-friday\npek-ethronos\ngholghotha\nsubGenre:Bright Saturday\nanok-pe-pi-kouji\nere-pi-esmou\ntribes\nstones\npanouti",
-    "backgroundUrl": "genres/backgrounds/HolyWeek2.jpeg"
+    }
   },
   {
     "id": "resurrection",
-    "cantorCloudActive": true,
+    "active": true,
+    "contentUrl": "genres/content/resurrection_content.txt",
+    "icon": "Cross",
     "rank": 6,
+    "name": "Resurrection",
     "backgroundUrl": "genres/backgrounds/Resurrection1.jpeg",
-    "content": "khristos-anesti-major\nkhristos-anesti-minor\nton-seena\ntou-lithou\nteen-anastaseen\nkata-ni-khoros\nkata-ni-khoros-distribution",
+    "cantorCloudActive": true,
     "updatedAt": {
       "seconds": 1794028876,
       "nanoseconds": 184000000
     },
-    "active": true,
-    "description": "",
-    "contentUrl": "genres/content/resurrection_content.txt",
-    "icon": "Cross",
-    "name": "Resurrection"
+    "content": "khristos-anesti-major\nkhristos-anesti-minor\nton-seena\ntou-lithou\nteen-anastaseen\nkata-ni-khoros\nkata-ni-khoros-distribution",
+    "description": ""
   },
   {
     "id": "apostles-fast",
-    "contentUrl": "genres/content/apostles-fast_content.txt",
-    "rank": 7,
     "content": "ondos\nenthoten-dhe\nniroumi",
+    "contentUrl": "genres/content/apostles-fast_content.txt",
     "name": "Apostles' Fast",
-    "icon": "Cross",
-    "backgroundUrl": "genres/backgrounds/ApostlesFast.webp",
     "cantorCloudActive": true,
+    "icon": "Cross",
     "updatedAt": {
       "seconds": 1794028876,
       "nanoseconds": 315000000
     },
-    "active": true,
-    "description": ""
+    "backgroundUrl": "genres/backgrounds/ApostlesFast.webp",
+    "rank": 7,
+    "description": "",
+    "active": true
   }
 ]

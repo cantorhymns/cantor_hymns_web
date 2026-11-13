@@ -1,79 +1,79 @@
 [
   {
     "id": "cantor-ibrahim",
+    "active": true,
+    "name": "Cantor Ibrahim",
     "updatedAt": {
       "seconds": 1794022243,
       "nanoseconds": 804000000
     },
-    "name": "Cantor Ibrahim",
-    "rank": 1,
-    "active": true,
-    "cantorCloudActive": true
+    "cantorCloudActive": true,
+    "rank": 1
   },
   {
     "id": "cantor-gad",
-    "active": true,
-    "cantorCloudActive": true,
-    "name": "Cantor Gad",
-    "rank": 2,
     "updatedAt": {
       "seconds": 1794022243,
       "nanoseconds": 851000000
-    }
+    },
+    "name": "Cantor Gad",
+    "active": true,
+    "cantorCloudActive": true,
+    "rank": 2
   },
   {
     "id": "cantor-tharwat",
+    "name": "Cantor Tharwat",
+    "cantorCloudActive": true,
     "active": true,
     "updatedAt": {
       "seconds": 1794022243,
       "nanoseconds": 893000000
     },
-    "name": "Cantor Tharwat",
-    "rank": 3,
-    "cantorCloudActive": true
+    "rank": 3
   },
   {
     "id": "cantor-bola",
-    "cantorCloudActive": true,
+    "rank": 4,
     "active": true,
+    "name": "Cantor Bola",
     "updatedAt": {
       "seconds": 1794022243,
       "nanoseconds": 941000000
     },
-    "rank": 4,
-    "name": "Cantor Bola"
+    "cantorCloudActive": true
   },
   {
     "id": "cantor-zaher",
-    "name": "Cantor Zaher",
-    "rank": 5,
-    "cantorCloudActive": true,
     "active": true,
+    "rank": 5,
     "updatedAt": {
       "seconds": 1794109436,
       "nanoseconds": 35000000
-    }
+    },
+    "cantorCloudActive": true,
+    "name": "Cantor Zaher"
   },
   {
     "id": "hics",
     "rank": 6,
-    "name": "HICS",
-    "active": true,
-    "cantorCloudActive": true,
     "updatedAt": {
       "seconds": 1794022244,
       "nanoseconds": 29000000
-    }
+    },
+    "active": true,
+    "name": "HICS",
+    "cantorCloudActive": true
   },
   {
     "id": "other",
+    "name": "Other",
+    "cantorCloudActive": false,
+    "active": true,
+    "rank": 7,
     "updatedAt": {
       "seconds": 1794022244,
       "nanoseconds": 60000000
-    },
-    "active": true,
-    "cantorCloudActive": false,
-    "name": "Other",
-    "rank": 7
+    }
   }
 ]

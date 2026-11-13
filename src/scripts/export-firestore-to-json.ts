@@ -5,7 +5,7 @@ import { firebaseConfig } from '../firebase/config';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export async function exportFirestore() {
+export async function exportFirestore(customBackupDir?: string) {
   console.log('Connecting to Firebase...');
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
@@ -20,16 +20,12 @@ export async function exportFirestore() {
 
   const collections = ['genres', 'cantors', 'hymns', 'recordings', 'authorized_users'];
   const outputDir = path.resolve(process.cwd(), 'data');
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  
-  // Save dedicated backups to top-level CantorHymns/backups/firestore/ outside dev directory
-  const externalBackupRoot = path.resolve(process.cwd(), '../../backups/firestore');
-  const backupDir = path.join(externalBackupRoot, `firestore_${timestamp}`);
+  const backupDir = customBackupDir ? path.resolve(customBackupDir) : null;
 
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
-  if (!fs.existsSync(backupDir)) {
+  if (backupDir && !fs.existsSync(backupDir)) {
     fs.mkdirSync(backupDir, { recursive: true });
   }
 
@@ -62,11 +58,13 @@ export async function exportFirestore() {
       const filePath = path.join(outputDir, `${colName}.json`);
       fs.writeFileSync(filePath, JSON.stringify(docs, null, 2), 'utf-8');
 
-      // Also archive to timestamped backup directory
-      const archivePath = path.join(backupDir, `${colName}.json`);
-      fs.writeFileSync(archivePath, JSON.stringify(docs, null, 2), 'utf-8');
+      // Archive to backup directory if provided
+      if (backupDir) {
+        const archivePath = path.join(backupDir, `${colName}.json`);
+        fs.writeFileSync(archivePath, JSON.stringify(docs, null, 2), 'utf-8');
+      }
 
-      console.log(`Saved ${docs.length} ${colName} to ${filePath} & archived to ${archivePath}`);
+      console.log(`Saved ${docs.length} ${colName} to ${filePath}${backupDir ? ` & archived to ${backupDir}` : ''}`);
     } catch (err: any) {
       console.warn(`Skipping collection "${colName}" due to read restrictions:`, err.message || err);
     }
@@ -113,15 +111,17 @@ export async function exportFirestore() {
     fs.writeFileSync(path.join(tDir, 'catalog.json'), JSON.stringify(catalog, null, 2), 'utf-8');
     console.log(`Synced unified catalog (${catalog.hymns.length} hymns) to ${tDir}`);
   }
-  fs.writeFileSync(path.join(backupDir, 'catalog.json'), JSON.stringify(catalog, null, 2), 'utf-8');
+  if (backupDir) {
+    fs.writeFileSync(path.join(backupDir, 'catalog.json'), JSON.stringify(catalog, null, 2), 'utf-8');
+  }
 
   console.log('\n✅ Firestore Export Complete!');
   console.log(`Summary:
 - Genres: ${genres.length}
 - Cantors: ${cantors.length}
 - Hymns: ${hymns.length}
-- Recordings: ${recordings.length}
-Output directory: ${outputDir}`);
+- Recordings: ${recordings.length}${backupDir ? `\nBackup archive: ${backupDir}` : ''}
+App data cache refreshed in: ${outputDir}`);
 }
 
 if (require.main === module) {
