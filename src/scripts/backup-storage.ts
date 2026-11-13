@@ -61,7 +61,7 @@ export async function backupStorageFiles(targetDir: string, folders: string[] = 
 
 // Allow direct CLI invocation
 if (require.main === module || process.argv[1]?.endsWith('backup-storage.ts')) {
-  const gdriveBase = path.resolve(process.cwd(), '../../backups/storage_latest');
+  const gdriveBase = path.resolve(process.cwd(), '../../backups/storage');
   const target = process.argv[2] ? path.resolve(process.argv[2]) : gdriveBase;
   backupStorageFiles(target).catch(console.error);
 }

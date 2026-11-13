@@ -21,7 +21,10 @@ export async function exportFirestore() {
   const collections = ['genres', 'cantors', 'hymns', 'recordings', 'authorized_users'];
   const outputDir = path.resolve(process.cwd(), 'data');
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const backupDir = path.resolve(process.cwd(), `backups/firestore_${timestamp}`);
+  
+  // Save dedicated backups to top-level CantorHymns/backups/firestore/ outside dev directory
+  const externalBackupRoot = path.resolve(process.cwd(), '../../backups/firestore');
+  const backupDir = path.join(externalBackupRoot, `firestore_${timestamp}`);
 
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
