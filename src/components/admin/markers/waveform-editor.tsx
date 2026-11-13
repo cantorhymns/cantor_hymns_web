@@ -230,6 +230,7 @@ export function WaveformEditor({
   // Playback & seeking tracking refs so async events and seek callbacks always have fresh state
   const isPlayingRef = useRef(false);
   const isSeekingRef = useRef(false);
+  const lastLoopSeekTimeRef = useRef(0);
   const markersRef = useRef(markers);
   const lyricsMappingRef = useRef(lyricsMapping);
   const selectedMarkerIdxRef = useRef(selectedMarkerIdx);
@@ -1151,13 +1152,31 @@ export function WaveformEditor({
 
   // Handle loop playback
   useEffect(() => {
-    if (!isLooping || selectedMarkerIdx === null || !wavesurferRef.current) return;
-    const start = markers[selectedMarkerIdx];
-    const end = selectedMarkerIdx + 1 < markers.length ? markers[selectedMarkerIdx + 1] : duration;
+    if (!isLooping || !wavesurferRef.current) return;
+    const ws = wavesurferRef.current;
+    const isAudioPlaying = isPlayingRef.current || ws.isPlaying();
+    if (!isAudioPlaying) return;
 
-    if (currentTime >= end - 0.05) {
-      wavesurferRef.current.setTime(start);
-      wavesurferRef.current.play();
+    let start = 0;
+    let end = duration;
+
+    if (markers.length > 0) {
+      if (selectedMarkerIdx === null || currentTime < markers[0] - 0.05) {
+        // Before the first marker: loop section between track start (0.0s) and the first marker
+        start = 0;
+        end = markers[0];
+      } else if (selectedMarkerIdx >= 0 && selectedMarkerIdx < markers.length) {
+        start = markers[selectedMarkerIdx];
+        end = selectedMarkerIdx + 1 < markers.length ? markers[selectedMarkerIdx + 1] : duration;
+      }
+    }
+
+    if (end > start + 0.05 && currentTime >= end - 0.05) {
+      const now = Date.now();
+      if (now - lastLoopSeekTimeRef.current < 250) return;
+      lastLoopSeekTimeRef.current = now;
+      ws.setTime(start);
+      ws.play().catch(() => {});
     }
   }, [currentTime, isLooping, selectedMarkerIdx, markers, duration]);
 
