@@ -1,57 +1,57 @@
 [
   {
     "id": "cantor-ibrahim",
-    "cantorCloudActive": true,
-    "rank": 1,
-    "name": "Cantor Ibrahim",
     "updatedAt": {
       "seconds": 1794022243,
       "nanoseconds": 804000000
     },
-    "active": true
+    "rank": 1,
+    "name": "Cantor Ibrahim",
+    "active": true,
+    "cantorCloudActive": true
   },
   {
     "id": "cantor-gad",
-    "name": "Cantor Gad",
-    "rank": 2,
+    "cantorCloudActive": true,
+    "active": true,
     "updatedAt": {
       "seconds": 1794022243,
       "nanoseconds": 851000000
     },
-    "cantorCloudActive": true,
-    "active": true
+    "name": "Cantor Gad",
+    "rank": 2
   },
   {
     "id": "cantor-tharwat",
-    "rank": 3,
-    "name": "Cantor Tharwat",
     "cantorCloudActive": true,
+    "rank": 3,
     "updatedAt": {
       "seconds": 1794022243,
       "nanoseconds": 893000000
     },
-    "active": true
+    "active": true,
+    "name": "Cantor Tharwat"
   },
   {
     "id": "cantor-bola",
-    "rank": 4,
-    "name": "Cantor Bola",
-    "active": true,
-    "cantorCloudActive": true,
     "updatedAt": {
       "seconds": 1794022243,
       "nanoseconds": 941000000
-    }
+    },
+    "cantorCloudActive": true,
+    "active": true,
+    "name": "Cantor Bola",
+    "rank": 4
   },
   {
     "id": "cantor-zaher",
+    "rank": 5,
     "updatedAt": {
       "seconds": 1794109436,
       "nanoseconds": 35000000
     },
     "cantorCloudActive": true,
     "active": true,
-    "rank": 5,
     "name": "Cantor Zaher"
   },
   {
@@ -60,20 +60,20 @@
       "seconds": 1794022244,
       "nanoseconds": 29000000
     },
+    "active": true,
     "cantorCloudActive": true,
     "name": "HICS",
-    "rank": 6,
-    "active": true
+    "rank": 6
   },
   {
     "id": "other",
+    "cantorCloudActive": false,
     "active": true,
+    "name": "Other",
+    "rank": 7,
     "updatedAt": {
       "seconds": 1794022244,
       "nanoseconds": 60000000
-    },
-    "name": "Other",
-    "cantorCloudActive": false,
-    "rank": 7
+    }
   }
 ]

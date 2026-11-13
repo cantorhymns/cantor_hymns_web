@@ -639,6 +639,8 @@ export function HymnPlayer({
   const playheadRef = useRef<HTMLDivElement>(null);
   const loopSectionRef = useRef<{ start: number, end: number } | null>(null);
   const dragStartRef = useRef<{ x: number; time: number } | null>(null);
+  const pendingCantorSwitchMarkerIdxRef = useRef<number | null>(null);
+  const pendingCantorSwitchWasPlayingRef = useRef<boolean>(false);
   
   // Stable ref for current time to use in callbacks without triggering re-renders of the callback itself
   const currentTimeRef = useRef(currentTime);
@@ -1085,8 +1087,42 @@ export function HymnPlayer({
     if ((!currentRecording?.audioLength || currentRecording.audioLength <= 0) && isFinite(audio.duration)) {
         setDuration(audio.duration);
     }
+    if (pendingCantorSwitchMarkerIdxRef.current !== null && !isLoadingMarks) {
+        const targetIdx = pendingCantorSwitchMarkerIdxRef.current;
+        const targetTime =
+            targetIdx >= 0 && targetIdx < sortedMarks.length && typeof sortedMarks[targetIdx] === 'number'
+                ? sortedMarks[targetIdx]
+                : 0;
+        pendingCantorSwitchMarkerIdxRef.current = null;
+        audio.currentTime = targetTime;
+        setCurrentTime(targetTime);
+        if (pendingCantorSwitchWasPlayingRef.current) {
+            pendingCantorSwitchWasPlayingRef.current = false;
+            audio.play().catch(() => {});
+        }
+        return;
+    }
     setCurrentTime(audio.currentTime);
   };
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || pendingCantorSwitchMarkerIdxRef.current === null || isLoadingMarks || !audioSrc) return;
+    if (audio.readyState >= 1) {
+      const targetIdx = pendingCantorSwitchMarkerIdxRef.current;
+      const targetTime =
+        targetIdx >= 0 && targetIdx < sortedMarks.length && typeof sortedMarks[targetIdx] === 'number'
+          ? sortedMarks[targetIdx]
+          : 0;
+      pendingCantorSwitchMarkerIdxRef.current = null;
+      audio.currentTime = targetTime;
+      setCurrentTime(targetTime);
+      if (pendingCantorSwitchWasPlayingRef.current) {
+        pendingCantorSwitchWasPlayingRef.current = false;
+        audio.play().catch(() => {});
+      }
+    }
+  }, [sortedMarks, isLoadingMarks, audioSrc]);
 
   const handleCanPlay = useCallback(() => {
     const audio = audioRef.current;
@@ -1273,7 +1309,20 @@ export function HymnPlayer({
                           value={currentRecording.id}
                           onValueChange={(recId) => {
                               const newRec = hymn.recordings!.find((r) => r.id === recId);
-                              if (newRec) {
+                              if (newRec && newRec.id !== currentRecording.id) {
+                                  let targetMarkerIdx = -1;
+                                  const curT = currentTimeRef.current;
+                                  if (sortedMarks.length > 0 && curT >= sortedMarks[0] - 0.15) {
+                                      const t = curT + 0.1;
+                                      for (let i = sortedMarks.length - 1; i >= 0; i--) {
+                                          if (t >= sortedMarks[i]) {
+                                              targetMarkerIdx = i;
+                                              break;
+                                          }
+                                      }
+                                  }
+                                  pendingCantorSwitchMarkerIdxRef.current = targetMarkerIdx;
+                                  pendingCantorSwitchWasPlayingRef.current = isPlaying;
                                   setCurrentRecording(newRec);
                                   onRecordingChange?.(newRec);
                               }

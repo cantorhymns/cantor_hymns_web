@@ -101,24 +101,36 @@ python3 .agents/skills/cantor-agent/scripts/fetch_lyrics.py fetch \
   - **Recitative Stanzas & The 4th-Line Pause Trap**:
     - In Coptic doxologies and recitative hymns (e.g., Roumi, Mo'aqab), the 4th line of a stanza often has an internal breathing pause or melodic slowdown before the cadence word (e.g., Verse 1 line 4 *"ymnoumen se"* ... pause ... *"adikhostasia"*).
     - **Never guess or randomly nudge markers**: Simple RMS valley finders will pick that internal pause, placing the marker 2 to 3 seconds too early and catching the final line/word of the previous verse.
-    - **Whisper / Phonetic Verification**: Always transcribe the boundary region (using Whisper word timestamps or waveform phoneme inspection) to identify the true end of the previous stanza and the onset of the new stanza's first word.
+    - **Do NOT rely on Whisper for Coptic Chant**: Whisper cannot transcribe Coptic chant reliably and hallucinates/truncates Coptic words. Instead, use **Cross-Cantor Acoustic DTW + Adaptive Pause Refinement** (when a reference cantor exists) or waveform/phoneme inspection and direct audio listening (`read_file` on extracted clips).
 
 ### Critical Recitative Marker Rules (Learned from Roumi & Mo'aqab Ground Truth):
-1. **The Breather Pre-Roll (~150–300ms)**:
-   - Never place the marker flush against the first vocal consonant or vowel attack. Always position it `~150–300ms` (approx `0.15–0.30s`) before the vocal attack in the breath silence. This ensures section looping in Learn Mode begins with a comfortable, natural breath intake rather than an abrupt attack.
-   - When replicating markers across recordings or cantors via DTW / alignment, the raw attack onset is often detected within ~50ms of singing. **Always shift the marker earlier by ~0.05–0.10s (50–100ms)** into the breath valley so the user hears that gentle pre-roll breath.
+1. **The Breather Pre-Roll & Reference Replication**:
+   - Never place the marker flush against the first vocal consonant or vowel attack. For brand-new standalone hymns, position it `~150–300ms` before the vocal attack in the breath silence so Learn Mode looping begins with a natural breath intake.
+   - **When replicating an existing reference cantor (e.g., Cantor Tharwat)**: Match the reference cantor's onset placement directly with **no excessive pre-roll buffer** (at most a light `~50ms` breath margin if needed, never large arbitrary buffers).
    - **Safety Margin**: Always verify that the marker remains at least `~40–50ms` after the decay of the preceding note (`t_marker >= t_prev_end + 0.04s`) so trailing syllables from the prior phrase are never clipped into the beginning of the looped section.
-2. **The "Mid-Stanza / 2nd-Line Pause" Trap**:
+2. **The "Mid-Stanza / 2nd-Line Pause" Trap & Strict Line-1 Anchoring**:
    - In 4-line recitative verses, the cantor frequently takes a pronounced breath after Line 1 before singing Line 2, while the transition between verses (from the previous verse into Line 1) may have little to no silence.
-   - **Crucial**: Simple RMS valley finders mistakenly latch onto the pause after Line 1, placing the marker 2 to 4 seconds *after* the verse has already started!
-   - Every verse marker MUST be anchored to the very beginning of **Line 1 (the initial word of the stanza)**, never to the pause between Line 1 and Line 2.
-3. **The Universal "Tenti Oo Ne" (Ⲧⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ) Final Verse Rule**:
+   - **Crucial**: Simple RMS valley finders mistakenly latch onto the pause after Line 1, placing the marker 2 to 4 seconds *after* the verse has already started, OR latch onto the pause before Stanza 4 of the preceding verse, placing the marker 2 to 3 seconds *before* the verse starts.
+   - Every verse marker MUST be strictly anchored to **Line 1 of each verse** (never Stanza 2, and never Stanza 4 of the preceding verse).
+3. **Mo'aqab Verse Structure Rule**:
+   - In `moaqab-1` through `moaqab-9`, the 1st stanza of each verse always follows the last stanza of the verse before it, **except for the final verse**, which is always the refrain (`Ⲧⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ` / *Ten-ti-o-ou ne*).
+4. **The Universal "Tenti Oo Ne" (Ⲧⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ) Final Verse Rule**:
    - In the final conclusion verse (`Ⲧⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ ⲱ̀ ⲑⲏⲉ̀ⲧⲥⲙⲁⲙⲁⲧ: ϣⲁ ⲡⲓⲛⲓϥⲓ ⲛ̀ⲧⲉ ⲗⲉⲩⲧⲉⲟⲥ...`), the first line (*"Ten-ti-o-ou ne o-the-ets-mamat"*) lasts `~4.5–5.5 seconds`, followed by a prominent pause before *"Sha pi-nifi..."*.
    - Naive valley detectors will consistently place the marker at *"Sha pi-nifi"*—missing the entire opening line of the conclusion!
    - Always anchor the marker at the vocal onset of `Ⲧⲉⲛϯⲱ̀ⲟⲩ ⲛⲉ` (Ten-ti-o-ou ne), which is consistently located **~5 seconds earlier** than the breath pause before `Sha pi-nifi`.
-4. **Breathless / Continuous Verse-to-Verse Transitions**:
+5. **Breathless / Continuous Verse-to-Verse Transitions**:
    - When a cantor chants continuously from the cadence note of one verse into the first note of the next verse without taking a breath, there will be no silence valley in the RMS envelope.
-   - When this happens, do not look for deep silence (which will jump into the middle of the verse). Instead, identify the melodic cadence resolution of the previous verse and place the marker at the pitch/phoneme restart of the new verse with a `-150ms` breather buffer.
+   - When this happens, do not look for deep silence (which will jump into the middle of the verse). Instead, identify the melodic cadence resolution of the previous verse and place the marker at the pitch/phoneme restart of the new verse with a minimal breather margin.
+
+### Cross-Cantor Acoustic DTW Alignment Workflow (Reference-Based)
+When aligning a target cantor (e.g., Cantor Ibrahim Ayad) against an existing reference cantor (e.g., Cantor Tharwat in `src/data/recordings.json`):
+1. **DTW Coarse Mapping (`scripts/dtw_align_ibrahim.py`)**:
+   - Resample to `16 kHz`, `20 ms` hop, compute CMVN-normalized MFCCs `1..19`, and run Sakoe-Chiba band DTW from the reference cantor to the target cantor to map every reference marker to a candidate timestamp.
+2. **Adaptive Pause Refinement (`scripts/anchor_refine_ibrahim.py`)**:
+   - Archival cassette recordings often have elevated noise floors (e.g. around `-38 dB`), which break fixed dB silence thresholds.
+   - Use an adaptive threshold (`np.percentile(db, 85) - 12.0`) and monotonic DP pause matching around the DTW candidate to snap cleanly to the Line-1 onset without drifting onto Stanza 2 or Stanza 4 of the previous verse.
+3. **Independent Verification**:
+   - Cross-check with a second feature/direction pass (`scripts/variant_dtw_check.py`: 40-band log-mel + delta, forward & reverse DTW) and structural/repeat checks (`scripts/independent_checks.py`, `scripts/moaqab_repeat_check.py`) before finalizing and publishing.
   - **Inline Storage First**: Markers (`markers: number[]`) and Lyrics Mappings (`lyricsMapping: number[]`) are stored directly on the recording document in Cloud Firestore and embedded inline in `catalog.json`.
   - **`lyrics_markers.txt` Format**: A newline-separated list of integers (`0\n1\n2...`). Each line $i$ maps Verse $i$ (1-based) to its section index (`0` for track start, `1` for Marker 1, `2` for Marker 2, etc.).
   - **Dynamic Learn Mode**: The green indicator dot, playback controls, and section looping activate automatically based on the presence of markers (`markers.length > 0`).
@@ -287,8 +299,8 @@ npm run catalog:push
 6. **Preserve Other Seasons & Hymns**:
    - Never replace or truncate `genres.json` or `catalog.json` with a single-season object. Any script modifying data must merge into the complete 7-season, 70-hymn library.
 
-7. **Browser Cache Invalidation**:
-   - When deploying structural catalog changes or new subgenres, bump `STORAGE_CACHE_KEY` in `src/lib/services/catalog.ts` (e.g. `v2`, `v3`) so clients' browser `localStorage` does not serve stale cached data.
+7. **Browser Cache Invalidation & Typecheck**:
+   - When deploying structural catalog changes, new subgenres, or updated markers, bump `STORAGE_CACHE_KEY` in `src/lib/services/catalog.ts` (e.g. `v12` -> `v13`) so clients' browser `localStorage` does not serve stale cached data, and run `npm run typecheck` to verify zero TypeScript errors.
 
 
 
